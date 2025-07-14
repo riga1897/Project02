@@ -1,0 +1,10 @@
+[run]
+#source = src
+#omit = tests/*
+
+[report]
+exclude_lines =
+    pragma: no cover
+    ^\s*#  # Игнорировать комментарии
+    ^\s*$  # Игнорировать пустые строки
+    ^\s*\"""  # Игнорировать docstrings
