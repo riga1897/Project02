@@ -1,4 +1,5 @@
 from typing import Dict, Any, Optional
+from .hh_api_config import HHAPIConfig
 
 
 class APIConfig:
@@ -15,24 +16,14 @@ class APIConfig:
         self.user_agent = user_agent
         self.timeout = timeout
         self.request_delay = request_delay
-        self._default_hh_params = default_hh_params or {
-            "area": 113,  # Russia
-            "period": 7,
-            "only_with_salary": True,
-            "per_page": 50
-        }
+        self.hh_config = HHAPIConfig(default_hh_params)
         self._default_pagination_params = default_pagination_params or {
             "max_pages": 20
         }
-
-    def get_hh_params(self, **kwargs) -> Dict[str, Any]:
-        """Get HH API params with overrides."""
-        params = self._default_hh_params.copy()
-        params.update(kwargs)
-        return params
 
     def get_pagination_params(self, **kwargs) -> Dict[str, Any]:
         """Get pagination params with overrides."""
         params = self._default_pagination_params.copy()
         params.update(kwargs)
         return params
+        
