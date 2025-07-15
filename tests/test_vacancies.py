@@ -17,6 +17,29 @@ class TestVacancy:
         assert result[0].title == "Test"
         assert result[1].salary is None
 
+    def test_cast_to_object_list_with_extra_fields(self):
+        """Тест преобразования данных с лишними полями"""
+        test_data = [
+            {
+                "id": "123",
+                "title": "Python Developer", 
+                "url": "https://hh.ru/vacancy/123",
+                "salary": "100 000-150 000 руб.",
+                "description": "Описание вакансии...",
+                "extra_field": "some value"  # Дополнительное поле
+            }
+        ]
+        result = Vacancy.cast_to_object_list(test_data)
+        assert len(result) == 1
+        assert isinstance(result[0], Vacancy)
+        assert result[0].title == "Python Developer"
+        assert result[0].url == "https://hh.ru/vacancy/123"
+        assert result[0].salary == "100 000-150 000 руб."
+        assert result[0].description == "Описание вакансии..."
+        # Проверяем, что лишние поля не попали в объект
+        assert not hasattr(result[0], 'id')
+        assert not hasattr(result[0], 'extra_field')
+
     def test_vacancy_equality(self, sample_vacancy):
         """Тест сравнения вакансий"""
         v1 = sample_vacancy
