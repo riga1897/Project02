@@ -26,14 +26,15 @@ class HeadHunterAPI(BaseAPI):
             "text": search_query,
             "search_field": "name",
             "page": max(page, 0),
-            **self.config.get_hh_params(**kwargs)
+            **self.config.hh_config.get_hh_params(**kwargs)
         }
         data = self._connect_to_api(self.base_url, params)
         return data.get('items', [])
 
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """Main method to get vacancies."""
-        return Paginator.paginate(  # Используем класс напрямую
+        return Paginator.paginate(
             fetch_func=lambda page: self.get_vacancies_page(search_query, page, **kwargs),
             **self.config.get_pagination_params(**kwargs)
         )
+        
