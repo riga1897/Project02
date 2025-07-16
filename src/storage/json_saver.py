@@ -79,41 +79,72 @@ class JSONSaver:
             return datetime.min  # Возвращаем минимальную дату если парсинг не удался
 
     def load_vacancies(self) -> List[Vacancy]:
-        """Загружает и валидирует вакансии из файла"""
+        """Загружает вакансии с улучшенной обработкой ошибок"""
         try:
             with open(self.filename, 'r', encoding='utf-8') as f:
                 data = json.load(f)
 
                 if not isinstance(data, list):
-                    logger.error(f"Ожидался список, получен {type(data)}")
-                    return []
+                    raise ValueError(f"Ожидался список, получен {type(data)}")
 
-                valid_vacancies = []
+                vacancies = []
                 for item in data:
-                    if not isinstance(item, dict):
-                        logger.warning(f"Пропущен некорректный элемент типа {type(item)}")
-                        continue
-
                     try:
-                        vacancy = Vacancy.from_dict(item)
-                        valid_vacancies.append(vacancy)
-                    except (AttributeError, KeyError) as e:
-                        logger.warning(f"Ошибка создания вакансии: {e}. Данные: {item}")
+                        if not isinstance(item, dict):
+                            logger.warning(f"Пропущен некорректный элемент типа {type(item)}")
+                            continue
 
-                return valid_vacancies
+                        vacancy = Vacancy.from_dict(item)
+                        vacancies.append(vacancy)
+                    except Exception as e:
+                        logger.error(f"Ошибка создания вакансии: {e}\nДанные: {item}")
+
+                return vacancies
+
+        except FileNotFoundError:
+            logger.info("Файл не найден, будет создан новый")
+            return []
+        except json.JSONDecodeError:
+            logger.error("Ошибка формата файла")
+            return []
+        except Exception as e:
+            logger.critical(f"Критическая ошибка загрузки: {e}")
+            raise
 
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.warning(f"Ошибка загрузки файла: {e}")
             return []
 
     def _save_to_file(self, vacancies: List[Vacancy]) -> None:
-        """Сохраняет только валидные вакансии"""
+        """Сохраняет вакансии с дополнительной валидацией"""
         valid_data = []
+        error_count = 0
+
         for vac in vacancies:
             try:
-                valid_data.append(vac.to_dict())
-            except AttributeError as e:
-                logger.error(f"Ошибка преобразования вакансии: {e}")
+                if not isinstance(vac, Vacancy):
+                    raise ValueError(f"Ожидался объект Vacancy, получен {type(vac)}")
+
+                vac_dict = vac.to_dict()
+                # Дополнительная проверка структуры
+                if not all(key in vac_dict for key in ['id', 'title', 'url']):
+                    raise ValueError("Отсутствуют обязательные поля")
+
+                valid_data.append(vac_dict)
+            except Exception as e:
+                error_count += 1
+                logger.error(f"Ошибка валидации вакансии: {e}\nВакансия: {vars(vac)}")
+
+        if error_count:
+            logger.warning(f"Пропущено {error_count} невалидных вакансий")
+
+        try:
+            with open(self.filename, 'w', encoding='utf-8') as f:
+                json.dump(valid_data, f, ensure_ascii=False, indent=2)
+            logger.info(f"Успешно сохранено {len(valid_data)} вакансий")
+        except Exception as e:
+            logger.critical(f"Ошибка записи в файл: {e}")
+            raise
 
         with open(self.filename, 'w', encoding='utf-8') as f:
             json.dump(valid_data, f, ensure_ascii=False, indent=2)
