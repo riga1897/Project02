@@ -74,7 +74,7 @@
 
 ## Установка:
 
-- Клонируйте репозиторий: `git clone git@github.com:riga1897/OOP.git`
+- Клонируйте репозиторий: `git clone git@github.com:riga1897/Project02.git`
 - Перейдите в папку с проектом `cd Project02`
 - Установите зависимости: `pip install -r requirements.txt`
 

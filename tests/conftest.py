@@ -9,7 +9,6 @@ from src.vacancies.models import Vacancy
 @pytest.fixture
 def default_hh_api():
     """Фикстура: предоставляет экземпляр HeadHunterAPI с настройками по умолчанию."""
-    # Создаем временную директорию для кэша
     with tempfile.TemporaryDirectory() as temp_dir:
         original_cache_dir = HeadHunterAPI.DEFAULT_CACHE_DIR
         HeadHunterAPI.DEFAULT_CACHE_DIR = temp_dir
@@ -47,12 +46,12 @@ def initialized_json_file(tmp_path):
 def sample_vacancy():
     """Фикстура: возвращает тестовую вакансию."""
     vacancy = Vacancy(
-        "Python Dev",
-        "http://test.com",
-        "100000",
-        "Test desc"
+        title="Python Dev",
+        url="http://test.com",
+        salary={"from": 100000, "to": 150000, "currency": "RUR"},
+        description="Test desc",
+        vacancy_id="test_id_1"
     )
-    vacancy.id = "test_id_1"
     return vacancy
 
 
@@ -60,19 +59,40 @@ def sample_vacancy():
 def sample_vacancies(sample_vacancy):
     """Фикстура: возвращает список тестовых вакансий."""
     vacancy2 = Vacancy(
-        "Java Developer",
-        "http://test.com",
-        "90000",
-        "Test description"
+        title="Java Developer",
+        url="http://test.com",
+        salary={"from": 90000, "currency": "RUR"},
+        description="Test description",
+        vacancy_id="test_id_2"
     )
-    vacancy2.id = "test_id_2"
 
     vacancy3 = Vacancy(
-        "Python Dev",
-        "http://another.com",
-        "110000",
-        "Senior position"
+        title="Python Dev",
+        url="http://another.com",
+        salary={"from": 110000, "to": 130000, "currency": "USD"},
+        description="Senior position",
+        vacancy_id="test_id_3"
     )
-    vacancy3.id = "test_id_3"
 
-    return [sample_vacancy, vacancy2, vacancy3]
+    vacancy4 = Vacancy(
+        title="DevOps Engineer",
+        url="http://devops.com",
+        salary=None,
+        description="Infrastructure",
+        vacancy_id="test_id_4"
+    )
+
+    return [sample_vacancy, vacancy2, vacancy3, vacancy4]
+
+
+@pytest.fixture
+def vacancy_without_salary():
+    """Фикстура: вакансия без указанной зарплаты."""
+    return Vacancy(
+        title="Intern",
+        url="http://example.com/intern",
+        salary=None,
+        description="Стажировка",
+        vacancy_id="test_id_5"
+    )
+    

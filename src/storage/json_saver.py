@@ -1,111 +1,120 @@
+from datetime import datetime
+from typing import List, Union, Dict, Any
+import json
+import logging
 from pathlib import Path
-from typing import List, Dict, Optional, Any, Union, Iterator
 from src.vacancies.models import Vacancy
-from src.utils.file_handlers import json_handler
+
+logger = logging.getLogger(__name__)
 
 
 class JSONSaver:
-    """Класс для работы с вакансиями в JSON-файле"""
+    """Класс для сохранения вакансий в JSON-файл с обновлением существующих"""
 
-    def __init__(self, file_path: str = "vacancies.json"):
-        self.file_path = Path(file_path)
-        self.file_path.touch(exist_ok=True)
-        self.allowed_filters = {"id", "title", "url", "salary", "description"}
-        self.updatable_fields = {"salary", "description"}
+    def __init__(self, filename: str = "vacancies.json"):
+        self.filename = filename
+        self._ensure_file_exists()
 
-    @property
-    def _data(self) -> List[Dict[str, Any]]:
-        """Возвращает данные из файла"""
-        return json_handler.read_json(self.file_path)
+    def _ensure_file_exists(self) -> None:
+        """Создает файл, если он не существует"""
+        Path(self.filename).touch(exist_ok=True)
 
-    def _save_data(self, data: List[Dict[str, Any]]) -> None:
-        """Сохраняет данные в файл"""
-        json_handler.write_json(self.file_path, data)
+        from typing import List, Union, Optional
 
-    def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> Iterator[Vacancy]:
-        """Возвращает отфильтрованные вакансии"""
-        vacancies = (Vacancy.from_dict(item) for item in self._data)
+    def add_vacancy(self, vacancies: Union[Vacancy, List[Vacancy]]) -> List[str]:
+        """
+        Добавляет вакансии в файл с выводом информационных сообщений об изменениях.
+        Возвращает список сообщений об обновлениях.
+        """
+        if not isinstance(vacancies, list):
+            vacancies = [vacancies]
 
-        if not filters:
-            yield from vacancies
-            return
+        existing_vacancies = self.load_vacancies()
+        existing_map = {v.vacancy_id: v for v in existing_vacancies}
 
-        # Проверяем допустимость фильтров, извлекая имена полей из операторов
-        filter_fields = set()
-        for key in filters.keys():
-            if "__" in key:
-                field, _ = key.split("__", 1)
-                filter_fields.add(field)
+        update_messages: List[str] = []
+        new_count = 0
+
+        for new_vac in vacancies:
+            if new_vac.vacancy_id in existing_map:
+                existing_vac = existing_map[new_vac.vacancy_id]
+                changed_fields = []
+
+                # Проверяем каждое поле на изменения
+                for field in ['title', 'url', 'salary', 'description', 'updated_at']:
+                    old_val = getattr(existing_vac, field, None)
+                    new_val = getattr(new_vac, field, None)
+
+                    if old_val != new_val:
+                        changed_fields.append(field)
+
+                if changed_fields:
+                    # Обновляем только изменившиеся поля
+                    for field in changed_fields:
+                        setattr(existing_vac, field, getattr(new_vac, field))
+
+                    message = (
+                        f"Вакансия ID {new_vac.vacancy_id} обновлена. "
+                        f"Измененные поля: {', '.join(changed_fields)}. "
+                        f"Название: '{new_vac.title}'"
+                    )
+                    update_messages.append(message)
             else:
-                filter_fields.add(key)
-        
-        invalid_filters = filter_fields - self.allowed_filters
-        if invalid_filters:
-            raise ValueError(f"Недопустимые фильтры: {invalid_filters}")
+                existing_map[new_vac.vacancy_id] = new_vac
+                message = f"Добавлена новая вакансия ID {new_vac.vacancy_id}: '{new_vac.title}'"
+                update_messages.append(message)
+                new_count += 1
 
-        for v in vacancies:
-            if all(self._apply_filter(v, key, value) for key, value in filters.items()):
-                yield v
+        # Сохраняем все вакансии
+        if update_messages:
+            self._save_to_file(list(existing_map.values()))
 
-    def _apply_filter(self, vacancy: Vacancy, key: str, value: Any) -> bool:
-        """Применяет фильтр к вакансии"""
-        if "__" in key:
-            field, op = key.split("__", 1)
-            attr = getattr(vacancy, field, None)
+        return update_messages
 
-            if op == "gt":
-                return str(attr) > str(value)
-            if op == "lt":
-                return str(attr) < str(value)
-            if op == "contains":
-                return str(value).lower() in str(attr).lower()
-            raise ValueError(f"Неизвестный оператор: {op}")
-        return str(getattr(vacancy, key)) == str(value)
+    def _parse_date(self, date_str: str) -> datetime:
+        """Парсит дату из строки в объект datetime"""
+        try:
+            return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S%z")
+        except (ValueError, TypeError):
+            return datetime.min  # Возвращаем минимальную дату если парсинг не удался
 
-    def add_vacancy(self, vacancy: Union[Vacancy, List[Vacancy]]) -> None:
-        """Добавляет вакансию(и) в хранилище"""
-        data = self._data
-        vacancies = [vacancy] if isinstance(vacancy, Vacancy) else vacancy
+    def load_vacancies(self) -> List[Vacancy]:
+        """Загружает и валидирует вакансии из файла"""
+        try:
+            with open(self.filename, 'r', encoding='utf-8') as f:
+                data = json.load(f)
 
-        for v in vacancies:
-            if not hasattr(v, 'vacancy_id'):
-                raise ValueError("Вакансия должна иметь атрибут vacancy_id")
+                if not isinstance(data, list):
+                    logger.error(f"Ожидался список, получен {type(data)}")
+                    return []
 
-            if any(item["id"] == v.vacancy_id for item in data):
-                raise ValueError(f"Вакансия с ID {v.vacancy_id} уже существует")
+                valid_vacancies = []
+                for item in data:
+                    if not isinstance(item, dict):
+                        logger.warning(f"Пропущен некорректный элемент типа {type(item)}")
+                        continue
 
-            data.append(v.to_dict())
+                    try:
+                        vacancy = Vacancy.from_dict(item)
+                        valid_vacancies.append(vacancy)
+                    except (AttributeError, KeyError) as e:
+                        logger.warning(f"Ошибка создания вакансии: {e}. Данные: {item}")
 
-        self._save_data(data)
+                return valid_vacancies
 
-    def delete_vacancy(self, vacancy_id: str) -> None:
-        """Удаляет вакансию по ID"""
-        data = [item for item in self._data if item["id"] != vacancy_id]
-        if len(data) == len(self._data):
-            raise ValueError(f"Вакансия с ID {vacancy_id} не найдена")
-        self._save_data(data)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.warning(f"Ошибка загрузки файла: {e}")
+            return []
 
-    def update_vacancy(self, vacancy_id: str, updates: Dict[str, Any]) -> None:
-        """Обновляет поля вакансии"""
-        data = self._data
-        updated = False
+    def _save_to_file(self, vacancies: List[Vacancy]) -> None:
+        """Сохраняет только валидные вакансии"""
+        valid_data = []
+        for vac in vacancies:
+            try:
+                valid_data.append(vac.to_dict())
+            except AttributeError as e:
+                logger.error(f"Ошибка преобразования вакансии: {e}")
 
-        for item in data:
-            if item["id"] == vacancy_id:
-                invalid_fields = set(updates.keys()) - self.updatable_fields
-                if invalid_fields:
-                    raise ValueError(f"Нельзя изменить поля: {invalid_fields}")
-
-                item.update(updates)
-                updated = True
-
-        if not updated:
-            raise ValueError(f"Вакансия с ID {vacancy_id} не найдена")
-        self._save_data(data)
-
-    def get_vacancy_by_id(self, vacancy_id: str) -> Optional[Vacancy]:
-        """Находит вакансию по ID"""
-        for item in self._data:
-            if item["id"] == vacancy_id:
-                return Vacancy.from_dict(item)
-        return None
+        with open(self.filename, 'w', encoding='utf-8') as f:
+            json.dump(valid_data, f, ensure_ascii=False, indent=2)
+            

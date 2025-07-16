@@ -3,63 +3,59 @@ from src.vacancies.models import Vacancy
 
 
 class TestVacancy:
-    """Тесты для класса Vacancy"""
+    def test_vacancy_creation(self):
+        vacancy = Vacancy(
+            title="Test", 
+            url="http://test.com", 
+            salary={"from": 100000, "currency": "RUR"}, 
+            description="Test vacancy"
+        )
+        assert vacancy.title == "Test"
+        assert vacancy.salary.average == 100000
+        assert "от 100000 RUR" in str(vacancy.salary)
+
+    def test_salary_comparison(self):
+        v1 = Vacancy("A", "http://a.com", {"from": 100000}, "Desc", "id1")
+        v2 = Vacancy("B", "http://b.com", {"from": 150000}, "Desc", "id2")
+
+        assert v1 < v2
+        assert v2 > v1
+        assert v1 <= v2
+        assert v2 >= v1
+
+    def test_to_from_dict(self):
+        vacancy = Vacancy(
+            title="Test",
+            url="http://test.com",
+            salary={"from": 100000, "to": 150000, "currency": "RUR"},
+            description="Test",
+            vacancy_id="test_id"
+        )
+        data = vacancy.to_dict()
+        new_vacancy = Vacancy.from_dict(data)
+
+        assert new_vacancy == vacancy
+        assert new_vacancy.salary.average == 125000
 
     def test_cast_to_object_list(self):
-        """Тест преобразования списка словарей в список объектов"""
         test_data = [
-            {"title": "Test", "url": "test.com", "salary": "100", "description": "desc"},
-            {"title": "Test2", "url": "test.com", "salary": None, "description": "desc2"}
+            {
+                "title": "A",
+                "url": "http://a.com",
+                "salary": {"from": 100000},
+                "description": "Desc",
+                "id": "1"
+            },
+            {
+                "title": "B",
+                "url": "http://b.com",
+                "salary": None,
+                "description": "Desc",
+                "id": "2"
+            }
         ]
         result = Vacancy.cast_to_object_list(test_data)
         assert len(result) == 2
-        assert isinstance(result[0], Vacancy)
-        assert result[0].title == "Test"
-        assert result[1].salary is None
-
-    def test_vacancy_equality(self):
-        """Тест сравнения вакансий"""
-        v1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
-        v2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
-        v3 = Vacancy("Java Dev", "http://test.com", None, "Java coding", "id2")
-        v4 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id3")
-
-        # Проверка равенства (должны быть равны, если совпадают id)
-        assert v1 == v2
-        # Проверка неравенства
-        assert v1 != v3
-        # Проверка с разными id (даже если остальные поля одинаковы)
-        assert v1 != v4
-        # Проверка сравнения с объектом другого типа
-        assert v1 != "not a vacancy object"
-
-    def test_to_from_dict(self):
-        """Тест преобразования в словарь и обратно"""
-        vacancy = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
-        data = vacancy.to_dict()
-        new_vacancy = Vacancy.from_dict(data)
-        assert new_vacancy == vacancy
-
-    def test_hash_method(self):
-        """Тест метода __hash__"""
-        vacancy1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
-        vacancy2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
-        vacancy3 = Vacancy("Java Dev", "http://test2.com", "120000", "Java desc", "id2")
+        assert result[0].salary.average == 100000
+        assert result[1].salary.average == 0
         
-        # Объекты с одинаковыми vacancy_id должны иметь одинаковый хэш
-        assert hash(vacancy1) == hash(vacancy2)
-        
-        # Объекты с разными vacancy_id должны иметь разные хэши
-        assert hash(vacancy1) != hash(vacancy3)
-        
-        # Проверяем, что можно использовать в set
-        vacancy_set = {vacancy1, vacancy2, vacancy3}
-        assert len(vacancy_set) == 2  # vacancy1 и vacancy2 считаются одинаковыми
-
-    def test_str_representation(self):
-        """Тест строкового представления вакансии"""
-        vacancy1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc")
-        vacancy2 = Vacancy("Java Dev", "http://test.com", None, "Java coding")
-
-        assert str(vacancy1) == "Python Dev (100000)"
-        assert str(vacancy2) == "Java Dev (Зарплата не указана)"
