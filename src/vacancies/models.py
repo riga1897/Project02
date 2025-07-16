@@ -1,18 +1,17 @@
 from typing import List, Dict, Any, Optional
 import uuid
 from datetime import datetime
+import logging
 from .abstract import AbstractVacancy
 from src.utils.salary import Salary
-
+logging.basicConfig(level=logging.ERROR)
 class Vacancy(AbstractVacancy):
     """Класс для представления вакансии с полной структурой HH.ru"""
-
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
         'employment', 'schedule', 'published_at', 'skills'
     )
-
     def __init__(
         self,
         title: str,
@@ -42,22 +41,18 @@ class Vacancy(AbstractVacancy):
         self.schedule = schedule
         self.published_at = self._parse_datetime(published_at) if published_at else None
         self.skills = skills
-
     def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Salary:
         """Приватный метод валидации данных о зарплате"""
         return Salary(salary_data) if salary_data else Salary()
-
     @staticmethod
     def _clean_html(text: str) -> str:
         """Очистка HTML-тегов из текста"""
         import re
         return re.sub(r'<[^>]+>', '', text)
-
     @staticmethod
     def _parse_datetime(dt_str: str) -> datetime:
         """Парсинг даты из строки"""
         return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S%z")
-
     @classmethod
     def cast_to_object_list(cls, data):
         vacancies = []
@@ -69,52 +64,33 @@ class Vacancy(AbstractVacancy):
                 print(f"Skipping item due to validation error: {e}")
                 continue
         return vacancies
-
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Vacancy':
-        """Создаёт объект Vacancy из словаря с проверкой структуры"""
-        if not isinstance(data, dict):
-            raise ValueError(f"Ожидался словарь, получен {type(data)}")
+        """Создает объект Vacancy из словаря с защитой от ошибок структуры"""
+        try:
+            # Обработка опыта работы (может быть как строкой, так и словарем)
+            experience = None
+            if isinstance(data.get('experience'), dict):
+                experience = data['experience'].get('name')
+            elif isinstance(data.get('experience'), str):
+                experience = data['experience']
+            # Обработка зарплаты (может быть None или сложной структурой)
+            salary = None
+            if isinstance(data.get('salary'), dict):
+                # salary = f"{data['salary'].get('from')}-{data['salary'].get('to')} {data['salary'].get('currency')}"
+                salary = data.get('salary')
+            return cls(
+                vacancy_id=str(data.get('id')),
+                title=data.get('title', ''),
+                url=data.get('url', ''),
+                salary=salary,
+                description=data.get('description', ''),
+                experience=experience,
+                published_at=data.get('published_at'))
 
-        # Маппинг полей HeadHunter API
-        title = data.get('name') or data.get('title', '')
-        url = data.get('alternate_url') or data.get('url', '')
-        
-        # Проверка обязательных полей
-        if not title:
-            raise ValueError("Отсутствует название вакансии (name/title)")
-        if not url:
-            raise ValueError("Отсутствует URL вакансии (alternate_url/url)")
-
-        # Обработка вложенных структур
-        experience = None
-        if isinstance(data.get('experience'), dict):
-            experience = data['experience'].get('name')
-
-        # Формирование описания из snippet если нет description
-        description = data.get('description', '')
-        if not description and 'snippet' in data:
-            snippet = data['snippet']
-            parts = []
-            if snippet.get('requirement'):
-                parts.append(f"Требования: {snippet['requirement']}")
-            if snippet.get('responsibility'):
-                parts.append(f"Обязанности: {snippet['responsibility']}")
-            description = '\n'.join(parts)
-
-        return cls(
-            title=title,
-            url=url,
-            salary=data.get('salary'),
-            description=description,
-            vacancy_id=data.get('id'),
-            experience=experience,
-            employer=data.get('employer'),
-            employment=data.get('employment', {}).get('name') if data.get('employment') else None,
-            schedule=data.get('schedule', {}).get('name') if data.get('schedule') else None,
-            published_at=data.get('published_at')
-        )
-
+        except Exception as e:
+            logging.error(f"Ошибка создания вакансии из данных: {data}\nОшибка: {e}")
+            raise ValueError(f"Невозможно создать вакансию: {e}")
     def to_dict(self) -> Dict[str, Any]:
         """Преобразование в словарь"""
         return {
@@ -132,7 +108,6 @@ class Vacancy(AbstractVacancy):
             'published_at': self.published_at.isoformat() if self.published_at else None,
             'skills': self.skills
         }
-
     def __str__(self) -> str:
         """Строковое представление вакансии"""
         parts = [
@@ -143,4 +118,4 @@ class Vacancy(AbstractVacancy):
             f"Ссылка: {self.url}"
         ]
         return "\n".join(parts)
-        
+
