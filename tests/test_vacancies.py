@@ -40,6 +40,22 @@ class TestVacancy:
         new_vacancy = Vacancy.from_dict(data)
         assert new_vacancy == vacancy
 
+    def test_hash_method(self):
+        """Тест метода __hash__"""
+        vacancy1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
+        vacancy2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
+        vacancy3 = Vacancy("Java Dev", "http://test2.com", "120000", "Java desc", "id2")
+        
+        # Объекты с одинаковыми vacancy_id должны иметь одинаковый хэш
+        assert hash(vacancy1) == hash(vacancy2)
+        
+        # Объекты с разными vacancy_id должны иметь разные хэши
+        assert hash(vacancy1) != hash(vacancy3)
+        
+        # Проверяем, что можно использовать в set
+        vacancy_set = {vacancy1, vacancy2, vacancy3}
+        assert len(vacancy_set) == 2  # vacancy1 и vacancy2 считаются одинаковыми
+
     def test_str_representation(self):
         """Тест строкового представления вакансии"""
         vacancy1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc")

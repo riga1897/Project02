@@ -30,8 +30,16 @@ class JSONSaver:
             yield from vacancies
             return
 
-        # Проверяем допустимость фильтров
-        invalid_filters = set(filters.keys()) - self.allowed_filters
+        # Проверяем допустимость фильтров, извлекая имена полей из операторов
+        filter_fields = set()
+        for key in filters.keys():
+            if "__" in key:
+                field, _ = key.split("__", 1)
+                filter_fields.add(field)
+            else:
+                filter_fields.add(key)
+        
+        invalid_filters = filter_fields - self.allowed_filters
         if invalid_filters:
             raise ValueError(f"Недопустимые фильтры: {invalid_filters}")
 
