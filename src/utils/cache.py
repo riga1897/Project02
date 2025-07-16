@@ -83,8 +83,11 @@ class FileCache:
         if not filepath.exists():
             return None
 
-        with open(filepath, 'r', encoding='utf-8') as f:
-            return json.load(f)
+        try:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (json.JSONDecodeError, OSError):
+            return None
 
     def clear(self, source: Optional[str] = None) -> None:
         """Очистка кэша"""
