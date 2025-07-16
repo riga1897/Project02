@@ -62,10 +62,12 @@ class Vacancy(AbstractVacancy):
     def cast_to_object_list(cls, data):
         vacancies = []
         for item in data:
-            if 'title' in item:  # Checking if 'title' exists in the item
-                vacancies.append(cls.from_dict(item))
-            else:
-                print(f"Skipping item due to missing 'title': {item}")
+            try:
+                vacancy = cls.from_dict(item)
+                vacancies.append(vacancy)
+            except ValueError as e:
+                print(f"Skipping item due to validation error: {e}")
+                continue
         return vacancies
 
     @classmethod
@@ -74,24 +76,43 @@ class Vacancy(AbstractVacancy):
         if not isinstance(data, dict):
             raise ValueError(f"Ожидался словарь, получен {type(data)}")
 
-        # Обязательные поля
-        required = {'title', 'url'}
-        if not required.issubset(data.keys()):
-            missing = required - set(data.keys())
-            raise ValueError(f"Отсутствуют обязательные поля: {missing}")
+        # Маппинг полей HeadHunter API
+        title = data.get('name') or data.get('title', '')
+        url = data.get('alternate_url') or data.get('url', '')
+        
+        # Проверка обязательных полей
+        if not title:
+            raise ValueError("Отсутствует название вакансии (name/title)")
+        if not url:
+            raise ValueError("Отсутствует URL вакансии (alternate_url/url)")
 
         # Обработка вложенных структур
         experience = None
         if isinstance(data.get('experience'), dict):
             experience = data['experience'].get('name')
 
+        # Формирование описания из snippet если нет description
+        description = data.get('description', '')
+        if not description and 'snippet' in data:
+            snippet = data['snippet']
+            parts = []
+            if snippet.get('requirement'):
+                parts.append(f"Требования: {snippet['requirement']}")
+            if snippet.get('responsibility'):
+                parts.append(f"Обязанности: {snippet['responsibility']}")
+            description = '\n'.join(parts)
+
         return cls(
-            title=data['title'],
-            url=data['url'],
+            title=title,
+            url=url,
             salary=data.get('salary'),
-            description=data.get('description', ''),
+            description=description,
             vacancy_id=data.get('id'),
-            experience=experience
+            experience=experience,
+            employer=data.get('employer'),
+            employment=data.get('employment', {}).get('name') if data.get('employment') else None,
+            schedule=data.get('schedule', {}).get('name') if data.get('schedule') else None,
+            published_at=data.get('published_at')
         )
 
     def to_dict(self) -> Dict[str, Any]:
