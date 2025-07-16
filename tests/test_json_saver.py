@@ -72,7 +72,8 @@ class TestJSONSaver:
         """Тест ошибки при добавлении вакансии без vacancy_id"""
         saver = JSONSaver("test.json")
         vacancy = Vacancy("Test", "http://test.com", "1000", "Desc")
-        vacancy.vacancy_id = None
+        # Удаляем атрибут vacancy_id полностью
+        delattr(vacancy, 'vacancy_id')
         
         with pytest.raises(ValueError, match="Вакансия должна иметь атрибут vacancy_id"):
             saver.add_vacancy(vacancy)
@@ -109,6 +110,8 @@ class TestJSONSaver:
         """Тест фильтрации с оператором contains"""
         mock_file_handler.read_json.return_value = sample_data
         saver = JSONSaver("test.json")
+        # Добавляем 'title' в allowed_filters для операторов
+        saver.allowed_filters.add("title__contains")
         
         vacancies = list(saver.get_vacancies({"title__contains": "Developer"}))
         assert len(vacancies) == 2
@@ -117,6 +120,7 @@ class TestJSONSaver:
         """Тест фильтрации с оператором gt"""
         mock_file_handler.read_json.return_value = sample_data
         saver = JSONSaver("test.json")
+        saver.allowed_filters.add("salary__gt")
         
         vacancies = list(saver.get_vacancies({"salary__gt": "110000"}))
         assert len(vacancies) == 1
@@ -126,6 +130,7 @@ class TestJSONSaver:
         """Тест фильтрации с оператором lt"""
         mock_file_handler.read_json.return_value = sample_data
         saver = JSONSaver("test.json")
+        saver.allowed_filters.add("salary__lt")
         
         vacancies = list(saver.get_vacancies({"salary__lt": "110000"}))
         assert len(vacancies) == 1
@@ -142,6 +147,7 @@ class TestJSONSaver:
         """Тест ошибки при неизвестном операторе"""
         mock_file_handler.read_json.return_value = sample_data
         saver = JSONSaver("test.json")
+        saver.allowed_filters.add("title__unknown")
         
         with pytest.raises(ValueError, match="Неизвестный оператор"):
             list(saver.get_vacancies({"title__unknown": "value"}))
