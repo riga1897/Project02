@@ -42,6 +42,51 @@ def main():
     for v in saver.get_vacancies():
         print(f"- {v.title}: {v.salary}")
 
+
+    #api = HeadHunterAPI()
+
+    # Первый запрос - идёт реальный запрос к API
+    vacancies = api.get_vacancies("Python")
+
+    # Повторный запрос - берётся из кэша
+    cached_vacancies = api.get_vacancies("Python")
+
+    # Принудительное обновление
+    api.clear_cache()
+    fresh_vacancies = api.get_vacancies("Python")
+
+    # 1. Инициализация
+    from src.api.hh_api import HeadHunterAPI
+    api = HeadHunterAPI()
+
+    # 2. Запрос с автоматическим сохранением
+    results = api.get_vacancies("Python", area=1, per_page=100)
+
+    # 3. Ручное чтение сырых данных
+    from src.utils.cache import FileCache
+    cache = FileCache("hh_cache")
+
+    # Получить все файлы для запроса "Python"
+    python_files = list(cache.cache_dir.glob("hh_text-Python*"))
+
+    # Прочитать конкретный файл
+    with open(python_files[0], 'r', encoding='utf-8') as f:
+        raw_json = json.load(f)
+        print(raw_json.keys())  # ['items', 'found', 'pages', 'per_page', ...]
+
+    sj_cache = FileCache("data/cache/sj")
+
+    from pathlib import Path
+
+    def init_project_structure():
+        """Создает необходимые директории при запуске"""
+        Path("data/cache/hh").mkdir(parents=True, exist_ok=True)
+        Path("data/cache/sj").mkdir(parents=True, exist_ok=True)  # Для будущих платформ
+
+    if __name__ == "__main__":
+        init_project_structure()
+        # ... запуск приложения ...
+
 if __name__ == "__main__":
     main()
     

@@ -17,30 +17,33 @@ class TestVacancy:
         assert result[0].title == "Test"
         assert result[1].salary is None
 
-    def test_vacancy_equality(self, sample_vacancy):
+    def test_vacancy_equality(self):
         """Тест сравнения вакансий"""
-        v1 = sample_vacancy
-        v2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc")
-        v3 = Vacancy("Java Dev", "http://test.com", None, "Java coding")
-        assert v1 == v2
-        assert v1 != v3
+        v1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
+        v2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
+        v3 = Vacancy("Java Dev", "http://test.com", None, "Java coding", "id2")
+        v4 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id3")
 
-    def test_to_from_dict(self, sample_vacancy):
+        # Проверка равенства (должны быть равны, если совпадают id)
+        assert v1 == v2
+        # Проверка неравенства
+        assert v1 != v3
+        # Проверка с разными id (даже если остальные поля одинаковы)
+        assert v1 != v4
+        # Проверка сравнения с объектом другого типа
+        assert v1 != "not a vacancy object"
+
+    def test_to_from_dict(self):
         """Тест преобразования в словарь и обратно"""
-        data = sample_vacancy.to_dict()
+        vacancy = Vacancy("Python Dev", "http://test.com", "100000", "Test desc", "id1")
+        data = vacancy.to_dict()
         new_vacancy = Vacancy.from_dict(data)
-        assert new_vacancy == sample_vacancy
+        assert new_vacancy == vacancy
 
-    def test_str_representation(self, sample_vacancy):
+    def test_str_representation(self):
         """Тест строкового представления вакансии"""
-        assert str(sample_vacancy) == "Python Dev (100000)"
+        vacancy1 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc")
+        vacancy2 = Vacancy("Java Dev", "http://test.com", None, "Java coding")
 
-    def test_vacancy_equality(self, sample_vacancy):
-        """Тест сравнения вакансий"""
-        v1 = sample_vacancy
-        v2 = Vacancy("Python Dev", "http://test.com", "100000", "Test desc")
-        v3 = Vacancy("Java Dev", "http://test.com", None, "Java coding")
-        assert v1 == v2
-        assert v1 != v3
-        # Add this new test case
-        assert v1 != "not a vacancy object"  # This will exercise line 63
+        assert str(vacancy1) == "Python Dev (100000)"
+        assert str(vacancy2) == "Java Dev (Зарплата не указана)"

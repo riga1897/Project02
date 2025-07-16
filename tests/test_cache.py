@@ -1,12 +1,12 @@
 import time
-from src.decorators.cache import simple_cache
+from src.utils.cache import simple_cache
 
 
 def test_simple_cache_basic_functionality():
     """Test that cache stores and returns results correctly."""
     call_count = 0
 
-    @simple_cache
+    @simple_cache()
     def test_func(x):
         nonlocal call_count
         call_count += 1
@@ -25,7 +25,7 @@ def test_simple_cache_with_different_args():
     """Test cache works with different arguments."""
     call_count = 0
 
-    @simple_cache
+    @simple_cache()
     def test_func(x):
         nonlocal call_count
         call_count += 1
@@ -46,7 +46,7 @@ def test_simple_cache_ttl_expiration(monkeypatch):
 
     monkeypatch.setattr(time, 'time', mock_time)
 
-    @simple_cache
+    @simple_cache(ttl=3600)
     def test_func(x):
         nonlocal call_count
         call_count += 1
