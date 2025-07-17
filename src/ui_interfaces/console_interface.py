@@ -414,19 +414,7 @@ class UserInterface:
                         print("Удаление отменено.")
                         
             elif choice == "3":
-                print("\nПоказать ID вакансий для выбора:")
-                # Показываем первые 10 вакансий с их полным ID
-                for i, vacancy in enumerate(vacancies[:10], 1):
-                    print(f"{i}. ID: {vacancy.vacancy_id}")
-                    print(f"    Название: {vacancy.title}")
-                    if vacancy.employer:
-                        print(f"    Компания: {vacancy.employer.get('name', 'Не указана')}")
-                    print()
-                
-                if len(vacancies) > 10:
-                    print(f"... и еще {len(vacancies) - 10} вакансий")
-                    print("Для просмотра большего количества используйте пункт 2 (Показать все сохраненные вакансии)")
-                
+                print("\nДля просмотра ID вакансий используйте пункт 2 (Показать все сохраненные вакансии)")
                 vacancy_id = get_user_input("Введите полный ID вакансии для удаления: ")
                 if vacancy_id:
                     # Найдем вакансию для подтверждения
