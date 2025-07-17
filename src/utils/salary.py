@@ -45,6 +45,14 @@ class Salary:
             'period': self.period
         }
 
+    def get_max_salary(self) -> Optional[int]:
+        """Возвращает максимальную зарплату для сортировки"""
+        if self.amount_to:
+            return self.amount_to
+        elif self.amount_from:
+            return self.amount_from
+        return None
+
     def __str__(self) -> str:
         if not any([self.amount_from, self.amount_to]):
             return "Зарплата не указана"
@@ -70,4 +78,3 @@ class Salary:
         gross = " до вычета налогов" if self.gross else ""
 
         return f"{' '.join(components)} {currency}{period}{gross}".strip()
-        
