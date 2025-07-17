@@ -6,7 +6,7 @@
 from typing import List, Optional, Dict
 import logging
 from src.vacancies.models import Vacancy
-from src.utils.menu_manager import print_section_header, print_menu_separator
+# from src.utils.menu_manager import print_section_header, print_menu_separator
 
 logger = logging.getLogger(__name__)
 
