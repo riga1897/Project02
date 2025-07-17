@@ -543,7 +543,7 @@ class UserInterface:
                 current_page += 1
             elif choice == 'p' and current_page > 1:
                 current_page -= 1
-            elif '-' in choice and not choice in ['n', 'p']:
+            elif '-' in choice and choice not in ['n', 'p']:
                 # Обработка диапазона (например: 8-9)
                 try:
                     start_str, end_str = choice.split('-', 1)
