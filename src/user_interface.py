@@ -223,7 +223,7 @@ class UserInterface:
                 print(f"\n--- Страница {current_page} из {total_pages} ---")
                 print(f"Показываем вакансии {start_idx + 1}-{end_idx} из {len(vacancies)}:")
                 
-                self._display_vacancies(vacancies[start_idx:end_idx])
+                self._display_vacancies(vacancies[start_idx:end_idx], start_idx + 1)
                 
                 # Меню навигации
                 print("\n" + "=" * 50)
@@ -250,9 +250,9 @@ class UserInterface:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
             print(f"Ошибка при загрузке вакансий: {e}")
     
-    def _display_vacancies(self, vacancies: List[Vacancy]) -> None:
+    def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
         """Отображение списка вакансий"""
-        for i, vacancy in enumerate(vacancies, 1):
+        for i, vacancy in enumerate(vacancies, start_number):
             print(f"\n{i}. {vacancy.title}")
             
             if vacancy.employer:
