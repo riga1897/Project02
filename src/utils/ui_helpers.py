@@ -279,13 +279,7 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     # Показываем краткое описание требований
     if vacancy.requirements:
         requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
-        print(f"Требования: {requirements_short}")
-        print(f"   Ссылка: {vacancy.url}")
-    else:
-        print(f"   Ссылка: Не указана")
-        print(f"   Компания: {company}")
-    
-    if vacancy.salary:
+        print(f"Требования: {requirements_short}").salary:
            Ссылк# Показываем оценку релевантности, если есть
     if hasattr(vacancy, '_relevance_score'):
         print(f"Релевантность: {vacancy._relevance_score}")
@@ -294,7 +288,7 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
 
 
 # Эти функции перенесены в src/utils/menu_manager.py
-# Импортируем их оттуда для обратной совместимости
+# Импортируем их оттуда для обратной совместимостисти
 from src.utils.menu_manager import print_section_header, print_menu_separator
 def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
     """
