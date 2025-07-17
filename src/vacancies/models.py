@@ -68,24 +68,41 @@ class Vacancy(AbstractVacancy):
     def from_dict(cls, data: Dict[str, Any]) -> 'Vacancy':
         """Создает объект Vacancy из словаря с защитой от ошибок структуры"""
         try:
+            if not isinstance(data, dict):
+                raise ValueError("Данные должны быть словарем")
+
             # Обработка опыта работы (может быть как строкой, так и словарем)
             experience = None
-            if isinstance(data.get('experience'), dict):
-                experience = data['experience'].get('name')
-            elif isinstance(data.get('experience'), str):
-                experience = data['experience']
-            # Обработка зарплаты (может быть None или сложной структурой)
+            experience_data = data.get('experience')
+            if isinstance(experience_data, dict):
+                experience = experience_data.get('name')
+            elif isinstance(experience_data, str):
+                experience = experience_data
+
+            # Безопасная обработка зарплаты
             salary = None
-            if isinstance(data.get('salary'), dict):
-                # salary = f"{data['salary'].get('from')}-{data['salary'].get('to')} {data['salary'].get('currency')}"
-                salary = data.get('salary')
+            salary_data = data.get('salary')
+            if isinstance(salary_data, dict):
+                salary = salary_data
+
+            # Безопасная обработка работодателя
+            employer = None
+            employer_data = data.get('employer')
+            if isinstance(employer_data, dict):
+                employer = employer_data
+
             return cls(
-                vacancy_id=str(data.get('id')),
+                vacancy_id=str(data.get('id', '')),
                 title=data.get('title', ''),
                 url=data.get('url', ''),
                 salary=salary,
                 description=data.get('description', ''),
+                requirements=data.get('snippet', {}).get('requirement') if isinstance(data.get('snippet'), dict) else None,
+                responsibilities=data.get('snippet', {}).get('responsibility') if isinstance(data.get('snippet'), dict) else None,
+                employer=employer,
                 experience=experience,
+                employment=data.get('employment', {}).get('name') if isinstance(data.get('employment'), dict) else None,
+                schedule=data.get('schedule', {}).get('name') if isinstance(data.get('schedule'), dict) else None,
                 published_at=data.get('published_at'))
 
         except Exception as e:
@@ -118,4 +135,4 @@ class Vacancy(AbstractVacancy):
             f"Ссылка: {self.url}"
         ]
         return "\n".join(parts)
-
+```
