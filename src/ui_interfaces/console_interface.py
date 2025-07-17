@@ -215,11 +215,12 @@ class UserInterface:
                 return
 
             print("\nРасширенный поиск:")
-            print("Введите ключевые слова через запятую или используйте операторы AND/OR")
+            print("Введите ключевые слова через запятую, пробел или используйте операторы AND/OR")
             print("Примеры:")
-            print("  - python, django, postgresql")
-            print("  - python AND django")
-            print("  - python OR java")
+            print("  - python django postgresql (поиск по любому из слов)")
+            print("  - python, django, postgresql (поиск по любому из слов)")
+            print("  - python AND django (поиск по всем словам)")
+            print("  - python OR java (поиск по любому из слов)")
 
             query = get_user_input("Введите поисковый запрос: ")
 
