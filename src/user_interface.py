@@ -5,6 +5,13 @@ from src.api_modules.hh_api import HeadHunterAPI
 from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
 from src.utils.ui_paginator import paginate_display
+from src.utils.ui_helpers import (
+    get_user_input, get_positive_integer, parse_salary_range, confirm_action,
+    filter_vacancies_by_keyword, filter_vacancies_by_min_salary,
+    filter_vacancies_by_max_salary, filter_vacancies_by_salary_range,
+    get_vacancies_with_salary, sort_vacancies_by_salary, display_vacancy_info,
+    print_section_header, print_menu_separator
+)
 
 logger = logging.getLogger(__name__)
 
@@ -18,9 +25,7 @@ class UserInterface:
     
     def run(self) -> None:
         """Основной цикл взаимодействия с пользователем"""
-        print("=" * 50)
-        print("Добро пожаловать в поисковик вакансий HH.ru!")
-        print("=" * 50)
+        print_section_header("Добро пожаловать в поисковик вакансий HH.ru!")
         
         while True:
             try:
@@ -51,7 +56,8 @@ class UserInterface:
     
     def _show_menu(self) -> str:
         """Отображение главного меню"""
-        print("\n" + "-" * 40)
+        print("\n")
+        print_menu_separator()
         print("Выберите действие:")
         print("1. Поиск вакансий по запросу (запрос к API)")
         print("2. Топ N сохраненных вакансий по зарплате")
@@ -59,16 +65,15 @@ class UserInterface:
         print("4. Фильтр сохраненных вакансий по зарплате")
         print("5. Показать все сохраненные вакансии")
         print("0. Выход")
-        print("-" * 40)
+        print_menu_separator()
         
         return input("Ваш выбор: ").strip()
     
     def _search_vacancies(self) -> None:
         """Поиск вакансий по запросу пользователя"""
-        query = input("\nВведите поисковый запрос: ").strip()
+        query = get_user_input("\nВведите поисковый запрос: ")
         
         if not query:
-            print("Запрос не может быть пустым!")
             return
         
         print(f"\nИщем вакансии по запросу: '{query}'...")
@@ -87,7 +92,7 @@ class UserInterface:
             # Постраничный просмотр найденных вакансий
             self._display_vacancies_with_pagination(vacancies)
             
-            if self._ask_save_vacancies():
+            if confirm_action("Сохранить найденные вакансии?"):
                 self.json_saver.add_vacancy(vacancies)
                 print(f"Сохранено {len(vacancies)} вакансий.")
                 
@@ -97,13 +102,8 @@ class UserInterface:
     
     def _get_top_saved_vacancies_by_salary(self) -> None:
         """Получение топ N сохраненных вакансий по зарплате"""
-        try:
-            n = int(input("\nВведите количество вакансий для отображения: "))
-            if n <= 0:
-                print("Количество должно быть положительным числом!")
-                return
-        except ValueError:
-            print("Введите корректное число!")
+        n = get_positive_integer("\nВведите количество вакансий для отображения: ")
+        if n is None:
             return
         
         try:
@@ -114,21 +114,14 @@ class UserInterface:
                 return
             
             # Фильтруем вакансии с зарплатой
-            vacancies_with_salary = [
-                v for v in vacancies 
-                if v.salary and (v.salary.salary_from or v.salary.salary_to)
-            ]
+            vacancies_with_salary = get_vacancies_with_salary(vacancies)
             
             if not vacancies_with_salary:
                 print("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
                 return
             
             # Сортируем по убыванию зарплаты
-            sorted_vacancies = sorted(
-                vacancies_with_salary,
-                key=lambda x: x.salary.get_max_salary() or 0,
-                reverse=True
-            )
+            sorted_vacancies = sort_vacancies_by_salary(vacancies_with_salary)
             
             top_vacancies = sorted_vacancies[:n]
             
@@ -141,10 +134,9 @@ class UserInterface:
     
     def _search_saved_vacancies_by_keyword(self) -> None:
         """Поиск в сохраненных вакансиях с ключевым словом в описании"""
-        keyword = input("\nВведите ключевое слово для поиска в описании: ").strip()
+        keyword = get_user_input("\nВведите ключевое слово для поиска в описании: ")
         
         if not keyword:
-            print("Ключевое слово не может быть пустым!")
             return
         
         try:
@@ -155,22 +147,7 @@ class UserInterface:
                 return
             
             # Фильтруем по ключевому слову в описании
-            filtered_vacancies = []
-            keyword_lower = keyword.lower()
-            
-            for vacancy in vacancies:
-                description_text = ""
-                if vacancy.title:
-                    description_text += vacancy.title.lower()
-                if vacancy.description:
-                    description_text += " " + vacancy.description.lower()
-                if vacancy.requirements:
-                    description_text += " " + vacancy.requirements.lower()
-                if vacancy.responsibilities:
-                    description_text += " " + vacancy.responsibilities.lower()
-                
-                if keyword_lower in description_text:
-                    filtered_vacancies.append(vacancy)
+            filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
             
             if not filtered_vacancies:
                 print(f"Среди сохраненных вакансий не найдено ни одной с ключевым словом '{keyword}'.")
@@ -307,39 +284,13 @@ class UserInterface:
     def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
         """Отображение списка вакансий"""
         for i, vacancy in enumerate(vacancies, start_number):
-            print(f"\n{i}. {vacancy.title}")
-            
-            if vacancy.employer:
-                company = vacancy.employer.get('name', 'Не указана')
-                print(f"   Компания: {company}")
-            
-            if vacancy.salary:
-                print(f"   Зарплата: {vacancy.salary}")
-            else:
-                print("   Зарплата: Не указана")
-            
-            if vacancy.experience:
-                print(f"   Опыт: {vacancy.experience}")
-            
-            if vacancy.url:
-                print(f"   Ссылка: {vacancy.url}")
-            
-            print("-" * 80)
+            display_vacancy_info(vacancy, i)
     
     def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
         """Отображение вакансий с постраничным просмотром"""
         paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
 
-    def _ask_save_vacancies(self) -> bool:
-        """Спрашивает пользователя, хочет ли он сохранить вакансии"""
-        while True:
-            answer = input("\nСохранить найденные вакансии? (y/n): ").strip().lower()
-            if answer in ['y', 'yes', 'д', 'да']:
-                return True
-            elif answer in ['n', 'no', 'н', 'нет']:
-                return False
-            else:
-                print("Введите 'y' для да или 'n' для нет.")
+    
 
 
 def main() -> None:
