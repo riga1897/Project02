@@ -17,16 +17,32 @@ class Salary:
 
     def _validate_and_set(self, data: Dict[str, Any]) -> None:
         """Приватный метод валидации данных"""
+        if not isinstance(data, dict):
+            return
+            
         self.amount_from = data.get('from') or 0
         self.amount_to = data.get('to') or 0
         self.currency = data.get('currency', 'RUR')
         self.gross = data.get('gross', False)
 
-        if 'salary_range' in data:
-            self.amount_from = data['salary_range'].get('from') or self.amount_from
-            self.amount_to = data['salary_range'].get('to') or self.amount_to
-            if data['salary_range'].get('mode'):
-                self.period = data['salary_range']['mode']['id'].lower()
+        if 'salary_range' in data and isinstance(data['salary_range'], dict):
+            salary_range = data['salary_range']
+            self.amount_from = salary_range.get('from') or self.amount_from
+            self.amount_to = salary_range.get('to') or self.amount_to
+            if salary_range.get('mode') and isinstance(salary_range['mode'], dict):
+                mode_id = salary_range['mode'].get('id', '').lower()
+                if mode_id:
+                    self.period = mode_id
+
+    @property
+    def salary_from(self) -> int:
+        """Alias for amount_from for backward compatibility"""
+        return self.amount_from
+    
+    @property
+    def salary_to(self) -> int:
+        """Alias for amount_to for backward compatibility"""
+        return self.amount_to
 
     @property
     def average(self) -> int:
