@@ -136,8 +136,8 @@ class Vacancy(AbstractVacancy):
 
             return cls(
                 vacancy_id=str(data.get('id', '')),
-                title=data.get('name', ''),
-                url=data.get('alternate_url', ''),
+                title=data.get('name', '') or data.get('title', ''),  # Проверяем оба поля
+                url=data.get('alternate_url', '') or data.get('url', ''),  # Проверяем оба поля
                 salary=salary,
                 description=data.get('description', ''),
                 requirements=data.get('snippet', {}).get('requirement') if isinstance(data.get('snippet'), dict) else None,
@@ -158,8 +158,10 @@ class Vacancy(AbstractVacancy):
         """Преобразование в словарь"""
         return {
             'id': self.vacancy_id,
-            'title': self.title,
+            'name': self.title,  # Используем 'name' для совместимости с API HH
+            'title': self.title,  # Оставляем для обратной совместимости
             'url': self.url,
+            'alternate_url': self.url,  # Добавляем для совместимости с API HH
             'salary': self.salary.to_dict() if self.salary else None,
             'description': self.description,
             'requirements': self.requirements,

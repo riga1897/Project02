@@ -233,11 +233,25 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
         vacancy: Вакансия для отображения
         number: Номер вакансии в списке
     """
-    print(f"\n{number}. {vacancy.title}")
+    title = vacancy.title if vacancy.title and vacancy.title.strip() else "Не указано"
+    print(f"\n{number}. {title}")
     print(f"   ID: {vacancy.vacancy_id}")
     
     if vacancy.employer:
         company = vacancy.employer.get('name', 'Не указана')
+        print(f"   Компания: {company}")
+    else:
+        print(f"   Компания: Не указана")
+    
+    if vacancy.salary and hasattr(vacancy.salary, '__str__'):
+        print(f"   Зарплата: {vacancy.salary}")
+    else:
+        print(f"   Зарплата: Зарплата не указана")
+    
+    if vacancy.url:
+        print(f"   Ссылка: {vacancy.url}")
+    else:
+        print(f"   Ссылка: Не указана")е указана')
         print(f"   Компания: {company}")
     
     if vacancy.salary:
