@@ -519,6 +519,7 @@ class UserInterface:
             print("Действия:")
             print("a - Удалить ВСЕ вакансии с этим ключевым словом")
             print("1-10 - Удалить конкретную вакансию по номеру на странице")
+            print("8-9, 2-5 - Удалить диапазон вакансий (например: 8-9)")
             if current_page > 1:
                 print("p - Предыдущая страница")
             if current_page < total_pages:
@@ -543,6 +544,55 @@ class UserInterface:
                 current_page += 1
             elif choice == 'p' and current_page > 1:
                 current_page -= 1
+            elif '-' in choice and not choice in ['n', 'p']:
+                # Обработка диапазона (например: 8-9)
+                try:
+                    start_str, end_str = choice.split('-', 1)
+                    start_num = int(start_str.strip())
+                    end_num = int(end_str.strip())
+                    
+                    if start_num > end_num:
+                        start_num, end_num = end_num, start_num
+                    
+                    if 1 <= start_num <= len(vacancies) and 1 <= end_num <= len(vacancies):
+                        # Получаем вакансии для удаления
+                        vacancies_to_delete = []
+                        for num in range(start_num, end_num + 1):
+                            vacancies_to_delete.append(vacancies[num - 1])
+                        
+                        print(f"\nВакансии для удаления (номера {start_num}-{end_num}):")
+                        for i, vacancy in enumerate(vacancies_to_delete, start_num):
+                            print(f"{i}. ID: {vacancy.vacancy_id}")
+                            print(f"   Название: {vacancy.title or 'Не указано'}")
+                            if vacancy.employer:
+                                print(f"   Компания: {vacancy.employer.get('name', 'Не указана')}")
+                            print(f"   Ссылка: {vacancy.url}")
+                            print("-" * 40)
+                        
+                        if confirm_action(f"Удалить {len(vacancies_to_delete)} вакансий?"):
+                            deleted_count = 0
+                            for vacancy in vacancies_to_delete:
+                                if self.json_saver.delete_vacancy_by_id(vacancy.vacancy_id):
+                                    vacancies.remove(vacancy)
+                                    deleted_count += 1
+                            
+                            if deleted_count > 0:
+                                print(f"Удалено {deleted_count} вакансий.")
+                                if not vacancies:
+                                    print("Все вакансии с данным ключевым словом удалены.")
+                                    break
+                                # Пересчитываем страницы
+                                total_pages = (len(vacancies) + page_size - 1) // page_size
+                                if current_page > total_pages:
+                                    current_page = total_pages
+                            else:
+                                print("Не удалось удалить вакансии.")
+                        else:
+                            print("Удаление отменено.")
+                    else:
+                        print(f"Введите диапазон в пределах от 1 до {len(vacancies)}")
+                except ValueError:
+                    print("Неверный формат диапазона. Используйте формат: 8-9")
             elif choice.isdigit():
                 vacancy_num = int(choice)
                 if 1 <= vacancy_num <= len(vacancies):
