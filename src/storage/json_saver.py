@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Optional
 import json
 import logging
 from pathlib import Path
