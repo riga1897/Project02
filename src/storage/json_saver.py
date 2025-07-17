@@ -11,13 +11,15 @@ logger = logging.getLogger(__name__)
 class JSONSaver:
     """Класс для сохранения вакансий в JSON-файл с обновлением существующих"""
 
-    def __init__(self, filename: str = "vacancies.json"):
+    def __init__(self, filename: str = "data/storage/vacancies.json"):
         self.filename = filename
         self._ensure_file_exists()
 
     def _ensure_file_exists(self) -> None:
-        """Создает файл, если он не существует"""
-        Path(self.filename).touch(exist_ok=True)
+        """Создает директорию и файл, если они не существуют"""
+        file_path = Path(self.filename)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.touch(exist_ok=True)
 
         from typing import List, Union, Optional
 
