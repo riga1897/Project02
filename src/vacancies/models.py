@@ -10,7 +10,8 @@ class Vacancy(AbstractVacancy):
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
-        'employment', 'schedule', 'published_at', 'skills'
+        'employment', 'schedule', 'published_at', 'skills', 'keywords',
+        'detailed_description', 'benefits'
     )
     def __init__(
         self,
@@ -26,6 +27,9 @@ class Vacancy(AbstractVacancy):
         schedule: Optional[str] = None,
         published_at: Optional[str] = None,
         skills: Optional[List[Dict[str, str]]] = None,
+        keywords: Optional[List[str]] = None,
+        detailed_description: Optional[str] = None,
+        benefits: Optional[str] = None,
         vacancy_id: Optional[str] = None
     ):
         self.vacancy_id = vacancy_id or str(uuid.uuid4())
@@ -40,7 +44,10 @@ class Vacancy(AbstractVacancy):
         self.employment = employment
         self.schedule = schedule
         self.published_at = self._parse_datetime(published_at) if published_at else None
-        self.skills = skills
+        self.skills = skills or []
+        self.keywords = self._extract_keywords(keywords, description, requirements, responsibilities)
+        self.detailed_description = detailed_description or description
+        self.benefits = benefits
     def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Salary:
         """Приватный метод валидации данных о зарплате"""
         return Salary(salary_data) if salary_data else Salary()
@@ -53,6 +60,42 @@ class Vacancy(AbstractVacancy):
     def _parse_datetime(dt_str: str) -> datetime:
         """Парсинг даты из строки"""
         return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S%z")
+    
+    def _extract_keywords(self, keywords: Optional[List[str]], description: str, 
+                         requirements: Optional[str], responsibilities: Optional[str]) -> List[str]:
+        """Извлечение ключевых слов из текста вакансии"""
+        if keywords:
+            return keywords
+        
+        # Автоматическое извлечение ключевых слов
+        text_parts = [description or ""]
+        if requirements:
+            text_parts.append(requirements)
+        if responsibilities:
+            text_parts.append(responsibilities)
+        
+        full_text = " ".join(text_parts).lower()
+        
+        # Популярные IT-навыки и технологии
+        tech_keywords = [
+            'python', 'java', 'javascript', 'react', 'angular', 'vue', 'node.js',
+            'django', 'flask', 'spring', 'sql', 'postgresql', 'mysql', 'mongodb',
+            'redis', 'docker', 'kubernetes', 'aws', 'azure', 'git', 'jenkins',
+            'terraform', 'ansible', 'linux', 'windows', 'macos', 'html', 'css',
+            'typescript', 'go', 'rust', 'c++', 'c#', '.net', 'php', 'ruby',
+            'swift', 'kotlin', 'scala', 'r', 'matlab', 'tableau', 'power bi',
+            'excel', 'jira', 'confluence', 'agile', 'scrum', 'kanban', 'devops',
+            'ci/cd', 'microservices', 'api', 'rest', 'graphql', 'machine learning',
+            'ai', 'data science', 'big data', 'spark', 'hadoop', 'kafka',
+            'elasticsearch', 'kibana', 'prometheus', 'grafana', 'nginx', 'apache'
+        ]
+        
+        extracted_keywords = []
+        for keyword in tech_keywords:
+            if keyword in full_text:
+                extracted_keywords.append(keyword)
+        
+        return extracted_keywords
     @classmethod
     def cast_to_object_list(cls, data):
         vacancies = []
@@ -103,7 +146,10 @@ class Vacancy(AbstractVacancy):
                 experience=experience,
                 employment=data.get('employment', {}).get('name') if isinstance(data.get('employment'), dict) else None,
                 schedule=data.get('schedule', {}).get('name') if isinstance(data.get('schedule'), dict) else None,
-                published_at=data.get('published_at'))
+                published_at=data.get('published_at'),
+                keywords=data.get('keywords'),
+                detailed_description=data.get('detailed_description'),
+                benefits=data.get('benefits'))
 
         except Exception as e:
             logging.error(f"Ошибка создания вакансии из данных: {data}\nОшибка: {e}")
@@ -123,7 +169,10 @@ class Vacancy(AbstractVacancy):
             'employment': self.employment,
             'schedule': self.schedule,
             'published_at': self.published_at.isoformat() if self.published_at else None,
-            'skills': self.skills
+            'skills': self.skills,
+            'keywords': self.keywords,
+            'detailed_description': self.detailed_description,
+            'benefits': self.benefits
         }
     def __str__(self) -> str:
         """Строковое представление вакансии"""

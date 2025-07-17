@@ -10,7 +10,8 @@ from src.utils.ui_helpers import (
     filter_vacancies_by_keyword, filter_vacancies_by_min_salary,
     filter_vacancies_by_max_salary, filter_vacancies_by_salary_range,
     get_vacancies_with_salary, sort_vacancies_by_salary, display_vacancy_info,
-    print_section_header, print_menu_separator
+    print_section_header, print_menu_separator, filter_vacancies_by_multiple_keywords,
+    search_vacancies_advanced, get_vacancy_keywords_summary
 )
 
 logger = logging.getLogger(__name__)
@@ -38,9 +39,13 @@ class UserInterface:
                 elif choice == "3":
                     self._search_saved_vacancies_by_keyword()
                 elif choice == "4":
-                    self._filter_saved_vacancies_by_salary()
+                    self._advanced_search_vacancies()
                 elif choice == "5":
+                    self._filter_saved_vacancies_by_salary()
+                elif choice == "6":
                     self._show_saved_vacancies()
+                elif choice == "7":
+                    self._show_keywords_statistics()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -62,8 +67,10 @@ class UserInterface:
         print("1. Поиск вакансий по запросу (запрос к API)")
         print("2. Топ N сохраненных вакансий по зарплате")
         print("3. Поиск в сохраненных вакансиях с ключевым словом")
-        print("4. Фильтр сохраненных вакансий по зарплате")
-        print("5. Показать все сохраненные вакансии")
+        print("4. Расширенный поиск (несколько ключевых слов)")
+        print("5. Фильтр сохраненных вакансий по зарплате")
+        print("6. Показать все сохраненные вакансии")
+        print("7. Статистика по ключевым словам")
         print("0. Выход")
         print_menu_separator()
         
@@ -286,6 +293,96 @@ class UserInterface:
         for i, vacancy in enumerate(vacancies, start_number):
             display_vacancy_info(vacancy, i)
     
+    def _advanced_search_vacancies(self) -> None:
+        """Расширенный поиск по вакансиям"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
+                return
+            
+            print("\nРасширенный поиск:")
+            print("Введите ключевые слова через запятую или используйте операторы AND/OR")
+            print("Примеры:")
+            print("  - python, django, postgresql")
+            print("  - python AND django")
+            print("  - python OR java")
+            
+            query = get_user_input("Введите поисковый запрос: ")
+            
+            if not query:
+                return
+            
+            # Определяем тип поиска
+            if ',' in query and ' AND ' not in query.upper() and ' OR ' not in query.upper():
+                # Поиск по нескольким ключевым словам через запятую
+                keywords = [kw.strip() for kw in query.split(',')]
+                filtered_vacancies = filter_vacancies_by_multiple_keywords(vacancies, keywords)
+                print(f"\nПоиск по ключевым словам: {', '.join(keywords)}")
+            else:
+                # Продвинутый поиск с операторами
+                filtered_vacancies = search_vacancies_advanced(vacancies, query)
+                print(f"\nРезультаты поиска по запросу: '{query}'")
+            
+            if not filtered_vacancies:
+                print("Вакансии по указанным критериям не найдены.")
+                return
+            
+            print(f"Найдено {len(filtered_vacancies)} вакансий:")
+            self._display_vacancies(filtered_vacancies[:10])  # Показываем первые 10
+            
+            if len(filtered_vacancies) > 10:
+                print(f"\n... и еще {len(filtered_vacancies) - 10} вакансий.")
+                if confirm_action("Показать все результаты постранично?"):
+                    paginate_display(filtered_vacancies, self._display_vacancies, 10, "Результаты поиска")
+                    
+        except Exception as e:
+            logger.error(f"Ошибка при расширенном поиске: {e}")
+            print(f"Ошибка при поиске: {e}")
+    
+    def _show_keywords_statistics(self) -> None:
+        """Показать статистику по ключевым словам"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
+                return
+            
+            keywords_stats = get_vacancy_keywords_summary(vacancies)
+            
+            if not keywords_stats:
+                print("Ключевые слова не найдены в сохраненных вакансиях.")
+                return
+            
+            print(f"\nСтатистика по ключевым словам (всего вакансий: {len(vacancies)}):")
+            print("-" * 50)
+            
+            # Показываем топ-20 ключевых слов
+            for i, (keyword, count) in enumerate(list(keywords_stats.items())[:20], 1):
+                percentage = (count / len(vacancies)) * 100
+                print(f"{i:2}. {keyword:<20} - {count:3} вакансий ({percentage:.1f}%)")
+            
+            if len(keywords_stats) > 20:
+                print(f"\n... и еще {len(keywords_stats) - 20} ключевых слов")
+            
+            # Предлагаем поиск по популярным ключевым словам
+            print("\nВыберите ключевое слово для поиска (введите номер) или 0 для возврата:")
+            try:
+                choice = int(input("Ваш выбор: "))
+                if 1 <= choice <= min(20, len(keywords_stats)):
+                    keyword = list(keywords_stats.keys())[choice - 1]
+                    filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
+                    print(f"\nВакансии с ключевым словом '{keyword}':")
+                    self._display_vacancies(filtered_vacancies[:10])
+            except ValueError:
+                pass
+                
+        except Exception as e:
+            logger.error(f"Ошибка при показе статистики: {e}")
+            print(f"Ошибка при загрузке статистики: {e}")
+
     def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
         """Отображение вакансий с постраничным просмотром"""
         paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")

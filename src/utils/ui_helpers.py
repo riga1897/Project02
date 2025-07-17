@@ -106,31 +106,61 @@ def confirm_action(prompt: str) -> bool:
 
 def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[Vacancy]:
     """
-    Фильтрация вакансий по ключевому слову в описании
+    Расширенная фильтрация вакансий по ключевому слову
     
     Args:
         vacancies: Список вакансий для фильтрации
         keyword: Ключевое слово для поиска
         
     Returns:
-        Список отфильтрованных вакансий
+        Список отфильтрованных вакансий с оценкой релевантности
     """
     filtered_vacancies = []
     keyword_lower = keyword.lower()
     
     for vacancy in vacancies:
-        description_text = ""
-        if vacancy.title:
-            description_text += vacancy.title.lower()
-        if vacancy.description:
-            description_text += " " + vacancy.description.lower()
-        if vacancy.requirements:
-            description_text += " " + vacancy.requirements.lower()
-        if vacancy.responsibilities:
-            description_text += " " + vacancy.responsibilities.lower()
+        relevance_score = 0
         
-        if keyword_lower in description_text:
+        # Проверяем в заголовке (высокий приоритет)
+        if vacancy.title and keyword_lower in vacancy.title.lower():
+            relevance_score += 10
+        
+        # Проверяем в ключевых словах (высокий приоритет)
+        if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
+            relevance_score += 8
+        
+        # Проверяем в требованиях (средний приоритет)
+        if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
+            relevance_score += 5
+        
+        # Проверяем в обязанностях (средний приоритет)
+        if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
+            relevance_score += 5
+        
+        # Проверяем в описании (низкий приоритет)
+        if vacancy.description and keyword_lower in vacancy.description.lower():
+            relevance_score += 3
+        
+        # Проверяем в детальном описании
+        if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
+            relevance_score += 2
+        
+        # Проверяем в навыках
+        if vacancy.skills:
+            for skill in vacancy.skills:
+                if isinstance(skill, dict) and 'name' in skill:
+                    if keyword_lower in skill['name'].lower():
+                        relevance_score += 6
+                elif isinstance(skill, str) and keyword_lower in skill.lower():
+                    relevance_score += 6
+        
+        if relevance_score > 0:
+            # Добавляем временный атрибут для сортировки
+            vacancy._relevance_score = relevance_score
             filtered_vacancies.append(vacancy)
+    
+    # Сортируем по релевантности
+    filtered_vacancies.sort(key=lambda x: getattr(x, '_relevance_score', 0), reverse=True)
     
     return filtered_vacancies
 
@@ -229,9 +259,90 @@ def sort_vacancies_by_salary(vacancies: List[Vacancy], reverse: bool = True) -> 
     )
 
 
+def filter_vacancies_by_multiple_keywords(vacancies: List[Vacancy], keywords: List[str]) -> List[Vacancy]:
+    """
+    Фильтрация вакансий по нескольким ключевым словам
+    
+    Args:
+        vacancies: Список вакансий для фильтрации
+        keywords: Список ключевых слов для поиска
+        
+    Returns:
+        Список отфильтрованных вакансий
+    """
+    if not keywords:
+        return vacancies
+    
+    filtered_vacancies = []
+    
+    for vacancy in vacancies:
+        matches = 0
+        for keyword in keywords:
+            if filter_vacancies_by_keyword([vacancy], keyword):
+                matches += 1
+        
+        # Включаем вакансию, если найдено хотя бы одно совпадение
+        if matches > 0:
+            vacancy._keyword_matches = matches
+            filtered_vacancies.append(vacancy)
+    
+    # Сортируем по количеству совпадений
+    filtered_vacancies.sort(key=lambda x: getattr(x, '_keyword_matches', 0), reverse=True)
+    
+    return filtered_vacancies
+
+
+def search_vacancies_advanced(vacancies: List[Vacancy], query: str) -> List[Vacancy]:
+    """
+    Продвинутый поиск по вакансиям с поддержкой операторов
+    
+    Args:
+        vacancies: Список вакансий для поиска
+        query: Поисковый запрос (может содержать операторы AND, OR)
+        
+    Returns:
+        Список найденных вакансий
+    """
+    # Простая обработка AND/OR операторов
+    if ' AND ' in query.upper():
+        keywords = [kw.strip() for kw in query.upper().split(' AND ')]
+        result = vacancies
+        for keyword in keywords:
+            result = filter_vacancies_by_keyword(result, keyword)
+        return result
+    
+    elif ' OR ' in query.upper():
+        keywords = [kw.strip() for kw in query.upper().split(' OR ')]
+        return filter_vacancies_by_multiple_keywords(vacancies, keywords)
+    
+    else:
+        return filter_vacancies_by_keyword(vacancies, query)
+
+
+def get_vacancy_keywords_summary(vacancies: List[Vacancy]) -> Dict[str, int]:
+    """
+    Получение сводки по ключевым словам в вакансиях
+    
+    Args:
+        vacancies: Список вакансий
+        
+    Returns:
+        Словарь {ключевое_слово: количество_вакансий}
+    """
+    keyword_count = {}
+    
+    for vacancy in vacancies:
+        if vacancy.keywords:
+            for keyword in vacancy.keywords:
+                keyword_count[keyword] = keyword_count.get(keyword, 0) + 1
+    
+    # Сортируем по популярности
+    return dict(sorted(keyword_count.items(), key=lambda x: x[1], reverse=True))
+
+
 def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     """
-    Отображение информации об одной вакансии
+    Отображение расширенной информации об одной вакансии
     
     Args:
         vacancy: Вакансия для отображения
@@ -251,8 +362,38 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     if vacancy.experience:
         print(f"   Опыт: {vacancy.experience}")
     
+    # Показываем ключевые слова
+    if vacancy.keywords:
+        keywords_str = ", ".join(vacancy.keywords[:10])  # Показываем первые 10
+        if len(vacancy.keywords) > 10:
+            keywords_str += f" и еще {len(vacancy.keywords) - 10}"
+        print(f"   Ключевые слова: {keywords_str}")
+    
+    # Показываем навыки
+    if vacancy.skills:
+        skills_list = []
+        for skill in vacancy.skills[:5]:  # Показываем первые 5 навыков
+            if isinstance(skill, dict) and 'name' in skill:
+                skills_list.append(skill['name'])
+            elif isinstance(skill, str):
+                skills_list.append(skill)
+        if skills_list:
+            skills_str = ", ".join(skills_list)
+            if len(vacancy.skills) > 5:
+                skills_str += f" и еще {len(vacancy.skills) - 5}"
+            print(f"   Навыки: {skills_str}")
+    
+    # Показываем краткое описание требований
+    if vacancy.requirements:
+        requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
+        print(f"   Требования: {requirements_short}")
+    
     if vacancy.url:
         print(f"   Ссылка: {vacancy.url}")
+    
+    # Показываем оценку релевантности, если есть
+    if hasattr(vacancy, '_relevance_score'):
+        print(f"   Релевантность: {vacancy._relevance_score}")
     
     print("-" * 80)
 
