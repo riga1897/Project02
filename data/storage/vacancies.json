@@ -89,50 +89,6 @@
     "benefits": null
   },
   {
-    "id": "122942348",
-    "title": "",
-    "url": "https://api.hh.ru/vacancies/122942348?host=hh.ru",
-    "salary": {
-      "from": 0,
-      "to": 0,
-      "currency": "RUR",
-      "gross": false,
-      "period": "month"
-    },
-    "description": "",
-    "requirements": null,
-    "responsibilities": null,
-    "employer": {
-      "id": "3388",
-      "name": "Газпромбанк",
-      "url": "https://api.hh.ru/employers/3388",
-      "alternate_url": "https://hh.ru/employer/3388",
-      "logo_urls": {
-        "original": "https://img.hhcdn.ru/employer-logo-original/803938.png",
-        "90": "https://img.hhcdn.ru/employer-logo/3656639.png",
-        "240": "https://img.hhcdn.ru/employer-logo/3656640.png"
-      },
-      "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3388",
-      "accredited_it_employer": false,
-      "employer_rating": {
-        "total_rating": "3.9",
-        "reviews_count": 2209
-      },
-      "trusted": true
-    },
-    "experience": "От 1 года до 3 лет",
-    "employment": null,
-    "schedule": null,
-    "published_at": "2025-07-17T13:07:45+03:00",
-    "skills": [],
-    "keywords": [
-      "sql",
-      "excel"
-    ],
-    "detailed_description": "",
-    "benefits": null
-  },
-  {
     "id": "122852886",
     "title": "",
     "url": "https://api.hh.ru/vacancies/122852886?host=hh.ru",
