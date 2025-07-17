@@ -82,7 +82,9 @@ class UserInterface:
             vacancies = Vacancy.cast_to_object_list(vacancies_data)
             
             print(f"\nНайдено {len(vacancies)} вакансий:")
-            self._display_vacancies(vacancies[:10])  # Показываем первые 10
+            
+            # Постраничный просмотр найденных вакансий
+            self._display_vacancies_with_pagination(vacancies)
             
             if self._ask_save_vacancies():
                 self.json_saver.add_vacancy(vacancies)
@@ -356,6 +358,47 @@ class UserInterface:
             
             print("-" * 80)
     
+    def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
+        """Отображение вакансий с постраничным просмотром"""
+        if not vacancies:
+            print("Нет вакансий для отображения.")
+            return
+            
+        page_size = 10
+        total_pages = (len(vacancies) + page_size - 1) // page_size
+        current_page = 1
+        
+        while True:
+            # Вычисляем индексы для текущей страницы
+            start_idx = (current_page - 1) * page_size
+            end_idx = min(start_idx + page_size, len(vacancies))
+            
+            print(f"\n--- Страница {current_page} из {total_pages} ---")
+            print(f"Показываем вакансии {start_idx + 1}-{end_idx} из {len(vacancies)}:")
+            
+            self._display_vacancies(vacancies[start_idx:end_idx], start_idx + 1)
+            
+            # Меню навигации
+            print("\n" + "=" * 50)
+            print("Навигация:")
+            if current_page > 1:
+                print("p - Предыдущая страница")
+            if current_page < total_pages:
+                print("n - Следующая страница")
+            print("q - Завершить просмотр")
+            print("=" * 50)
+            
+            choice = input("Ваш выбор: ").strip().lower()
+            
+            if choice == 'q':
+                break
+            elif choice == 'n' and current_page < total_pages:
+                current_page += 1
+            elif choice == 'p' and current_page > 1:
+                current_page -= 1
+            else:
+                print("Неверный выбор. Попробуйте снова.")
+
     def _ask_save_vacancies(self) -> bool:
         """Спрашивает пользователя, хочет ли он сохранить вакансии"""
         while True:
