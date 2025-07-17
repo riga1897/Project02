@@ -425,6 +425,7 @@ class UserInterface:
                             print("Зарплата: Не указана")
                         if vacancy_to_delete.experience:
                             print(f"Опыт: {vacancy_to_delete.experience}")
+                        print("1")
                         print(f"Ссылка: {vacancy_to_delete.url}")
                         
                         if confirm_action("Удалить эту вакансию?"):
@@ -511,6 +512,7 @@ class UserInterface:
                     print(f"   Зарплата: {vacancy.salary}")
                 else:
                     print("   Зарплата: Не указана")
+                print("2")
                 print(f"   Ссылка: {vacancy.url}")
                 print("-" * 40)
             
@@ -566,6 +568,7 @@ class UserInterface:
                             print(f"   Название: {vacancy.title or 'Не указано'}")
                             if vacancy.employer:
                                 print(f"   Компания: {vacancy.employer.get('name', 'Не указана')}")
+                            print("3")
                             print(f"   Ссылка: {vacancy.url}")
                             print("-" * 40)
                         
@@ -606,6 +609,7 @@ class UserInterface:
                         print(f"Зарплата: {vacancy_to_delete.salary}")
                     else:
                         print("Зарплата: Не указана")
+                        print("4")
                     print(f"Ссылка: {vacancy_to_delete.url}")
                     
                     if confirm_action("Удалить эту вакансию?"):
