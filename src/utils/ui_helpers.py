@@ -122,6 +122,10 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
     for vacancy in vacancies:
         relevance_score = 0
         
+        # Проверяем по ID вакансии (очень высокий приоритет)
+        if vacancy.vacancy_id and keyword_lower in vacancy.vacancy_id.lower():
+            relevance_score += 15
+        
         # Проверяем в заголовке (высокий приоритет)
         if vacancy.title and keyword_lower in vacancy.title.lower():
             relevance_score += 10
