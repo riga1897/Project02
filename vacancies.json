@@ -20998,5 +20998,81 @@
     "schedule": null,
     "published_at": "2025-07-14T10:53:26+03:00",
     "skills": null
+  },
+  {
+    "id": "121731778",
+    "title": "",
+    "url": "https://api.hh.ru/vacancies/121731778?host=hh.ru",
+    "salary": {
+      "from": 0,
+      "to": 0,
+      "currency": "RUR",
+      "gross": false,
+      "period": "month"
+    },
+    "description": "",
+    "requirements": "Ты будешь: Опыт тестирования от 2 лет (middle+/senior уровень). Навыки ручного тестирования мобильных (Android/iOS) и веб-приложений. ",
+    "responsibilities": "Стек: React (Web), Swift/Kotlin (Mobile). Фишка: Автономность — сами управляем бэклогом. Тестировать компоненты дизайн-системы на всех платформах: Android, iOS...",
+    "employer": {
+      "id": "4496",
+      "name": "МТС Финтех",
+      "url": "https://api.hh.ru/employers/4496",
+      "alternate_url": "https://hh.ru/employer/4496",
+      "logo_urls": {
+        "original": "https://img.hhcdn.ru/employer-logo-original/1417383.png",
+        "90": "https://img.hhcdn.ru/employer-logo/7289181.png",
+        "240": "https://img.hhcdn.ru/employer-logo/7289182.png"
+      },
+      "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4496",
+      "accredited_it_employer": false,
+      "employer_rating": {
+        "total_rating": "4",
+        "reviews_count": 1001
+      },
+      "trusted": true
+    },
+    "experience": "От 1 года до 3 лет",
+    "employment": "Полная занятость",
+    "schedule": "Удаленная работа",
+    "published_at": "2025-07-15T14:39:47+03:00",
+    "skills": null
+  },
+  {
+    "id": "122369090",
+    "title": "",
+    "url": "https://api.hh.ru/vacancies/122369090?host=hh.ru",
+    "salary": {
+      "from": 0,
+      "to": 0,
+      "currency": "RUR",
+      "gross": false,
+      "period": "month"
+    },
+    "description": "",
+    "requirements": "Middle+/Senior в системном анализе. Знание SQL, понимание XML и json. Грамотная устная и письменная речь. Проактивность. Прямой опыт работы...",
+    "responsibilities": "Сбор требований к продукту для построения ETL-процессов. Проектирования DWH-сервисов – фичей фреймоврка для построения ETL процессов на таких стеках...",
+    "employer": {
+      "id": "4913210",
+      "name": "Datanomica",
+      "url": "https://api.hh.ru/employers/4913210",
+      "alternate_url": "https://hh.ru/employer/4913210",
+      "logo_urls": {
+        "original": "https://img.hhcdn.ru/employer-logo-original/894710.png",
+        "90": "https://img.hhcdn.ru/employer-logo/4019527.png",
+        "240": "https://img.hhcdn.ru/employer-logo/4019528.png"
+      },
+      "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4913210",
+      "accredited_it_employer": true,
+      "employer_rating": {
+        "total_rating": "4.9",
+        "reviews_count": 16
+      },
+      "trusted": true
+    },
+    "experience": "От 3 до 6 лет",
+    "employment": "Полная занятость",
+    "schedule": "Полный день",
+    "published_at": "2025-07-15T18:49:01+03:00",
+    "skills": null
   }
 ]
