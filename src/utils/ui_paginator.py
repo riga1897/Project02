@@ -30,21 +30,22 @@ def paginate_display(
         start_idx = (current_page - 1) * page_size
         end_idx = min(start_idx + page_size, len(items))
         
-        print(f"\n--- Страница {current_page} из {total_pages} ---")
-        print(f"Показываем {title.lower()} {start_idx + 1}-{end_idx} из {len(items)}:")
-        
         # Отображаем элементы текущей страницы
         display_func(items[start_idx:end_idx], start_idx + 1)
         
-        # Меню навигации
-        print("\n" + "=" * 50)
+        # Меню навигации с информацией о странице
+        print("\n" + "=" * 44)
         print("Навигация:")
+        print("-" * 66)
+        print(f"--- Страница {current_page} из {total_pages} ---")
+        print(f"Показываем {title.lower()} {start_idx + 1}-{end_idx} из {len(items)}")
+        print("=" * 44)
         if current_page > 1:
             print("p - Предыдущая страница")
         if current_page < total_pages:
             print("n - Следующая страница")
         print("q - Завершить просмотр")
-        print("=" * 50)
+        print("=" * 44)
         
         choice = input("Ваш выбор: ").strip().lower()
         
