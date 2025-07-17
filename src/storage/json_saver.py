@@ -115,6 +115,14 @@ class JSONSaver:
             logger.warning(f"Ошибка загрузки файла: {e}")
             return []
 
+    def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[Vacancy]:
+        """
+        Возвращает список вакансий с учетом фильтров
+        :param filters: Словарь с критериями фильтрации (не используется в базовой реализации)
+        :return: Список вакансий
+        """
+        return self.load_vacancies()
+
     def _save_to_file(self, vacancies: List[Vacancy]) -> None:
         """Сохраняет вакансии с дополнительной валидацией"""
         valid_data = []
