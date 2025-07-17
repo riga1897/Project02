@@ -9,14 +9,33 @@ logger = logging.getLogger(__name__)
 
 
 class JSONSaver:
-    """Класс для сохранения вакансий в JSON-файл с обновлением существующих"""
+    """Класс для сохранения и загрузки вакансий в JSON формате"""
+
+    __slots__ = ('_filename',)
 
     def __init__(self, filename: str = "data/storage/vacancies.json"):
-        self.filename = filename
+        self._filename = self._validate_filename(filename)
+        self._ensure_data_directory()
         self._ensure_file_exists()
 
+    def _validate_filename(self, filename: str) -> str:
+        """Валидация имени файла"""
+        if not filename or not isinstance(filename, str):
+            return "data/storage/vacancies.json"
+        return filename.strip()
+
+    @property
+    def filename(self) -> str:
+        """Получение имени файла"""
+        return self._filename
+
+    def _ensure_data_directory(self) -> None:
+        """Создает директорию для хранения данных, если она не существует."""
+        data_dir = Path("data/storage")
+        data_dir.mkdir(parents=True, exist_ok=True)
+
     def _ensure_file_exists(self) -> None:
-        """Создает директорию и файл, если они не существуют"""
+        """Создает файл, если он не существует"""
         file_path = Path(self.filename)
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
@@ -158,4 +177,29 @@ class JSONSaver:
 
         with open(self.filename, 'w', encoding='utf-8') as f:
             json.dump(valid_data, f, ensure_ascii=False, indent=2)
-            
+
+    def _vacancy_to_dict(self, vacancy: Vacancy) -> Dict[str, Any]:
+        """Преобразование объекта Vacancy в словарь"""
+        salary_dict = None
+        if vacancy.salary:
+            salary_dict = {
+                'from': vacancy.salary.salary_from,
+                'to': vacancy.salary.salary_to,
+                'currency': vacancy.salary.currency
+            }
+
+        return {
+            'title': vacancy.title,
+            'url': vacancy.url,
+            'salary': salary_dict,
+            'description': vacancy.description,
+            'requirements': vacancy.requirements,
+            'responsibilities': vacancy.responsibilities,
+            'experience': vacancy.experience,
+            'employment': vacancy.employment,
+            'schedule': vacancy.schedule,
+            'employer': vacancy.employer,
+            'area': vacancy.area,
+            'vacancy_id': vacancy.vacancy_id,
+            'published_at': vacancy.published_at
+        }

@@ -4,6 +4,7 @@ from typing import List, Optional
 from src.api_modules.hh_api import HeadHunterAPI
 from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
+from src.utils.ui_paginator import paginate_display
 
 logger = logging.getLogger(__name__)
 
@@ -194,40 +195,7 @@ class UserInterface:
             print(f"\nСохраненных вакансий: {len(vacancies)}")
             
             # Постраничный просмотр
-            page_size = 10
-            total_pages = (len(vacancies) + page_size - 1) // page_size
-            current_page = 1
-            
-            while True:
-                # Вычисляем индексы для текущей страницы
-                start_idx = (current_page - 1) * page_size
-                end_idx = min(start_idx + page_size, len(vacancies))
-                
-                print(f"\n--- Страница {current_page} из {total_pages} ---")
-                print(f"Показываем вакансии {start_idx + 1}-{end_idx} из {len(vacancies)}:")
-                
-                self._display_vacancies(vacancies[start_idx:end_idx], start_idx + 1)
-                
-                # Меню навигации
-                print("\n" + "=" * 50)
-                print("Навигация:")
-                if current_page > 1:
-                    print("p - Предыдущая страница")
-                if current_page < total_pages:
-                    print("n - Следующая страница")
-                print("q - Выход к главному меню")
-                print("=" * 50)
-                
-                choice = input("Ваш выбор: ").strip().lower()
-                
-                if choice == 'q':
-                    break
-                elif choice == 'n' and current_page < total_pages:
-                    current_page += 1
-                elif choice == 'p' and current_page > 1:
-                    current_page -= 1
-                else:
-                    print("Неверный выбор. Попробуйте снова.")
+            paginate_display(vacancies, self._display_vacancies, 10, "Сохраненные вакансии")
                 
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
@@ -360,44 +328,7 @@ class UserInterface:
     
     def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
         """Отображение вакансий с постраничным просмотром"""
-        if not vacancies:
-            print("Нет вакансий для отображения.")
-            return
-            
-        page_size = 10
-        total_pages = (len(vacancies) + page_size - 1) // page_size
-        current_page = 1
-        
-        while True:
-            # Вычисляем индексы для текущей страницы
-            start_idx = (current_page - 1) * page_size
-            end_idx = min(start_idx + page_size, len(vacancies))
-            
-            print(f"\n--- Страница {current_page} из {total_pages} ---")
-            print(f"Показываем вакансии {start_idx + 1}-{end_idx} из {len(vacancies)}:")
-            
-            self._display_vacancies(vacancies[start_idx:end_idx], start_idx + 1)
-            
-            # Меню навигации
-            print("\n" + "=" * 50)
-            print("Навигация:")
-            if current_page > 1:
-                print("p - Предыдущая страница")
-            if current_page < total_pages:
-                print("n - Следующая страница")
-            print("q - Завершить просмотр")
-            print("=" * 50)
-            
-            choice = input("Ваш выбор: ").strip().lower()
-            
-            if choice == 'q':
-                break
-            elif choice == 'n' and current_page < total_pages:
-                current_page += 1
-            elif choice == 'p' and current_page > 1:
-                current_page -= 1
-            else:
-                print("Неверный выбор. Попробуйте снова.")
+        paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
 
     def _ask_save_vacancies(self) -> bool:
         """Спрашивает пользователя, хочет ли он сохранить вакансии"""

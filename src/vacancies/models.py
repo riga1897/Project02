@@ -70,7 +70,7 @@ class Vacancy(AbstractVacancy):
         try:
             if not isinstance(data, dict):
                 raise ValueError("Данные должны быть словарем")
-                
+
             # Обработка опыта работы (может быть как строкой, так и словарем)
             experience = None
             experience_data = data.get('experience')
@@ -78,19 +78,19 @@ class Vacancy(AbstractVacancy):
                 experience = experience_data.get('name')
             elif isinstance(experience_data, str):
                 experience = experience_data
-                
+
             # Безопасная обработка зарплаты
             salary = None
             salary_data = data.get('salary')
             if isinstance(salary_data, dict):
                 salary = salary_data
-                
+
             # Безопасная обработка работодателя
             employer = None
             employer_data = data.get('employer')
             if isinstance(employer_data, dict):
                 employer = employer_data
-                
+
             return cls(
                 vacancy_id=str(data.get('id', '')),
                 title=data.get('title', ''),
@@ -135,4 +135,4 @@ class Vacancy(AbstractVacancy):
             f"Ссылка: {self.url}"
         ]
         return "\n".join(parts)
-
+```
