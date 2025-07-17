@@ -438,7 +438,7 @@ class UserInterface:
                         print("Вакансия с указанным ID не найдена.")
                         
             elif choice == "0":
-                print("Отмена удаления.")
+                print("Назад в предыдущее меню.")
                 
             else:
                 print("Неверный выбор.")
@@ -524,7 +524,7 @@ class UserInterface:
                 print("p - Предыдущая страница")
             if current_page < total_pages:
                 print("n - Следующая страница")
-            print("q - Отмена удаления")
+            print("q - Назад в предыдущее меню.")
             print("=" * 60)
             
             choice = input("Ваш выбор: ").strip().lower()

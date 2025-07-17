@@ -251,7 +251,7 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     if vacancy.url:
         print(f"   Ссылка: {vacancy.url}")
     else:
-        print(f"   Ссылка: Не указана")е указана')
+        print(f"   Ссылка: Не указана")
         print(f"   Компания: {company}")
     
     if vacancy.salary:
