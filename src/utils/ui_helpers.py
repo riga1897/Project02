@@ -234,6 +234,7 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
         number: Номер вакансии в списке
     """
     print(f"\n{number}. {vacancy.title}")
+    print(f"   ID: {vacancy.vacancy_id}")
     
     if vacancy.employer:
         company = vacancy.employer.get('name', 'Не указана')
