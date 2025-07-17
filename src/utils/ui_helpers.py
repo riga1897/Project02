@@ -6,6 +6,7 @@
 from typing import List, Optional, Dict
 import logging
 from src.vacancies.models import Vacancy
+from src.utils.menu_manager import print_section_header, print_menu_separator
 
 logger = logging.getLogger(__name__)
 
@@ -280,16 +281,14 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     if vacancy.requirements:
         requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
         print(f"Требования: {requirements_short}")
-           # Показываем оценку релевантности, если есть
+    
+    # Показываем оценку релевантности, если есть
     if hasattr(vacancy, '_relevance_score'):
         print(f"Релевантность: {vacancy._relevance_score}")
     
     print("-" * 80)
 
 
-# Эти функции перенесены в src/utils/menu_manager.py
-# Импортируем их оттуда для обратной совместимостисти
-from src.utils.menu_manager import print_section_header, print_menu_separator
 def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
     """
     Отладочная функция для проверки содержимого вакансии при поиске
