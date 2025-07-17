@@ -1,5 +1,9 @@
+import os
 import pytest
 from src.api_modules.hh_api import HeadHunterAPI
+
+# Автоматически отключаем прогресс-бары для всех тестов
+os.environ['DISABLE_TQDM'] = '1'
 from src.config.api_config import APIConfig
 from pathlib import Path
 import tempfile

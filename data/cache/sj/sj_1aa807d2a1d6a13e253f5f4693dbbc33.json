@@ -1,0 +1,167 @@
+{
+  "meta": {
+    "params": {
+      "count": 1,
+      "order_field": "date",
+      "order_direction": "desc",
+      "published": 60,
+      "keyword": "Бухгалтер",
+      "period": 60
+    }
+  },
+  "data": {
+    "objects": [
+      {
+        "canEdit": false,
+        "is_closed": false,
+        "id": 48433020,
+        "id_client": 4569978,
+        "payment_from": 30000,
+        "payment_to": 60000,
+        "date_pub_to": 1754842203,
+        "date_archived": 0,
+        "date_published": 1752855003,
+        "address": "Республика Мордовия, Саранск, Рабочая улица, 103",
+        "profession": "Бухгалтер материальной группы",
+        "work": null,
+        "compensation": null,
+        "candidat": "Обязанности:\n• Учет ТМЦ - поступление, перемещение, списание ТМЦ;\n• Формирование материальных отчётов\n• Формирование отгрузочных документов\n• Проведение сверок взаиморасчетов с контрагентами\n• Архивация первичных документов\nТребования:\n• опыт работы в 1С\n• умение читать и оформлять специфическую документацию и вести базы данных\n• коммуникабельность, внимательность, ответственность, оперативность, умение работать с большим объемом информации\nУсловия:\n• график работы 5/2\n• оформление по ТК РФ\n• полный рабочий день",
+        "metro": [],
+        "currency": "rub",
+        "vacancyRichText": "<p><b>Обязанности:</b></p><p></p><ul><li>Учет ТМЦ - поступление, перемещение, списание ТМЦ;</li><li>Формирование материальных отчётов</li><li>Формирование отгрузочных документов</li><li>Проведение сверок взаиморасчетов с контрагентами</li><li>Архивация первичных документов</li></ul><b>Требования:</b><p></p><ul><li>опыт работы в 1С</li><li>умение читать и оформлять специфическую документацию и вести базы данных</li><li>коммуникабельность, внимательность, ответственность, оперативность, умение работать с большим объемом информации</li></ul><b>Условия:</b><p></p><ul><li>график работы 5/2</li><li>оформление по ТК РФ</li><li>полный рабочий день</li></ul>",
+        "covid_vaccination_requirement": {
+          "id": 1,
+          "title": "Не важно"
+        },
+        "moveable": false,
+        "agreement": false,
+        "anonymous": false,
+        "is_archive": false,
+        "is_storage": false,
+        "type_of_work": {
+          "id": 6,
+          "title": "Полный рабочий день"
+        },
+        "place_of_work": {
+          "id": 0,
+          "title": "Не имеет значения"
+        },
+        "education": {
+          "id": 0,
+          "title": "Не имеет значения"
+        },
+        "experience": {
+          "id": 2,
+          "title": "От 1 года"
+        },
+        "maritalstatus": {
+          "id": 0,
+          "title": "Не имеет значения"
+        },
+        "children": {
+          "id": 0,
+          "title": "Не имеет значения"
+        },
+        "client": {
+          "id": 4569978,
+          "title": "Прогресс-М",
+          "link": "https://www.superjob.ru/clients/progress-m-4569978/vacancies.html",
+          "industry": [],
+          "description": "СпецМастер - это сеть магазинов по продаже инструментов и оборудования.\nМы работаем на рынке уже более пятнадцати лет и являемся официальным дилером продукции фирмы Stihl, Bosch, Makita, Husqvarna, Karcher, P.I.T., Huter, Champion, Зубр, что позволяет нам предлагать самые выгодные цены на всю продукцию производителя.",
+          "vacancy_count": 7,
+          "staff_count": "менее 50",
+          "client_logo": null,
+          "address": null,
+          "addresses": [],
+          "url": "http://specmaster.ru",
+          "short_reg": false,
+          "is_blocked": false,
+          "registered_date": 1704800286,
+          "town": {
+            "id": 380,
+            "title": "Саранск",
+            "declension": "в Саранске",
+            "hasMetro": false,
+            "genitive": "Саранска"
+          }
+        },
+        "languages": [],
+        "driving_licence": [],
+        "catalogues": [
+          {
+            "id": 11,
+            "title": "Бухгалтерия, финансы, аудит",
+            "key": 11,
+            "positions": [
+              {
+                "id": 14,
+                "title": "Бухгалтерский учет",
+                "key": 14
+              },
+              {
+                "id": 23,
+                "title": "Расчет себестоимости",
+                "key": 23
+              },
+              {
+                "id": 25,
+                "title": "Учет счетов и платежей",
+                "key": 25
+              },
+              {
+                "id": 27,
+                "title": "Учет фондов",
+                "key": 27
+              },
+              {
+                "id": 28,
+                "title": "Финансовый анализ и контроль",
+                "key": 28
+              }
+            ]
+          }
+        ],
+        "agency": {
+          "id": 1,
+          "title": "прямой работодатель"
+        },
+        "town": {
+          "id": 380,
+          "title": "Саранск",
+          "declension": "в Саранске",
+          "hasMetro": false,
+          "genitive": "Саранска"
+        },
+        "already_sent_on_vacancy": false,
+        "rejected": false,
+        "response_info": [],
+        "phone": "+7 (927) 27673XX",
+        "phones": [
+          {
+            "number": "792727673XX",
+            "additionalNumber": null
+          }
+        ],
+        "fax": null,
+        "faxes": null,
+        "client_logo": null,
+        "highlight": false,
+        "age_from": 0,
+        "age_to": 0,
+        "gender": {
+          "id": 0,
+          "title": "Не имеет значения"
+        },
+        "firm_name": "Прогресс-М",
+        "firm_activity": "СпецМастер - это сеть магазинов по продаже инструментов и оборудования. \nМы работаем на рынке уже более пятнадцати лет и являемся официальным дилером продукции фирмы Stihl, Bosch, Makita, Husqvarna, Karcher, P.I.T., Huter, Champion, Зубр, что позволяет нам предлагать самые выгодные цены на всю продукцию производителя.",
+        "link": "https://saransk.superjob.ru/vakansii/buhgalter-materialnoj-gruppy-48433020.html",
+        "latitude": 54.191788,
+        "longitude": 45.194916
+      }
+    ],
+    "total": 526,
+    "more": true,
+    "subscription_id": 0,
+    "subscription_active": false
+  }
+}

@@ -1,3 +1,15 @@
 modules = ["python-3.11"]
 [nix]
-packages = ["python39Packages.pytest"]
+packages = ["gdb", "python39Packages.pytest"]
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 45162478
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python3 user_app.py"

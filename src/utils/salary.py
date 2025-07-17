@@ -102,28 +102,34 @@ class Salary:
             return self.amount_from
         return None
 
+    CURRENCY_SYMBOLS = {
+        'RUR': 'руб.',
+        'USD': '$',
+        'EUR': '€'
+    }
+
     def __str__(self) -> str:
-        if not any([self.amount_from, self.amount_to]):
+        """Строковое представление зарплаты"""
+        if not self.amount_from and not self.amount_to:
             return "Зарплата не указана"
 
         components = []
         if self.amount_from:
-            components.append(f"от {self.amount_from}")
+            components.append(f"от {self.amount_from:,}")
         if self.amount_to:
-            components.append(f"до {self.amount_to}")
+            components.append(f"до {self.amount_to:,}")
 
-        currency = {
-            'RUR': 'руб.',
-            'USD': '$',
-            'EUR': '€'
-        }.get(self.currency, self.currency)
+        currency = self.CURRENCY_SYMBOLS.get(self.currency, self.currency)
 
-        period = {
-            'month': 'в месяц',
-            'year': 'в год',
-            'day': 'в день'
-        }.get(self.period, '')
+        # Добавляем период если указан
+        period_str = ''
+        if self.period:
+            # Исправляем формат периода для SuperJob
+            if self.period in ['месяц', 'month']:
+                period_str = "в месяц"
+            else:
+                period_str = f"в {self.period}"
 
         gross = " до вычета налогов" if self.gross else ""
 
-        return f"{' '.join(components)} {currency}{period}{gross}".strip()
+        return f"{' '.join(components)} {currency} {period_str}{gross}".strip()
