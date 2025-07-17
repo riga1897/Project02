@@ -437,7 +437,19 @@ class UserInterface:
                             break
                     
                     if vacancy_to_delete:
-                        print(f"\nВакансия для удаления: {vacancy_to_delete.title}")
+                        print(f"\nВакансия для удаления:")
+                        print(f"ID: {vacancy_to_delete.vacancy_id}")
+                        print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
+                        if vacancy_to_delete.employer:
+                            print(f"Компания: {vacancy_to_delete.employer.get('name', 'Не указана')}")
+                        if vacancy_to_delete.salary:
+                            print(f"Зарплата: {vacancy_to_delete.salary}")
+                        else:
+                            print("Зарплата: Не указана")
+                        if vacancy_to_delete.experience:
+                            print(f"Опыт: {vacancy_to_delete.experience}")
+                        print(f"Ссылка: {vacancy_to_delete.url}")
+                        
                         if confirm_action("Удалить эту вакансию?"):
                             if self.json_saver.delete_vacancy_by_id(vacancy_id):
                                 print("Вакансия успешно удалена.")
