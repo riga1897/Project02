@@ -3,7 +3,7 @@
 Вспомогательные функции для пользовательского интерфейса
 """
 
-from typing import List, Optional
+from typing import List, Optional, Dict
 import logging
 from src.vacancies.models import Vacancy
 
