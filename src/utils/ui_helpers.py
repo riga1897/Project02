@@ -280,7 +280,7 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     if vacancy.requirements:
         requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
         print(f"Требования: {requirements_short}")
-           Ссылк# Показываем оценку релевантности, если есть
+           # Показываем оценку релевантности, если есть
     if hasattr(vacancy, '_relevance_score'):
         print(f"Релевантность: {vacancy._relevance_score}")
     
