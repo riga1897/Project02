@@ -234,40 +234,33 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
         number: Номер вакансии в списке
     """
     title = vacancy.title if vacancy.title and vacancy.title.strip() else "Не указано"
-    print(f"\n{number}. {title}")
-    print(f"   ID: {vacancy.vacancy_id}")
+    print(f"\n{number}.")
+    print(f"Название: {title}")
+    print(f"ID: {vacancy.vacancy_id}")
     
     if vacancy.employer:
         company = vacancy.employer.get('name', 'Не указана')
-        print(f"   Компания: {company}")
+        print(f"Компания: {company}")
     else:
-        print(f"   Компания: Не указана")
+        print(f"Компания: Не указана")
     
     if vacancy.salary and hasattr(vacancy.salary, '__str__'):
-        print(f"   Зарплата: {vacancy.salary}")
+        print(f"Зарплата: {vacancy.salary}")
     else:
-        print(f"   Зарплата: Зарплата не указана")
-    
-    if vacancy.url:
-        print(f"   Ссылка: {vacancy.url}")
-    else:
-        print(f"   Ссылка: Не указана")
-        print(f"   Компания: {company}")
-    
-    if vacancy.salary:
-        print(f"   Зарплата: {vacancy.salary}")
-    else:
-        print("   Зарплата: Не указана")
+        print(f"Зарплата: Зарплата не указана")
     
     if vacancy.experience:
-        print(f"   Опыт: {vacancy.experience}")
+        print(f"Опыт: {vacancy.experience}")
+    
+    if vacancy.url:
+        print(f"Ссылка: {vacancy.url}")
     
     # Показываем ключевые слова
     if vacancy.keywords:
         keywords_str = ", ".join(vacancy.keywords[:10])  # Показываем первые 10
         if len(vacancy.keywords) > 10:
             keywords_str += f" и еще {len(vacancy.keywords) - 10}"
-        print(f"   Ключевые слова: {keywords_str}")
+        print(f"Ключевые слова: {keywords_str}")
     
     # Показываем навыки
     if vacancy.skills:
@@ -281,19 +274,21 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
             skills_str = ", ".join(skills_list)
             if len(vacancy.skills) > 5:
                 skills_str += f" и еще {len(vacancy.skills) - 5}"
-            print(f"   Навыки: {skills_str}")
+            print(f"Навыки: {skills_str}")
     
     # Показываем краткое описание требований
     if vacancy.requirements:
         requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
-        print(f"   Требования: {requirements_short}")
-    
-    if vacancy.url:
+        print(f"Требования: {requirements_short}")
         print(f"   Ссылка: {vacancy.url}")
+    else:
+        print(f"   Ссылка: Не указана")
+        print(f"   Компания: {company}")
     
-    # Показываем оценку релевантности, если есть
+    if vacancy.salary:
+           Ссылк# Показываем оценку релевантности, если есть
     if hasattr(vacancy, '_relevance_score'):
-        print(f"   Релевантность: {vacancy._relevance_score}")
+        print(f"Релевантность: {vacancy._relevance_score}")
     
     print("-" * 80)
 
