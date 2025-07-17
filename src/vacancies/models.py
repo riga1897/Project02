@@ -158,8 +158,10 @@ class Vacancy(AbstractVacancy):
         """Преобразование в словарь"""
         return {
             'id': self.vacancy_id,
+            'name': self.title,  # HH API использует 'name' для названия
             'title': self.title,
             'url': self.url,
+            'alternate_url': self.url,  # HH API использует 'alternate_url'
             'salary': self.salary.to_dict() if self.salary else None,
             'description': self.description,
             'requirements': self.requirements,
