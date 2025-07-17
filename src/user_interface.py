@@ -200,7 +200,7 @@ class UserInterface:
             print(f"Ошибка при поиске: {e}")
     
     def _show_saved_vacancies(self) -> None:
-        """Отображение сохраненных вакансий"""
+        """Отображение сохраненных вакансий с постраничным просмотром"""
         try:
             vacancies = self.json_saver.get_vacancies()
             
@@ -210,14 +210,41 @@ class UserInterface:
             
             print(f"\nСохраненных вакансий: {len(vacancies)}")
             
-            # Показываем первые 10
-            display_count = min(10, len(vacancies))
-            print(f"Показываем первые {display_count}:")
+            # Постраничный просмотр
+            page_size = 10
+            total_pages = (len(vacancies) + page_size - 1) // page_size
+            current_page = 1
             
-            self._display_vacancies(vacancies[:display_count])
-            
-            if len(vacancies) > 10:
-                print(f"\n... и еще {len(vacancies) - 10} вакансий.")
+            while True:
+                # Вычисляем индексы для текущей страницы
+                start_idx = (current_page - 1) * page_size
+                end_idx = min(start_idx + page_size, len(vacancies))
+                
+                print(f"\n--- Страница {current_page} из {total_pages} ---")
+                print(f"Показываем вакансии {start_idx + 1}-{end_idx} из {len(vacancies)}:")
+                
+                self._display_vacancies(vacancies[start_idx:end_idx])
+                
+                # Меню навигации
+                print("\n" + "=" * 50)
+                print("Навигация:")
+                if current_page > 1:
+                    print("p - Предыдущая страница")
+                if current_page < total_pages:
+                    print("n - Следующая страница")
+                print("q - Выход к главному меню")
+                print("=" * 50)
+                
+                choice = input("Ваш выбор: ").strip().lower()
+                
+                if choice == 'q':
+                    break
+                elif choice == 'n' and current_page < total_pages:
+                    current_page += 1
+                elif choice == 'p' and current_page > 1:
+                    current_page -= 1
+                else:
+                    print("Неверный выбор. Попробуйте снова.")
                 
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
