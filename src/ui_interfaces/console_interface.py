@@ -7,12 +7,10 @@ from src.storage.json_saver import JSONSaver
 from src.utils.ui_paginator import paginate_display
 from src.utils.ui_helpers import (
     get_user_input, get_positive_integer, parse_salary_range, confirm_action,
-    filter_vacancies_by_keyword, filter_vacancies_by_min_salary,
-    filter_vacancies_by_max_salary, filter_vacancies_by_salary_range,
-    get_vacancies_with_salary, sort_vacancies_by_salary, display_vacancy_info,
-    print_section_header, print_menu_separator, filter_vacancies_by_multiple_keywords,
-    search_vacancies_advanced, get_vacancy_keywords_summary
+    filter_vacancies_by_keyword, display_vacancy_info
 )
+from src.utils.vacancy_operations import VacancyOperations
+from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
 
 logger = logging.getLogger(__name__)
 
@@ -21,8 +19,11 @@ class UserInterface:
     """Класс для взаимодействия с пользователем через консоль"""
     
     def __init__(self):
+        """Инициализация пользовательского интерфейса"""
         self.hh_api = HeadHunterAPI()
         self.json_saver = JSONSaver()
+        self.menu_manager = create_main_menu()
+        self.vacancy_ops = VacancyOperations()
     
     def run(self) -> None:
         """Основной цикл взаимодействия с пользователем"""
@@ -35,18 +36,20 @@ class UserInterface:
                 if choice == "1":
                     self._search_vacancies()
                 elif choice == "2":
-                    self._get_top_saved_vacancies_by_salary()
-                elif choice == "3":
-                    self._search_saved_vacancies_by_keyword()
-                elif choice == "4":
-                    self._advanced_search_vacancies()
-                elif choice == "5":
-                    self._filter_saved_vacancies_by_salary()
-                elif choice == "6":
                     self._show_saved_vacancies()
+                elif choice == "3":
+                    self._get_top_saved_vacancies_by_salary()
+                elif choice == "4":
+                    self._search_saved_vacancies_by_keyword()
+                elif choice == "5":
+                    self._advanced_search_vacancies()
+                elif choice == "6":
+                    self._filter_saved_vacancies_by_salary()
                 elif choice == "7":
                     self._show_keywords_statistics()
                 elif choice == "8":
+                    self._delete_saved_vacancies()
+                elif choice == "9":
                     self._clear_api_cache()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
@@ -62,18 +65,24 @@ class UserInterface:
                 print(f"Произошла ошибка: {e}")
     
     def _show_menu(self) -> str:
-        """Отображение главного меню"""
+        """
+        Отображение главного меню
+        
+        Returns:
+            str: Выбор пользователя
+        """
         print("\n")
         print_menu_separator()
         print("Выберите действие:")
         print("1. Поиск вакансий по запросу (запрос к API)")
-        print("2. Топ N сохраненных вакансий по зарплате")
-        print("3. Поиск в сохраненных вакансиях с ключевым словом")
-        print("4. Расширенный поиск (несколько ключевых слов)")
-        print("5. Фильтр сохраненных вакансий по зарплате")
-        print("6. Показать все сохраненные вакансии")
+        print("2. Показать все сохраненные вакансии")
+        print("3. Топ N сохраненных вакансий по зарплате")
+        print("4. Поиск в сохраненных вакансиях по ключевому слову")
+        print("5. Расширенный поиск (несколько ключевых слов)")
+        print("6. Фильтр сохраненных вакансий по зарплате")
         print("7. Статистика по ключевым словам")
-        print("8. Очистить кэш API")
+        print("8. Удалить сохраненные вакансии")
+        print("9. Очистить кэш API")
         print("0. Выход")
         print_menu_separator()
         
@@ -115,6 +124,24 @@ class UserInterface:
             logger.error(f"Ошибка при поиске вакансий: {e}")
             print(f"Ошибка при поиске: {e}")
     
+    def _show_saved_vacancies(self) -> None:
+        """Отображение сохраненных вакансий с постраничным просмотром"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("\nНет сохраненных вакансий.")
+                return
+            
+            print(f"\nСохраненных вакансий: {len(vacancies)}")
+            
+            # Постраничный просмотр
+            paginate_display(vacancies, self._display_vacancies, 10, "Сохраненные вакансии")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
+            print(f"Ошибка при загрузке вакансий: {e}")
+    
     def _get_top_saved_vacancies_by_salary(self) -> None:
         """Получение топ N сохраненных вакансий по зарплате"""
         n = get_positive_integer("\nВведите количество вакансий для отображения: ")
@@ -129,14 +156,14 @@ class UserInterface:
                 return
             
             # Фильтруем вакансии с зарплатой
-            vacancies_with_salary = get_vacancies_with_salary(vacancies)
+            vacancies_with_salary = self.vacancy_ops.get_vacancies_with_salary(vacancies)
             
             if not vacancies_with_salary:
                 print("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
                 return
             
             # Сортируем по убыванию зарплаты
-            sorted_vacancies = sort_vacancies_by_salary(vacancies_with_salary)
+            sorted_vacancies = self.vacancy_ops.sort_vacancies_by_salary(vacancies_with_salary)
             
             top_vacancies = sorted_vacancies[:n]
             
@@ -179,131 +206,6 @@ class UserInterface:
             logger.error(f"Ошибка при поиске по ключевому слову: {e}")
             print(f"Ошибка при поиске: {e}")
     
-    def _show_saved_vacancies(self) -> None:
-        """Отображение сохраненных вакансий с постраничным просмотром"""
-        try:
-            vacancies = self.json_saver.get_vacancies()
-            
-            if not vacancies:
-                print("\nНет сохраненных вакансий.")
-                return
-            
-            print(f"\nСохраненных вакансий: {len(vacancies)}")
-            
-            # Постраничный просмотр
-            paginate_display(vacancies, self._display_vacancies, 10, "Сохраненные вакансии")
-                
-        except Exception as e:
-            logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
-            print(f"Ошибка при загрузке вакансий: {e}")
-    
-    def _filter_saved_vacancies_by_salary(self) -> None:
-        """Фильтрация сохраненных вакансий по зарплате"""
-        try:
-            vacancies = self.json_saver.get_vacancies()
-            
-            if not vacancies:
-                print("Нет сохраненных вакансий.")
-                return
-            
-            print("\nВыберите тип фильтрации:")
-            print("1. Минимальная зарплата")
-            print("2. Максимальная зарплата")
-            print("3. Диапазон зарплат")
-            
-            choice = input("Ваш выбор: ").strip()
-            
-            filtered_vacancies = []
-            
-            if choice == "1":
-                try:
-                    min_salary = int(input("Введите минимальную зарплату: "))
-                    filtered_vacancies = [
-                        v for v in vacancies 
-                        if v.salary and v.salary.get_max_salary() and v.salary.get_max_salary() >= min_salary
-                    ]
-                    print(f"\nВакансии с зарплатой от {min_salary} руб.:")
-                except ValueError:
-                    print("Введите корректное число!")
-                    return
-                    
-            elif choice == "2":
-                try:
-                    max_salary = int(input("Введите максимальную зарплату: "))
-                    filtered_vacancies = [
-                        v for v in vacancies 
-                        if v.salary and (
-                            (v.salary.salary_from and v.salary.salary_from <= max_salary) or
-                            (v.salary.salary_to and v.salary.salary_to <= max_salary)
-                        )
-                    ]
-                    print(f"\nВакансии с зарплатой до {max_salary} руб.:")
-                except ValueError:
-                    print("Введите корректное число!")
-                    return
-                    
-            elif choice == "3":
-                salary_range = input("Введите диапазон зарплат (пример: 100000 - 150000): ").strip()
-                try:
-                    # Парсим диапазон
-                    if " - " in salary_range:
-                        min_sal, max_sal = salary_range.split(" - ")
-                        min_salary = int(min_sal.strip())
-                        max_salary = int(max_sal.strip())
-                    elif "-" in salary_range:
-                        min_sal, max_sal = salary_range.split("-")
-                        min_salary = int(min_sal.strip())
-                        max_salary = int(max_sal.strip())
-                    else:
-                        print("Неверный формат диапазона. Используйте формат: 100000 - 150000")
-                        return
-                    
-                    if min_salary > max_salary:
-                        min_salary, max_salary = max_salary, min_salary
-                    
-                    filtered_vacancies = [
-                        v for v in vacancies 
-                        if v.salary and (
-                            (v.salary.salary_from and min_salary <= v.salary.salary_from <= max_salary) or
-                            (v.salary.salary_to and min_salary <= v.salary.salary_to <= max_salary) or
-                            (v.salary.salary_from and v.salary.salary_to and 
-                             v.salary.salary_from <= max_salary and v.salary.salary_to >= min_salary)
-                        )
-                    ]
-                    print(f"\nВакансии с зарплатой в диапазоне {min_salary} - {max_salary} руб.:")
-                except ValueError:
-                    print("Введите корректные числа!")
-                    return
-                    
-            else:
-                print("Неверный выбор.")
-                return
-            
-            if not filtered_vacancies:
-                print("Вакансии с указанными критериями зарплаты не найдены.")
-                return
-            
-            # Сортируем по убыванию зарплаты
-            sorted_vacancies = sorted(
-                filtered_vacancies,
-                key=lambda x: x.salary.get_max_salary() or 0,
-                reverse=True
-            )
-            
-            print(f"Найдено {len(sorted_vacancies)} вакансий:")
-            
-            # Постраничный просмотр
-            paginate_display(sorted_vacancies, self._display_vacancies, 10, "Вакансии по зарплате")
-                
-        except Exception as e:
-            logger.error(f"Ошибка при фильтрации по зарплате: {e}")
-            print(f"Ошибка при фильтрации: {e}")
-    
-    def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
-        """Отображение списка вакансий"""
-        for i, vacancy in enumerate(vacancies, start_number):
-            display_vacancy_info(vacancy, i)
-    
     def _advanced_search_vacancies(self) -> None:
         """Расширенный поиск по вакансиям"""
         try:
@@ -329,11 +231,11 @@ class UserInterface:
             if ',' in query and ' AND ' not in query.upper() and ' OR ' not in query.upper():
                 # Поиск по нескольким ключевым словам через запятую
                 keywords = [kw.strip() for kw in query.split(',')]
-                filtered_vacancies = filter_vacancies_by_multiple_keywords(vacancies, keywords)
+                filtered_vacancies = self.vacancy_ops.filter_vacancies_by_multiple_keywords(vacancies, keywords)
                 print(f"\nПоиск по ключевым словам: {', '.join(keywords)}")
             else:
                 # Продвинутый поиск с операторами
-                filtered_vacancies = search_vacancies_advanced(vacancies, query)
+                filtered_vacancies = self.vacancy_ops.search_vacancies_advanced(vacancies, query)
                 print(f"\nРезультаты поиска по запросу: '{query}'")
             
             if not filtered_vacancies:
@@ -349,6 +251,72 @@ class UserInterface:
             logger.error(f"Ошибка при расширенном поиске: {e}")
             print(f"Ошибка при поиске: {e}")
     
+    def _filter_saved_vacancies_by_salary(self) -> None:
+        """Фильтрация сохраненных вакансий по зарплате"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
+                return
+            
+            print("\nВыберите тип фильтрации:")
+            print("1. Минимальная зарплата")
+            print("2. Максимальная зарплата")
+            print("3. Диапазон зарплат")
+            
+            choice = input("Ваш выбор: ").strip()
+            
+            filtered_vacancies = []
+            
+            if choice == "1":
+                try:
+                    min_salary = int(input("Введите минимальную зарплату: "))
+                    filtered_vacancies = self.vacancy_ops.filter_vacancies_by_min_salary(vacancies, min_salary)
+                    print(f"\nВакансии с зарплатой от {min_salary} руб.:")
+                except ValueError:
+                    print("Введите корректное число!")
+                    return
+                    
+            elif choice == "2":
+                try:
+                    max_salary = int(input("Введите максимальную зарплату: "))
+                    filtered_vacancies = self.vacancy_ops.filter_vacancies_by_max_salary(vacancies, max_salary)
+                    print(f"\nВакансии с зарплатой до {max_salary} руб.:")
+                except ValueError:
+                    print("Введите корректное число!")
+                    return
+                    
+            elif choice == "3":
+                salary_range = input("Введите диапазон зарплат (пример: 100000 - 150000): ").strip()
+                parsed_range = parse_salary_range(salary_range)
+                if parsed_range:
+                    min_salary, max_salary = parsed_range
+                    filtered_vacancies = self.vacancy_ops.filter_vacancies_by_salary_range(vacancies, min_salary, max_salary)
+                    print(f"\nВакансии с зарплатой в диапазоне {min_salary} - {max_salary} руб.:")
+                else:
+                    return
+                    
+            else:
+                print("Неверный выбор.")
+                return
+            
+            if not filtered_vacancies:
+                print("Вакансии с указанными критериями зарплаты не найдены.")
+                return
+            
+            # Сортируем по убыванию зарплаты
+            sorted_vacancies = self.vacancy_ops.sort_vacancies_by_salary(filtered_vacancies)
+            
+            print(f"Найдено {len(sorted_vacancies)} вакансий:")
+            
+            # Постраничный просмотр
+            paginate_display(sorted_vacancies, self._display_vacancies, 10, "Вакансии по зарплате")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при фильтрации по зарплате: {e}")
+            print(f"Ошибка при фильтрации: {e}")
+    
     def _show_keywords_statistics(self) -> None:
         """Показать статистику по ключевым словам"""
         try:
@@ -358,7 +326,7 @@ class UserInterface:
                 print("Нет сохраненных вакансий.")
                 return
             
-            keywords_stats = get_vacancy_keywords_summary(vacancies)
+            keywords_stats = self.vacancy_ops.get_vacancy_keywords_summary(vacancies)
             
             if not keywords_stats:
                 print("Ключевые слова не найдены в сохраненных вакансиях.")
@@ -392,10 +360,98 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при показе статистики: {e}")
             print(f"Ошибка при загрузке статистики: {e}")
-
-    def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
-        """Отображение вакансий с постраничным просмотром"""
-        paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
+    
+    def _delete_saved_vacancies(self) -> None:
+        """Удаление сохраненных вакансий"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("Нет сохраненных вакансий для удаления.")
+                return
+            
+            print(f"\nСохраненных вакансий: {len(vacancies)}")
+            print("\nВыберите способ удаления:")
+            print("1. Удалить все сохраненные вакансии")
+            print("2. Удалить вакансии по ключевому слову")
+            print("3. Удалить конкретную вакансию по ID")
+            print("0. Отмена")
+            
+            choice = input("Ваш выбор: ").strip()
+            
+            if choice == "1":
+                if confirm_action("Вы уверены, что хотите удалить ВСЕ сохраненные вакансии?"):
+                    if self.json_saver.delete_all_vacancies():
+                        print("Все сохраненные вакансии успешно удалены.")
+                    else:
+                        print("Ошибка при удалении вакансий.")
+                else:
+                    print("Удаление отменено.")
+                    
+            elif choice == "2":
+                keyword = get_user_input("Введите ключевое слово для удаления связанных вакансий: ")
+                if keyword:
+                    # Сначала покажем, что будет удалено
+                    filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
+                    if not filtered_vacancies:
+                        print(f"Вакансии с ключевым словом '{keyword}' не найдены.")
+                        return
+                    
+                    print(f"\nБудет удалено {len(filtered_vacancies)} вакансий с ключевым словом '{keyword}':")
+                    for i, vacancy in enumerate(filtered_vacancies[:5], 1):
+                        print(f"{i}. {vacancy.title}")
+                    
+                    if len(filtered_vacancies) > 5:
+                        print(f"... и еще {len(filtered_vacancies) - 5} вакансий")
+                    
+                    if confirm_action(f"Удалить {len(filtered_vacancies)} вакансий?"):
+                        deleted_count = self.json_saver.delete_vacancies_by_keyword(keyword)
+                        if deleted_count > 0:
+                            print(f"Удалено {deleted_count} вакансий.")
+                        else:
+                            print("Не удалось удалить вакансии.")
+                    else:
+                        print("Удаление отменено.")
+                        
+            elif choice == "3":
+                print("\nПоказать ID вакансий для выбора:")
+                # Показываем первые 10 вакансий с их ID
+                for i, vacancy in enumerate(vacancies[:10], 1):
+                    print(f"{i}. ID: {vacancy.vacancy_id[:8]}... - {vacancy.title}")
+                
+                if len(vacancies) > 10:
+                    print(f"... и еще {len(vacancies) - 10} вакансий")
+                
+                vacancy_id = get_user_input("Введите полный ID вакансии для удаления: ")
+                if vacancy_id:
+                    # Найдем вакансию для подтверждения
+                    vacancy_to_delete = None
+                    for vacancy in vacancies:
+                        if vacancy.vacancy_id == vacancy_id:
+                            vacancy_to_delete = vacancy
+                            break
+                    
+                    if vacancy_to_delete:
+                        print(f"\nВакансия для удаления: {vacancy_to_delete.title}")
+                        if confirm_action("Удалить эту вакансию?"):
+                            if self.json_saver.delete_vacancy_by_id(vacancy_id):
+                                print("Вакансия успешно удалена.")
+                            else:
+                                print("Ошибка при удалении вакансии.")
+                        else:
+                            print("Удаление отменено.")
+                    else:
+                        print("Вакансия с указанным ID не найдена.")
+                        
+            elif choice == "0":
+                print("Отмена удаления.")
+                
+            else:
+                print("Неверный выбор.")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при удалении вакансий: {e}")
+            print(f"Ошибка при удалении: {e}")
     
     def _clear_api_cache(self) -> None:
         """Очистка кэша API"""
@@ -408,3 +464,23 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при очистке кэша: {e}")
             print(f"Ошибка при очистке кэша: {e}")
+    
+    def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
+        """
+        Отображение списка вакансий
+        
+        Args:
+            vacancies: Список вакансий для отображения
+            start_number: Начальный номер для нумерации
+        """
+        for i, vacancy in enumerate(vacancies, start_number):
+            display_vacancy_info(vacancy, i)
+    
+    def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
+        """
+        Отображение вакансий с постраничным просмотром
+        
+        Args:
+            vacancies: Список вакансий для отображения
+        """
+        paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")

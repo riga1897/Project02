@@ -188,179 +188,41 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
     return filtered_vacancies
 
 
-def filter_vacancies_by_min_salary(vacancies: List[Vacancy], min_salary: int) -> List[Vacancy]:
-    """
-    Фильтрация вакансий по минимальной зарплате
-    
-    Args:
-        vacancies: Список вакансий для фильтрации
-        min_salary: Минимальная зарплата
-        
-    Returns:
-        Список отфильтрованных вакансий
-    """
-    return [
-        v for v in vacancies 
-        if v.salary and v.salary.get_max_salary() and v.salary.get_max_salary() >= min_salary
-    ]
+# Эти функции перенесены в src/utils/vacancy_operations.py
+# Импортируем их оттуда для обратной совместимости
+from src.utils.vacancy_operations import VacancyOperations
 
+def filter_vacancies_by_min_salary(vacancies: List[Vacancy], min_salary: int) -> List[Vacancy]:
+    """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_min_salary"""
+    return VacancyOperations.filter_vacancies_by_min_salary(vacancies, min_salary)
 
 def filter_vacancies_by_max_salary(vacancies: List[Vacancy], max_salary: int) -> List[Vacancy]:
-    """
-    Фильтрация вакансий по максимальной зарплате
-    
-    Args:
-        vacancies: Список вакансий для фильтрации
-        max_salary: Максимальная зарплата
-        
-    Returns:
-        Список отфильтрованных вакансий
-    """
-    return [
-        v for v in vacancies 
-        if v.salary and (
-            (v.salary.salary_from and v.salary.salary_from <= max_salary) or
-            (v.salary.salary_to and v.salary.salary_to <= max_salary)
-        )
-    ]
-
+    """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_max_salary"""
+    return VacancyOperations.filter_vacancies_by_max_salary(vacancies, max_salary)
 
 def filter_vacancies_by_salary_range(vacancies: List[Vacancy], min_salary: int, max_salary: int) -> List[Vacancy]:
-    """
-    Фильтрация вакансий по диапазону зарплат
-    
-    Args:
-        vacancies: Список вакансий для фильтрации
-        min_salary: Минимальная зарплата диапазона
-        max_salary: Максимальная зарплата диапазона
-        
-    Returns:
-        Список отфильтрованных вакансий
-    """
-    return [
-        v for v in vacancies 
-        if v.salary and (
-            (v.salary.salary_from and min_salary <= v.salary.salary_from <= max_salary) or
-            (v.salary.salary_to and min_salary <= v.salary.salary_to <= max_salary) or
-            (v.salary.salary_from and v.salary.salary_to and 
-             v.salary.salary_from <= max_salary and v.salary.salary_to >= min_salary)
-        )
-    ]
-
+    """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_salary_range"""
+    return VacancyOperations.filter_vacancies_by_salary_range(vacancies, min_salary, max_salary)
 
 def get_vacancies_with_salary(vacancies: List[Vacancy]) -> List[Vacancy]:
-    """
-    Фильтрация вакансий, у которых указана зарплата
-    
-    Args:
-        vacancies: Список вакансий для фильтрации
-        
-    Returns:
-        Список вакансий с указанной зарплатой
-    """
-    return [
-        v for v in vacancies 
-        if v.salary and (v.salary.salary_from or v.salary.salary_to)
-    ]
-
+    """Устаревшая функция - используйте VacancyOperations.get_vacancies_with_salary"""
+    return VacancyOperations.get_vacancies_with_salary(vacancies)
 
 def sort_vacancies_by_salary(vacancies: List[Vacancy], reverse: bool = True) -> List[Vacancy]:
-    """
-    Сортировка вакансий по зарплате
-    
-    Args:
-        vacancies: Список вакансий для сортировки
-        reverse: Сортировка по убыванию (True) или возрастанию (False)
-        
-    Returns:
-        Отсортированный список вакансий
-    """
-    return sorted(
-        vacancies,
-        key=lambda x: x.salary.get_max_salary() if x.salary else 0,
-        reverse=reverse
-    )
-
+    """Устаревшая функция - используйте VacancyOperations.sort_vacancies_by_salary"""
+    return VacancyOperations.sort_vacancies_by_salary(vacancies, reverse)
 
 def filter_vacancies_by_multiple_keywords(vacancies: List[Vacancy], keywords: List[str]) -> List[Vacancy]:
-    """
-    Фильтрация вакансий по нескольким ключевым словам
-    
-    Args:
-        vacancies: Список вакансий для фильтрации
-        keywords: Список ключевых слов для поиска
-        
-    Returns:
-        Список отфильтрованных вакансий
-    """
-    if not keywords:
-        return vacancies
-    
-    filtered_vacancies = []
-    
-    for vacancy in vacancies:
-        matches = 0
-        for keyword in keywords:
-            if filter_vacancies_by_keyword([vacancy], keyword):
-                matches += 1
-        
-        # Включаем вакансию, если найдено хотя бы одно совпадение
-        if matches > 0:
-            vacancy._keyword_matches = matches
-            filtered_vacancies.append(vacancy)
-    
-    # Сортируем по количеству совпадений
-    filtered_vacancies.sort(key=lambda x: getattr(x, '_keyword_matches', 0), reverse=True)
-    
-    return filtered_vacancies
-
+    """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_multiple_keywords"""
+    return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
 
 def search_vacancies_advanced(vacancies: List[Vacancy], query: str) -> List[Vacancy]:
-    """
-    Продвинутый поиск по вакансиям с поддержкой операторов
-    
-    Args:
-        vacancies: Список вакансий для поиска
-        query: Поисковый запрос (может содержать операторы AND, OR)
-        
-    Returns:
-        Список найденных вакансий
-    """
-    # Простая обработка AND/OR операторов
-    if ' AND ' in query.upper():
-        keywords = [kw.strip() for kw in query.upper().split(' AND ')]
-        result = vacancies
-        for keyword in keywords:
-            result = filter_vacancies_by_keyword(result, keyword)
-        return result
-    
-    elif ' OR ' in query.upper():
-        keywords = [kw.strip() for kw in query.upper().split(' OR ')]
-        return filter_vacancies_by_multiple_keywords(vacancies, keywords)
-    
-    else:
-        return filter_vacancies_by_keyword(vacancies, query)
-
+    """Устаревшая функция - используйте VacancyOperations.search_vacancies_advanced"""
+    return VacancyOperations.search_vacancies_advanced(vacancies, query)
 
 def get_vacancy_keywords_summary(vacancies: List[Vacancy]) -> Dict[str, int]:
-    """
-    Получение сводки по ключевым словам в вакансиях
-    
-    Args:
-        vacancies: Список вакансий
-        
-    Returns:
-        Словарь {ключевое_слово: количество_вакансий}
-    """
-    keyword_count = {}
-    
-    for vacancy in vacancies:
-        if vacancy.keywords:
-            for keyword in vacancy.keywords:
-                keyword_count[keyword] = keyword_count.get(keyword, 0) + 1
-    
-    # Сортируем по популярности
-    return dict(sorted(keyword_count.items(), key=lambda x: x[1], reverse=True))
+    """Устаревшая функция - используйте VacancyOperations.get_vacancy_keywords_summary"""
+    return VacancyOperations.get_vacancy_keywords_summary(vacancies)
 
 
 def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
@@ -421,30 +283,15 @@ def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
     print("-" * 80)
 
 
-def print_section_header(title: str, width: int = 50) -> None:
-    """
-    Печать заголовка секции с декоративным оформлением
-    
-    Args:
-        title: Текст заголовка
-        width: Ширина декоративной линии
-    """
-    print("=" * width)
-    print(title)
-    print("=" * width)
-
-
-def print_menu_separator(width: int = 40) -> None:
-    """
-    Печать разделителя меню
-    
-    Args:
-        width: Ширина разделителя
-    """
-    print("-" * width)
+# Эти функции перенесены в src/utils/menu_manager.py
+# Импортируем их оттуда для обратной совместимости
+from src.utils.menu_manager import print_section_header, print_menu_separator
 def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
     """
     Отладочная функция для проверки содержимого вакансии при поиске
+    
+    Выводит подробную информацию о вакансии и показывает, в каких полях
+    найдено искомое ключевое слово. Используется для отладки алгоритма поиска.
     
     Args:
         vacancy: Вакансия для отладки
@@ -486,6 +333,10 @@ def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
 def debug_search_vacancies(vacancies: List[Vacancy], keyword: str) -> None:
     """
     Отладочная функция для анализа всех сохраненных вакансий
+    
+    Выводит сводную информацию о поиске по всем вакансиям и показывает
+    первые 5 вакансий с подробным анализом. Используется для отладки
+    алгоритма поиска на больших наборах данных.
     
     Args:
         vacancies: Список вакансий для анализа

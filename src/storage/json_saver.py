@@ -143,6 +143,86 @@ class JSONSaver:
         :return: Список вакансий
         """
         return self.load_vacancies()
+    
+    def delete_all_vacancies(self) -> bool:
+        """
+        Удаляет все сохраненные вакансии
+        
+        Returns:
+            bool: True если операция успешна, False иначе
+        """
+        try:
+            with open(self.filename, 'w', encoding='utf-8') as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+            logger.info("Все вакансии удалены")
+            return True
+        except Exception as e:
+            logger.error(f"Ошибка при удалении всех вакансий: {e}")
+            return False
+    
+    def delete_vacancy_by_id(self, vacancy_id: str) -> bool:
+        """
+        Удаляет вакансию по ID
+        
+        Args:
+            vacancy_id: ID вакансии для удаления
+            
+        Returns:
+            bool: True если вакансия найдена и удалена, False иначе
+        """
+        try:
+            vacancies = self.load_vacancies()
+            initial_count = len(vacancies)
+            
+            # Фильтруем вакансии, исключая нужную
+            filtered_vacancies = [v for v in vacancies if v.vacancy_id != vacancy_id]
+            
+            if len(filtered_vacancies) == initial_count:
+                logger.warning(f"Вакансия с ID {vacancy_id} не найдена")
+                return False
+            
+            self._save_to_file(filtered_vacancies)
+            logger.info(f"Вакансия с ID {vacancy_id} удалена")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Ошибка при удалении вакансии {vacancy_id}: {e}")
+            return False
+    
+    def delete_vacancies_by_keyword(self, keyword: str) -> int:
+        """
+        Удаляет вакансии, содержащие указанное ключевое слово
+        
+        Args:
+            keyword: Ключевое слово для поиска
+            
+        Returns:
+            int: Количество удаленных вакансий
+        """
+        try:
+            from src.utils.ui_helpers import filter_vacancies_by_keyword
+            
+            vacancies = self.load_vacancies()
+            initial_count = len(vacancies)
+            
+            # Находим вакансии для удаления
+            vacancies_to_delete = filter_vacancies_by_keyword(vacancies, keyword)
+            delete_ids = {v.vacancy_id for v in vacancies_to_delete}
+            
+            # Фильтруем вакансии, исключая найденные
+            filtered_vacancies = [v for v in vacancies if v.vacancy_id not in delete_ids]
+            
+            deleted_count = initial_count - len(filtered_vacancies)
+            
+            if deleted_count > 0:
+                self._save_to_file(filtered_vacancies)
+                logger.info(f"Удалено {deleted_count} вакансий по ключевому слову '{keyword}'")
+            
+            return deleted_count
+            
+        except Exception as e:
+            logger.error(f"Ошибка при удалении вакансий по ключевому слову '{keyword}': {e}")
+            return 0
 
     def _save_to_file(self, vacancies: List[Vacancy]) -> None:
         """Сохраняет вакансии с дополнительной валидацией"""

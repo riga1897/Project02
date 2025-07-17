@@ -1,3 +1,4 @@
+# Adding docstrings to the clear_cache method in the HeadHunterAPI class.
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 import logging
@@ -130,10 +131,11 @@ class HeadHunterAPI(BaseAPI):
             return []
 
     def clear_cache(self) -> None:
-        """Clear cache with confirmation"""
-        try:
-            self.cache.clear("hh")
-            logger.info("Cache cleared successfully")
-        except Exception as e:
-            logger.error(f"Failed to clear cache: {e}")
-            
+        """
+        Очищает кэш API
+
+        Удаляет все сохраненные ответы API из кэша для освобождения места
+        и обеспечения получения актуальных данных при следующих запросах.
+        """
+        self.cache.clear_cache()
+`
