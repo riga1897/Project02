@@ -12,4 +12,4 @@ mode = "sequential"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python3 src/user_interface.py"
+args = "python3 user_app.py"
