@@ -133,7 +133,9 @@ class UserInterface:
             top_vacancies = sorted_vacancies[:n]
             
             print(f"\nТоп {len(top_vacancies)} сохраненных вакансий по зарплате:")
-            self._display_vacancies(top_vacancies)
+            
+            # Постраничный просмотр
+            paginate_display(top_vacancies, self._display_vacancies, 10, f"Топ {len(top_vacancies)} вакансий по зарплате")
                 
         except Exception as e:
             logger.error(f"Ошибка при получении топ сохраненных вакансий: {e}")
@@ -146,9 +148,6 @@ class UserInterface:
         if not keyword:
             return
         
-        # Спрашиваем о режиме отладки
-        debug_mode = input("Включить режим отладки? (y/n): ").strip().lower() in ['y', 'yes', 'д', 'да']
-        
         try:
             vacancies = self.json_saver.get_vacancies()
             
@@ -156,26 +155,17 @@ class UserInterface:
                 print("Нет сохраненных вакансий.")
                 return
             
-            if debug_mode:
-                from src.utils.ui_helpers import debug_search_vacancies
-                debug_search_vacancies(vacancies, keyword)
-            
             # Фильтруем по ключевому слову в описании
             filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
             
             if not filtered_vacancies:
                 print(f"Среди сохраненных вакансий не найдено ни одной с ключевым словом '{keyword}'.")
-                
-                if debug_mode:
-                    print("\nПроверим первые 3 вакансии детально:")
-                    from src.utils.ui_helpers import debug_vacancy_search
-                    for i, vacancy in enumerate(vacancies[:3]):
-                        debug_vacancy_search(vacancy, keyword)
-                        
                 return
             
             print(f"\nНайдено {len(filtered_vacancies)} сохраненных вакансий с ключевым словом '{keyword}':")
-            self._display_vacancies(filtered_vacancies[:10])  # Показываем первые 10
+            
+            # Постраничный просмотр
+            paginate_display(filtered_vacancies, self._display_vacancies, 10, f"Вакансии с ключевым словом '{keyword}'")
                 
         except Exception as e:
             logger.error(f"Ошибка при поиске по ключевому слову: {e}")
@@ -293,10 +283,9 @@ class UserInterface:
             )
             
             print(f"Найдено {len(sorted_vacancies)} вакансий:")
-            self._display_vacancies(sorted_vacancies[:10])  # Показываем первые 10
             
-            if len(sorted_vacancies) > 10:
-                print(f"\n... и еще {len(sorted_vacancies) - 10} вакансий.")
+            # Постраничный просмотр
+            paginate_display(sorted_vacancies, self._display_vacancies, 10, "Вакансии по зарплате")
                 
         except Exception as e:
             logger.error(f"Ошибка при фильтрации по зарплате: {e}")
@@ -344,12 +333,9 @@ class UserInterface:
                 return
             
             print(f"Найдено {len(filtered_vacancies)} вакансий:")
-            self._display_vacancies(filtered_vacancies[:10])  # Показываем первые 10
             
-            if len(filtered_vacancies) > 10:
-                print(f"\n... и еще {len(filtered_vacancies) - 10} вакансий.")
-                if confirm_action("Показать все результаты постранично?"):
-                    paginate_display(filtered_vacancies, self._display_vacancies, 10, "Результаты поиска")
+            # Постраничный просмотр
+            paginate_display(filtered_vacancies, self._display_vacancies, 10, "Результаты расширенного поиска")
                     
         except Exception as e:
             logger.error(f"Ошибка при расширенном поиске: {e}")
@@ -389,7 +375,9 @@ class UserInterface:
                     keyword = list(keywords_stats.keys())[choice - 1]
                     filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
                     print(f"\nВакансии с ключевым словом '{keyword}':")
-                    self._display_vacancies(filtered_vacancies[:10])
+                    
+                    # Постраничный просмотр
+                    paginate_display(filtered_vacancies, self._display_vacancies, 10, f"Вакансии с ключевым словом '{keyword}'")
             except ValueError:
                 pass
                 
