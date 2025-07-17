@@ -138,4 +138,3 @@ class HeadHunterAPI(BaseAPI):
         и обеспечения получения актуальных данных при следующих запросах.
         """
         self.cache.clear_cache()
-`
