@@ -46,6 +46,8 @@ class UserInterface:
                     self._show_saved_vacancies()
                 elif choice == "7":
                     self._show_keywords_statistics()
+                elif choice == "8":
+                    self._clear_api_cache()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -71,6 +73,7 @@ class UserInterface:
         print("5. Фильтр сохраненных вакансий по зарплате")
         print("6. Показать все сохраненные вакансии")
         print("7. Статистика по ключевым словам")
+        print("8. Очистить кэш API")
         print("0. Выход")
         print_menu_separator()
         
@@ -103,6 +106,11 @@ class UserInterface:
                 self.json_saver.add_vacancy(vacancies)
                 print(f"Сохранено {len(vacancies)} вакансий.")
                 
+        except KeyboardInterrupt:
+            print("\nПоиск прерван пользователем.")
+            if confirm_action("Очистить кэш от этого запроса?"):
+                self.hh_api.clear_cache()
+                print("Кэш очищен.")
         except Exception as e:
             logger.error(f"Ошибка при поиске вакансий: {e}")
             print(f"Ошибка при поиске: {e}")
@@ -388,3 +396,15 @@ class UserInterface:
     def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
         """Отображение вакансий с постраничным просмотром"""
         paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
+    
+    def _clear_api_cache(self) -> None:
+        """Очистка кэша API"""
+        try:
+            if confirm_action("Вы уверены, что хотите очистить кэш API?"):
+                self.hh_api.clear_cache()
+                print("Кэш API успешно очищен.")
+            else:
+                print("Очистка кэша отменена.")
+        except Exception as e:
+            logger.error(f"Ошибка при очистке кэша: {e}")
+            print(f"Ошибка при очистке кэша: {e}")

@@ -121,6 +121,10 @@ class HeadHunterAPI(BaseAPI):
             logger.info(f"Successfully processed {len(results)} vacancies")
             return results
 
+        except KeyboardInterrupt:
+            logger.info("Получение вакансий прервано пользователем")
+            print("\nПолучение вакансий остановлено.")
+            return []
         except Exception as e:
             logger.error(f"Failed to get vacancies: {e}")
             return []
