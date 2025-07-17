@@ -397,21 +397,10 @@ class UserInterface:
                         print(f"Вакансии с ключевым словом '{keyword}' не найдены.")
                         return
                     
-                    print(f"\nБудет удалено {len(filtered_vacancies)} вакансий с ключевым словом '{keyword}':")
-                    for i, vacancy in enumerate(filtered_vacancies[:5], 1):
-                        print(f"{i}. {vacancy.title}")
+                    print(f"\nНайдено {len(filtered_vacancies)} вакансий с ключевым словом '{keyword}':")
                     
-                    if len(filtered_vacancies) > 5:
-                        print(f"... и еще {len(filtered_vacancies) - 5} вакансий")
-                    
-                    if confirm_action(f"Удалить {len(filtered_vacancies)} вакансий?"):
-                        deleted_count = self.json_saver.delete_vacancies_by_keyword(keyword)
-                        if deleted_count > 0:
-                            print(f"Удалено {deleted_count} вакансий.")
-                        else:
-                            print("Не удалось удалить вакансии.")
-                    else:
-                        print("Удаление отменено.")
+                    # Показываем список с постраничным просмотром
+                    self._show_vacancies_for_deletion(filtered_vacancies, keyword)
                         
             elif choice == "3":
                 print("\nДля просмотра ID вакансий используйте пункт 2 (Показать все сохраненные вакансии)")
@@ -489,3 +478,103 @@ class UserInterface:
             vacancies: Список вакансий для отображения
         """
         paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
+    
+    def _show_vacancies_for_deletion(self, vacancies: List[Vacancy], keyword: str) -> None:
+        """
+        Отображение вакансий для удаления с возможностью выбора
+        
+        Args:
+            vacancies: Список вакансий для удаления
+            keyword: Ключевое слово для удаления
+        """
+        page_size = 10
+        total_pages = (len(vacancies) + page_size - 1) // page_size
+        current_page = 1
+        
+        while True:
+            # Вычисляем индексы для текущей страницы
+            start_idx = (current_page - 1) * page_size
+            end_idx = min(start_idx + page_size, len(vacancies))
+            current_vacancies = vacancies[start_idx:end_idx]
+            
+            print(f"\n--- Страница {current_page} из {total_pages} ---")
+            print(f"Вакансии {start_idx + 1}-{end_idx} из {len(vacancies)} с ключевым словом '{keyword}':")
+            print("-" * 80)
+            
+            # Отображаем вакансии с номерами
+            for i, vacancy in enumerate(current_vacancies, start_idx + 1):
+                print(f"{i}. ID: {vacancy.vacancy_id}")
+                print(f"   Название: {vacancy.title or 'Не указано'}")
+                if vacancy.employer:
+                    print(f"   Компания: {vacancy.employer.get('name', 'Не указана')}")
+                if vacancy.salary:
+                    print(f"   Зарплата: {vacancy.salary}")
+                else:
+                    print("   Зарплата: Не указана")
+                print(f"   Ссылка: {vacancy.url}")
+                print("-" * 40)
+            
+            # Меню навигации и действий
+            print("\n" + "=" * 60)
+            print("Действия:")
+            print("a - Удалить ВСЕ вакансии с этим ключевым словом")
+            print("1-10 - Удалить конкретную вакансию по номеру на странице")
+            if current_page > 1:
+                print("p - Предыдущая страница")
+            if current_page < total_pages:
+                print("n - Следующая страница")
+            print("q - Отмена удаления")
+            print("=" * 60)
+            
+            choice = input("Ваш выбор: ").strip().lower()
+            
+            if choice == 'q':
+                print("Удаление отменено.")
+                break
+            elif choice == 'a':
+                if confirm_action(f"Удалить ВСЕ {len(vacancies)} вакансий с ключевым словом '{keyword}'?"):
+                    deleted_count = self.json_saver.delete_vacancies_by_keyword(keyword)
+                    if deleted_count > 0:
+                        print(f"Удалено {deleted_count} вакансий.")
+                    else:
+                        print("Не удалось удалить вакансии.")
+                break
+            elif choice == 'n' and current_page < total_pages:
+                current_page += 1
+            elif choice == 'p' and current_page > 1:
+                current_page -= 1
+            elif choice.isdigit():
+                vacancy_num = int(choice)
+                if 1 <= vacancy_num <= len(vacancies):
+                    vacancy_to_delete = vacancies[vacancy_num - 1]
+                    print(f"\nВакансия для удаления:")
+                    print(f"ID: {vacancy_to_delete.vacancy_id}")
+                    print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
+                    if vacancy_to_delete.employer:
+                        print(f"Компания: {vacancy_to_delete.employer.get('name', 'Не указана')}")
+                    if vacancy_to_delete.salary:
+                        print(f"Зарплата: {vacancy_to_delete.salary}")
+                    else:
+                        print("Зарплата: Не указана")
+                    print(f"Ссылка: {vacancy_to_delete.url}")
+                    
+                    if confirm_action("Удалить эту вакансию?"):
+                        if self.json_saver.delete_vacancy_by_id(vacancy_to_delete.vacancy_id):
+                            print("Вакансия успешно удалена.")
+                            # Удаляем из локального списка и обновляем отображение
+                            vacancies.remove(vacancy_to_delete)
+                            if not vacancies:
+                                print("Все вакансии с данным ключевым словом удалены.")
+                                break
+                            # Пересчитываем страницы
+                            total_pages = (len(vacancies) + page_size - 1) // page_size
+                            if current_page > total_pages:
+                                current_page = total_pages
+                        else:
+                            print("Ошибка при удалении вакансии.")
+                    else:
+                        print("Удаление отменено.")
+                else:
+                    print(f"Введите номер от 1 до {len(vacancies)}")
+            else:
+                print("Неверный выбор. Попробуйте снова.")
