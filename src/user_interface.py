@@ -28,10 +28,12 @@ class UserInterface:
                 if choice == "1":
                     self._search_vacancies()
                 elif choice == "2":
-                    self._get_top_vacancies_by_salary()
+                    self._get_top_saved_vacancies_by_salary()
                 elif choice == "3":
-                    self._search_vacancies_by_keyword()
+                    self._search_saved_vacancies_by_keyword()
                 elif choice == "4":
+                    self._filter_saved_vacancies_by_salary()
+                elif choice == "5":
                     self._show_saved_vacancies()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
@@ -50,10 +52,11 @@ class UserInterface:
         """Отображение главного меню"""
         print("\n" + "-" * 40)
         print("Выберите действие:")
-        print("1. Поиск вакансий по запросу")
-        print("2. Топ N вакансий по зарплате")
-        print("3. Поиск вакансий с ключевым словом")
-        print("4. Показать сохраненные вакансии")
+        print("1. Поиск вакансий по запросу (запрос к API)")
+        print("2. Топ N сохраненных вакансий по зарплате")
+        print("3. Поиск в сохраненных вакансиях с ключевым словом")
+        print("4. Фильтр сохраненных вакансий по зарплате")
+        print("5. Показать все сохраненные вакансии")
         print("0. Выход")
         print("-" * 40)
         
@@ -89,8 +92,8 @@ class UserInterface:
             logger.error(f"Ошибка при поиске вакансий: {e}")
             print(f"Ошибка при поиске: {e}")
     
-    def _get_top_vacancies_by_salary(self) -> None:
-        """Получение топ N вакансий по зарплате"""
+    def _get_top_saved_vacancies_by_salary(self) -> None:
+        """Получение топ N сохраненных вакансий по зарплате"""
         try:
             n = int(input("\nВведите количество вакансий для отображения: "))
             if n <= 0:
@@ -100,32 +103,21 @@ class UserInterface:
             print("Введите корректное число!")
             return
         
-        query = input("Введите поисковый запрос: ").strip()
-        
-        if not query:
-            print("Запрос не может быть пустым!")
-            return
-        
-        print(f"\nИщем топ {n} вакансий по зарплате для запроса: '{query}'...")
-        
         try:
-            # Получаем вакансии только с указанной зарплатой
-            vacancies_data = self.hh_api.get_vacancies(query, only_with_salary=True)
+            vacancies = self.json_saver.get_vacancies()
             
-            if not vacancies_data:
-                print("Вакансии с указанной зарплатой не найдены.")
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
                 return
             
-            vacancies = Vacancy.cast_to_object_list(vacancies_data)
-            
-            # Сортируем по максимальной зарплате
+            # Фильтруем вакансии с зарплатой
             vacancies_with_salary = [
                 v for v in vacancies 
                 if v.salary and (v.salary.salary_from or v.salary.salary_to)
             ]
             
             if not vacancies_with_salary:
-                print("Не найдено вакансий с корректно указанной зарплатой.")
+                print("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
                 return
             
             # Сортируем по убыванию зарплаты
@@ -137,36 +129,27 @@ class UserInterface:
             
             top_vacancies = sorted_vacancies[:n]
             
-            print(f"\nТоп {len(top_vacancies)} вакансий по зарплате:")
+            print(f"\nТоп {len(top_vacancies)} сохраненных вакансий по зарплате:")
             self._display_vacancies(top_vacancies)
-            
-            if self._ask_save_vacancies():
-                self.json_saver.add_vacancy(top_vacancies)
-                print(f"Сохранено {len(top_vacancies)} вакансий.")
                 
         except Exception as e:
-            logger.error(f"Ошибка при получении топ вакансий: {e}")
+            logger.error(f"Ошибка при получении топ сохраненных вакансий: {e}")
             print(f"Ошибка при поиске: {e}")
     
-    def _search_vacancies_by_keyword(self) -> None:
-        """Поиск вакансий с ключевым словом в описании"""
-        base_query = input("\nВведите основной поисковый запрос: ").strip()
-        keyword = input("Введите ключевое слово для поиска в описании: ").strip()
+    def _search_saved_vacancies_by_keyword(self) -> None:
+        """Поиск в сохраненных вакансиях с ключевым словом в описании"""
+        keyword = input("\nВведите ключевое слово для поиска в описании: ").strip()
         
-        if not base_query or not keyword:
-            print("Запрос и ключевое слово не могут быть пустыми!")
+        if not keyword:
+            print("Ключевое слово не может быть пустым!")
             return
         
-        print(f"\nИщем вакансии по запросу '{base_query}' с ключевым словом '{keyword}'...")
-        
         try:
-            vacancies_data = self.hh_api.get_vacancies(base_query)
+            vacancies = self.json_saver.get_vacancies()
             
-            if not vacancies_data:
-                print("Вакансии не найдены.")
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
                 return
-            
-            vacancies = Vacancy.cast_to_object_list(vacancies_data)
             
             # Фильтруем по ключевому слову в описании
             filtered_vacancies = []
@@ -174,8 +157,10 @@ class UserInterface:
             
             for vacancy in vacancies:
                 description_text = ""
+                if vacancy.title:
+                    description_text += vacancy.title.lower()
                 if vacancy.description:
-                    description_text += vacancy.description.lower()
+                    description_text += " " + vacancy.description.lower()
                 if vacancy.requirements:
                     description_text += " " + vacancy.requirements.lower()
                 if vacancy.responsibilities:
@@ -185,15 +170,11 @@ class UserInterface:
                     filtered_vacancies.append(vacancy)
             
             if not filtered_vacancies:
-                print(f"Вакансии с ключевым словом '{keyword}' не найдены.")
+                print(f"Среди сохраненных вакансий не найдено ни одной с ключевым словом '{keyword}'.")
                 return
             
-            print(f"\nНайдено {len(filtered_vacancies)} вакансий с ключевым словом '{keyword}':")
+            print(f"\nНайдено {len(filtered_vacancies)} сохраненных вакансий с ключевым словом '{keyword}':")
             self._display_vacancies(filtered_vacancies[:10])  # Показываем первые 10
-            
-            if self._ask_save_vacancies():
-                self.json_saver.add_vacancy(filtered_vacancies)
-                print(f"Сохранено {len(filtered_vacancies)} вакансий.")
                 
         except Exception as e:
             logger.error(f"Ошибка при поиске по ключевому слову: {e}")
@@ -249,6 +230,109 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
             print(f"Ошибка при загрузке вакансий: {e}")
+    
+    def _filter_saved_vacancies_by_salary(self) -> None:
+        """Фильтрация сохраненных вакансий по зарплате"""
+        try:
+            vacancies = self.json_saver.get_vacancies()
+            
+            if not vacancies:
+                print("Нет сохраненных вакансий.")
+                return
+            
+            print("\nВыберите тип фильтрации:")
+            print("1. Минимальная зарплата")
+            print("2. Максимальная зарплата")
+            print("3. Диапазон зарплат")
+            
+            choice = input("Ваш выбор: ").strip()
+            
+            filtered_vacancies = []
+            
+            if choice == "1":
+                try:
+                    min_salary = int(input("Введите минимальную зарплату: "))
+                    filtered_vacancies = [
+                        v for v in vacancies 
+                        if v.salary and v.salary.get_max_salary() and v.salary.get_max_salary() >= min_salary
+                    ]
+                    print(f"\nВакансии с зарплатой от {min_salary} руб.:")
+                except ValueError:
+                    print("Введите корректное число!")
+                    return
+                    
+            elif choice == "2":
+                try:
+                    max_salary = int(input("Введите максимальную зарплату: "))
+                    filtered_vacancies = [
+                        v for v in vacancies 
+                        if v.salary and (
+                            (v.salary.salary_from and v.salary.salary_from <= max_salary) or
+                            (v.salary.salary_to and v.salary.salary_to <= max_salary)
+                        )
+                    ]
+                    print(f"\nВакансии с зарплатой до {max_salary} руб.:")
+                except ValueError:
+                    print("Введите корректное число!")
+                    return
+                    
+            elif choice == "3":
+                salary_range = input("Введите диапазон зарплат (пример: 100000 - 150000): ").strip()
+                try:
+                    # Парсим диапазон
+                    if " - " in salary_range:
+                        min_sal, max_sal = salary_range.split(" - ")
+                        min_salary = int(min_sal.strip())
+                        max_salary = int(max_sal.strip())
+                    elif "-" in salary_range:
+                        min_sal, max_sal = salary_range.split("-")
+                        min_salary = int(min_sal.strip())
+                        max_salary = int(max_sal.strip())
+                    else:
+                        print("Неверный формат диапазона. Используйте формат: 100000 - 150000")
+                        return
+                    
+                    if min_salary > max_salary:
+                        min_salary, max_salary = max_salary, min_salary
+                    
+                    filtered_vacancies = [
+                        v for v in vacancies 
+                        if v.salary and (
+                            (v.salary.salary_from and min_salary <= v.salary.salary_from <= max_salary) or
+                            (v.salary.salary_to and min_salary <= v.salary.salary_to <= max_salary) or
+                            (v.salary.salary_from and v.salary.salary_to and 
+                             v.salary.salary_from <= max_salary and v.salary.salary_to >= min_salary)
+                        )
+                    ]
+                    print(f"\nВакансии с зарплатой в диапазоне {min_salary} - {max_salary} руб.:")
+                except ValueError:
+                    print("Введите корректные числа!")
+                    return
+                    
+            else:
+                print("Неверный выбор.")
+                return
+            
+            if not filtered_vacancies:
+                print("Вакансии с указанными критериями зарплаты не найдены.")
+                return
+            
+            # Сортируем по убыванию зарплаты
+            sorted_vacancies = sorted(
+                filtered_vacancies,
+                key=lambda x: x.salary.get_max_salary() or 0,
+                reverse=True
+            )
+            
+            print(f"Найдено {len(sorted_vacancies)} вакансий:")
+            self._display_vacancies(sorted_vacancies[:10])  # Показываем первые 10
+            
+            if len(sorted_vacancies) > 10:
+                print(f"\n... и еще {len(sorted_vacancies) - 10} вакансий.")
+                
+        except Exception as e:
+            logger.error(f"Ошибка при фильтрации по зарплате: {e}")
+            print(f"Ошибка при фильтрации: {e}")
     
     def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
         """Отображение списка вакансий"""
