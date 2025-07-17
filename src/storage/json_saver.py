@@ -40,6 +40,8 @@ class JSONSaver:
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
 
+        from typing import List, Union, Optional
+
     def add_vacancy(self, vacancies: Union[Vacancy, List[Vacancy]]) -> List[str]:
         """
         Добавляет вакансии в файл с выводом информационных сообщений об изменениях.
@@ -130,7 +132,9 @@ class JSONSaver:
             logger.critical(f"Критическая ошибка загрузки: {e}")
             raise
 
-        
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.warning(f"Ошибка загрузки файла: {e}")
+            return []
 
     def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[Vacancy]:
         """
@@ -250,6 +254,9 @@ class JSONSaver:
         except Exception as e:
             logger.critical(f"Ошибка записи в файл: {e}")
             raise
+
+        with open(self.filename, 'w', encoding='utf-8') as f:
+            json.dump(valid_data, f, ensure_ascii=False, indent=2)
 
     def _vacancy_to_dict(self, vacancy: Vacancy) -> Dict[str, Any]:
         """Преобразование объекта Vacancy в словарь"""
