@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from src.vacancies.models import Vacancy
 from src.utils.cache import FileCache
 

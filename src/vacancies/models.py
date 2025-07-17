@@ -136,8 +136,8 @@ class Vacancy(AbstractVacancy):
 
             return cls(
                 vacancy_id=str(data.get('id', '')),
-                title=data.get('title', ''),
-                url=data.get('url', ''),
+                title=data.get('name', ''),
+                url=data.get('alternate_url', ''),
                 salary=salary,
                 description=data.get('description', ''),
                 requirements=data.get('snippet', {}).get('requirement') if isinstance(data.get('snippet'), dict) else None,
