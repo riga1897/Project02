@@ -146,6 +146,9 @@ class UserInterface:
         if not keyword:
             return
         
+        # Спрашиваем о режиме отладки
+        debug_mode = input("Включить режим отладки? (y/n): ").strip().lower() in ['y', 'yes', 'д', 'да']
+        
         try:
             vacancies = self.json_saver.get_vacancies()
             
@@ -153,11 +156,22 @@ class UserInterface:
                 print("Нет сохраненных вакансий.")
                 return
             
+            if debug_mode:
+                from src.utils.ui_helpers import debug_search_vacancies
+                debug_search_vacancies(vacancies, keyword)
+            
             # Фильтруем по ключевому слову в описании
             filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
             
             if not filtered_vacancies:
                 print(f"Среди сохраненных вакансий не найдено ни одной с ключевым словом '{keyword}'.")
+                
+                if debug_mode:
+                    print("\nПроверим первые 3 вакансии детально:")
+                    from src.utils.ui_helpers import debug_vacancy_search
+                    for i, vacancy in enumerate(vacancies[:3]):
+                        debug_vacancy_search(vacancy, keyword)
+                        
                 return
             
             print(f"\nНайдено {len(filtered_vacancies)} сохраненных вакансий с ключевым словом '{keyword}':")

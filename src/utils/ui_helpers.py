@@ -133,7 +133,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
             relevance_score += 5
         
-        # Проверяем в обязанностях (средний приоритет)
+        # Проверяем в обязанностях (средний приоритет)  
         if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
             relevance_score += 5
         
@@ -153,6 +153,29 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
                         relevance_score += 6
                 elif isinstance(skill, str) and keyword_lower in skill.lower():
                     relevance_score += 6
+        
+        # Дополнительные проверки для улучшения поиска
+        # Проверяем в информации о работодателе
+        if vacancy.employer and isinstance(vacancy.employer, dict):
+            employer_name = vacancy.employer.get('name', '')
+            if employer_name and keyword_lower in employer_name.lower():
+                relevance_score += 4
+        
+        # Проверяем в типе занятости
+        if vacancy.employment and keyword_lower in vacancy.employment.lower():
+            relevance_score += 3
+            
+        # Проверяем в графике работы
+        if vacancy.schedule and keyword_lower in vacancy.schedule.lower():
+            relevance_score += 3
+            
+        # Проверяем в опыте работы
+        if vacancy.experience and keyword_lower in vacancy.experience.lower():
+            relevance_score += 3
+            
+        # Проверяем в бонусах/льготах
+        if vacancy.benefits and keyword_lower in vacancy.benefits.lower():
+            relevance_score += 2
         
         if relevance_score > 0:
             # Добавляем временный атрибут для сортировки
@@ -419,3 +442,58 @@ def print_menu_separator(width: int = 40) -> None:
         width: Ширина разделителя
     """
     print("-" * width)
+def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
+    """
+    Отладочная функция для проверки содержимого вакансии при поиске
+    
+    Args:
+        vacancy: Вакансия для отладки
+        keyword: Ключевое слово для поиска
+    """
+    print(f"\n=== Отладка вакансии: {vacancy.title} ===")
+    print(f"ID: {vacancy.vacancy_id}")
+    print(f"Заголовок: {vacancy.title}")
+    print(f"Описание: {vacancy.description[:200] if vacancy.description else 'Нет'}...")
+    print(f"Требования: {vacancy.requirements[:200] if vacancy.requirements else 'Нет'}...")
+    print(f"Обязанности: {vacancy.responsibilities[:200] if vacancy.responsibilities else 'Нет'}...")
+    print(f"Ключевые слова: {vacancy.keywords}")
+    print(f"Навыки: {vacancy.skills}")
+    print(f"Работодатель: {vacancy.employer}")
+    print(f"Опыт: {vacancy.experience}")
+    print(f"Занятость: {vacancy.employment}")
+    print(f"График: {vacancy.schedule}")
+    print(f"Бонусы: {vacancy.benefits}")
+    
+    # Проверяем наличие ключевого слова
+    keyword_lower = keyword.lower()
+    found_in = []
+    
+    if vacancy.title and keyword_lower in vacancy.title.lower():
+        found_in.append("заголовок")
+    if vacancy.description and keyword_lower in vacancy.description.lower():
+        found_in.append("описание")
+    if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
+        found_in.append("требования")
+    if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
+        found_in.append("обязанности")
+    if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
+        found_in.append("ключевые слова")
+    
+    print(f"Ключевое слово '{keyword}' найдено в: {', '.join(found_in) if found_in else 'НИГДЕ'}")
+    print("=" * 50)
+
+
+def debug_search_vacancies(vacancies: List[Vacancy], keyword: str) -> None:
+    """
+    Отладочная функция для анализа всех сохраненных вакансий
+    
+    Args:
+        vacancies: Список вакансий для анализа
+        keyword: Ключевое слово для поиска
+    """
+    print(f"\n=== Отладка поиска по слову '{keyword}' ===")
+    print(f"Всего вакансий: {len(vacancies)}")
+    
+    for i, vacancy in enumerate(vacancies[:5]):  # Показываем первые 5
+        print(f"\nВакансия {i+1}:")
+        debug_vacancy_search(vacancy, keyword)
