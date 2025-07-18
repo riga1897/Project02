@@ -24,13 +24,17 @@ class VacancyFormatter:
         """
         lines = []
         
-        header = f"{number}. " if number else ""
-        header += f"{vacancy.title or 'Не указано'}"
-        lines.append(header)
+        # Добавляем номер отдельной строкой
+        if number:
+            lines.append(f"{number}.")
         
-        lines.append(f"   Источник: {getattr(vacancy, 'source', 'Не указан')}")
-        lines.append(f"   Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
-        lines.append(f"   ID: {vacancy.vacancy_id}")
+        # Добавляем название
+        title = vacancy.title or vacancy.name or 'Не указано'
+        lines.append(f"Название: {title}")
+        
+        lines.append(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
+        lines.append(f"Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
+        lines.append(f"ID: {vacancy.vacancy_id}")
         
         if vacancy.salary:
             lines.append(f"   Зарплата: {vacancy.salary}")
@@ -89,13 +93,17 @@ class VacancyFormatter:
             vacancy: Объект вакансии
             number: Порядковый номер (опционально)
         """
-        header = f"{number}. " if number else ""
-        header += f"{vacancy.title or 'Не указано'}"
+        # Печатаем номер отдельно
+        if number:
+            print(f"{number}.")
         
-        print(f"{header}")
-        print(f"   Источник: {getattr(vacancy, 'source', 'Не указан')}")
-        print(f"   Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
-        print(f"   ID: {vacancy.vacancy_id}")
+        # Печатаем название
+        title = vacancy.title or vacancy.name or 'Не указано'
+        print(f"Название: {title}")
+        
+        print(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
+        print(f"Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
+        print(f"ID: {vacancy.vacancy_id}")
         
         if vacancy.salary:
             print(f"   Зарплата: {vacancy.salary}")
