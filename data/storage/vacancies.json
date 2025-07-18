@@ -1,1 +1,50 @@
-[]
+[
+  {
+    "id": "1",
+    "title": "Python Developer",
+    "url": "https://test1.com",
+    "salary": {
+      "from": 100000,
+      "to": 0,
+      "currency": "RUR",
+      "gross": false,
+      "period": "month"
+    },
+    "description": "Python dev",
+    "requirements": null,
+    "responsibilities": null,
+    "employer": null,
+    "experience": null,
+    "employment": null,
+    "schedule": null,
+    "published_at": null,
+    "skills": [],
+    "detailed_description": "Python dev",
+    "benefits": null,
+    "source": "hh.ru"
+  },
+  {
+    "id": "2",
+    "title": "Java Developer",
+    "url": "https://test2.com",
+    "salary": {
+      "from": 120000,
+      "to": 0,
+      "currency": "RUR",
+      "gross": false,
+      "period": "month"
+    },
+    "description": "Java dev",
+    "requirements": null,
+    "responsibilities": null,
+    "employer": null,
+    "experience": null,
+    "employment": null,
+    "schedule": null,
+    "published_at": null,
+    "skills": [],
+    "detailed_description": "Java dev",
+    "benefits": null,
+    "source": "hh.ru"
+  }
+]

@@ -1,0 +1,488 @@
+tests/test_core_api.py::TestHeadHunterAPI::test_init PASSED       [  2%]
+tests/test_core_api.py::TestHeadHunterAPI::test_validate_vacancy_valid PASSED [  4%]
+tests/test_core_api.py::TestHeadHunterAPI::test_validate_vacancy_invalid PASSED [  6%]
+tests/test_core_api.py::TestHeadHunterAPI::test_get_vacancies_page_success PASSED [  9%]
+tests/test_core_api.py::TestHeadHunterAPI::test_get_vacancies_page_error PASSED [ 11%]
+tests/test_core_api.py::TestHeadHunterAPI::test_get_vacancies_success PASSED [ 13%]
+tests/test_core_api.py::TestHeadHunterAPI::test_get_empty_response PASSED [ 16%]
+tests/test_core_api.py::TestSuperJobAPI::test_init FAILED         [ 18%]
+tests/test_core_api.py::TestSuperJobAPI::test_get_vacancies_success FAILED [ 20%]
+tests/test_core_api.py::TestUnifiedAPI::test_search_from_both_sources FAILED [ 23%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_creation_with_salary PASSED [ 25%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_creation_without_salary PASSED [ 27%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_comparison PASSED [ 30%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_to_dict PASSED [ 32%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_from_dict PASSED [ 34%]
+tests/test_vacancy_models.py::TestVacancy::test_cast_to_object_list PASSED [ 37%]
+tests/test_vacancy_models.py::TestSuperJobVacancy::test_superjob_vacancy_creation FAILED [ 39%]
+tests/test_vacancy_models.py::TestSuperJobVacancy::test_superjob_vacancy_no_salary FAILED [ 41%]
+tests/test_storage_system.py::TestJSONSaver::test_json_saver_init FAILED [ 44%]
+tests/test_storage_system.py::TestJSONSaver::test_add_vacancy FAILED [ 46%]
+tests/test_storage_system.py::TestJSONSaver::test_add_multiple_vacancies FAILED [ 48%]
+tests/test_storage_system.py::TestJSONSaver::test_get_vacancies PASSED [ 51%]
+tests/test_storage_system.py::TestJSONSaver::test_get_vacancies_with_filters FAILED [ 53%]
+tests/test_storage_system.py::TestJSONSaver::test_delete_vacancy FAILED [ 55%]
+tests/test_storage_system.py::TestJSONSaver::test_clear_all_vacancies FAILED [ 58%]
+tests/test_storage_system.py::TestJSONSaver::test_file_corruption_handling FAILED [ 60%]
+tests/test_utilities.py::TestSalary::test_salary_with_from_and_to PASSED [ 62%]
+tests/test_utilities.py::TestSalary::test_salary_only_from FAILED [ 65%]
+tests/test_utilities.py::TestSalary::test_salary_only_to FAILED   [ 67%]
+tests/test_utilities.py::TestSalary::test_salary_none FAILED      [ 69%]
+tests/test_utilities.py::TestSalary::test_salary_comparison FAILED [ 72%]
+tests/test_utilities.py::TestSalary::test_salary_str_representation FAILED [ 74%]
+tests/test_utilities.py::TestSearchUtils::test_filter_by_keyword PASSED [ 76%]
+tests/test_utilities.py::TestSearchUtils::test_filter_case_insensitive PASSED [ 79%]
+tests/test_utilities.py::TestSearchUtils::test_vacancy_contains_keyword PASSED [ 81%]
+tests/test_utilities.py::TestSearchUtils::test_filter_no_results PASSED [ 83%]
+tests/test_utilities.py::TestVacancyOperations::test_sort_by_salary_desc FAILED [ 86%]
+tests/test_utilities.py::TestVacancyOperations::test_sort_by_salary_asc FAILED [ 88%]
+tests/test_utilities.py::TestVacancyOperations::test_get_top_vacancies FAILED [ 90%]
+tests/test_utilities.py::TestVacancyOperations::test_filter_by_salary_range FAILED [ 93%]
+tests/test_utilities.py::TestVacancyFormatter::test_format_single_vacancy FAILED [ 95%]
+tests/test_utilities.py::TestVacancyFormatter::test_format_vacancy_list FAILED [ 97%]
+tests/test_utilities.py::TestVacancyFormatter::test_format_vacancy_without_salary FAILED [100%]
+
+=============================== FAILURES ================================
+_______________________ TestSuperJobAPI.test_init _______________________
+
+self = <tests.test_core_api.TestSuperJobAPI object at 0x7f709a57d520>
+sj_api = <src.api_modules.sj_api.SuperJobAPI object at 0x7f709b6bf760>
+
+    def test_init(self, sj_api):
+        """Тест инициализации SuperJob API"""
+>       assert sj_api.BASE_URL == "https://api.superjob.ru/2.0/vacancies/"
+E       AssertionError: assert 'https://api....2.0/vacancies' == 'https://api.....0/vacancies/'
+E         
+E         - https://api.superjob.ru/2.0/vacancies/
+E         ?                                      -
+E         + https://api.superjob.ru/2.0/vacancies
+
+tests/test_core_api.py:129: AssertionError
+______________ TestSuperJobAPI.test_get_vacancies_success _______________
+
+self = <tests.test_core_api.TestSuperJobAPI object at 0x7f709b25fd30>
+mock_connect = <MagicMock name='_CachedAPI__connect_to_api' id='140121601416688'>
+sj_api = <src.api_modules.sj_api.SuperJobAPI object at 0x7f709a471b80>
+mock_sj_response = {'objects': [{'candidat': 'Опыт работы с Python', 'currency': 'rub', 'firm_name': 'Tech Company', 'id': 123, ...}], 'total': 1}
+
+    @patch.object(SuperJobAPI, '_CachedAPI__connect_to_api')
+    def test_get_vacancies_success(self, mock_connect, sj_api, mock_sj_response):
+        """Тест успешного получения вакансий из SuperJob"""
+        mock_connect.return_value = mock_sj_response
+    
+        result = sj_api.get_vacancies("Python")
+    
+>       assert len(result) >= 1
+E       assert 0 >= 1
+E        +  where 0 = len([])
+
+tests/test_core_api.py:139: AssertionError
+------------------------- Captured stderr call --------------------------
+ERROR:src.api_modules.sj_api:Failed to get vacancies: 'SuperJobAPI' object has no attribute '_connect_to_api'
+--------------------------- Captured log call ---------------------------
+ERROR    src.api_modules.sj_api:sj_api.py:134 Failed to get vacancies: 'SuperJobAPI' object has no attribute '_connect_to_api'
+_____________ TestUnifiedAPI.test_search_from_both_sources ______________
+
+self = <tests.test_core_api.TestUnifiedAPI object at 0x7f709b25f8b0>
+mock_sj = <MagicMock name='SuperJobAPI' id='140121601377856'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140121601534272'>
+unified_api = <src.api_modules.unified_api.UnifiedAPI object at 0x7f709a468f40>
+
+    @patch('src.api_modules.unified_api.HeadHunterAPI')
+    @patch('src.api_modules.unified_api.SuperJobAPI')
+    def test_search_from_both_sources(self, mock_sj, mock_hh, unified_api):
+        """Тест поиска из обоих источников"""
+        mock_hh_instance = Mock()
+        mock_sj_instance = Mock()
+        mock_hh.return_value = mock_hh_instance
+        mock_sj.return_value = mock_sj_instance
+    
+        mock_hh_instance.get_vacancies.return_value = [{'name': 'HH Vacancy', 'source': 'hh'}]
+        mock_sj_instance.get_vacancies.return_value = [{'profession': 'SJ Vacancy', 'source': 'sj'}]
+    
+>       result = unified_api.search_vacancies("Python", sources=['hh', 'sj'])
+E       AttributeError: 'UnifiedAPI' object has no attribute 'search_vacancies'
+
+tests/test_core_api.py:163: AttributeError
+__________ TestSuperJobVacancy.test_superjob_vacancy_creation ___________
+
+self = <tests.test_vacancy_models.TestSuperJobVacancy object at 0x7f709a5ef940>
+sj_data = {'candidat': 'Опыт работы с Python', 'currency': 'rub', 'firm_name': 'Tech Company', 'id': 123, ...}
+
+    def test_superjob_vacancy_creation(self, sj_data):
+        """Тест создания SuperJob вакансии"""
+>       vacancy = SuperJobVacancy.from_api_data(sj_data)
+E       AttributeError: type object 'SuperJobVacancy' has no attribute 'from_api_data'
+
+tests/test_vacancy_models.py:168: AttributeError
+__________ TestSuperJobVacancy.test_superjob_vacancy_no_salary __________
+
+self = <tests.test_vacancy_models.TestSuperJobVacancy object at 0x7f709a5efb20>
+
+    def test_superjob_vacancy_no_salary(self):
+        """Тест создания SuperJob вакансии без зарплаты"""
+        data = {
+            'profession': 'Intern',
+            'link': 'https://superjob.ru/vacancy/456',
+            'payment_from': 0,
+            'payment_to': 0,
+            'currency': 'rub',
+            'candidat': 'Стажировка',
+            'firm_name': 'Startup',
+            'id': 456
+        }
+    
+>       vacancy = SuperJobVacancy.from_api_data(data)
+E       AttributeError: type object 'SuperJobVacancy' has no attribute 'from_api_data'
+
+tests/test_vacancy_models.py:188: AttributeError
+__________________ TestJSONSaver.test_json_saver_init ___________________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a6fd6a0>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_json_saver_init0/test_vacancies.json')
+
+    def test_json_saver_init(self, temp_json_file):
+        """Тест инициализации JSONSaver"""
+        saver = JSONSaver(temp_json_file)
+>       assert saver.file_path == temp_json_file
+E       AttributeError: 'JSONSaver' object has no attribute 'file_path'
+
+tests/test_storage_system.py:44: AttributeError
+____________________ TestJSONSaver.test_add_vacancy _____________________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a6fd880>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_add_vacancy0/test_vacancies.json')
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f709a42dca0>, <src.vacancies.models.Vacancy object at 0x7f709a42de00>]
+
+    def test_add_vacancy(self, temp_json_file, sample_vacancies):
+        """Тест добавления вакансии"""
+        saver = JSONSaver(temp_json_file)
+        vacancy = sample_vacancies[0]
+    
+        saver.add_vacancy(vacancy)
+    
+>       stored_data = json.loads(temp_json_file.read_text())
+
+tests/test_storage_system.py:55: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1256: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1242: in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/tmp/pytest-of-runner/pytest-8/test_add_vacancy0/test_vacancies.json')
+name = '/tmp/pytest-of-runner/pytest-8/test_add_vacancy0/test_vacancies.json'
+flags = 524288, mode = 438
+
+    def _opener(self, name, flags, mode=0o666):
+        # A stub for the opener argument to built-in open()
+>       return self._accessor.open(self, flags, mode)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-8/test_add_vacancy0/test_vacancies.json'
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1110: FileNotFoundError
+_______________ TestJSONSaver.test_add_multiple_vacancies _______________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a6fdc10>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_add_multiple_vacancies0/test_vacancies.json')
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f709a506300>, <src.vacancies.models.Vacancy object at 0x7f709c1145c0>]
+
+    def test_add_multiple_vacancies(self, temp_json_file, sample_vacancies):
+        """Тест добавления нескольких вакансий"""
+        saver = JSONSaver(temp_json_file)
+    
+        for vacancy in sample_vacancies:
+            saver.add_vacancy(vacancy)
+    
+>       stored_data = json.loads(temp_json_file.read_text())
+
+tests/test_storage_system.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1256: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1242: in open
+    return io.open(self, mode, buffering, encoding, errors, newline,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = PosixPath('/tmp/pytest-of-runner/pytest-8/test_add_multiple_vacancies0/test_vacancies.json')
+name = '/tmp/pytest-of-runner/pytest-8/test_add_multiple_vacancies0/test_vacancies.json'
+flags = 524288, mode = 438
+
+    def _opener(self, name, flags, mode=0o666):
+        # A stub for the opener argument to built-in open()
+>       return self._accessor.open(self, flags, mode)
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-8/test_add_multiple_vacancies0/test_vacancies.json'
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/pathlib.py:1110: FileNotFoundError
+_____________ TestJSONSaver.test_get_vacancies_with_filters _____________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a6fda90>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_get_vacancies_with_filter0/test_vacancies.json')
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f709a43ba90>, <src.vacancies.models.Vacancy object at 0x7f709a43bb40>]
+
+    def test_get_vacancies_with_filters(self, temp_json_file, sample_vacancies):
+        """Тест получения вакансий с фильтрами"""
+        saver = JSONSaver(temp_json_file)
+    
+        for vacancy in sample_vacancies:
+            saver.add_vacancy(vacancy)
+    
+        # Фильтр по названию
+        result = saver.get_vacancies({'title': 'Python Developer'})
+>       assert len(result) == 1
+E       assert 2 == 1
+E        +  where 2 = len([<src.vacancies.models.Vacancy object at 0x7f7099bf01a0>, <src.vacancies.models.Vacancy object at 0x7f7099bf0460>])
+
+tests/test_storage_system.py:93: AssertionError
+___________________ TestJSONSaver.test_delete_vacancy ___________________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a87cee0>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_delete_vacancy0/test_vacancies.json')
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bf09e0>, <src.vacancies.models.Vacancy object at 0x7f7099bf0a90>]
+
+    def test_delete_vacancy(self, temp_json_file, sample_vacancies):
+        """Тест удаления вакансии"""
+        saver = JSONSaver(temp_json_file)
+        vacancy = sample_vacancies[0]
+    
+        saver.add_vacancy(vacancy)
+>       assert len(saver.get_vacancies()) == 1
+E       assert 2 == 1
+E        +  where 2 = len([<src.vacancies.models.Vacancy object at 0x7f7099bf0d50>, <src.vacancies.models.Vacancy object at 0x7f7099bf0e00>])
+E        +    where [<src.vacancies.models.Vacancy object at 0x7f7099bf0d50>, <src.vacancies.models.Vacancy object at 0x7f7099bf0e00>] = get_vacancies()
+E        +      where get_vacancies = <src.storage.json_saver.JSONSaver object at 0x7f709b47d640>.get_vacancies
+
+tests/test_storage_system.py:102: AssertionError
+________________ TestJSONSaver.test_clear_all_vacancies _________________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a87c340>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_clear_all_vacancies0/test_vacancies.json')
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bea250>, <src.vacancies.models.Vacancy object at 0x7f7099bea300>]
+
+    def test_clear_all_vacancies(self, temp_json_file, sample_vacancies):
+        """Тест очистки всех вакансий"""
+        saver = JSONSaver(temp_json_file)
+    
+        for vacancy in sample_vacancies:
+            saver.add_vacancy(vacancy)
+    
+        assert len(saver.get_vacancies()) == 2
+    
+>       saver.clear_all()
+E       AttributeError: 'JSONSaver' object has no attribute 'clear_all'
+
+tests/test_storage_system.py:116: AttributeError
+______________ TestJSONSaver.test_file_corruption_handling ______________
+
+self = <tests.test_storage_system.TestJSONSaver object at 0x7f709a87c5b0>
+temp_json_file = PosixPath('/tmp/pytest-of-runner/pytest-8/test_file_corruption_handling0/test_vacancies.json')
+
+    def test_file_corruption_handling(self, temp_json_file):
+        """Тест обработки поврежденного файла"""
+        # Записываем некорректный JSON
+        temp_json_file.write_text("invalid json")
+    
+        # Должен создаться новый пустой файл
+        saver = JSONSaver(temp_json_file)
+>       assert saver.get_vacancies() == []
+E       assert [<src.vacanci...7f7099beab40>] == []
+E         
+E         Left contains 2 more items, first extra item: <src.vacancies.models.Vacancy object at 0x7f7099beaa90>
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     <src.vacancies.models.Vacancy object at 0x7f7099beaa90>,
+E         +     <src.vacancies.models.Vacancy object at 0x7f7099beab40>,
+E         + ]
+
+tests/test_storage_system.py:130: AssertionError
+___________________ TestSalary.test_salary_only_from ____________________
+
+self = <tests.test_utilities.TestSalary object at 0x7f709aa624f0>
+
+    def test_salary_only_from(self):
+        """Тест зарплаты только с минимумом"""
+        salary = Salary({'from': 100000, 'currency': 'RUR'})
+        assert salary.salary_from == 100000
+>       assert salary.salary_to is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f709a457940>.salary_to
+
+tests/test_utilities.py:29: AssertionError
+____________________ TestSalary.test_salary_only_to _____________________
+
+self = <tests.test_utilities.TestSalary object at 0x7f709aa62340>
+
+    def test_salary_only_to(self):
+        """Тест зарплаты только с максимумом"""
+        salary = Salary({'to': 150000, 'currency': 'RUR'})
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f7099bc6d60>.salary_from
+
+tests/test_utilities.py:35: AssertionError
+______________________ TestSalary.test_salary_none ______________________
+
+self = <tests.test_utilities.TestSalary object at 0x7f709aa62190>
+
+    def test_salary_none(self):
+        """Тест пустой зарплаты"""
+        salary = Salary(None)
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f7099bc6ca0>.salary_from
+
+tests/test_utilities.py:42: AssertionError
+___________________ TestSalary.test_salary_comparison ___________________
+
+self = <tests.test_utilities.TestSalary object at 0x7f709b25c220>
+
+    def test_salary_comparison(self):
+        """Тест сравнения зарплат"""
+        salary1 = Salary({'from': 100000, 'currency': 'RUR'})
+        salary2 = Salary({'from': 150000, 'currency': 'RUR'})
+    
+>       assert salary2 > salary1
+E       TypeError: '>' not supported between instances of 'Salary' and 'Salary'
+
+tests/test_utilities.py:52: TypeError
+_______________ TestSalary.test_salary_str_representation _______________
+
+self = <tests.test_utilities.TestSalary object at 0x7f709b25c6a0>
+
+    def test_salary_str_representation(self):
+        """Тест строкового представления зарплаты"""
+        salary = Salary({'from': 100000, 'to': 150000, 'currency': 'RUR'})
+        result = str(salary)
+>       assert '100000' in result
+E       AssertionError: assert '100000' in 'от 100,000 до 150,000 руб. в месяц'
+
+tests/test_utilities.py:60: AssertionError
+____________ TestVacancyOperations.test_sort_by_salary_desc _____________
+
+self = <tests.test_utilities.TestVacancyOperations object at 0x7f709b25c820>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bae7d0>, <src.vacancies.models.Vacancy object at 0x7f7099beaa90>, <src.vacancies.models.Vacancy object at 0x7f7099beab40>]
+
+    def test_sort_by_salary_desc(self, sample_vacancies):
+        """Тест сортировки по зарплате по убыванию"""
+        operations = VacancyOperations()
+    
+>       result = operations.sort_by_salary(sample_vacancies, reverse=True)
+E       AttributeError: 'VacancyOperations' object has no attribute 'sort_by_salary'
+
+tests/test_utilities.py:156: AttributeError
+_____________ TestVacancyOperations.test_sort_by_salary_asc _____________
+
+self = <tests.test_utilities.TestVacancyOperations object at 0x7f709b25c7f0>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bd21a0>, <src.vacancies.models.Vacancy object at 0x7f7099bd2250>, <src.vacancies.models.Vacancy object at 0x7f7099bd2300>]
+
+    def test_sort_by_salary_asc(self, sample_vacancies):
+        """Тест сортировки по зарплате по возрастанию"""
+        operations = VacancyOperations()
+    
+>       result = operations.sort_by_salary(sample_vacancies, reverse=False)
+E       AttributeError: 'VacancyOperations' object has no attribute 'sort_by_salary'
+
+tests/test_utilities.py:166: AttributeError
+_____________ TestVacancyOperations.test_get_top_vacancies ______________
+
+self = <tests.test_utilities.TestVacancyOperations object at 0x7f709b25cbe0>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bd2720>, <src.vacancies.models.Vacancy object at 0x7f7099bd27d0>, <src.vacancies.models.Vacancy object at 0x7f7099bd2880>]
+
+    def test_get_top_vacancies(self, sample_vacancies):
+        """Тест получения топ N вакансий"""
+        operations = VacancyOperations()
+    
+>       result = operations.get_top_by_salary(sample_vacancies, 2)
+E       AttributeError: 'VacancyOperations' object has no attribute 'get_top_by_salary'
+
+tests/test_utilities.py:175: AttributeError
+___________ TestVacancyOperations.test_filter_by_salary_range ___________
+
+self = <tests.test_utilities.TestVacancyOperations object at 0x7f709aa62e20>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f7099bd2ca0>, <src.vacancies.models.Vacancy object at 0x7f7099bd2d50>, <src.vacancies.models.Vacancy object at 0x7f7099bd2e00>]
+
+    def test_filter_by_salary_range(self, sample_vacancies):
+        """Тест фильтрации по диапазону зарплат"""
+        operations = VacancyOperations()
+    
+>       result = operations.filter_by_salary_range(
+            sample_vacancies,
+            min_salary=120000,
+            max_salary=200000
+        )
+E       AttributeError: 'VacancyOperations' object has no attribute 'filter_by_salary_range'
+
+tests/test_utilities.py:184: AttributeError
+____________ TestVacancyFormatter.test_format_single_vacancy ____________
+
+self = <tests.test_utilities.TestVacancyFormatter object at 0x7f709aab2a30>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f7099bac300>
+
+    def test_format_single_vacancy(self, sample_vacancy):
+        """Тест форматирования одной вакансии"""
+        formatter = VacancyFormatter()
+    
+>       result = formatter.format_vacancy(sample_vacancy)
+E       AttributeError: 'VacancyFormatter' object has no attribute 'format_vacancy'
+
+tests/test_utilities.py:212: AttributeError
+_____________ TestVacancyFormatter.test_format_vacancy_list _____________
+
+self = <tests.test_utilities.TestVacancyFormatter object at 0x7f709aab2ca0>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f7099bac720>
+
+    def test_format_vacancy_list(self, sample_vacancy):
+        """Тест форматирования списка вакансий"""
+        formatter = VacancyFormatter()
+        vacancies = [sample_vacancy]
+    
+>       result = formatter.format_vacancy_list(vacancies)
+E       AttributeError: 'VacancyFormatter' object has no attribute 'format_vacancy_list'
+
+tests/test_utilities.py:224: AttributeError
+________ TestVacancyFormatter.test_format_vacancy_without_salary ________
+
+self = <tests.test_utilities.TestVacancyFormatter object at 0x7f709aab2cd0>
+
+    def test_format_vacancy_without_salary(self):
+        """Тест форматирования вакансии без зарплаты"""
+        vacancy = Vacancy(
+            title="Intern",
+            url="https://test.com",
+            salary=None,
+            description="Стажировка",
+            vacancy_id="1"
+        )
+    
+        formatter = VacancyFormatter()
+>       result = formatter.format_vacancy(vacancy)
+E       AttributeError: 'VacancyFormatter' object has no attribute 'format_vacancy'
+
+tests/test_utilities.py:240: AttributeError
+======================== short test summary info ========================
+FAILED tests/test_core_api.py::TestSuperJobAPI::test_init - AssertionError: assert 'https://api....2.0/vacancies' == 'https://ap...
+FAILED tests/test_core_api.py::TestSuperJobAPI::test_get_vacancies_success - assert 0 >= 1
+FAILED tests/test_core_api.py::TestUnifiedAPI::test_search_from_both_sources - AttributeError: 'UnifiedAPI' object has no attribute 'search_vacancies'
+FAILED tests/test_vacancy_models.py::TestSuperJobVacancy::test_superjob_vacancy_creation - AttributeError: type object 'SuperJobVacancy' has no attribute 'from...
+FAILED tests/test_vacancy_models.py::TestSuperJobVacancy::test_superjob_vacancy_no_salary - AttributeError: type object 'SuperJobVacancy' has no attribute 'from...
+FAILED tests/test_storage_system.py::TestJSONSaver::test_json_saver_init - AttributeError: 'JSONSaver' object has no attribute 'file_path'
+FAILED tests/test_storage_system.py::TestJSONSaver::test_add_vacancy - FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest...
+FAILED tests/test_storage_system.py::TestJSONSaver::test_add_multiple_vacancies - FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest...
+FAILED tests/test_storage_system.py::TestJSONSaver::test_get_vacancies_with_filters - assert 2 == 1
+FAILED tests/test_storage_system.py::TestJSONSaver::test_delete_vacancy - assert 2 == 1
+FAILED tests/test_storage_system.py::TestJSONSaver::test_clear_all_vacancies - AttributeError: 'JSONSaver' object has no attribute 'clear_all'
+FAILED tests/test_storage_system.py::TestJSONSaver::test_file_corruption_handling - assert [<src.vacanci...7f7099beab40>] == []
+FAILED tests/test_utilities.py::TestSalary::test_salary_only_from - assert 0 is None
+FAILED tests/test_utilities.py::TestSalary::test_salary_only_to - assert 0 is None
+FAILED tests/test_utilities.py::TestSalary::test_salary_none - assert 0 is None
+FAILED tests/test_utilities.py::TestSalary::test_salary_comparison - TypeError: '>' not supported between instances of 'Salary' and 'Salary'
+FAILED tests/test_utilities.py::TestSalary::test_salary_str_representation - AssertionError: assert '100000' in 'от 100,000 до 150,000 руб. в месяц'
+FAILED tests/test_utilities.py::TestVacancyOperations::test_sort_by_salary_desc - AttributeError: 'VacancyOperations' object has no attribute 'sort_by...
+FAILED tests/test_utilities.py::TestVacancyOperations::test_sort_by_salary_asc - AttributeError: 'VacancyOperations' object has no attribute 'sort_by...
+FAILED tests/test_utilities.py::TestVacancyOperations::test_get_top_vacancies - AttributeError: 'VacancyOperations' object has no attribute 'get_top...
+FAILED tests/test_utilities.py::TestVacancyOperations::test_filter_by_salary_range - AttributeError: 'VacancyOperations' object has no attribute 'filter_...
+FAILED tests/test_utilities.py::TestVacancyFormatter::test_format_single_vacancy - AttributeError: 'VacancyFormatter' object has no attribute 'format_v...
+FAILED tests/test_utilities.py::TestVacancyFormatter::test_format_vacancy_list - AttributeError: 'VacancyFormatter' object has no attribute 'format_v...
+FAILED tests/test_utilities.py::TestVacancyFormatter::test_format_vacancy_without_salary - AttributeError: 'VacancyFormatter' object has no attribute 'format_v...
