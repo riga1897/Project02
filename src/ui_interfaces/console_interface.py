@@ -1,6 +1,5 @@
 import logging
 from typing import List, Optional
-from src.api_modules.unified_api import UnifiedVacancyAPI
 from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
 from src.utils.ui_paginator import paginate_display
