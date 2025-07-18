@@ -2,16 +2,15 @@
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 import logging
-from src.api_modules.base_api import BaseAPI
+from src.api_modules.cached_api import CachedAPI
 from src.api_modules.get_api import APIConnector
 from src.utils.paginator import Paginator
 from src.config.api_config import APIConfig
-from src.utils.cache import FileCache
 
 logger = logging.getLogger(__name__)
 
 
-class HeadHunterAPI(BaseAPI):
+class HeadHunterAPI(CachedAPI):
     """Enhanced HH API client with robust error handling and caching"""
 
     BASE_URL = "https://api.hh.ru/vacancies"
@@ -19,60 +18,14 @@ class HeadHunterAPI(BaseAPI):
     REQUIRED_VACANCY_FIELDS = {'name', 'alternate_url', 'salary'}
 
     def __init__(self, config: Optional[APIConfig] = None):
+        super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
         self.config = config or APIConfig()
         self.connector = APIConnector(self.config)
         self.paginator = Paginator()
-        self.cache = FileCache(self.DEFAULT_CACHE_DIR)
-        self._init_cache()
 
-    def _init_cache(self) -> None:
-        """Initialize cache directory with validation"""
-        try:
-            Path(self.DEFAULT_CACHE_DIR).mkdir(parents=True, exist_ok=True)
-            logger.info(f"Cache directory initialized: {self.DEFAULT_CACHE_DIR}")
-        except Exception as e:
-            logger.error(f"Failed to initialize cache: {e}")
-            raise
-
-    def _connect_to_api(self, url: str, params: Dict) -> Dict:
-        """Execute API request with caching and enhanced error handling"""
-        cache_key = self._generate_cache_key(params)
-
-        try:
-            # Проверяем кэш
-            cached = self.cache.load_response("hh", cache_key)
-            if cached and self.validate_response(cached.get("data")):
-                logger.debug(f"Cache hit for HH params: {params}")
-                return cached["data"]
-
-            # Делаем реальный API запрос если кэш отсутствует
-            logger.info(f"Making API request to {url} with params: {params}")
-            response = self.connector.connect(url, params)
-
-            if not self.validate_response(response):
-                logger.error(f"Invalid API response structure: {response}")
-                return {'items': []}
-
-            # Сохраняем в кэш
-            self.cache.save_response("hh", cache_key, response)
-            logger.info(f"Response cached for HH params: {params}")
-            return response
-
-        except Exception as e:
-            logger.error(f"API connection failed: {e}")
-            # Попробуем сделать запрос без кэша
-            try:
-                logger.info("Attempting direct API call without cache...")
-                response = self.connector.connect(url, params)
-                if self.validate_response(response):
-                    return response
-            except Exception as e2:
-                logger.error(f"Direct API call also failed: {e2}")
-            return {'items': []}
-
-    def _generate_cache_key(self, params: Dict) -> str:
-        """Generate consistent cache key from params"""
-        return str(sorted(params.items()))
+    def _get_empty_response(self) -> Dict:
+        """Get empty response structure for HH API"""
+        return {'items': []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """Validate vacancy structure"""
@@ -90,7 +43,7 @@ class HeadHunterAPI(BaseAPI):
                 **self.config.hh_config.get_params(**kwargs)
             }
 
-            data = self._connect_to_api(self.BASE_URL, params)
+            data = self._connect_to_api(self.BASE_URL, params, "hh")
             items = data.get('items', [])
 
             return [item for item in items if self._validate_vacancy(item)]
@@ -110,7 +63,8 @@ class HeadHunterAPI(BaseAPI):
                     page=0,
                     per_page=1,
                     **kwargs
-                )
+                ),
+                "hh"
             )
 
             if not initial_data.get('found', 0):
@@ -151,5 +105,4 @@ class HeadHunterAPI(BaseAPI):
         Удаляет все сохраненные ответы API из кэша для освобождения места
         и обеспечения получения актуальных данных при следующих запросах.
         """
-        from src.utils.cache_manager import cache_manager
-        cache_manager.clear_cache_for_source("hh")
+        super().clear_cache("hh")

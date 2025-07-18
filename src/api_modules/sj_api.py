@@ -1,18 +1,17 @@
 import logging
 from pathlib import Path
 from typing import Dict, List, Union, Optional
-from .base_api import BaseAPI
+from .cached_api import CachedAPI
 from .get_api import APIConnector
 from src.config.sj_api_config import SJAPIConfig
 from src.config.api_config import APIConfig
-from src.utils.cache import FileCache
 from src.utils.paginator import Paginator
 from src.utils.env_loader import EnvLoader
 
 logger = logging.getLogger(__name__)
 
 
-class SuperJobAPI(BaseAPI):
+class SuperJobAPI(CachedAPI):
     """SuperJob API для поиска вакансий с использованием общих механизмов"""
 
     BASE_URL = "https://api.superjob.ru/2.0/vacancies"
@@ -26,6 +25,7 @@ class SuperJobAPI(BaseAPI):
         Args:
             config: Конфигурация SuperJob API
         """
+        super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
         self.config = config or SJAPIConfig()
         
         # Используем общий APIConnector как в HH API
@@ -41,8 +41,6 @@ class SuperJobAPI(BaseAPI):
 
         # Инициализируем общие компоненты как в HH API
         self.paginator = Paginator()
-        self.cache = FileCache(self.DEFAULT_CACHE_DIR)
-        self._init_cache()
 
         # Логируем, какой ключ используется
         if api_key == 'v3.r.137440105.example.test_tool':
@@ -50,54 +48,9 @@ class SuperJobAPI(BaseAPI):
         else:
             logger.info("Используется пользовательский API ключ SuperJob")
 
-    def _init_cache(self) -> None:
-        """Initialize cache directory with validation (как в HH API)"""
-        try:
-            Path(self.DEFAULT_CACHE_DIR).mkdir(parents=True, exist_ok=True)
-            logger.info(f"Cache directory initialized: {self.DEFAULT_CACHE_DIR}")
-        except Exception as e:
-            logger.error(f"Failed to initialize cache: {e}")
-            raise
-
-    def _connect_to_api(self, url: str, params: Dict) -> Union[Dict, str]:
-        """Execute API request using shared APIConnector (как в HH API)"""
-        cache_key = self._generate_cache_key(params)
-
-        try:
-            # Проверяем кэш
-            cached = self.cache.load_response("sj", cache_key)
-            if cached and self.validate_response(cached.get("data")):
-                logger.debug(f"Cache hit for SJ params: {params}")
-                return cached["data"]
-
-            # Делаем реальный API запрос если кэш отсутствует
-            logger.info(f"Making API request to {url} with params: {params}")
-            response = self.connector.connect(url, params)
-
-            if not self.validate_response(response):
-                logger.error(f"Invalid API response structure: {response}")
-                return {'objects': []}
-
-            # Сохраняем в кэш
-            self.cache.save_response("sj", cache_key, response)
-            logger.info(f"Response cached for SJ params: {params}")
-            return response
-
-        except Exception as e:
-            logger.error(f"API connection failed: {e}")
-            # Попробуем сделать запрос без кэша
-            try:
-                logger.info("Attempting direct API call without cache...")
-                response = self.connector.connect(url, params)
-                if self.validate_response(response):
-                    return response
-            except Exception as e2:
-                logger.error(f"Direct API call also failed: {e2}")
-            return {'objects': []}
-
-    def _generate_cache_key(self, params: Dict) -> str:
-        """Generate consistent cache key from params (как в HH API)"""
-        return str(sorted(params.items()))
+    def _get_empty_response(self) -> Dict:
+        """Get empty response structure for SJ API"""
+        return {'objects': []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """Validate vacancy structure (как в HH API)"""
@@ -115,7 +68,7 @@ class SuperJobAPI(BaseAPI):
                 **kwargs
             )
 
-            data = self._connect_to_api(self.BASE_URL, params)
+            data = self._connect_to_api(self.BASE_URL, params, "sj")
             items = data.get('objects', [])
 
             # Добавляем источник и валидируем как в HH API
@@ -141,7 +94,8 @@ class SuperJobAPI(BaseAPI):
                     keyword=search_query,
                     count=1,  # Минимальные данные сначала
                     **kwargs
-                )
+                ),
+                "sj"
             )
 
             if not initial_data.get('total', 0):
@@ -187,10 +141,4 @@ class SuperJobAPI(BaseAPI):
         Удаляет все сохраненные ответы API из кэша для освобождения места
         и обеспечения получения актуальных данных при следующих запросах.
         """
-        try:
-            # Используем общий механизм очистки кэша как в HH API
-            from src.utils.cache_manager import cache_manager
-            cache_manager.clear_cache_for_source("sj")
-            logger.info("Кэш SuperJob очищен")
-        except Exception as e:
-            logger.error(f"Ошибка очистки кэша SuperJob: {e}")
+        super().clear_cache("sj")
