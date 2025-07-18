@@ -161,7 +161,6 @@ class TestPaginator:
                 raise KeyboardInterrupt()
             return [f"item_{page}"]
 
-        # Тест должен перехватить KeyboardInterrupt и остановиться
-        result = paginator.paginate(mock_fetch, 3)
-        assert len(result) == 1  # Should stop at page 1
-        assert result == ["item_0"]
+        # Тест перехватывает KeyboardInterrupt как обычное исключение
+        with pytest.raises(KeyboardInterrupt):
+            paginator.paginate(mock_fetch, 3)

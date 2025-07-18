@@ -47,6 +47,9 @@ class Paginator:
                     results.extend(page_data)
                     pbar.set_postfix(vacancies=len(results))
 
+                except KeyboardInterrupt:
+                    logger.info("Прервано пользователем")
+                    raise
                 except Exception as e:
                     logger.error(f"Error on page {page}: {e}")
                 finally:
