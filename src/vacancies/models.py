@@ -122,7 +122,19 @@ class Vacancy(AbstractVacancy):
             # \b - граница слова, чтобы избежать ложных совпадений
             pattern = r'\b' + re.escape(keyword) + r'\b'
             if re.search(pattern, full_text):
-                extracted_keywords.append(keyword)
+                # Дополнительная проверка для коротких слов (1-2 символа)
+                if len(keyword) <= 2:
+                    # Для коротких слов требуем более строгий контекст
+                    strict_patterns = [
+                        rf'\b{re.escape(keyword)}\b[\s,\.]',  # слово с пробелом, запятой или точкой
+                        rf'язык\s+{re.escape(keyword)}\b',    # "язык r"
+                        rf'\b{re.escape(keyword)}\s+программ',  # "r программирование"
+                        rf'знание\s+{re.escape(keyword)}\b',   # "знание r"
+                    ]
+                    if any(re.search(p, full_text, re.IGNORECASE) for p in strict_patterns):
+                        extracted_keywords.append(keyword)
+                else:
+                    extracted_keywords.append(keyword)
 
         return extracted_keywords
     @classmethod
