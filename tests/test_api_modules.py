@@ -696,4 +696,4 @@ class TestAPIConnector:
         mock_get.side_effect = requests.RequestException("Request failed")
 
         with pytest.raises(ConnectionError, match="Connection error"):
-            api_connector.connect("https://test.com", {})```python
+            api_connector.connect("https://test.com", {})
