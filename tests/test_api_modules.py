@@ -559,6 +559,32 @@ class TestUnifiedAPI:
         result = unified_api.get_vacancies_from_sources("Python", sources=['hh'])
         assert result == []
 
+    @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
+    def test_get_vacancies_from_sources_sj_none_data(self, mock_sj, unified_api):
+        # Тестируем случай когда SJ возвращает None (строка 59)
+        mock_sj.return_value = None
+        
+        result = unified_api.get_vacancies_from_sources("Python", sources=['sj'])
+        assert result == []
+
+    @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
+    def test_get_vacancies_from_sources_period_sync(self, mock_sj, unified_api):
+        # Тестируем синхронизацию параметра period (строки 116-117)
+        mock_sj.return_value = []
+        
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=30)
+        
+        # Проверяем что period был передан как published
+        mock_sj.assert_called_once_with("Python", period=30, published=30)
+
+    def test_clear_all_cache_with_error(self, unified_api):
+        # Тестируем ошибку при очистке всего кэша (строки 128-129)
+        with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")):
+            with patch.object(unified_api.sj_api, 'clear_cache') as mock_sj_clear:
+                unified_api.clear_all_cache()
+                # Проверяем что несмотря на ошибку HH, метод продолжает работу
+                mock_sj_clear.assert_called_once()
+
 
 class TestAPIConnector:
 
@@ -650,4 +676,13 @@ class TestAPIConnector:
         mock_get.side_effect = http_error
         
         with pytest.raises(ConnectionError, match="HTTP error \\(no response details\\)"):
+            api_connector.connect("https://test.com", {})
+
+    @patch('requests.get')
+    def test_connect_request_exception(self, mock_get, api_connector):
+        # Тестируем RequestException (строка 88)
+        import requests
+        mock_get.side_effect = requests.RequestException("Request failed")
+        
+        with pytest.raises(ConnectionError, match="Connection error"):
             api_connector.connect("https://test.com", {})

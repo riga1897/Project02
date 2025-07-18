@@ -6,6 +6,54 @@ from pathlib import Path
 # Добавляем путь к исходному коду
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.config.hh_api_config import HHAPIConfig
+
+
+class TestHHAPIConfig:
+    
+    @pytest.fixture
+    def hh_config(self):
+        return HHAPIConfig()
+    
+    def test_init_default(self, hh_config):
+        assert hh_config.area == 1
+        assert hh_config.per_page == 50
+        assert hh_config.only_with_salary is False
+        assert hh_config.custom_params is None
+    
+    def test_init_with_params(self):
+        config = HHAPIConfig(area=2, per_page=100, only_with_salary=True)
+        assert config.area == 2
+        assert config.per_page == 100
+        assert config.only_with_salary is True
+    
+    def test_get_params_default(self, hh_config):
+        params = hh_config.get_params()
+        assert params['area'] == 1
+        assert params['per_page'] == 50
+        assert params['only_with_salary'] is False
+    
+    def test_get_params_with_override(self, hh_config):
+        params = hh_config.get_params(area=2, per_page=25)
+        assert params['area'] == 2
+        assert params['per_page'] == 25
+        assert params['only_with_salary'] is False
+    
+    def test_get_params_with_custom(self):
+        config = HHAPIConfig(custom_params={'custom_key': 'custom_value'})
+        params = config.get_params()
+        assert params['custom_key'] == 'custom_value'
+
+
+
+
+import pytest
+import sys
+from pathlib import Path
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.config.api_config import APIConfig, HHAPIConfig
 from src.config.sj_api_config import SJAPIConfig
 from src.config.ui_config import UIConfig

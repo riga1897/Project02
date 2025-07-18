@@ -81,3 +81,72 @@ class TestJSONSaver:
     def test_delete_all_vacancies(self, mock_file, json_saver):
         result = json_saver.delete_all_vacancies()
         assert isinstance(result, bool)
+import pytest
+import sys
+import json
+from pathlib import Path
+from unittest.mock import patch, mock_open
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.storage.abstract import AbstractStorage
+from src.storage.json_saver import JSONSaver
+
+
+class TestAbstractStorage:
+    
+    def test_abstract_methods(self):
+        # Тест что нельзя создать экземпляр абстрактного класса
+        with pytest.raises(TypeError):
+            AbstractStorage()
+
+
+class TestJSONSaver:
+    
+    @pytest.fixture
+    def temp_json_file(self, tmp_path):
+        """Создает временный JSON файл"""
+        json_file = tmp_path / "test_vacancies.json"
+        return str(json_file)
+    
+    @pytest.fixture
+    def json_saver(self, temp_json_file):
+        return JSONSaver(temp_json_file)
+    
+    def test_init(self, json_saver, temp_json_file):
+        assert json_saver.file_path == temp_json_file
+    
+    def test_save_and_load_basic(self, json_saver):
+        # Тест базового сохранения и загрузки
+        test_data = [
+            {"id": "1", "title": "Test Job", "url": "http://test.com"}
+        ]
+        
+        json_saver.save_vacancies(test_data)
+        loaded_data = json_saver.load_vacancies()
+        
+        assert len(loaded_data) == 1
+        assert loaded_data[0]["id"] == "1"
+    
+    def test_load_empty_file(self, json_saver):
+        # Тест загрузки из несуществующего файла
+        result = json_saver.load_vacancies()
+        assert result == []
+    
+    @patch('builtins.open', side_effect=PermissionError("Access denied"))
+    def test_save_permission_error(self, mock_file, json_saver):
+        # Тест ошибки доступа при сохранении
+        test_data = [{"id": "1"}]
+        
+        # Метод должен обработать ошибку без исключения
+        json_saver.save_vacancies(test_data)
+        assert True  # Проверяем что исключение не возникло
+    
+    def test_file_creation(self, json_saver):
+        # Тест создания файла
+        test_data = [{"id": "1", "title": "Test"}]
+        json_saver.save_vacancies(test_data)
+        
+        assert Path(json_saver.file_path).exists()
+

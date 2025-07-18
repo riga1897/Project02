@@ -239,3 +239,187 @@ class TestSalary:
         salary = Salary()
         assert salary.get_max_salary() is None
 
+import pytest
+import sys
+from pathlib import Path
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.vacancies.models import Vacancy
+from src.vacancies.parsers.hh_parser import HeadHunterParser
+from src.vacancies.parsers.sj_parser import SuperJobParser
+from src.vacancies.sj_models import SuperJobVacancy
+
+
+class TestVacancy:
+    
+    @pytest.fixture
+    def sample_vacancy_data(self):
+        return {
+            "title": "Python Developer",
+            "url": "https://test.com/job/1",
+            "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+            "description": "Разработка на Python",
+            "vacancy_id": "1",
+            "requirements": "Python, Django",
+            "responsibilities": "Разработка веб-приложений"
+        }
+    
+    def test_from_dict(self, sample_vacancy_data):
+        vacancy = Vacancy.from_dict(sample_vacancy_data)
+        
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com/job/1"
+        assert vacancy.vacancy_id == "1"
+    
+    def test_to_dict(self, sample_vacancy_data):
+        vacancy = Vacancy.from_dict(sample_vacancy_data)
+        result = vacancy.to_dict()
+        
+        assert result["title"] == "Python Developer"
+        assert result["url"] == "https://test.com/job/1"
+        assert result["vacancy_id"] == "1"
+    
+    def test_str_representation(self, sample_vacancy_data):
+        vacancy = Vacancy.from_dict(sample_vacancy_data)
+        str_repr = str(vacancy)
+        
+        assert "Python Developer" in str_repr
+        assert "100 000" in str_repr
+    
+    def test_salary_comparison(self, sample_vacancy_data):
+        vacancy1 = Vacancy.from_dict(sample_vacancy_data)
+        
+        sample_vacancy_data["salary"]["from"] = 200000
+        vacancy2 = Vacancy.from_dict(sample_vacancy_data)
+        
+        assert vacancy2 > vacancy1
+        assert vacancy1 < vacancy2
+
+
+class TestHeadHunterParser:
+    
+    @pytest.fixture
+    def hh_parser(self):
+        return HeadHunterParser()
+    
+    @pytest.fixture
+    def hh_vacancy_data(self):
+        return {
+            "id": "12345",
+            "name": "Python Developer",
+            "alternate_url": "https://hh.ru/vacancy/12345",
+            "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+            "snippet": {
+                "requirement": "Знание Python",
+                "responsibility": "Разработка приложений"
+            },
+            "employer": {"name": "Компания"}
+        }
+    
+    def test_parse_vacancy(self, hh_parser, hh_vacancy_data):
+        result = hh_parser.parse_vacancy(hh_vacancy_data)
+        
+        assert result["title"] == "Python Developer"
+        assert result["url"] == "https://hh.ru/vacancy/12345"
+        assert result["vacancy_id"] == "12345"
+        assert result["requirements"] == "Знание Python"
+    
+    def test_parse_salary(self, hh_parser):
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        result = hh_parser._parse_salary(salary_data)
+        
+        assert result["from"] == 100000
+        assert result["to"] == 150000
+        assert result["currency"] == "RUR"
+    
+    def test_parse_salary_none(self, hh_parser):
+        result = hh_parser._parse_salary(None)
+        assert result is None
+
+
+class TestSuperJobParser:
+    
+    @pytest.fixture
+    def sj_parser(self):
+        return SuperJobParser()
+    
+    @pytest.fixture
+    def sj_vacancy_data(self):
+        return {
+            "id": 123,
+            "profession": "Python Developer",
+            "link": "https://superjob.ru/vacancy/123",
+            "payment_from": 100000,
+            "payment_to": 150000,
+            "currency": "rub",
+            "firm_name": "Компания",
+            "candidat": "Требования к кандидату"
+        }
+    
+    def test_parse_vacancies(self, sj_parser, sj_vacancy_data):
+        raw_data = [sj_vacancy_data]
+        result = sj_parser.parse_vacancies(raw_data)
+        
+        assert len(result) == 1
+        assert isinstance(result[0], SuperJobVacancy)
+        assert result[0].profession == "Python Developer"
+    
+    def test_convert_to_unified_format(self, sj_parser):
+        sj_vacancy = SuperJobVacancy(
+            id=123,
+            profession="Python Developer",
+            link="https://superjob.ru/vacancy/123",
+            payment_from=100000,
+            payment_to=150000,
+            currency="rub",
+            firm_name="Компания"
+        )
+        
+        result = sj_parser.convert_to_unified_format(sj_vacancy)
+        
+        assert result["title"] == "Python Developer"
+        assert result["url"] == "https://superjob.ru/vacancy/123"
+        assert result["vacancy_id"] == "123"
+
+
+class TestSuperJobVacancy:
+    
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            id=123,
+            profession="Python Developer",
+            link="https://test.com",
+            payment_from=100000
+        )
+        
+        assert vacancy.id == 123
+        assert vacancy.profession == "Python Developer"
+        assert vacancy.link == "https://test.com"
+        assert vacancy.payment_from == 100000
+    
+    def test_str_representation(self):
+        vacancy = SuperJobVacancy(
+            id=123,
+            profession="Python Developer",
+            link="https://test.com"
+        )
+        
+        str_repr = str(vacancy)
+        assert "Python Developer" in str_repr
+    
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            id=123,
+            profession="Test",
+            link="test",
+            payment_from=100000,
+            payment_to=150000,
+            currency="rub"
+        )
+        
+        salary = vacancy.salary
+        assert salary["from"] == 100000
+        assert salary["to"] == 150000
+        assert salary["currency"] == "rub"
