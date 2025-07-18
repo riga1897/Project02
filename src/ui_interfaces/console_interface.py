@@ -536,10 +536,10 @@ class UserInterface:
 
             self.source_selector.display_sources_info(sources)
             if confirm_action("Вы уверены, что хотите очистить кэш выбранных источников?"):
-                # Конвертируем sources в нужный формат для clear_cache
+                # Конвертируем sources (set) в нужный формат для clear_cache
                 cache_sources = {
-                    'hh': sources.get('hh', False),
-                    'sj': sources.get('sj', False)
+                    'hh': 'hh' in sources,
+                    'sj': 'sj' in sources
                 }
                 self.unified_api.clear_cache(cache_sources)
                 print("Кэш выбранных источников успешно очищен.")
