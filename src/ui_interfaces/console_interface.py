@@ -18,6 +18,7 @@ from src.ui_interfaces.source_selector import SourceSelector
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
 from src.api_modules.unified_api import UnifiedAPI
+from src.config.ui_config import ui_pagination_config
 
 logger = logging.getLogger(__name__)
 
@@ -215,7 +216,7 @@ class UserInterface:
                 vacancies,
                 formatter=format_vacancy,
                 header="Сохраненные вакансии",
-                items_per_page=10
+                items_per_page=ui_pagination_config.get_items_per_page('saved')
             )
 
         except Exception as e:
@@ -257,7 +258,7 @@ class UserInterface:
                 top_vacancies,
                 formatter=format_vacancy,
                 header=f"Топ {len(top_vacancies)} вакансий по зарплате",
-                items_per_page=10
+                items_per_page=ui_pagination_config.get_items_per_page('top')
             )
 
         except Exception as e:
@@ -295,7 +296,7 @@ class UserInterface:
                 filtered_vacancies,
                 formatter=format_vacancy,
                 header=f"Вакансии с ключевым словом '{keyword}'",
-                items_per_page=10
+                items_per_page=ui_pagination_config.get_items_per_page('search')
             )
 
         except Exception as e:
@@ -349,7 +350,7 @@ class UserInterface:
                 filtered_vacancies,
                 formatter=format_vacancy,
                 header="Результаты расширенного поиска",
-                items_per_page=10
+                items_per_page=ui_pagination_config.get_items_per_page('search')
             )
 
         except Exception as e:
@@ -423,7 +424,7 @@ class UserInterface:
                 sorted_vacancies,
                 formatter=format_vacancy,
                 header="Вакансии по зарплате",
-                items_per_page=10
+                items_per_page=ui_pagination_config.get_items_per_page('search')
             )
 
         except Exception as e:
