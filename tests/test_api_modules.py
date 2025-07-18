@@ -538,8 +538,8 @@ class TestUnifiedAPI:
         with patch.object(unified_api, 'get_vacancies_from_sources', return_value=[]) as mock_get:
             unified_api.get_sj_vacancies("Python", period=7)
             
-            # Проверяем что period конвертируется в published
-            mock_get.assert_called_once_with("Python", sources=['sj'], published=7)
+            # Проверяем что period конвертируется в published и оба параметра передаются
+            mock_get.assert_called_once_with("Python", sources=['sj'], period=7, published=7)
     
     @patch('src.api_modules.hh_api.HeadHunterAPI.get_vacancies')
     def test_get_hh_vacancies_error_logging(self, mock_hh, unified_api):
