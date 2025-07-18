@@ -198,16 +198,62 @@ class UserInterface:
 
             print(f"\nСохраненных вакансий: {len(vacancies)}")
 
-            # Постраничный просмотр
-            def format_vacancy(vacancy):
-                return VacancyFormatter.format_vacancy_info(vacancy)
+            # Постраничный просмотр с нумерацией
+            def format_vacancy_with_number(vacancy, number):
+                return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            paginate_display(
-                vacancies,
-                items_per_page=10,
-                formatter=format_vacancy,
-                header="Сохраненные вакансии"
-            )
+            # Используем пагинацию с нумерацией
+            page_size = 10
+            total_pages = (len(vacancies) + page_size - 1) // page_size
+            current_page = 1
+            
+            while True:
+                # Вычисляем индексы для текущей страницы
+                start_idx = (current_page - 1) * page_size
+                end_idx = min(start_idx + page_size, len(vacancies))
+                current_vacancies = vacancies[start_idx:end_idx]
+                
+                print(f"\n\nСохраненные вакансии")
+                print("=" * 20)
+                print(f"Страница {current_page} из {total_pages}")
+                print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(vacancies)}")
+                print("-" * 80)
+                
+                # Отображаем вакансии с номерами
+                for i, vacancy in enumerate(current_vacancies, start_idx + 1):
+                    print(format_vacancy_with_number(vacancy, i))
+                
+                # Меню навигации
+                if total_pages > 1:
+                    print("\nНавигация:")
+                    if current_page < total_pages:
+                        print("'n' или 'next' - следующая страница")
+                    if current_page > 1:
+                        print("'p' или 'prev' - предыдущая страница")
+                    print("'q' или 'quit' - выход")
+                    print("Номер страницы - переход к странице")
+                    
+                    choice = input("\nВыберите действие: ").strip().lower()
+                    
+                    if choice in ['q', 'quit']:
+                        break
+                    elif choice in ['n', 'next'] and current_page < total_pages:
+                        current_page += 1
+                    elif choice in ['p', 'prev'] and current_page > 1:
+                        current_page -= 1
+                    elif choice.isdigit():
+                        page_num = int(choice)
+                        if 1 <= page_num <= total_pages:
+                            current_page = page_num
+                        else:
+                            print(f"Некорректный номер страницы. Доступно: 1-{total_pages}")
+                            input("Нажмите Enter для продолжения...")
+                    else:
+                        print("Некорректный ввод")
+                        input("Нажмите Enter для продолжения...")
+                else:
+                    input("\nНажмите Enter для продолжения...")
+                    break
 
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
