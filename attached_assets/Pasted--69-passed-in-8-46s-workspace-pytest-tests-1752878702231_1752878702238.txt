@@ -1,0 +1,144 @@
+========================== 69 passed in 8.46s ===========================
+~/workspace$ pytest tests/test_с
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 0 items                                                       
+
+========================= no tests ran in 0.06s =========================
+ERROR: file or directory not found: tests/test_с
+
+~/workspace$ pytest tests/test_config.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 20 items                                                      
+
+tests/test_config.py ....................                         [100%]
+
+========================== 20 passed in 0.11s ===========================
+~/workspace$ pytest tests/test_storage.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 6 items                                                       
+
+tests/test_storage.py ......                                      [100%]
+
+=========================== 6 passed in 0.09s ===========================
+~/workspace$ pytest tests/test_utils.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 17 items                                                      
+
+tests/test_utils.py .................                             [100%]
+
+========================== 17 passed in 0.15s ===========================
+~/workspace$ pytest tests/test_vacancies.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 25 items                                                      
+
+tests/test_vacancies.py ..F...................FFF                 [100%]
+
+=============================== FAILURES ================================
+__________________ TestVacancy.test_str_representation __________________
+
+self = <tests.test_vacancies.TestVacancy object at 0x7f61643bcfd0>
+sample_vacancy_data = {'description': 'Разработка на Python', 'employer': 'Test Company', 'requirements': 'Python, Django', 'salary': {'currency': 'RUR', 'from': 100000, 'to': 150000}, ...}
+
+    def test_str_representation(self, sample_vacancy_data):
+        vacancy = Vacancy(**sample_vacancy_data)
+>       str_repr = str(vacancy)
+
+tests/test_vacancies.py:286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.vacancies.models.Vacancy object at 0x7f616403a300>
+
+    def __str__(self) -> str:
+        """Строковое представление вакансии"""
+        parts = [
+            f"Должность: {self.title}",
+>           f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
+            f"Зарплата: {self.salary}",
+            f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
+            f"Ссылка: {self.url}"
+        ]
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/vacancies/models.py:171: AttributeError
+_____________________ TestSuperJobVacancy.test_init _____________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e1e50>
+
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com"
+>       assert vacancy.salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:397: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+______________ TestSuperJobVacancy.test_str_representation ______________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e4c40>
+
+    def test_str_representation(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={},
+            description="Test description"
+        )
+    
+        str_repr = str(vacancy)
+>       assert "Python Developer" in str_repr
+E       AssertionError: assert 'Python Developer' in '<src.vacancies.sj_models.SuperJobVacancy object at 0x7f6164b06130>'
+
+tests/test_vacancies.py:408: AssertionError
+_______________ TestSuperJobVacancy.test_salary_property ________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e48e0>
+
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            title="Test",
+            url="test",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        salary = vacancy.salary
+>       assert salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:419: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+======================== short test summary info ========================
+FAILED tests/test_vacancies.py::TestVacancy::test_str_representation - AttributeError: 'str' object has no attribute 'get'
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_init - TypeError: 'NoneType' object is not subscriptable
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_str_representation - AssertionError: assert 'Python Developer' in '<src.vacancies.sj_mode...
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_salary_property - TypeError: 'NoneType' object is not subscriptable
