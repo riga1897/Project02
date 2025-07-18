@@ -29,29 +29,7 @@ class CachedAPI(BaseAPI, ABC):
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.cache = FileCache(str(self.cache_dir))
 
-    def _generate_cache_key(self, url: str, params: Dict, api_prefix: str) -> str:
-        """
-        Генерация ключа кэша на основе URL и параметров
-
-        Args:
-            url: URL запроса
-            params: Параметры запроса
-            api_prefix: Префикс API (hh, sj)
-
-        Returns:
-            str: Ключ кэша
-        """
-        import hashlib
-        
-        # Сортируем параметры для консистентности
-        sorted_params = sorted(params.items())
-        cache_string = f"{url}_{sorted_params}"
-        
-        # Создаем хэш
-        hash_object = hashlib.md5(cache_string.encode())
-        hash_hex = hash_object.hexdigest()
-        
-        return f"{api_prefix}_{hash_hex}"
+    
 
     def _connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
@@ -65,22 +43,19 @@ class CachedAPI(BaseAPI, ABC):
         Returns:
             Dict: Ответ API
         """
-        # Генерируем ключ кэша
-        cache_key = self._generate_cache_key(url, params, api_prefix)
-        
         # Проверяем кэш
-        cached_data = self.cache.get(cache_key)
-        if cached_data is not None:
-            logger.debug(f"Данные получены из кэша: {cache_key}")
-            return cached_data
+        cached_response = self.cache.load_response(api_prefix, params)
+        if cached_response is not None:
+            logger.debug(f"Данные получены из кэша для {api_prefix}")
+            return cached_response.get('data', self._get_empty_response())
         
         # Если кэш пуст, делаем запрос
         try:
             data = self.connector.connect(url, params)
             
             # Сохраняем в кэш
-            self.cache.set(cache_key, data)
-            logger.debug(f"Данные сохранены в кэш: {cache_key}")
+            self.cache.save_response(api_prefix, params, data)
+            logger.debug(f"Данные сохранены в кэш для {api_prefix}")
             
             return data
             
@@ -97,10 +72,8 @@ class CachedAPI(BaseAPI, ABC):
             api_prefix: Префикс API (hh, sj)
         """
         try:
-            if self.cache_dir.exists():
-                for cache_file in self.cache_dir.glob(f"{api_prefix}_*.json"):
-                    cache_file.unlink()
-                logger.info(f"Кэш {api_prefix} очищен")
+            self.cache.clear(api_prefix)
+            logger.info(f"Кэш {api_prefix} очищен")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша {api_prefix}: {e}")
 
