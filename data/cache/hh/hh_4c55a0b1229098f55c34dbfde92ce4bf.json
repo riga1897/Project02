@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "params": "[('area', 1), ('only_with_salary', False), ('page', 17), ('per_page', 50), ('text', 'VMware')]"
+  },
+  "data": {
+    "items": [],
+    "found": 701,
+    "pages": 15,
+    "page": 17,
+    "per_page": 50,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=50&page=17&text=VMware"
+  }
+}
