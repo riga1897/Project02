@@ -6,6 +6,7 @@ from typing import Dict, List, Union, Optional
 from .base_api import BaseAPI
 from src.config.sj_api_config import SJAPIConfig
 from src.utils.cache import simple_cache
+from src.utils.env_loader import EnvLoader
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +24,8 @@ class SuperJobAPI(BaseAPI):
         self.base_url = "https://api.superjob.ru/2.0"
         self.config = config or SJAPIConfig()
         
-        # Получаем API ключ из переменных окружения или используем тестовый
-        api_key = os.getenv('SUPERJOB_API_KEY', 'v3.r.137440105.example.test_tool')
+        # Получаем API ключ из переменных окружения (включая .env файл)
+        api_key = EnvLoader.get_env_var('SUPERJOB_API_KEY', 'v3.r.137440105.example.test_tool')
         
         self.headers = {
             "X-Api-App-Id": api_key,
