@@ -7,6 +7,7 @@ from .base_api import BaseAPI
 from src.config.sj_api_config import SJAPIConfig
 from src.utils.cache import simple_cache, FileCache
 from src.utils.env_loader import EnvLoader
+from src.utils.paginator import Paginator
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,8 @@ class SuperJobAPI(BaseAPI):
         else:
             logger.info("Используется пользовательский API ключ SuperJob")
 
+        self.paginator = Paginator()
+
     def _connect_to_api(self, url: str, params: Dict, max_retries: int = 3) -> Union[Dict, str]:
         """
         Подключение к API SuperJob с обработкой ошибок и повторными попытками
@@ -61,7 +64,7 @@ class SuperJobAPI(BaseAPI):
                     wait_time = 2 ** attempt  # Экспоненциальная задержка
                     logger.info(f"Повторная попытка {attempt}/{max_retries} через {wait_time} сек...")
                     time.sleep(wait_time)
-                
+
                 logger.debug(f"Making request to: {url} (attempt {attempt + 1})")
                 logger.debug(f"Request params: {params}")
                 logger.debug(f"Request headers: {self.headers}")
@@ -107,176 +110,91 @@ class SuperJobAPI(BaseAPI):
                 if attempt < max_retries:
                     continue
                 return f"Unexpected error: {e}"
-        
+
         return "Max retries exceeded"
 
+    def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
+        """Get and validate single page of vacancies"""
+        try:
+            params = self.config.get_params(
+                keyword=search_query,
+                page=page,
+                **kwargs
+            )
+
+            url = f"{self.base_url}/vacancies/"
+            data = self._connect_to_api(url, params)
+
+            if not data or not isinstance(data, dict):
+                logger.error(f"Invalid response on page {page}")
+                return []
+
+            items = data.get('objects', [])
+            for item in items:
+                item["source"] = "superjob.ru"
+            return items
+
+        except Exception as e:
+            logger.error(f"Failed to get vacancies page {page}: {e}")
+            return []
+
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
-        """
-        Получение вакансий по поисковому запросу
+        """Get all vacancies with pagination and validation"""
+        try:
+            # Initial request to get metadata
+            initial_params = self.config.get_params(
+                keyword=search_query,
+                count=1,  # Get minimal data first
+                **kwargs
+            )
+            url = f"{self.base_url}/vacancies/"
 
-        Args:
-            search_query: Поисковый запрос
-            **kwargs: Дополнительные параметры поиска
+            logger.debug(f"SuperJob API URL: {url}")
+            logger.debug(f"SuperJob API params: {initial_params}")
+            logger.debug(f"SuperJob API headers: {self.headers}")
 
-        Returns:
-            List[Dict]: Список вакансий
-        """
-        url = f"{self.base_url}/vacancies/"
+            initial_data = self._connect_to_api(url, initial_params)
 
-        # Базовые параметры из конфигурации
-        params = self.config.get_params(**kwargs)
-        params["keyword"] = search_query
-        
-        # Используем более безопасный размер страницы
-        params["count"] = min(params.get("count", 100), 100)
+            if not initial_data or not isinstance(initial_data, dict):
+                logger.error("Invalid initial response format")
+                return []
 
-        # Проверяем кэш
-        cache_key_params = {
-            "query": search_query,
-            "params": params
-        }
+            total_found = initial_data.get('total', 0)
+            more_available = initial_data.get('more', False)
 
-        cached_data = self.file_cache.load_response("sj", cache_key_params)
-        if cached_data:
-            logger.info(f"Found cached data for SuperJob query: '{search_query}'")
-            return cached_data.get("data", [])
+            logger.debug(f"Total found: {total_found}")
+            logger.debug(f"More available: {more_available}")
 
-        logger.info(f"Searching SuperJob vacancies for: '{search_query}'")
-        logger.info(f"Request parameters: {params}")
-        
-        # Добавляем отладочную информацию
-        print(f"DEBUG: SuperJob API URL: {url}")
-        print(f"DEBUG: SuperJob API params: {params}")
-        print(f"DEBUG: SuperJob API headers: {self.headers}")
+            if total_found == 0:
+                logger.info("No vacancies found for query")
+                return []
 
-        all_vacancies = []
-        page = 0
-        max_pages = kwargs.get('max_pages', 20)  # Увеличиваем количество страниц
-        consecutive_empty_pages = 0
-        max_empty_pages = 3  # Увеличиваем терпимость к пустым страницам
-        total_found = 0
+            # Calculate pages needed
+            per_page = kwargs.get('count', 100)
+            max_pages = kwargs.get('max_pages', 20)
+            total_pages = min(
+                max_pages,
+                (total_found + per_page - 1) // per_page if total_found > 0 else 1
+            )
 
-        while page < max_pages and consecutive_empty_pages < max_empty_pages:
-            params["page"] = page
+            logger.info(f"Found {total_found} vacancies ({total_pages} pages to process)")
 
-            logger.debug(f"Requesting page {page + 1}")
-            
-            # Показываем прогресс
-            if page == 0:
-                print(f"🔍 Загружаем вакансии SuperJob...")
-            else:
-                print(f"📄 Загружаем страницу {page + 1}... (найдено: {len(all_vacancies)})")
+            # Process all pages using unified paginator with progress bar
+            results = self.paginator.paginate(
+                fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs),
+                total_pages=total_pages
+            )
 
-            response = self._connect_to_api(url, params)
-            
-            # Добавляем отладочную информацию о ответе
-            print(f"DEBUG: Response type: {type(response)}")
-            if isinstance(response, dict):
-                print(f"DEBUG: Response keys: {list(response.keys())}")
-                print(f"DEBUG: Total found: {response.get('total', 'N/A')}")
-                print(f"DEBUG: More available: {response.get('more', 'N/A')}")
-                if response.get('objects'):
-                    print(f"DEBUG: Objects count: {len(response.get('objects', []))}")
-                else:
-                    print("DEBUG: No 'objects' key or empty objects")
+            logger.info(f"Successfully processed {len(results)} vacancies")
+            return results
 
-            # Если получили строку - это ошибка
-            if isinstance(response, str):
-                logger.error(f"API error on page {page + 1}: {response}")
-                print(f"⚠️  Ошибка на странице {page + 1}: {response}")
-                
-                # Если это первая страница и есть ошибка - прерываем
-                if page == 0:
-                    break
-                
-                # Для последующих страниц - пытаемся продолжить с разными стратегиями
-                if "Connection error" in response and page > 0:
-                    logger.warning(f"Connection error on page {page + 1}, trying recovery strategies")
-                    
-                    # Стратегия 1: Уменьшаем размер страницы
-                    if params.get("count", 100) > 20:
-                        params["count"] = 20
-                        print(f"🔄 Уменьшаем размер страницы до {params['count']} и повторяем...")
-                        continue
-                    
-                    # Стратегия 2: Увеличиваем задержку
-                    print(f"⏳ Увеличиваем задержку и повторяем...")
-                    time.sleep(2)
-                    
-                    # Стратегия 3: Пропускаем эту страницу
-                    if consecutive_empty_pages < max_empty_pages - 1:
-                        consecutive_empty_pages += 1
-                        page += 1
-                        print(f"⏭️  Пропускаем страницу {page}, переходим к следующей...")
-                        continue
-                
-                # Если ошибка критическая - останавливаемся
-                break
-
-            # Проверяем, что ответ является словарем и содержит данные
-            if not isinstance(response, dict):
-                logger.error(f"Invalid response type on page {page + 1}: {type(response)}")
-                break
-
-            if not response.get("objects") and page == 0:
-                logger.warning(f"No 'objects' key in response on page {page + 1}")
-                logger.debug(f"Response keys: {list(response.keys())}")
-                print(f"DEBUG: Full response: {response}")
-                break
-
-            vacancies = response.get("objects", [])
-
-            if not vacancies:
-                consecutive_empty_pages += 1
-                logger.info(f"Empty page {page + 1}, consecutive empty: {consecutive_empty_pages}")
-                if consecutive_empty_pages >= max_empty_pages:
-                    logger.info(f"Stopping after {consecutive_empty_pages} consecutive empty pages")
-                    break
-            else:
-                consecutive_empty_pages = 0  # Сбрасываем счетчик пустых страниц
-
-                # Добавляем источник к каждой вакансии
-                for vacancy in vacancies:
-                    vacancy["source"] = "superjob.ru"
-
-                all_vacancies.extend(vacancies)
-                logger.info(f"Page {page + 1}: found {len(vacancies)} vacancies")
-
-            # Проверяем, есть ли еще страницы
-            has_more = response.get("more", False)
-            if page == 0:  # Сохраняем общее количество с первой страницы
-                total_found = response.get("total", 0)
-            
-            logger.debug(f"Page {page + 1}: has_more={has_more}, total_found={total_found}, current_total={len(all_vacancies)}")
-            
-            # Показываем прогресс
-            if total_found > 0:
-                progress = min(100, (len(all_vacancies) / total_found) * 100)
-                print(f"📊 Прогресс: {len(all_vacancies)}/{total_found} ({progress:.1f}%)")
-            
-            # Останавливаемся если API сообщает что больше нет данных
-            if not has_more:
-                logger.info(f"API indicates no more pages available. Total processed: {len(all_vacancies)}")
-                print(f"✅ Загрузка завершена - больше страниц нет")
-                break
-
-            page += 1
-
-        logger.info(f"Total SuperJob vacancies found: {len(all_vacancies)}")
-        
-        # Финальная статистика
-        if total_found > 0:
-            coverage = (len(all_vacancies) / total_found) * 100
-            print(f"📈 Итого загружено: {len(all_vacancies)} из {total_found} ({coverage:.1f}%)")
-        else:
-            print(f"📈 Итого загружено: {len(all_vacancies)} вакансий")
-
-        # Сохраняем результаты в кэш
-        if all_vacancies:
-            self.file_cache.save_response("sj", cache_key_params, all_vacancies)
-            logger.debug(f"Saved {len(all_vacancies)} SuperJob vacancies to cache")
-
-        return all_vacancies
+        except KeyboardInterrupt:
+            logger.info("Получение вакансий прервано пользователем")
+            print("\nПолучение вакансий остановлено.")
+            return []
+        except Exception as e:
+            logger.error(f"Failed to get vacancies: {e}")
+            return []
 
     def clear_cache(self) -> None:
         """Очистка кэша SuperJob API"""
