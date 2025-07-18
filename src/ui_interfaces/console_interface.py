@@ -227,11 +227,8 @@ class UserInterface:
                 end_idx = min(start_idx + page_size, len(vacancies))
                 current_vacancies = vacancies[start_idx:end_idx]
                 
-                print(f"\n\nСохраненные вакансии")
+                print("\n\nСохраненные вакансии")
                 print("=" * 20)
-                print(f"Страница {current_page} из {total_pages}")
-                print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(vacancies)}")
-                print("-" * 80)
                 
                 # Всегда отображаем вакансии
                 for i, vacancy in enumerate(current_vacancies, start_idx + 1):
@@ -245,6 +242,9 @@ class UserInterface:
                 # Меню навигации для многостраничного просмотра - внизу
                 print("\n" + "=" * 20)
                 print("Навигация:")
+                print(f"Страница {current_page} из {total_pages}")
+                print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(vacancies)}")
+                print("=" * 20)
                 if current_page > 1:
                     print("'p' или 'prev' - предыдущая страница")
                 if current_page < total_pages:
