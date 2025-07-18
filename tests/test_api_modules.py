@@ -571,20 +571,10 @@ class TestUnifiedAPI:
 
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
     def test_get_vacancies_from_sources_period_sync_coverage(self, mock_sj, unified_api):
-        # Тестируем покрытие строк 116-117 - синхронизация параметра period
+        # Покрытие строк 116-117
         mock_sj.return_value = []
-
-        # Вызываем с параметром period для покрытия строк 116-117
-        # Важно: передаем sources=['sj'] чтобы попасть в блок обработки SJ
         unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=7)
-
-        # Проверяем что вызов sj_api.get_vacancies содержит published параметр
-        call_args = mock_sj.call_args
-        assert call_args is not None, "SuperJob API должен был быть вызван"
-        # Проверяем что published был добавлен из period
-        assert call_args[1]['published'] == 7
-        # period также должен остаться
-        assert call_args[1]['period'] == 7
+        mock_sj.assert_called_once_with("Python", period=7, published=7)
 
     def test_clear_all_cache_with_error(self, unified_api):
         # Тестируем ошибку при очистке всего кэша (строки 128-129)
