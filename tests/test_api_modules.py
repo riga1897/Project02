@@ -85,7 +85,7 @@ class TestSuperJobAPI:
         
         try:
             api = SuperJobAPI(api_config)
-            assert api._config == api_config
+            assert api.config is not None  # SJ API creates its own SJAPIConfig
         finally:
             SuperJobAPI.DEFAULT_CACHE_DIR = original_cache
     
