@@ -61,7 +61,14 @@ class VacancyOperations:
         """
         return [
             v for v in vacancies 
-            if v.salary and v.salary.get_max_salary() and v.salary.get_max_salary() >= min_salary
+            if v.salary and (
+                # Если есть только нижняя граница - она должна быть >= min_salary
+                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from >= min_salary) or
+                # Если есть только верхняя граница - она должна быть >= min_salary
+                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to >= min_salary) or
+                # Если есть обе границы - нижняя граница должна быть >= min_salary
+                (v.salary.salary_from and v.salary.salary_to and v.salary.salary_from >= min_salary)
+            )
         ]
 
     @staticmethod
@@ -79,8 +86,13 @@ class VacancyOperations:
         return [
             v for v in vacancies 
             if v.salary and (
-                (v.salary.salary_from and v.salary.salary_from <= max_salary) or
-                (v.salary.salary_to and v.salary.salary_to <= max_salary)
+                # Если есть только нижняя граница - она должна быть <= max_salary
+                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from <= max_salary) or
+                # Если есть только верхняя граница - она должна быть <= max_salary
+                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to <= max_salary) or
+                # Если есть обе границы - ОБЕ границы должны быть <= max_salary
+                (v.salary.salary_from and v.salary.salary_to and 
+                 v.salary.salary_from <= max_salary and v.salary.salary_to <= max_salary)
             )
         ]
 
