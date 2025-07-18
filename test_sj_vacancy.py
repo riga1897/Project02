@@ -12,79 +12,138 @@ def test_specific_vacancy():
     
     print("=== Прямой запрос к SuperJob API ===")
     
-    # Делаем запрос для поиска вакансии по ID
-    try:
-        # SuperJob API не позволяет искать по ID напрямую,
-        # но мы можем найти вакансию через поиск
-        params = {
-            'keyword': 'бухгалтер',
-            'count': 100  # увеличиваем количество для поиска
+    # Пробуем разные поисковые запросы
+    search_queries = [
+        'бухгалтер',
+        'ведущий бухгалтер',
+        'нефинансовые активы',
+        'бухгалтерия',
+        'основные средства'
+    ]
+    
+    target_vacancy = None
+    
+    for query in search_queries:
+        print(f"\n--- Поиск по запросу: '{query}' ---")
+        try:
+            params = {
+                'keyword': query,
+                'count': 100,
+                'published': 1  # за последний день
+            }
+            
+            response = api._connect_to_api(
+                "https://api.superjob.ru/2.0/vacancies/",
+                params,
+                "sj"
+            )
+            
+            if 'objects' in response:
+                print(f"Найдено {len(response['objects'])} вакансий")
+                
+                # Ищем вакансию с нужным ID
+                for vacancy in response['objects']:
+                    if str(vacancy.get('id')) == '50354308':
+                        target_vacancy = vacancy
+                        print(f"✓ Найдена целевая вакансия!")
+                        break
+                
+                if target_vacancy:
+                    break
+                else:
+                    # Показываем первые несколько ID для отладки
+                    ids = [str(v.get('id')) for v in response['objects'][:5]]
+                    print(f"Первые 5 ID: {ids}")
+            else:
+                print("Неожиданная структура ответа")
+                
+        except Exception as e:
+            print(f"Ошибка при поиске по '{query}': {e}")
+    
+    if target_vacancy:
+        print(f"\n=== Анализ найденной вакансии ID: {target_vacancy['id']} ===")
+        print(f"Название: {target_vacancy.get('profession', 'Не указано')}")
+        print(f"URL: {target_vacancy.get('link', 'Не указано')}")
+        print(f"Компания: {target_vacancy.get('firm_name', 'Не указана')}")
+        
+        # Анализируем все текстовые поля
+        text_fields = {
+            'vacancyRichText': target_vacancy.get('vacancyRichText', ''),
+            'candidat': target_vacancy.get('candidat', ''),
+            'work': target_vacancy.get('work', ''),
+            'profession': target_vacancy.get('profession', ''),
+            'firm_name': target_vacancy.get('firm_name', '')
         }
         
-        response = api._connect_to_api(
-            "https://api.superjob.ru/2.0/vacancies/",
-            params,
-            "sj"
-        )
+        print(f"\n=== Анализ текстовых полей ===")
+        for field_name, field_value in text_fields.items():
+            print(f"{field_name}: {len(field_value)} символов")
         
-        if 'objects' in response:
-            # Ищем вакансию с нужным ID
-            target_vacancy = None
-            for vacancy in response['objects']:
-                if str(vacancy.get('id')) == '50354308':
-                    target_vacancy = vacancy
-                    break
+        # Объединяем весь текст
+        all_text = ' '.join(text_fields.values()).lower()
+        print(f"Общий объем текста: {len(all_text)} символов")
+        
+        # Проверяем ключевые слова
+        keywords_to_check = ['excel', 'r', '1c', '1с', 'word', 'опыт', 'бухгалтер']
+        print(f"\n=== Проверка ключевых слов ===")
+        
+        for keyword in keywords_to_check:
+            import re
+            # Поиск целых слов
+            pattern = r'\b' + re.escape(keyword.lower()) + r'\b'
+            matches = re.findall(pattern, all_text)
             
-            if target_vacancy:
-                print(f"=== Найдена вакансия ID: {target_vacancy['id']} ===")
-                print(f"Название: {target_vacancy.get('profession', 'Не указано')}")
-                print(f"URL: {target_vacancy.get('link', 'Не указано')}")
+            if matches:
+                print(f"✓ '{keyword}': найдено {len(matches)} раз")
                 
-                # Проверяем поля с текстом
-                description = target_vacancy.get('vacancyRichText', '')
-                candidat = target_vacancy.get('candidat', '')
-                work = target_vacancy.get('work', '')
-                
-                print(f"\n=== Анализ текстовых полей ===")
-                print(f"vacancyRichText длина: {len(description)}")
-                print(f"candidat длина: {len(candidat)}")
-                print(f"work длина: {len(work)}")
-                
-                # Объединяем весь текст
-                full_text = f"{description} {candidat} {work}".lower()
-                print(f"Полный текст длина: {len(full_text)}")
-                
-                # Ищем ключевые слова
-                keywords_to_check = ['excel', 'r', '1c', '1с']
-                print(f"\n=== Проверка ключевых слов ===")
-                
-                for keyword in keywords_to_check:
-                    count = full_text.count(keyword.lower())
-                    if count > 0:
-                        print(f"✓ '{keyword}': найдено {count} раз")
-                        # Показываем контекст
-                        import re
-                        pattern = r'.{0,30}' + re.escape(keyword.lower()) + r'.{0,30}'
-                        matches = re.findall(pattern, full_text)
-                        for i, match in enumerate(matches[:3]):  # Показываем первые 3 совпадения
-                            print(f"  Контекст {i+1}: ...{match}...")
-                    else:
-                        print(f"✗ '{keyword}': НЕ найдено")
-                
-                # Сохраняем полные данные вакансии для анализа
-                with open('vacancy_50354308_raw.json', 'w', encoding='utf-8') as f:
-                    json.dump(target_vacancy, f, ensure_ascii=False, indent=2)
-                print(f"\n=== Данные сохранены в vacancy_50354308_raw.json ===")
-                
+                # Показываем контекст первого вхождения
+                match_pos = all_text.find(keyword.lower())
+                if match_pos != -1:
+                    start = max(0, match_pos - 40)
+                    end = min(len(all_text), match_pos + len(keyword) + 40)
+                    context = all_text[start:end]
+                    print(f"  Контекст: ...{context}...")
             else:
-                print("Вакансия с ID 50354308 не найдена в результатах поиска")
-                print(f"Найдено {len(response['objects'])} вакансий")
-        else:
-            print("Неожиданная структура ответа API")
-            print(json.dumps(response, ensure_ascii=False, indent=2)[:500])
+                print(f"✗ '{keyword}': НЕ найдено")
+        
+        # Сохраняем данные для детального анализа
+        with open('vacancy_50354308_full.json', 'w', encoding='utf-8') as f:
+            json.dump(target_vacancy, f, ensure_ascii=False, indent=2)
+        print(f"\n=== Данные сохранены в vacancy_50354308_full.json ===")
+        
+    else:
+        print("\n❌ Вакансия с ID 50354308 не найдена ни по одному запросу")
+        print("Возможные причины:")
+        print("- Вакансия была удалена или архивирована")
+        print("- Она не индексируется в поиске")
+        print("- Нужен более специфический поисковый запрос")
+        
+        # Попробуем получить последние вакансии без фильтра
+        print("\n--- Проверка последних вакансий без фильтра ---")
+        try:
+            params = {
+                'count': 50,
+                'published': 1
+            }
             
-    except Exception as e:
-        print(f"Ошибка при запросе к API: {e}")
+            response = api._connect_to_api(
+                "https://api.superjob.ru/2.0/vacancies/",
+                params,
+                "sj"
+            )
+            
+            if 'objects' in response:
+                print(f"Получено {len(response['objects'])} последних вакансий")
+                ids = [str(v.get('id')) for v in response['objects']]
+                print(f"Диапазон ID: {min(ids)} - {max(ids)}")
+                
+                if '50354308' in ids:
+                    print("✓ ID 50354308 найден в последних вакансиях!")
+                else:
+                    print("✗ ID 50354308 не найден даже в последних вакансиях")
+                    
+        except Exception as e:
+            print(f"Ошибка при получении последних вакансий: {e}")
 
 if __name__ == "__main__":
     test_specific_vacancy()
