@@ -10,7 +10,7 @@ class Vacancy(AbstractVacancy):
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
-        'employment', 'schedule', 'published_at', 'skills', 'keywords',
+        'employment', 'schedule', 'published_at', 'skills',
         'detailed_description', 'benefits', 'source'
     )
     def __init__(
@@ -27,7 +27,7 @@ class Vacancy(AbstractVacancy):
         schedule: Optional[str] = None,
         published_at: Optional[str] = None,
         skills: Optional[List[Dict[str, str]]] = None,
-        keywords: Optional[List[str]] = None,
+        
         detailed_description: Optional[str] = None,
         benefits: Optional[str] = None,
         vacancy_id: Optional[str] = None,
@@ -46,7 +46,6 @@ class Vacancy(AbstractVacancy):
         self.schedule = schedule
         self.published_at = self._parse_datetime(published_at) if published_at else None
         self.skills = skills or []
-        self.keywords = self._extract_keywords(keywords, description, requirements, responsibilities)
         self.detailed_description = detailed_description or description
         self.benefits = benefits
         self.source = source
@@ -85,58 +84,7 @@ class Vacancy(AbstractVacancy):
             logging.error(f"Ошибка парсинга даты '{published_at_str}': {e}")
             return datetime.now()
 
-    def _extract_keywords(self, keywords: Optional[List[str]], description: str, 
-                         requirements: Optional[str], responsibilities: Optional[str]) -> List[str]:
-        """Извлечение ключевых слов из текста вакансии"""
-        import re
-
-        if keywords:
-            return keywords
-
-        # Автоматическое извлечение ключевых слов
-        text_parts = [description or ""]
-        if requirements and isinstance(requirements, str):
-            text_parts.append(requirements)
-        if responsibilities and isinstance(responsibilities, str):
-            text_parts.append(responsibilities)
-
-        full_text = " ".join(str(part) if part is not None else "" for part in text_parts).lower()
-
-        # Популярные IT-навыки и технологии
-        tech_keywords = [
-            'python', 'java', 'javascript', 'react', 'angular', 'vue', 'node.js',
-            'django', 'flask', 'spring', 'sql', 'postgresql', 'mysql', 'mongodb',
-            'redis', 'docker', 'kubernetes', 'aws', 'azure', 'git', 'jenkins',
-            'terraform', 'ansible', 'linux', 'windows', 'macos', 'html', 'css',
-            'typescript', 'go', 'rust', 'c++', 'c#', '.net', 'php', 'ruby',
-            'swift', 'kotlin', 'scala', 'r', 'matlab', 'tableau', 'power bi',
-            'excel', 'jira', 'confluence', 'agile', 'scrum', 'kanban', 'devops',
-            'ci/cd', 'microservices', 'api', 'rest', 'graphql', 'machine learning',
-            'ai', 'data science', 'big data', 'spark', 'hadoop', 'kafka',
-            'elasticsearch', 'kibana', 'prometheus', 'grafana', 'nginx', 'apache'
-        ]
-
-        extracted_keywords = []
-        for keyword in tech_keywords:
-            # Используем регулярное выражение для поиска целых слов
-            # \b - граница слова, чтобы избежать ложных совпадений
-            pattern = r'\b' + re.escape(keyword) + r'\b'
-            if re.search(pattern, full_text):
-                # Дополнительная проверка для коротких слов (1-2 символа)
-                if len(keyword) <= 2:
-                    # Для коротких слов требуем более строгий контекст
-                    strict_patterns = [
-                        rf'\b{re.escape(keyword)}\b[\s,\.]',  # слово с пробелом, запятой или точкой
-                        rf'язык\s+{re.escape(keyword)}\b',    # "язык r"
-                        rf'\b{re.escape(keyword)}\s+программ',  # "r программирование"
-                        rf'знание\s+{re.escape(keyword)}\b',   # "знание r"
-                    ]
-                    if any(re.search(p, full_text, re.IGNORECASE) for p in strict_patterns):
-                        extracted_keywords.append(keyword)
-                else:
-                    extracted_keywords.append(keyword)
-
-        return extracted_keywords
+    
     @classmethod
     def cast_to_object_list(cls, data):
         vacancies = []
@@ -188,7 +136,7 @@ class Vacancy(AbstractVacancy):
                 employment=data.get('employment', {}).get('name') if isinstance(data.get('employment'), dict) else None,
                 schedule=data.get('schedule', {}).get('name') if isinstance(data.get('schedule'), dict) else None,
                 published_at=data.get('published_at'),
-                keywords=data.get('keywords'),
+                
                 detailed_description=data.get('detailed_description'),
                 benefits=data.get('benefits'),
                 source=data.get('source', 'hh.ru'))
@@ -212,7 +160,6 @@ class Vacancy(AbstractVacancy):
             'schedule': self.schedule,
             'published_at': self.published_at.isoformat() if self.published_at else None,
             'skills': self.skills,
-            'keywords': self.keywords,
             'detailed_description': self.detailed_description,
             'benefits': self.benefits,
             'source': self.source

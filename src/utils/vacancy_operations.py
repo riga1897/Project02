@@ -209,26 +209,7 @@ class VacancyOperations:
             # Простой поиск по одному ключевому слову
             return filter_vacancies_by_keyword(vacancies, query)
 
-    @staticmethod
-    def get_vacancy_keywords_summary(vacancies: List[Vacancy]) -> Dict[str, int]:
-        """
-        Получение сводки по ключевым словам в вакансиях
-
-        Args:
-            vacancies: Список вакансий
-
-        Returns:
-            Dict[str, int]: Словарь {ключевое_слово: количество_вакансий}
-        """
-        keyword_count = {}
-
-        for vacancy in vacancies:
-            if vacancy.keywords:
-                for keyword in vacancy.keywords:
-                    keyword_count[keyword] = keyword_count.get(keyword, 0) + 1
-
-        # Сортируем по популярности
-        return dict(sorted(keyword_count.items(), key=lambda x: x[1], reverse=True))
+    
 
     @staticmethod
     def _vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
@@ -248,9 +229,7 @@ class VacancyOperations:
         if vacancy.title and keyword_lower in vacancy.title.lower():
             return True
 
-        # Проверяем в ключевых словах
-        if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
-            return True
+        
 
         # Проверяем в требованиях
         if vacancy.requirements and keyword_lower in vacancy.requirements.lower():

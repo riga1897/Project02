@@ -64,13 +64,6 @@ class VacancyFormatter:
         if vacancy.schedule:
             lines.append(f"График: {vacancy.schedule}")
 
-        # Ключевые слова
-        if vacancy.keywords:
-            keywords_str = ", ".join(vacancy.keywords[:10])
-            if len(vacancy.keywords) > 10:
-                keywords_str += f" и еще {len(vacancy.keywords) - 10}"
-            lines.append(f"Ключевые слова: {keywords_str}")
-
         # Навыки
         if vacancy.skills:
             skills_list = []

@@ -129,9 +129,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         if vacancy.title and keyword_lower in vacancy.title.lower():
             relevance_score += 10
 
-        # Проверяем в ключевых словах (высокий приоритет)
-        if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
-            relevance_score += 8
+        
 
         # Проверяем в требованиях (средний приоритет)
         if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
@@ -224,9 +222,7 @@ def search_vacancies_advanced(vacancies: List[Vacancy], query: str) -> List[Vaca
     """Устаревшая функция - используйте VacancyOperations.search_vacancies_advanced"""
     return VacancyOperations.search_vacancies_advanced(vacancies, query)
 
-def get_vacancy_keywords_summary(vacancies: List[Vacancy]) -> Dict[str, int]:
-    """Устаревшая функция - используйте VacancyOperations.get_vacancy_keywords_summary"""
-    return VacancyOperations.get_vacancy_keywords_summary(vacancies)
+
 
 
 
