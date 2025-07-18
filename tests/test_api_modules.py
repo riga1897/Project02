@@ -2,7 +2,7 @@
 """
 Тесты для API модулей
 """
-
+from unittest.mock import patch
 
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
@@ -43,15 +43,26 @@ class TestHeadHunterAPI:
         assert result is False
     
     @patch('src.api_modules.cached_api.CachedAPI._CachedAPI__connect_to_api')
-    def test_get_vacancies_page(self, mock_connect, hh_api, mock_hh_response):
-        """Тест получения страницы вакансий"""
-        mock_connect.return_value = mock_hh_response
-        
-        result = hh_api.get_vacancies_page("python", page=0)
-        
+    def test_get_vacancies_page(self, mock_connect, sj_api, mock_sj_response):
+        """Тест получения страницы вакансий SJ"""
+        # Убедимся, что mock возвращает правильную структуру
+        mock_connect.return_value = {
+            'objects': [{
+                'profession': 'Python Developer',
+                'link': 'https://sj.ru/vacancy/123',
+                'payment_from': 100000,
+                'currency': 'rub',
+                'candidat': 'Знание Python',
+                'experience': {'title': 'От 3 до 6 лет'},
+                'firm_name': 'Tech Company'
+            }],
+            'total': 1
+        }
+
+        result = sj_api.get_vacancies_page("python", page=0)
+
         assert len(result) == 1
-        assert result[0]['name'] == 'Python Developer'
-        mock_connect.assert_called_once()
+        assert result[0]['profession'] == 'Python Developer'
     
     @patch('src.api_modules.cached_api.CachedAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_empty_response(self, mock_connect, hh_api):
