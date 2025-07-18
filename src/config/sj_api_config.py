@@ -11,23 +11,24 @@ class SJAPIConfig:
 
     def get_params(self, **kwargs) -> Dict[str, Any]:
         """Генерация параметров запроса с учетом переопределений"""
-        # Используем оптимальный размер страницы для стабильной работы
-        default_count = kwargs.get("count", min(self.count, 50))
-        
         params = {
-            "count": default_count,
+            "count": kwargs.get("count", self.count),
             "order_field": kwargs.get("order_field", "date"),  # Сортировка по дате
             "order_direction": kwargs.get("order_direction", "desc"),  # Сначала новые
         }
-        
+
+        # Обрабатываем пагинацию (SuperJob использует page, начиная с 0)
+        if "page" in kwargs:
+            params["page"] = kwargs["page"]
+
         # Добавляем город только если он указан явно
         if "town" in kwargs or self.town != 4:
             params["town"] = kwargs.get("town", self.town)
-            
+
         # Добавляем фильтр по времени публикации только если указан
         if "published" in kwargs:
             params["published"] = kwargs["published"]
-            
+
         if self.custom_params:
             params.update(self.custom_params)
         params.update(kwargs)

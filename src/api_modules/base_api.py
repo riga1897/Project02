@@ -25,11 +25,14 @@ class BaseAPI(ABC):
 
     @staticmethod
     def validate_response(response: Union[Dict, str]) -> bool:
-        """Validate API response structure"""
+        """Validate API response structure for both HH and SuperJob APIs"""
         if isinstance(response, str):
             logger.error(f"API returned error: {response}")
             return False
         if isinstance(response, dict):
             # Для SuperJob API используется 'objects', для HH.ru используется 'items'
-            return 'items' in response or 'objects' in response
+            # Также проверяем, что есть данные для обработки
+            has_hh_structure = 'items' in response
+            has_sj_structure = 'objects' in response
+            return has_hh_structure or has_sj_structure
         return False
