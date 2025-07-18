@@ -301,7 +301,7 @@ from src.utils.vacancy_formatter import vacancy_formatter
 
 def display_vacancy_info(vacancy: 'Vacancy', number: int = None) -> None:
     """
-    Отображение информации о вакансии (устаревшая функция)
+    Отображение информации о вакансии
     
     Args:
         vacancy: Объект вакансии
