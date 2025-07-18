@@ -23,7 +23,7 @@ class TestHeadHunterAPI:
 
     def test_init(self, hh_api):
         assert hh_api is not None
-        assert hh_api.config.user_agent == 'TestApp'
+        assert hh_api._config.user_agent == 'TestApp'
 
     @patch('requests.get')
     def test_get_vacancies_success(self, mock_get, hh_api):
@@ -83,8 +83,7 @@ class TestUnifiedAPI:
 
     @pytest.fixture
     def unified_api(self):
-        config = APIConfig()
-        return UnifiedAPI(config)
+        return UnifiedAPI()
 
     def test_init(self, unified_api):
         assert unified_api is not None
@@ -95,21 +94,21 @@ class TestUnifiedAPI:
         mock_hh.return_value = [{'source': 'hh', 'id': '1'}]
         mock_sj.return_value = [{'source': 'sj', 'id': '2'}]
 
-        result = unified_api.get_vacancies_from_all_sources("Python")
+        result = unified_api.get_vacancies_from_sources("Python")
         assert isinstance(result, list)
 
     @patch('src.api_modules.hh_api.HeadHunterAPI.get_vacancies')
     def test_get_vacancies_from_hh(self, mock_hh, unified_api):
         mock_hh.return_value = [{'source': 'hh', 'id': '1'}]
 
-        result = unified_api.get_vacancies_from_hh("Python")
+        result = unified_api.get_hh_vacancies("Python")
         assert isinstance(result, list)
 
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
     def test_get_vacancies_from_sj(self, mock_sj, unified_api):
         mock_sj.return_value = [{'source': 'sj', 'id': '1'}]
 
-        result = unified_api.get_vacancies_from_sj("Python")
+        result = unified_api.get_sj_vacancies("Python")
         assert isinstance(result, list)
 
 
@@ -130,5 +129,5 @@ class TestAPIConnector:
         mock_response.json.return_value = {'items': []}
         mock_get.return_value = mock_response
 
-        result = api_connector.get("https://test.com")
+        result = api_connector.get_data("https://test.com")
         assert mock_get.called
