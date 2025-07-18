@@ -88,14 +88,20 @@ class TestEnvLoader:
 
     @patch('src.utils.env_loader.os.getenv')
     def test_get_env_var_not_exists(self, mock_getenv):
-        mock_getenv.return_value = None
+        # Мокаем os.getenv так, чтобы он возвращал второй аргумент (default) когда переменная не найдена
+        def mock_getenv_func(key, default=None):
+            return default
+        mock_getenv.side_effect = mock_getenv_func
 
         result = EnvLoader.get_env_var("TEST_VAR", "default")
         assert result == "default"
 
     @patch('src.utils.env_loader.os.getenv')
     def test_get_env_var_no_default(self, mock_getenv):
-        mock_getenv.return_value = None
+        # Мокаем os.getenv так, чтобы он возвращал второй аргумент (None по умолчанию)
+        def mock_getenv_func(key, default=None):
+            return default
+        mock_getenv.side_effect = mock_getenv_func
 
         result = EnvLoader.get_env_var("TEST_VAR")
         assert result is None
