@@ -119,9 +119,9 @@ class UserInterface:
 
             # Определяем источники для поиска
             selected_sources = []
-            if sources["hh"]:
+            if sources.get("hh", False):
                 selected_sources.append("hh")
-            if sources["sj"]:
+            if sources.get("sj", False):
                 selected_sources.append("sj")
 
             if not selected_sources:
@@ -484,7 +484,12 @@ class UserInterface:
 
             self.source_selector.display_sources_info(sources)
             if confirm_action("Вы уверены, что хотите очистить кэш выбранных источников?"):
-                self.unified_api.clear_cache(sources)
+                # Конвертируем sources в нужный формат для clear_cache
+                cache_sources = {
+                    'hh': sources.get('hh', False),
+                    'sj': sources.get('sj', False)
+                }
+                self.unified_api.clear_cache(cache_sources)
                 print("Кэш выбранных источников успешно очищен.")
             else:
                 print("Очистка кэша отменена.")
