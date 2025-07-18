@@ -29,7 +29,7 @@ class VacancyFormatter:
             lines.append(f"{number}.")
         
         # Добавляем название
-        title = vacancy.title or vacancy.name or 'Не указано'
+        title = vacancy.title or getattr(vacancy, 'name', None) or 'Не указано'
         lines.append(f"Название: {title}")
         
         lines.append(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
@@ -98,7 +98,7 @@ class VacancyFormatter:
             print(f"{number}.")
         
         # Печатаем название
-        title = vacancy.title or vacancy.name or 'Не указано'
+        title = vacancy.title or getattr(vacancy, 'name', None) or 'Не указано'
         print(f"Название: {title}")
         
         print(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
