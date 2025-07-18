@@ -135,36 +135,68 @@ class UserInterface:
                 print("Вакансии не найдены.")
                 return
 
-            # Сохраняем найденные вакансии в файл через интерфейс
-            try:
-                update_messages = self.json_saver.add_vacancy(all_vacancies)
-                print(f"\nПоиск завершен. Всего найдено: {len(all_vacancies)} вакансий")
-                
-                # Показываем сообщения об обновлениях
-                if update_messages:
-                    new_count = sum(1 for msg in update_messages if "Добавлена новая вакансия" in msg)
-                    updated_count = len(update_messages) - new_count
-                    
-                    if new_count > 0:
-                        print(f"Добавлено новых вакансий: {new_count}")
-                    if updated_count > 0:
-                        print(f"Обновлено существующих вакансий: {updated_count}")
+            # Показываем статистику по источникам
+            hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
+            sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
+
+            print(f"\nПоиск завершен. Всего найдено: {len(all_vacancies)} вакансий")
+            if hh_count > 0:
+                print(f"  • HH.ru: {hh_count} вакансий")
+            if sj_count > 0:
+                print(f"  • SuperJob: {sj_count} вакансий")
+
+            # Показываем предварительный просмотр вакансий
+            print(f"\nПредварительный просмотр найденных вакансий:")
+            print("=" * 60)
+            
+            # Показываем до 10 первых вакансий для предварительного просмотра
+            preview_count = min(10, len(all_vacancies))
+            for i, vacancy in enumerate(all_vacancies[:preview_count], 1):
+                print(f"\n{i}. {vacancy.title or 'Без названия'}")
+                if vacancy.employer:
+                    company_name = vacancy.employer.get('name', 'Не указана') if isinstance(vacancy.employer, dict) else str(vacancy.employer)
+                    print(f"   Компания: {company_name}")
+                if vacancy.salary:
+                    print(f"   Зарплата: {vacancy.salary}")
                 else:
-                    print("Все найденные вакансии уже существуют в базе")
+                    print("   Зарплата: Не указана")
+                print(f"   Источник: {vacancy.source}")
+                print(f"   Ссылка: {vacancy.url}")
+                print("-" * 40)
 
-                # Показываем статистику по источникам
-                hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
-                sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
+            if len(all_vacancies) > preview_count:
+                print(f"\n... и еще {len(all_vacancies) - preview_count} вакансий")
 
-                if hh_count > 0:
-                    print(f"  • HH.ru: {hh_count} вакансий")
-                if sj_count > 0:
-                    print(f"  • SuperJob: {sj_count} вакансий")
+            # Спрашиваем пользователя о сохранении
+            print("\n" + "=" * 60)
+            save_choice = input(f"Сохранить {len(all_vacancies)} найденных вакансий в файл? (y/n): ").strip().lower()
+            
+            if save_choice in ['y', 'yes', 'да', 'д']:
+                # Сохраняем найденные вакансии в файл через интерфейс
+                try:
+                    update_messages = self.json_saver.add_vacancy(all_vacancies)
                     
-            except Exception as save_error:
-                logger.error(f"Ошибка сохранения вакансий в файл: {save_error}")
-                print(f"Вакансии найдены, но ошибка сохранения: {save_error}")
-                print("Вакансии остались в кэше API и будут доступны до очистки кэша.")
+                    # Показываем сообщения об обновлениях
+                    if update_messages:
+                        new_count = sum(1 for msg in update_messages if "Добавлена новая вакансия" in msg)
+                        updated_count = len(update_messages) - new_count
+                        
+                        if new_count > 0:
+                            print(f"✅ Добавлено новых вакансий: {new_count}")
+                        if updated_count > 0:
+                            print(f"🔄 Обновлено существующих вакансий: {updated_count}")
+                        
+                        print("✅ Вакансии успешно сохранены!")
+                    else:
+                        print("ℹ️  Все найденные вакансии уже существуют в базе")
+                        
+                except Exception as save_error:
+                    logger.error(f"Ошибка сохранения вакансий в файл: {save_error}")
+                    print(f"❌ Ошибка сохранения: {save_error}")
+                    print("Вакансии остались в кэше API и будут доступны до очистки кэша.")
+            else:
+                print("❌ Сохранение отменено. Вакансии остались в кэше API.")
+                print("Вы можете найти их снова или очистить кэш через соответствующий пункт меню.")
 
         except Exception as e:
             print(f"Ошибка при поиске вакансий: {e}")
