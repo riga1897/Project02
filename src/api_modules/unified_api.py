@@ -72,7 +72,7 @@ class UnifiedAPI:
                         except Exception as e:
                             logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
                             if sj_vacancies:
-                        logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
+                                logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
                         all_vacancies.extend(sj_vacancies)
                     else:
                         logger.warning("SuperJob API не вернул вакансий")
