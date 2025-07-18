@@ -794,7 +794,7 @@ class UserInterface:
         """Настройка SuperJob API"""
         import os
 
-        print("\n" + "="*60)```python
+        print("\n" + "="*60)
         print("НАСТРОЙКА SUPERJOB API")
         print("="*60)
 
