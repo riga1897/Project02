@@ -19,9 +19,9 @@ class HeadHunterAPI(CachedAPI):
 
     def __init__(self, config: Optional[APIConfig] = None):
         super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
-        self.config = config or APIConfig()
-        self.connector = APIConnector(self.config)
-        self.paginator = Paginator()
+        self._config = config or APIConfig()
+        self._connector = APIConnector(self._config)
+        self._paginator = Paginator()
 
     def _get_empty_response(self) -> Dict:
         """Get empty response structure for HH API"""
@@ -40,7 +40,7 @@ class HeadHunterAPI(CachedAPI):
             params = {
                 "text": search_query,
                 "page": page,
-                **self.config.hh_config.get_params(**kwargs)
+                **self._config.hh_config.get_params(**kwargs)
             }
 
             data = self._connect_to_api(self.BASE_URL, params, "hh")
@@ -58,7 +58,7 @@ class HeadHunterAPI(CachedAPI):
             # Initial request for metadata
             initial_data = self._connect_to_api(
                 self.BASE_URL,
-                self.config.hh_config.get_params(
+                self._config.hh_config.get_params(
                     text=search_query,
                     page=0,
                     per_page=1,
@@ -73,7 +73,7 @@ class HeadHunterAPI(CachedAPI):
 
             total_pages = min(
                 initial_data.get('pages', 1),
-                self.config.get_pagination_params(**kwargs)["max_pages"]
+                self._config.get_pagination_params(**kwargs)["max_pages"]
             )
 
             logger.info(
@@ -82,7 +82,7 @@ class HeadHunterAPI(CachedAPI):
             )
 
             # Process all pages
-            results = self.paginator.paginate(
+            results = self._paginator.paginate(
                 fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs),
                 total_pages=total_pages
             )
