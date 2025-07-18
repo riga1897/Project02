@@ -5,7 +5,7 @@ import logging
 from typing import Dict, List, Union, Optional
 from .base_api import BaseAPI
 from src.config.sj_api_config import SJAPIConfig
-from src.utils.cache import cache_request
+from src.utils.cache import simple_cache
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +73,7 @@ class SuperJobAPI(BaseAPI):
             logger.error(f"Unexpected error: {e}")
             return f"Unexpected error: {e}"
 
-    @cache_request(cache_dir="data/cache/sj", expiry_hours=1)
+    @simple_cache(ttl=3600)  # 1 час в секундах
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """
         Получение вакансий по поисковому запросу
