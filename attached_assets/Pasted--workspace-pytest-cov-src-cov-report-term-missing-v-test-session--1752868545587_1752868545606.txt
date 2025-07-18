@@ -1,0 +1,952 @@
+~/workspace$ pytest --cov=src --cov-report=term-missing -v
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0 -- /nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/bin/python3.9
+cachedir: .pytest_cache
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 75 items                                                      
+
+test_sj_vacancy.py::test_specific_vacancy PASSED                  [  1%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_init PASSED    [  2%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_validate_vacancy_valid PASSED [  4%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_validate_vacancy_invalid PASSED [  5%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_get_vacancies_page PASSED [  6%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_get_vacancies_empty_response PASSED [  8%]
+tests/test_api_modules.py::TestHeadHunterAPI::test_get_vacancies_full PASSED [  9%]
+tests/test_api_modules.py::TestSuperJobAPI::test_init FAILED      [ 10%]
+tests/test_api_modules.py::TestSuperJobAPI::test_get_vacancies_page FAILED [ 12%]
+tests/test_api_modules.py::TestUnifiedAPI::test_init FAILED       [ 13%]
+tests/test_api_modules.py::TestUnifiedAPI::test_search_vacancies_hh_only FAILED [ 14%]
+tests/test_api_modules.py::TestUnifiedAPI::test_search_vacancies_both_sources FAILED [ 16%]
+tests/test_config.py::TestAPIConfig::test_default_config FAILED   [ 17%]
+tests/test_config.py::TestAPIConfig::test_custom_config PASSED    [ 18%]
+tests/test_config.py::TestAPIConfig::test_pagination_params FAILED [ 20%]
+tests/test_config.py::TestHHAPIConfig::test_default_params FAILED [ 21%]
+tests/test_config.py::TestHHAPIConfig::test_custom_params FAILED  [ 22%]
+tests/test_config.py::TestSJAPIConfig::test_default_params FAILED [ 24%]
+tests/test_config.py::TestSJAPIConfig::test_custom_params PASSED  [ 25%]
+tests/test_json_saver.py::TestJSONSaver::test_init_creates_file PASSED [ 26%]
+tests/test_json_saver.py::TestJSONSaver::test_add_single_vacancy PASSED [ 28%]
+tests/test_json_saver.py::TestJSONSaver::test_add_multiple_vacancies PASSED [ 29%]
+tests/test_json_saver.py::TestJSONSaver::test_update_existing_vacancy PASSED [ 30%]
+tests/test_json_saver.py::TestJSONSaver::test_load_empty_file PASSED [ 32%]
+tests/test_json_saver.py::TestJSONSaver::test_delete_all_vacancies PASSED [ 33%]
+tests/test_json_saver.py::TestJSONSaver::test_delete_vacancy_by_id PASSED [ 34%]
+tests/test_json_saver.py::TestJSONSaver::test_delete_nonexistent_vacancy PASSED [ 36%]
+tests/test_json_saver.py::TestJSONSaver::test_delete_vacancies_by_keyword PASSED [ 37%]
+tests/test_json_saver.py::TestJSONSaver::test_corrupted_file_handling PASSED [ 38%]
+tests/test_json_saver.py::TestJSONSaver::test_get_vacancies PASSED [ 40%]
+tests/test_salary.py::TestSalary::test_empty_salary FAILED        [ 41%]
+tests/test_salary.py::TestSalary::test_salary_with_from_only FAILED [ 42%]
+tests/test_salary.py::TestSalary::test_salary_with_to_only FAILED [ 44%]
+tests/test_salary.py::TestSalary::test_salary_with_range FAILED   [ 45%]
+tests/test_salary.py::TestSalary::test_salary_currency_conversion PASSED [ 46%]
+tests/test_salary.py::TestSalary::test_salary_comparison FAILED   [ 48%]
+tests/test_salary.py::TestSalary::test_salary_equality FAILED     [ 49%]
+tests/test_salary.py::TestSalary::test_salary_str_representation FAILED [ 50%]
+tests/test_salary.py::TestSalary::test_salary_to_dict FAILED      [ 52%]
+tests/test_salary.py::TestSalary::test_invalid_salary_data FAILED [ 53%]
+tests/test_utils.py::TestPaginator::test_paginate_multiple_pages PASSED [ 54%]
+tests/test_utils.py::TestPaginator::test_paginate_empty_page_stops PASSED [ 56%]
+tests/test_utils.py::TestPaginator::test_paginate_empty_result PASSED [ 57%]
+tests/test_utils.py::TestPaginator::test_paginate_respects_total_pages PASSED [ 58%]
+tests/test_utils.py::TestUIHelpers::test_filter_vacancies_by_keyword PASSED [ 60%]
+tests/test_utils.py::TestUIHelpers::test_filter_vacancies_case_insensitive PASSED [ 61%]
+tests/test_utils.py::TestUIHelpers::test_filter_vacancies_no_matches PASSED [ 62%]
+tests/test_utils.py::TestUIHelpers::test_filter_vacancies_empty_keyword FAILED [ 64%]
+tests/test_utils.py::TestVacancyFormatter::test_format_vacancy_full FAILED [ 65%]
+tests/test_utils.py::TestVacancyFormatter::test_format_vacancy_no_salary FAILED [ 66%]
+tests/test_utils.py::TestVacancyFormatter::test_format_vacancy_list FAILED [ 68%]
+tests/test_utils.py::TestVacancyFormatter::test_format_vacancy_short FAILED [ 69%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_creation_minimal FAILED [ 70%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_creation_full PASSED [ 72%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_from_dict PASSED [ 73%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_to_dict PASSED [ 74%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_comparison PASSED [ 76%]
+tests/test_vacancy_models.py::TestVacancy::test_vacancy_equality PASSED [ 77%]
+tests/test_vacancy_models.py::TestVacancy::test_cast_to_object_list FAILED [ 78%]
+tests/test_vacancy_models.py::TestVacancy::test_html_cleaning PASSED [ 80%]
+tests/test_vacancy_models.py::TestVacancy::test_datetime_parsing PASSED [ 81%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_get_vacancies_with_salary FAILED [ 82%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_sort_vacancies_by_salary_desc FAILED [ 84%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_sort_vacancies_by_salary_asc FAILED [ 85%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_filter_vacancies_by_min_salary FAILED [ 86%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_filter_vacancies_by_max_salary FAILED [ 88%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_filter_vacancies_by_salary_range FAILED [ 89%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_filter_vacancies_by_multiple_keywords FAILED [ 90%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_filter_vacancies_by_multiple_keywords_empty FAILED [ 92%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_search_vacancies_advanced_and FAILED [ 93%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_search_vacancies_advanced_or FAILED [ 94%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_search_vacancies_advanced_simple FAILED [ 96%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_get_vacancy_keywords_summary FAILED [ 97%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_get_vacancy_keywords_summary_empty FAILED [ 98%]
+tests/test_vacancy_operations.py::TestVacancyOperations::test_get_vacancy_keywords_summary_no_keywords FAILED [100%]
+
+=============================== FAILURES ================================
+_______________________ TestSuperJobAPI.test_init _______________________
+
+self = <tests.test_api_modules.TestSuperJobAPI object at 0x7f961f1e5b20>
+api_config = <src.config.api_config.APIConfig object at 0x7f961f265160>
+temp_cache_dir = '/tmp/tmpb4ndk_xd'
+
+    def test_init(self, api_config, temp_cache_dir):
+        """Тест инициализации SJ API"""
+        original_cache = SuperJobAPI.DEFAULT_CACHE_DIR
+        SuperJobAPI.DEFAULT_CACHE_DIR = temp_cache_dir
+    
+        try:
+            api = SuperJobAPI(api_config)
+>           assert api._config == api_config
+E           AttributeError: 'SuperJobAPI' object has no attribute '_config'
+
+tests/test_api_modules.py:88: AttributeError
+________________ TestSuperJobAPI.test_get_vacancies_page ________________
+
+self = <tests.test_api_modules.TestSuperJobAPI object at 0x7f961f1e5430>
+mock_connect = <MagicMock name='_CachedAPI__connect_to_api' id='140282743896624'>
+sj_api = <src.api_modules.sj_api.SuperJobAPI object at 0x7f961f1e3d60>
+mock_sj_response = {'objects': [{'candidat': 'Знание Python', 'currency': 'rub', 'experience': {'title': 'От 3 до 6 лет'}, 'firm_name': 'Tech Company', ...}], 'total': 1}
+
+    @patch('src.api_modules.cached_api.CachedAPI._CachedAPI__connect_to_api')
+    def test_get_vacancies_page(self, mock_connect, sj_api, mock_sj_response):
+        """Тест получения страницы вакансий SJ"""
+        mock_connect.return_value = mock_sj_response
+    
+        result = sj_api.get_vacancies_page("python", page=0)
+    
+>       assert len(result) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_api_modules.py:99: AssertionError
+------------------------- Captured stderr call --------------------------
+ERROR:src.api_modules.sj_api:Failed to get vacancies page 0: 'APIConfig' object has no attribute 'get_params'
+--------------------------- Captured log call ---------------------------
+ERROR    src.api_modules.sj_api:sj_api.py:84 Failed to get vacancies page 0: 'APIConfig' object has no attribute 'get_params'
+_______________________ TestUnifiedAPI.test_init ________________________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7f961f1e5e20>
+mock_sj = <MagicMock name='SuperJobAPI' id='140282743160160'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140282743612944'>
+api_config = <src.config.api_config.APIConfig object at 0x7f961f12fe20>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_init(self, mock_sj, mock_hh, api_config):
+        """Тест инициализации унифицированного API"""
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:110: TypeError
+_____________ TestUnifiedAPI.test_search_vacancies_hh_only ______________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7f961f1e5d90>
+mock_sj = <MagicMock name='SuperJobAPI' id='140282743109520'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140282744085664'>
+api_config = <src.config.api_config.APIConfig object at 0x7f961f123190>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_search_vacancies_hh_only(self, mock_sj, mock_hh, api_config):
+        """Тест поиска только через HH"""
+        mock_hh_instance = MagicMock()
+        mock_hh_instance.get_vacancies.return_value = [{'name': 'Test'}]
+        mock_hh.return_value = mock_hh_instance
+    
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:124: TypeError
+___________ TestUnifiedAPI.test_search_vacancies_both_sources ___________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7f961f2654c0>
+mock_sj = <MagicMock name='SuperJobAPI' id='140282743059552'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140282743043408'>
+api_config = <src.config.api_config.APIConfig object at 0x7f961f117b80>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_search_vacancies_both_sources(self, mock_sj, mock_hh, api_config):
+        """Тест поиска через оба источника"""
+        mock_hh_instance = MagicMock()
+        mock_hh_instance.get_vacancies.return_value = [{'name': 'HH Test'}]
+        mock_hh.return_value = mock_hh_instance
+    
+        mock_sj_instance = MagicMock()
+        mock_sj_instance.get_vacancies.return_value = [{'profession': 'SJ Test'}]
+        mock_sj.return_value = mock_sj_instance
+    
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:142: TypeError
+___________________ TestAPIConfig.test_default_config ___________________
+
+self = <tests.test_config.TestAPIConfig object at 0x7f961f1b3250>
+
+    def test_default_config(self):
+        """Тест конфигурации по умолчанию"""
+        config = APIConfig()
+    
+        assert config.user_agent is not None
+        assert config.timeout > 0
+>       assert isinstance(config.hh_config, HHAPIConfig)
+E       assert False
+E        +  where False = isinstance(HHAPIConfig(area=1, per_page=50, only_with_salary=False, custom_params=None), HHAPIConfig)
+E        +    where HHAPIConfig(area=1, per_page=50, only_with_salary=False, custom_params=None) = <src.config.api_config.APIConfig object at 0x7f961f193850>.hh_config
+
+tests/test_config.py:21: AssertionError
+_________________ TestAPIConfig.test_pagination_params __________________
+
+self = <tests.test_config.TestAPIConfig object at 0x7f961f1b39a0>
+
+    def test_pagination_params(self):
+        """Тест параметров пагинации"""
+        config = APIConfig()
+    
+        params = config.get_pagination_params()
+        assert "max_pages" in params
+>       assert "per_page" in params
+E       AssertionError: assert 'per_page' in {'max_pages': 20}
+
+tests/test_config.py:40: AssertionError
+__________________ TestHHAPIConfig.test_default_params __________________
+
+self = <tests.test_config.TestHHAPIConfig object at 0x7f961f1b3cd0>
+
+    def test_default_params(self):
+        """Тест параметров по умолчанию"""
+        config = HHAPIConfig()
+>       params = config.get_params()
+E       AttributeError: 'HHAPIConfig' object has no attribute 'get_params'
+
+tests/test_config.py:53: AttributeError
+__________________ TestHHAPIConfig.test_custom_params ___________________
+
+self = <tests.test_config.TestHHAPIConfig object at 0x7f961f1b3850>
+
+    def test_custom_params(self):
+        """Тест пользовательских параметров"""
+        config = HHAPIConfig()
+>       params = config.get_params(
+            text="python",
+            area=1,
+            experience="between3And6"
+        )
+E       AttributeError: 'HHAPIConfig' object has no attribute 'get_params'
+
+tests/test_config.py:62: AttributeError
+__________________ TestSJAPIConfig.test_default_params __________________
+
+self = <tests.test_config.TestSJAPIConfig object at 0x7f961f266c40>
+
+    def test_default_params(self):
+        """Тест параметров по умолчанию"""
+        config = SJAPIConfig()
+        params = config.get_params()
+    
+        assert "count" in params
+>       assert "page" in params
+E       AssertionError: assert 'page' in {'count': 500, 'order_direction': 'desc', 'order_field': 'date', 'published': 15}
+
+tests/test_config.py:82: AssertionError
+_____________________ TestSalary.test_empty_salary ______________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f1bb6d0>
+
+    def test_empty_salary(self):
+        """Тест пустой зарплаты"""
+        salary = Salary()
+    
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f961f115be0>.salary_from
+
+tests/test_salary.py:17: AssertionError
+_________________ TestSalary.test_salary_with_from_only _________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f1bba90>
+
+    def test_salary_with_from_only(self):
+        """Тест зарплаты только с минимальным значением"""
+        salary_data = {"from": 100000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        assert salary.salary_from == 100000
+>       assert salary.salary_to is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f961e873280>.salary_to
+
+tests/test_salary.py:29: AssertionError
+__________________ TestSalary.test_salary_with_to_only __________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f1bb430>
+
+    def test_salary_with_to_only(self):
+        """Тест зарплаты только с максимальным значением"""
+        salary_data = {"to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f961e87ca00>.salary_from
+
+tests/test_salary.py:39: AssertionError
+___________________ TestSalary.test_salary_with_range ___________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f1bb730>
+
+    def test_salary_with_range(self):
+        """Тест зарплаты с диапазоном"""
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        assert salary.salary_from == 100000
+        assert salary.salary_to == 150000
+        assert salary.currency == "RUR"
+        assert salary.average == 125000
+>       assert salary.is_empty() is False
+E       AttributeError: 'Salary' object has no attribute 'is_empty'
+
+tests/test_salary.py:54: AttributeError
+___________________ TestSalary.test_salary_comparison ___________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f20fb80>
+
+    def test_salary_comparison(self):
+        """Тест сравнения зарплат"""
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+        salary2 = Salary({"from": 200000, "to": 250000, "currency": "RUR"})
+    
+>       assert salary1 < salary2
+E       TypeError: '<' not supported between instances of 'Salary' and 'Salary'
+
+tests/test_salary.py:73: TypeError
+____________________ TestSalary.test_salary_equality ____________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f20fa60>
+
+    def test_salary_equality(self):
+        """Тест равенства зарплат"""
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+        salary2 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+    
+>       assert salary1 == salary2
+E       assert <src.utils.salary.Salary object at 0x7f961f115be0> == <src.utils.salary.Salary object at 0x7f961e87cac0>
+
+tests/test_salary.py:84: AssertionError
+_______________ TestSalary.test_salary_str_representation _______________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f20f040>
+
+    def test_salary_str_representation(self):
+        """Тест строкового представления"""
+        # С диапазоном
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+>       assert "100 000" in str(salary1)
+E       AssertionError: assert '100 000' in 'от 100,000 до 150,000 руб. в месяц'
+E        +  where 'от 100,000 до 150,000 руб. в месяц' = str(<src.utils.salary.Salary object at 0x7f961e873280>)
+
+tests/test_salary.py:90: AssertionError
+____________________ TestSalary.test_salary_to_dict _____________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f20ff70>
+
+    def test_salary_to_dict(self):
+        """Тест преобразования в словарь"""
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        result = salary.to_dict()
+    
+        assert result["from"] == 100000
+        assert result["to"] == 150000
+        assert result["currency"] == "RUR"
+>       assert result["average"] == 125000
+E       KeyError: 'average'
+
+tests/test_salary.py:116: KeyError
+__________________ TestSalary.test_invalid_salary_data __________________
+
+self = <tests.test_salary.TestSalary object at 0x7f961f20f250>
+
+    def test_invalid_salary_data(self):
+        """Тест обработки некорректных данных"""
+        # Некорректный тип данных
+>       salary1 = Salary("invalid")
+
+tests/test_salary.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.utils.salary.Salary object at 0x7f961e88f460>
+salary_data = 'invalid'
+
+    def __init__(self, salary_data: Optional[Dict[str, Any]] = None):
+        if salary_data is None:
+            salary_data = {}
+    
+        self.amount_from = 0
+        self.amount_to = 0
+        self.gross = False
+        self.period = 'month'
+    
+>       self._salary_from = self._validate_salary_value(salary_data.get('from'))
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/utils/salary.py:17: AttributeError
+___________ TestUIHelpers.test_filter_vacancies_empty_keyword ___________
+
+self = <tests.test_utils.TestUIHelpers object at 0x7f961f1b3df0>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f961e892510>, <src.vacancies.models.Vacancy object at 0x7f961e8925c0>, <src.vacancies.models.Vacancy object at 0x7f961e892250>]
+
+    def test_filter_vacancies_empty_keyword(self, sample_vacancies):
+        """Тест фильтрации с пустым ключевым словом"""
+        result = filter_vacancies_by_keyword(sample_vacancies, "")
+>       assert len(result) == 0
+E       assert 3 == 0
+E        +  where 3 = len([<src.vacancies.models.Vacancy object at 0x7f961e892510>, <src.vacancies.models.Vacancy object at 0x7f961e8925c0>, <src.vacancies.models.Vacancy object at 0x7f961e892250>])
+
+tests/test_utils.py:84: AssertionError
+_____________ TestVacancyFormatter.test_format_vacancy_full _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7f961f211910>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f961e89e720>
+
+    def test_format_vacancy_full(self, sample_vacancy):
+        """Тест форматирования полной вакансии"""
+>       result = VacancyFormatter.format_vacancy(sample_vacancy)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy'
+
+tests/test_utils.py:92: AttributeError
+__________ TestVacancyFormatter.test_format_vacancy_no_salary ___________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7f961f2117c0>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f961e899a90>, <src.vacancies.models.Vacancy object at 0x7f961e899b40>, <src.vacancies.models.Vacancy object at 0x7f961e899bf0>]
+
+    def test_format_vacancy_no_salary(self, sample_vacancies):
+        """Тест форматирования вакансии без зарплаты"""
+        vacancy_no_salary = sample_vacancies[2]  # Frontend Developer без зарплаты
+>       result = VacancyFormatter.format_vacancy(vacancy_no_salary)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy'
+
+tests/test_utils.py:101: AttributeError
+_____________ TestVacancyFormatter.test_format_vacancy_list _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7f961f211e50>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7f961e882eb0>, <src.vacancies.models.Vacancy object at 0x7f961e882f60>, <src.vacancies.models.Vacancy object at 0x7f961e8a8040>]
+
+    def test_format_vacancy_list(self, sample_vacancies):
+        """Тест форматирования списка вакансий"""
+>       result = VacancyFormatter.format_vacancy_list(sample_vacancies)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy_list'
+
+tests/test_utils.py:108: AttributeError
+____________ TestVacancyFormatter.test_format_vacancy_short _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7f961f211f10>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f961f1881a0>
+
+    def test_format_vacancy_short(self, sample_vacancy):
+        """Тест краткого форматирования вакансии"""
+>       result = VacancyFormatter.format_vacancy_short(sample_vacancy)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy_short'
+
+tests/test_utils.py:116: AttributeError
+_______________ TestVacancy.test_vacancy_creation_minimal _______________
+
+self = <tests.test_vacancy_models.TestVacancy object at 0x7f961f0e7310>
+
+    def test_vacancy_creation_minimal(self):
+        """Тест создания вакансии с минимальными данными"""
+        vacancy = Vacancy(
+            title="Test Job",
+            url="https://example.com",
+            salary=None,
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Test Job"
+        assert vacancy.url == "https://example.com"
+        assert vacancy.description == "Test description"
+>       assert vacancy.salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7f961e88f160>.salary_from
+E        +    where <src.utils.salary.Salary object at 0x7f961e88f160> = <src.vacancies.models.Vacancy object at 0x7f961e899510>.salary
+
+tests/test_vacancy_models.py:27: AssertionError
+_________________ TestVacancy.test_cast_to_object_list __________________
+
+self = <tests.test_vacancy_models.TestVacancy object at 0x7f961f271310>
+
+    def test_cast_to_object_list(self):
+        """Тест преобразования списка словарей в список вакансий"""
+        data = [
+            {
+                'id': '1',
+                'name': 'Job1',
+                'alternate_url': 'https://example.com/1',
+                'salary': {'from': 100000, 'currency': 'RUR'}
+            },
+            {
+                'id': '2',
+                'name': 'Job2',
+                'alternate_url': 'https://example.com/2'
+            },
+            {'invalid': 'data'}  # Некорректные данные
+        ]
+    
+        result = Vacancy.cast_to_object_list(data)
+    
+>       assert len(result) == 2
+E       assert 3 == 2
+E        +  where 3 = len([<src.vacancies.models.Vacancy object at 0x7f961f267e00>, <src.vacancies.models.Vacancy object at 0x7f961e8ab0f0>, <src.vacancies.models.Vacancy object at 0x7f961e8ab880>])
+
+tests/test_vacancy_models.py:159: AssertionError
+_________ TestVacancyOperations.test_get_vacancies_with_salary __________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed610>
+
+    def test_get_vacancies_with_salary(self):
+        """Тест получения вакансий с зарплатой"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2"),  # без зарплаты
+            self.create_test_vacancy("Job 3", salary_to=200000)
+        ]
+
+tests/test_vacancy_operations.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed610>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+_______ TestVacancyOperations.test_sort_vacancies_by_salary_desc ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed9a0>
+
+    def test_sort_vacancies_by_salary_desc(self):
+        """Тест сортировки вакансий по убыванию зарплаты"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2", salary_from=200000),
+            self.create_test_vacancy("Job 3", salary_from=150000)
+        ]
+
+tests/test_vacancy_operations.py:51: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed9a0>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+________ TestVacancyOperations.test_sort_vacancies_by_salary_asc ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed4c0>
+
+    def test_sort_vacancies_by_salary_asc(self):
+        """Тест сортировки вакансий по возрастанию зарплаты"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2", salary_from=200000)
+        ]
+
+tests/test_vacancy_operations.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3ed4c0>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+_______ TestVacancyOperations.test_filter_vacancies_by_min_salary _______
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3edf10>
+
+    def test_filter_vacancies_by_min_salary(self):
+        """Тест фильтрации по минимальной зарплате"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2", salary_from=200000),
+            self.create_test_vacancy("Job 3", salary_from=50000)
+        ]
+
+tests/test_vacancy_operations.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3edf10>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+_______ TestVacancyOperations.test_filter_vacancies_by_max_salary _______
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3edc10>
+
+    def test_filter_vacancies_by_max_salary(self):
+        """Тест фильтрации по максимальной зарплате"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2", salary_from=200000),
+            self.create_test_vacancy("Job 3", salary_to=150000)
+        ]
+
+tests/test_vacancy_operations.py:91: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3edc10>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+______ TestVacancyOperations.test_filter_vacancies_by_salary_range ______
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5280>
+
+    def test_filter_vacancies_by_salary_range(self):
+        """Тест фильтрации по диапазону зарплат"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", salary_from=100000),
+            self.create_test_vacancy("Job 2", salary_from=200000),
+            self.create_test_vacancy("Job 3", salary_from=50000)
+        ]
+
+tests/test_vacancy_operations.py:106: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5280>
+title = 'Job 1', salary_from = 100000, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+___ TestVacancyOperations.test_filter_vacancies_by_multiple_keywords ____
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5430>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140282733837328'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_filter_vacancies_by_multiple_keywords(self, mock_filter):
+        """Тест фильтрации по нескольким ключевым словам"""
+        vacancies = [
+>           self.create_test_vacancy("Python Developer"),
+            self.create_test_vacancy("Java Developer")
+        ]
+
+tests/test_vacancy_operations.py:122: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5430>
+title = 'Python Developer', salary_from = None, salary_to = None
+keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+_ TestVacancyOperations.test_filter_vacancies_by_multiple_keywords_empty _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a50d0>
+
+    def test_filter_vacancies_by_multiple_keywords_empty(self):
+        """Тест фильтрации по пустому списку ключевых слов"""
+>       vacancies = [self.create_test_vacancy("Test")]
+
+tests/test_vacancy_operations.py:137: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a50d0>
+title = 'Test', salary_from = None, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+_______ TestVacancyOperations.test_search_vacancies_advanced_and ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a59d0>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140282733887152'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_search_vacancies_advanced_and(self, mock_filter):
+        """Тест продвинутого поиска с оператором AND"""
+>       vacancies = [self.create_test_vacancy("Test")]
+
+tests/test_vacancy_operations.py:148: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a59d0>
+title = 'Test', salary_from = None, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+________ TestVacancyOperations.test_search_vacancies_advanced_or ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5c40>
+mock_filter = <MagicMock name='filter_vacancies_by_multiple_keywords' id='140282742743920'>
+
+    @patch.object(VacancyOperations, 'filter_vacancies_by_multiple_keywords')
+    def test_search_vacancies_advanced_or(self, mock_filter):
+        """Тест продвинутого поиска с оператором OR"""
+>       vacancies = [self.create_test_vacancy("Test")]
+
+tests/test_vacancy_operations.py:160: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5c40>
+title = 'Test', salary_from = None, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+______ TestVacancyOperations.test_search_vacancies_advanced_simple ______
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5820>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140282733866624'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_search_vacancies_advanced_simple(self, mock_filter):
+        """Тест простого продвинутого поиска"""
+>       vacancies = [self.create_test_vacancy("Test")]
+
+tests/test_vacancy_operations.py:172: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5820>
+title = 'Test', salary_from = None, salary_to = None, keywords = None
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
+                'currency': 'RUR'
+            }
+    
+>       return Vacancy(
+            title=title,
+            url="https://example.com",
+            salary=salary_data,
+            description="Test description",
+            keywords=keywords or []
+        )
+E       TypeError: __init__() got an unexpected keyword argument 'keywords'
+
+tests/test_vacancy_operations.py:26: TypeError
+________ TestVacancyOperations.test_get_vacancy_keywords_summary ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5e50>
+
+    def test_get_vacancy_keywords_summary(self):
+        """Тест получения сводки по ключевым словам"""
+        vacancies = [
+>           self.create_test_vacancy("Job 1", keywords=["python", "django"]),
+            self.create_test_vacancy("Job 2", keywords=["python", "flask"]),
+            self.create_test_vacancy("Job 3", keywords=["java", "spring"])
+        ]
+
+tests/test_vacancy_operations.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7f961f3a5e50>
+title = 'Job 1', salary_from = None, salary_to = None
+keywords = ['python', 'django']
+
+    def create_test_vacancy(self, title: str, salary_from: int = None,
+                           salary_to: int = None, keywords: list = None):
+        """Создает тестовую вакансию"""
+        salary_data = None
+        if salary_from is not None or salary_to is not None:
+            salary_data = {
+                'from': salary_from,
+                'to': salary_to,
