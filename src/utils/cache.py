@@ -47,7 +47,7 @@ def simple_cache(ttl: Optional[int] = None, cache_dir: str = "data/cache") -> Ca
 class FileCache:
     """Класс для файлового кэширования API-ответов"""
 
-    def __init__(self, cache_dir: str = "data/cache/hh"):
+    def __init__(self, cache_dir: str = "data/cache"):
         self.cache_dir = Path(cache_dir)
         self._ensure_dir_exists()
 
