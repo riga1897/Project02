@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "0",
+      "page": 0,
+      "period": 1
+    }
+  },
+  "data": {
+    "items": [
+      {
+        "id": "122991240",
+        "premium": false,
+        "name": "Продавец-консультант",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 75000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 75000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T15:00:09+0300",
+        "created_at": "2025-07-18T15:00:09+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122991240",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122991240?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122991240",
+        "relations": [],
+        "employer": {
+          "id": "827187",
+          "name": "BY business group",
+          "url": "https://api.hh.ru/employers/827187",
+          "alternate_url": "https://hh.ru/employer/827187",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/942457.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/4210364.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/4210365.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=827187",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.6",
+            "reviews_count": 270
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Хочешь работать в месте, где ты важна — не только за выполнение плана, но и за улыбку клиента? Где тебя не...",
+          "responsibility": "Встречать клиентов — по-настоящему. Не по скрипту, а по ситуации. Подбирать образы, советовать, помогать и вдохновлять. Работать с кассой — чётко..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          },
+          {
+            "id": "HOURS_11",
+            "name": "11 часов"
+          },
+          {
+            "id": "FLEXIBLE",
+            "name": "По договорённости"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          },
+          {
+            "id": "THREE_ON_THREE_OFF",
+            "name": "3/3"
+          },
+          {
+            "id": "TWO_ON_TWO_OFF",
+            "name": "2/2"
+          },
+          {
+            "id": "OTHER",
+            "name": "Другое"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "97",
+            "name": "Продавец-консультант, продавец-кассир"
+          }
+        ],
+        "accept_incomplete_resumes": true,
+        "experience": {
+          "id": "noExperience",
+          "name": "Нет опыта"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 20273,
+    "pages": 2000,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&search_period=1&text=0"
+  }
+}
