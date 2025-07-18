@@ -5,7 +5,6 @@ from pathlib import Path
 from src.utils.cache import FileCache
 from src.utils.env_loader import EnvLoader
 from src.utils.paginator import Paginator
-from src.utils.salary import SalaryUtils
 
 
 class TestFileCache:
