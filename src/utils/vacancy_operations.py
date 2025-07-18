@@ -154,22 +154,49 @@ class VacancyOperations:
         """
         # Простая обработка AND/OR операторов
         if ' AND ' in query.upper():
-            keywords = [kw.strip() for kw in query.upper().split(' AND ')]
+            keywords = [kw.strip() for kw in query.split(' AND ') if 'AND' not in kw.upper()]
+            # Разбираем более аккуратно, сохраняя регистр
+            parts = query.split()
+            keywords = []
+            current_keyword = []
+            for part in parts:
+                if part.upper() == 'AND':
+                    if current_keyword:
+                        keywords.append(' '.join(current_keyword))
+                        current_keyword = []
+                else:
+                    current_keyword.append(part)
+            if current_keyword:
+                keywords.append(' '.join(current_keyword))
+            
             result = vacancies
             for keyword in keywords:
-                result = filter_vacancies_by_keyword(result, keyword)
+                result = filter_vacancies_by_keyword(result, keyword.strip())
             return result
 
         elif ' OR ' in query.upper():
-            keywords = [kw.strip() for kw in query.upper().split(' OR ')]
-            return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
+            # Аналогично для OR
+            parts = query.split()
+            keywords = []
+            current_keyword = []
+            for part in parts:
+                if part.upper() == 'OR':
+                    if current_keyword:
+                        keywords.append(' '.join(current_keyword))
+                        current_keyword = []
+                else:
+                    current_keyword.append(part)
+            if current_keyword:
+                keywords.append(' '.join(current_keyword))
+            
+            return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, [kw.strip() for kw in keywords])
         elif ',' in query:
             # Поиск с запятой как разделителем (OR)
-            keywords = [kw.strip().upper() for kw in query.split(',') if kw.strip()]
+            keywords = [kw.strip() for kw in query.split(',') if kw.strip()]
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
         elif ' ' in query.strip() and not any(op in query.upper() for op in [' AND ', ' OR ']):
             # Поиск с пробелами как разделителем (OR по умолчанию)
-            keywords = [kw.strip().upper() for kw in query.split() if kw.strip()]
+            keywords = [kw.strip() for kw in query.split() if kw.strip()]
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
         else:
             # Простой поиск по одному ключевому слову
