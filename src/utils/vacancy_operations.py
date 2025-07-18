@@ -286,14 +286,14 @@ class VacancyOperations:
         найдено ключевое слово.
         """
         print(f"\n=== ОТЛАДКА ПОИСКА: '{keyword}' ===")
-        print(f"Вакансия: {vacancy.name}")
+        print(f"Вакансия: {vacancy.title}")
         print(f"Компания: {vacancy.employer}")
         print(f"Ключевые слова: {vacancy.keywords}")
         print(f"URL: {vacancy.url}")
 
         # Проверяем каждое поле
         fields_to_check = [
-            ('Название', vacancy.name),
+            ('Название', vacancy.title),
             ('Описание', vacancy.description),
             ('Требования', vacancy.requirements),
             ('Обязанности', vacancy.responsibilities),
@@ -312,7 +312,7 @@ class VacancyOperations:
         Отладочная функция для проверки извлечения ключевых слов
         """
         print(f"\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
-        print(f"Вакансия: {vacancy.name}")
+        print(f"Вакансия: {vacancy.title}")
         print(f"URL: {vacancy.url}")
         print(f"Автоматически извлеченные ключевые слова: {vacancy.keywords}")
 

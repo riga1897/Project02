@@ -802,12 +802,12 @@ class UserInterface:
                 if 1 <= vacancy_num <= len(vacancies):
                     vacancy_to_delete = vacancies[vacancy_num - 1]
                     print(f"\nВакансия для удаления:")
-                    print(f"ID: {vacancy_to_delete.vacancyy_id}")
+                    print(f"ID: {vacancy_to_delete.vacancy_id}")
                     print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
                     if vacancy_to_delete.employer:
                         print(f"Компания: {vacancy_to_delete.employer.get('name', 'Не указана')}")
                     if vacancy_to_delete.salary:
-                        print(f"Зарплата:{vacancy_to_delete.salary}")
+                        print(f"Зарплата: {vacancy_to_delete.salary}")
                     else:
                         print("Зарплата: Не указана")
                     print(f"Ссылка: {vacancy_to_delete.url}")
