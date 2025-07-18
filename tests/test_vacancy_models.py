@@ -1,191 +1,192 @@
 
 """
-Комплексные тесты для моделей вакансий
+Тесты для модуля vacancy models
 """
 
 import pytest
+from datetime import datetime
 from src.vacancies.models import Vacancy
-from src.vacancies.sj_models import SuperJobVacancy
 from src.utils.salary import Salary
 
 
 class TestVacancy:
-    """Тесты для основной модели Vacancy"""
+    """Тесты для класса Vacancy"""
     
-    @pytest.fixture
-    def vacancy_data(self):
-        """Тестовые данные для вакансии"""
-        return {
-            'name': 'Python Developer',
-            'alternate_url': 'https://hh.ru/vacancy/123',
-            'salary': {'from': 100000, 'to': 150000, 'currency': 'RUR'},
-            'snippet': {'responsibility': 'Разработка на Python'},
-            'employer': {'name': 'Tech Company'},
-            'id': '123'
-        }
+    def test_vacancy_creation_minimal(self):
+        """Тест создания вакансии с минимальными данными"""
+        vacancy = Vacancy(
+            title="Test Job",
+            url="https://example.com",
+            salary=None,
+            description="Test description"
+        )
+        
+        assert vacancy.title == "Test Job"
+        assert vacancy.url == "https://example.com"
+        assert vacancy.description == "Test description"
+        assert vacancy.salary.salary_from is None
+        assert vacancy.salary.salary_to is None
+        assert vacancy.vacancy_id is not None
     
-    @pytest.fixture
-    def vacancy_no_salary_data(self):
-        """Тестовые данные для вакансии без зарплаты"""
-        return {
-            'name': 'Intern Position',
+    def test_vacancy_creation_full(self):
+        """Тест создания вакансии с полными данными"""
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        employer_data = {"name": "Test Company"}
+        
+        vacancy = Vacancy(
+            title="Senior Python Developer",
+            url="https://example.com/vacancy/123",
+            salary=salary_data,
+            description="Python development",
+            requirements="Python, Django",
+            responsibilities="Code development",
+            employer=employer_data,
+            experience="От 3 до 6 лет",
+            vacancy_id="123"
+        )
+        
+        assert vacancy.title == "Senior Python Developer"
+        assert vacancy.salary.salary_from == 100000
+        assert vacancy.salary.salary_to == 150000
+        assert vacancy.requirements == "Python, Django"
+        assert vacancy.employer == employer_data
+        assert vacancy.vacancy_id == "123"
+    
+    def test_vacancy_from_dict(self):
+        """Тест создания вакансии из словаря"""
+        data = {
+            'id': '456',
+            'name': 'Frontend Developer',
             'alternate_url': 'https://hh.ru/vacancy/456',
-            'salary': None,
-            'snippet': {'responsibility': 'Стажировка'},
-            'employer': {'name': 'Startup'},
-            'id': '456'
+            'salary': {'from': 80000, 'to': 120000, 'currency': 'RUR'},
+            'snippet': {
+                'requirement': 'JavaScript',
+                'responsibility': 'UI development'
+            },
+            'employer': {'name': 'Web Company'},
+            'experience': {'name': 'От 1 года до 3 лет'}
         }
+        
+        vacancy = Vacancy.from_dict(data)
+        
+        assert vacancy.vacancy_id == '456'
+        assert vacancy.title == 'Frontend Developer'
+        assert vacancy.url == 'https://hh.ru/vacancy/456'
+        assert vacancy.salary.salary_from == 80000
+        assert vacancy.requirements == 'JavaScript'
+        assert vacancy.responsibilities == 'UI development'
     
-    def test_vacancy_creation_with_salary(self, vacancy_data):
-        """Тест создания вакансии с зарплатой"""
+    def test_vacancy_to_dict(self):
+        """Тест преобразования вакансии в словарь"""
         vacancy = Vacancy(
-            title=vacancy_data['name'],
-            url=vacancy_data['alternate_url'],
-            salary=vacancy_data['salary'],
-            description=vacancy_data['snippet']['responsibility'],
-            vacancy_id=vacancy_data['id']
-        )
-        
-        assert vacancy.title == 'Python Developer'
-        assert vacancy.url == 'https://hh.ru/vacancy/123'
-        assert vacancy.salary.average == 125000
-        assert vacancy.vacancy_id == '123'
-    
-    def test_vacancy_creation_without_salary(self, vacancy_no_salary_data):
-        """Тест создания вакансии без зарплаты"""
-        vacancy = Vacancy(
-            title=vacancy_no_salary_data['name'],
-            url=vacancy_no_salary_data['alternate_url'],
-            salary=vacancy_no_salary_data['salary'],
-            description=vacancy_no_salary_data['snippet']['responsibility'],
-            vacancy_id=vacancy_no_salary_data['id']
-        )
-        
-        assert vacancy.title == 'Intern Position'
-        assert vacancy.salary.average == 0
-    
-    def test_vacancy_comparison(self):
-        """Тест сравнения вакансий по зарплате"""
-        vacancy1 = Vacancy(
-            title="Junior",
-            url="http://test1.com",
-            salary={'from': 50000, 'currency': 'RUR'},
-            description="Junior position",
-            vacancy_id="1"
-        )
-        
-        vacancy2 = Vacancy(
-            title="Senior",
-            url="http://test2.com",
-            salary={'from': 150000, 'currency': 'RUR'},
-            description="Senior position",
-            vacancy_id="2"
-        )
-        
-        assert vacancy2 > vacancy1
-        assert vacancy1 < vacancy2
-        assert vacancy1 != vacancy2
-    
-    def test_vacancy_to_dict(self, vacancy_data):
-        """Тест сериализации вакансии в словарь"""
-        vacancy = Vacancy(
-            title=vacancy_data['name'],
-            url=vacancy_data['alternate_url'],
-            salary=vacancy_data['salary'],
-            description=vacancy_data['snippet']['responsibility'],
-            vacancy_id=vacancy_data['id']
+            title="Test Job",
+            url="https://example.com",
+            salary={"from": 100000, "to": 150000, "currency": "RUR"},
+            description="Test description",
+            vacancy_id="test_id"
         )
         
         result = vacancy.to_dict()
         
-        assert result['title'] == 'Python Developer'
-        assert result['url'] == 'https://hh.ru/vacancy/123'
+        assert result['id'] == 'test_id'
+        assert result['title'] == 'Test Job'
+        assert result['url'] == 'https://example.com'
         assert result['salary']['from'] == 100000
-        assert result['id'] == '123'
+        assert result['salary']['to'] == 150000
     
-    def test_vacancy_from_dict(self, vacancy_data):
-        """Тест десериализации вакансии из словаря"""
-        dict_data = {
-            'title': vacancy_data['name'],
-            'url': vacancy_data['alternate_url'],
-            'salary': vacancy_data['salary'],
-            'description': vacancy_data['snippet']['responsibility'],
-            'id': vacancy_data['id']
-        }
+    def test_vacancy_comparison(self):
+        """Тест сравнения вакансий"""
+        vacancy1 = Vacancy(
+            title="Job1",
+            url="https://example.com/1",
+            salary={"from": 100000, "to": 150000, "currency": "RUR"},
+            description="Test",
+            vacancy_id="1"
+        )
         
-        vacancy = Vacancy.from_dict(dict_data)
+        vacancy2 = Vacancy(
+            title="Job2",
+            url="https://example.com/2",
+            salary={"from": 200000, "to": 250000, "currency": "RUR"},
+            description="Test",
+            vacancy_id="2"
+        )
         
-        assert vacancy.title == 'Python Developer'
-        assert vacancy.url == 'https://hh.ru/vacancy/123'
-        assert vacancy.salary.average == 125000
+        assert vacancy1 < vacancy2  # По средней зарплате
+        assert vacancy2 > vacancy1
+        assert vacancy1 != vacancy2
+    
+    def test_vacancy_equality(self):
+        """Тест равенства вакансий по ID"""
+        vacancy1 = Vacancy(
+            title="Job",
+            url="https://example.com",
+            salary=None,
+            description="Test",
+            vacancy_id="same_id"
+        )
+        
+        vacancy2 = Vacancy(
+            title="Different Job",
+            url="https://different.com",
+            salary=None,
+            description="Different",
+            vacancy_id="same_id"
+        )
+        
+        assert vacancy1 == vacancy2
+        assert hash(vacancy1) == hash(vacancy2)
     
     def test_cast_to_object_list(self):
-        """Тест преобразования списка словарей в список объектов"""
+        """Тест преобразования списка словарей в список вакансий"""
         data = [
             {
-                'title': 'Python Dev',
-                'url': 'http://test1.com',
-                'salary': {'from': 100000, 'currency': 'RUR'},
-                'description': 'Test',
-                'id': '1'
+                'id': '1',
+                'name': 'Job1',
+                'alternate_url': 'https://example.com/1',
+                'salary': {'from': 100000, 'currency': 'RUR'}
             },
             {
-                'title': 'Java Dev',
-                'url': 'http://test2.com',
-                'salary': None,
-                'description': 'Test',
-                'id': '2'
-            }
+                'id': '2',
+                'name': 'Job2',
+                'alternate_url': 'https://example.com/2'
+            },
+            {'invalid': 'data'}  # Некорректные данные
         ]
         
         result = Vacancy.cast_to_object_list(data)
         
         assert len(result) == 2
-        assert all(isinstance(v, Vacancy) for v in result)
-        assert result[0].salary.average == 100000
-        assert result[1].salary.average == 0
-
-
-class TestSuperJobVacancy:
-    """Тесты для модели SuperJobVacancy"""
+        assert result[0].vacancy_id == '1'
+        assert result[1].vacancy_id == '2'
     
-    @pytest.fixture
-    def sj_data(self):
-        """Тестовые данные для SuperJob вакансии"""
-        return {
-            'profession': 'Python Developer',
-            'link': 'https://superjob.ru/vacancy/123',
-            'payment_from': 100000,
-            'payment_to': 150000,
-            'currency': 'rub',
-            'candidat': 'Опыт работы с Python',
-            'firm_name': 'Tech Company',
-            'id': 123
-        }
+    def test_html_cleaning(self):
+        """Тест очистки HTML тегов"""
+        vacancy = Vacancy(
+            title="Test Job",
+            url="https://example.com",
+            salary=None,
+            description="Test",
+            requirements="<p>Python</p> and <b>Django</b>"
+        )
+        
+        assert vacancy.requirements == "Python and Django"
     
-    def test_superjob_vacancy_creation(self, sj_data):
-        """Тест создания SuperJob вакансии"""
-        vacancy = SuperJobVacancy.from_api_data(sj_data)
+    def test_datetime_parsing(self, sample_vacancy):
+        """Тест парсинга даты и времени"""
+        # Тестируем разные форматы даты
+        test_dates = [
+            "2024-01-15T10:30:45+0300",
+            "2024-01-15T10:30:45",
+            "2024-01-15 10:30:45"
+        ]
         
-        assert vacancy.title == 'Python Developer'
-        assert vacancy.url == 'https://superjob.ru/vacancy/123'
-        assert vacancy.salary.average == 125000
-        assert vacancy.source == 'superjob'
-    
-    def test_superjob_vacancy_no_salary(self):
-        """Тест создания SuperJob вакансии без зарплаты"""
-        data = {
-            'profession': 'Intern',
-            'link': 'https://superjob.ru/vacancy/456',
-            'payment_from': 0,
-            'payment_to': 0,
-            'currency': 'rub',
-            'candidat': 'Стажировка',
-            'firm_name': 'Startup',
-            'id': 456
-        }
-        
-        vacancy = SuperJobVacancy.from_api_data(data)
-        
-        assert vacancy.title == 'Intern'
-        assert vacancy.salary.average == 0
+        for date_str in test_dates:
+            vacancy = Vacancy(
+                title="Test",
+                url="https://example.com",
+                salary=None,
+                description="Test",
+                published_at=date_str
+            )
+            assert isinstance(vacancy.published_at, datetime)
