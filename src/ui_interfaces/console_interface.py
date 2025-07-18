@@ -251,6 +251,9 @@ class UserInterface:
                         print("Некорректный ввод")
                         input("Нажмите Enter для продолжения...")
                         continue
+                else:
+                    # Если только одна страница, показываем вакансии и выходим
+                    pass
                 
                 print("-" * 80)
                 
@@ -258,7 +261,7 @@ class UserInterface:
                 for i, vacancy in enumerate(current_vacancies, start_idx + 1):
                     print(format_vacancy_with_number(vacancy, i))
                 
-                # Если только одна страница, просто показываем вакансии и выходим
+                # Если только одна страница, просто ждем Enter и выходим
                 if total_pages == 1:
                     input("\nНажмите Enter для продолжения...")
                     break
