@@ -6,6 +6,8 @@ from src.utils.ui_paginator import paginate_display
 from src.utils.ui_helpers import (
     confirm_action, 
     get_user_input,
+    get_positive_integer,
+    parse_salary_range,
     filter_vacancies_by_keyword,
     display_vacancy_info
 )
