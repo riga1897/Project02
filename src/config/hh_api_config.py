@@ -8,7 +8,7 @@ class HHAPIConfig:
         self._default_hh_params = default_hh_params or {
             "area": 113,  # Russia
             "period": 7,
-            "per_page": 50
+            "per_page": 100  # Максимальное значение для HH.ru API
         }
 
     def get_hh_params(self, **kwargs) -> Dict[str, Any]:
