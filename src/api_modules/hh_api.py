@@ -43,7 +43,7 @@ class HeadHunterAPI(CachedAPI):
                 **self._config.hh_config.get_params(**kwargs)
             }
 
-            data = self._connect_to_api(self.BASE_URL, params, "hh")
+            data = self._CachedAPI__connect_to_api(self.BASE_URL, params, "hh")
             items = data.get('items', [])
 
             return [item for item in items if self._validate_vacancy(item)]
@@ -56,7 +56,7 @@ class HeadHunterAPI(CachedAPI):
         """Get all vacancies with pagination and validation"""
         try:
             # Initial request for metadata
-            initial_data = self._connect_to_api(
+            initial_data = self._CachedAPI__connect_to_api(
                 self.BASE_URL,
                 self._config.hh_config.get_params(
                     text=search_query,
