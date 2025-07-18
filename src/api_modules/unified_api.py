@@ -1,142 +1,131 @@
+
 import logging
 from typing import List, Dict, Any, Optional, Set
 from .hh_api import HeadHunterAPI
 from .sj_api import SuperJobAPI
 from src.vacancies.models import Vacancy
+from src.vacancies.sj_models import SuperJobVacancy
 from src.vacancies.parsers.sj_parser import SuperJobParser
 from src.utils.source_manager import source_manager
+from src.storage.json_saver import JSONSaver
 
 logger = logging.getLogger(__name__)
 
 
-class UnifiedVacancyAPI:
+class UnifiedAPI:
     """Унифицированный API для работы с несколькими источниками вакансий"""
-
+    
     def __init__(self):
-        """Инициализация унифицированного API"""
         self.hh_api = HeadHunterAPI()
         self.sj_api = SuperJobAPI()
-        self.sj_parser = SuperJobParser()
-
-    def get_vacancies(
-        self, 
-        search_query: str, 
-        sources: Optional[Set[str]] = None,
-        **kwargs
-    ) -> List[Vacancy]:
-        """
-        Получение вакансий из выбранных источников
-
-        Args:
-            search_query: Поисковый запрос
-            sources: Множество источников ('hh', 'sj'). Если None - все источники
-            **kwargs: Дополнительные параметры поиска
-
-        Returns:
-            List[Vacancy]: Список унифицированных вакансий
-        """
+        self.json_saver = JSONSaver()
+        self.parser = SuperJobParser()
         
-        sources = source_manager.validate_sources(sources)
-
-        all_vacancies = []
-
-        # Получение вакансий с HH.ru
-        if 'hh' in sources:
-            try:
-                logger.info(f"Поиск вакансий на HH.ru по запросу: '{search_query}'")
-                hh_vacancies_data = self.hh_api.get_vacancies(search_query, **kwargs)
-                hh_vacancies = Vacancy.cast_to_object_list(hh_vacancies_data)
-
-                # Устанавливаем источник для HH вакансий
-                for vacancy in hh_vacancies:
-                    vacancy.source = "hh.ru"
-
-                all_vacancies.extend(hh_vacancies)
-                logger.info(f"Найдено {len(hh_vacancies)} вакансий на HH.ru")
-
-            except Exception as e:
-                logger.error(f"Ошибка при получении вакансий с HH.ru: {e}")
-
-        # Получение вакансий с SuperJob
-        if 'sj' in sources:
-            try:
-                logger.info(f"Поиск вакансий на SuperJob по запросу: '{search_query}'")
-                sj_vacancies_data = self.sj_api.get_vacancies(search_query, **kwargs)
-
-                # Парсим SuperJob вакансии
-                sj_vacancies_objects = self.sj_parser.parse_vacancies(sj_vacancies_data)
-
-                # Конвертируем в унифицированный формат и создаем объекты Vacancy
-                for sj_vacancy in sj_vacancies_objects:
-                    unified_data = self.sj_parser.convert_to_unified_format(sj_vacancy)
-                    try:
-                        vacancy = Vacancy.from_dict(unified_data)
-                        all_vacancies.append(vacancy)
-                    except Exception as e:
-                        logger.warning(f"Ошибка конвертации SuperJob вакансии: {e}")
-
-                logger.info(f"Найдено {len(sj_vacancies_objects)} вакансий на SuperJob")
-
-            except Exception as e:
-                logger.error(f"Ошибка при получении вакансий с SuperJob: {e}")
-
-        # Удаление дубликатов по URL
-        unique_vacancies = self._remove_duplicates(all_vacancies)
-
-        logger.info(f"Всего найдено {len(unique_vacancies)} уникальных вакансий из {len(all_vacancies)}")
-        return unique_vacancies
-
-    def _remove_duplicates(self, vacancies: List[Vacancy]) -> List[Vacancy]:
+    def get_vacancies_from_sources(self, query: str, sources: List[str] = None, **kwargs) -> List[Vacancy]:
         """
-        Удаление дубликатов вакансий по URL
-
+        Получение вакансий из выбранных источников с автоматическим сохранением
+        
         Args:
-            vacancies: Список вакансий
-
+            query: Поисковый запрос
+            sources: Список источников ('hh', 'sj'). Если None - используются все
+            **kwargs: Дополнительные параметры
+            
         Returns:
-            List[Vacancy]: Список уникальных вакансий
-        """
-        seen_urls = set()
-        unique_vacancies = []
-
-        for vacancy in vacancies:
-            if vacancy.url not in seen_urls:
-                seen_urls.add(vacancy.url)
-                unique_vacancies.append(vacancy)
-            else:
-                logger.debug(f"Дубликат найден: {vacancy.url}")
-
-        return unique_vacancies
-
-    def clear_cache(self, sources: Optional[Set[str]] = None) -> None:
-        """
-        Очистка кэша выбранных источников
-
-        Args:
-            sources: Множество источников для очистки кэша
+            List[Vacancy]: Объединенный список вакансий
         """
         if sources is None:
-            sources = {'hh', 'sj'}
-
+            sources = ['hh', 'sj']
+            
+        all_vacancies = []
+        
+        # Получение из HeadHunter
         if 'hh' in sources:
             try:
-                self.hh_api.clear_cache()
-                logger.info("Кэш HH.ru очищен")
+                logger.info(f"Получение вакансий с HH.ru по запросу: '{query}'")
+                hh_data = self.hh_api.get_vacancies(query, **kwargs)
+                hh_vacancies = [Vacancy.from_dict(item) for item in hh_data]
+                
+                if hh_vacancies:
+                    logger.info(f"Найдено {len(hh_vacancies)} вакансий с HH.ru")
+                    # Сохраняем вакансии HH на диск
+                    messages = self.json_saver.add_vacancy(hh_vacancies)
+                    for msg in messages[:3]:  # Показываем первые 3 сообщения
+                        logger.info(msg)
+                    if len(messages) > 3:
+                        logger.info(f"... и еще {len(messages) - 3} обновлений")
+                    
+                    all_vacancies.extend(hh_vacancies)
+                    
             except Exception as e:
-                logger.error(f"Ошибка очистки кэша HH.ru: {e}")
-
+                logger.error(f"Ошибка получения вакансий с HH.ru: {e}")
+        
+        # Получение из SuperJob
         if 'sj' in sources:
             try:
-                self.sj_api.clear_cache()
-                logger.info("Кэш SuperJob очищен")
+                logger.info(f"Получение вакансий с SuperJob по запросу: '{query}'")
+                sj_data = self.sj_api.get_vacancies(query, **kwargs)
+                
+                if sj_data:
+                    # Парсим данные SuperJob в объекты SuperJobVacancy
+                    sj_vacancies_raw = self.parser.parse_vacancies(sj_data)
+                    
+                    # Конвертируем в унифицированный формат Vacancy
+                    sj_vacancies = []
+                    for sj_vac in sj_vacancies_raw:
+                        try:
+                            # Конвертируем SuperJobVacancy в обычный Vacancy
+                            unified_data = self.parser.convert_to_unified_format(sj_vac)
+                            vacancy = Vacancy.from_dict(unified_data)
+                            sj_vacancies.append(vacancy)
+                        except Exception as e:
+                            logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
+                            continue
+                    
+                    if sj_vacancies:
+                        logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
+                        # Сохраняем вакансии SuperJob на диск
+                        messages = self.json_saver.add_vacancy(sj_vacancies)
+                        for msg in messages[:3]:  # Показываем первые 3 сообщения
+                            logger.info(msg)
+                        if len(messages) > 3:
+                            logger.info(f"... и еще {len(messages) - 3} обновлений")
+                        
+                        all_vacancies.extend(sj_vacancies)
+                        
             except Exception as e:
-                logger.error(f"Ошибка очистки кэша SuperJob: {e}")
-
+                logger.error(f"Ошибка получения вакансий с SuperJob: {e}")
+        
+        logger.info(f"Всего получено и сохранено {len(all_vacancies)} вакансий")
+        return all_vacancies
+    
+    def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
+        """Получение вакансий только с HH.ru"""
+        return self.get_vacancies_from_sources(query, sources=['hh'], **kwargs)
+    
+    def get_sj_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
+        """Получение вакансий только с SuperJob"""
+        return self.get_vacancies_from_sources(query, sources=['sj'], **kwargs)
+    
+    def clear_all_cache(self) -> None:
+        """Очистка кэша всех API"""
+        try:
+            self.hh_api.clear_cache()
+            self.sj_api.clear_cache()
+            logger.info("Кэш всех API очищен")
+        except Exception as e:
+            logger.error(f"Ошибка очистки кэша: {e}")
+    
     def get_available_sources(self) -> List[str]:
-        """
-        Получение списка доступных источников
-
-        Returns:
-            List[str]: Список доступных источников
-        """
+        """Получение списка доступных источников"""
         return ['hh', 'sj']
+    
+    def validate_sources(self, sources: List[str]) -> List[str]:
+        """Валидация списка источников"""
+        available = self.get_available_sources()
+        valid_sources = [s for s in sources if s in available]
+        
+        if not valid_sources:
+            logger.warning(f"Нет валидных источников в {sources}, используем все доступные")
+            return available
+            
+        return valid_sources

@@ -62,8 +62,8 @@ class SuperJobParser:
             "employment": sj_vacancy.employment,
             "schedule": sj_vacancy.schedule,
             "published_at": sj_vacancy.published_at.isoformat() if sj_vacancy.published_at else None,
-            "skills": sj_vacancy.skills,
-            "keywords": sj_vacancy.keywords,
+            "skills": [],
+            "keywords": [],
             "detailed_description": sj_vacancy.detailed_description,
             "benefits": sj_vacancy.benefits,
             "source": sj_vacancy.source

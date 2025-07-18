@@ -11,6 +11,9 @@ from src.utils.ui_helpers import (
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
 from src.ui_interfaces.source_selector import SourceSelector
+from src.api_modules.hh_api import HeadHunterAPI
+from src.api_modules.sj_api import SuperJobAPI
+from src.api_modules.unified_api import UnifiedAPI
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +23,9 @@ class UserInterface:
 
     def __init__(self):
         """Инициализация пользовательского интерфейса"""
-        self.unified_api = UnifiedVacancyAPI()
+        self.hh_api = HeadHunterAPI()
+        self.sj_api = SuperJobAPI()
+        self.unified_api = UnifiedAPI()
         self.json_saver = JSONSaver()
         self.menu_manager = create_main_menu()
         self.vacancy_ops = VacancyOperations()
@@ -109,30 +114,43 @@ class UserInterface:
 
         print(f"\nИщем вакансии по запросу: '{query}'...")
 
+        # Получение вакансий с выбранных источников через UnifiedAPI
         try:
-            vacancies = self.unified_api.get_vacancies(query, sources=sources)
+            print(f"Поиск вакансий по запросу: '{query}'...")
 
-            if not vacancies:
+            # Определяем источники для поиска
+            selected_sources = []
+            if sources["hh"]:
+                selected_sources.append("hh")
+            if sources["sj"]:
+                selected_sources.append("sj")
+
+            if not selected_sources:
+                print("Не выбран ни один источник для поиска.")
+                return
+
+            # Получаем и автоматически сохраняем вакансии
+            all_vacancies = self.unified_api.get_vacancies_from_sources(query, selected_sources)
+
+            if not all_vacancies:
                 print("Вакансии не найдены.")
                 return
 
-            print(f"\nНайдено {len(vacancies)} вакансий:")
+            print(f"\nПоиск завершен. Всего найдено и сохранено: {len(all_vacancies)} вакансий")
 
-            # Постраничный просмотр найденных вакансий
-            self._display_vacancies_with_pagination(vacancies)
+            # Показываем статистику по источникам
+            hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
+            sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
 
-            if confirm_action("Сохранить найденные вакансии?"):
-                self.json_saver.add_vacancy(vacancies)
-                print(f"Сохранено {len(vacancies)} вакансий.")
+            if hh_count > 0:
+                print(f"  • HH.ru: {hh_count} вакансий")
+            if sj_count > 0:
+                print(f"  • SuperJob: {sj_count} вакансий")
 
-        except KeyboardInterrupt:
-            print("\nПоиск прерван пользователем.")
-            if confirm_action("Очистить кэш от этого запроса?"):
-                self.unified_api.clear_cache(sources)
-                print("Кэш очищен.")
         except Exception as e:
-            logger.error(f"Ошибка при поиске вакансий: {e}")
-            print(f"Ошибка при поиске: {e}")
+            print(f"Ошибка при поиске вакансий: {e}")
+            logger.error(f"Ошибка в search_vacancies: {e}")
+            return
 
     def _show_saved_vacancies(self) -> None:
         """Отображение сохраненных вакансий с постраничным просмотром"""
