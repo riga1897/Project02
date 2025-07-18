@@ -111,7 +111,10 @@ class UserInterface:
         if not query:
             return
 
-        print(f"\nИщем вакансии по запросу: '{query}'...")
+        # Выбор периода публикации
+        period = self._get_period_choice()
+
+        print(f"\nИщем вакансии по запросу: '{query}' за последние {period} дней...")
 
         # Получение вакансий с выбранных источников
         try:
@@ -120,7 +123,7 @@ class UserInterface:
             # Получаем вакансии последовательно из каждого источника
             if "hh" in sources:
                 print("Получение вакансий с HH.ru...")
-                hh_vacancies = self.unified_api.get_hh_vacancies(query)
+                hh_vacancies = self.unified_api.get_hh_vacancies(query, period=period)
                 if hh_vacancies:
                     all_vacancies.extend(hh_vacancies)
                     print(f"Найдено {len(hh_vacancies)} вакансий на HH.ru")
@@ -129,7 +132,7 @@ class UserInterface:
 
             if "sj" in sources:
                 print("Получение вакансий с SuperJob...")
-                sj_vacancies = self.unified_api.get_sj_vacancies(query)
+                sj_vacancies = self.unified_api.get_sj_vacancies(query, period=period)
                 if sj_vacancies:
                     all_vacancies.extend(sj_vacancies)
                     print(f"Найдено {len(sj_vacancies)} вакансий на SuperJob")
@@ -511,6 +514,49 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при очистке кэша: {e}")
             print(f"Ошибка при очистке кэша: {e}")
+
+    def _get_period_choice(self) -> int:
+        """
+        Выбор периода публикации вакансий
+
+        Returns:
+            int: Количество дней для поиска
+        """
+        print("\nВыберите период публикации вакансий:")
+        print("1. 1 день")
+        print("2. 3 дня")
+        print("3. 7 дней")
+        print("4. 15 дней (по умолчанию)")
+        print("5. 30 дней")
+        print("6. Ввести свой период")
+
+        choice = input("Ваш выбор (по умолчанию 4): ").strip()
+
+        period_map = {
+            "1": 1,
+            "2": 3,
+            "3": 7,
+            "4": 15,
+            "5": 30,
+            "": 15  # По умолчанию
+        }
+
+        if choice in period_map:
+            return period_map[choice]
+        elif choice == "6":
+            try:
+                custom_period = int(input("Введите количество дней (1-365): "))
+                if 1 <= custom_period <= 365:
+                    return custom_period
+                else:
+                    print("Некорректный период. Используется 15 дней по умолчанию.")
+                    return 15
+            except ValueError:
+                print("Некорректный ввод. Используется 15 дней по умолчанию.")
+                return 15
+        else:
+            print("Некорректный выбор. Используется 15 дней по умолчанию.")
+            return 15
 
     def _setup_superjob_api(self) -> None:
         """Настройка SuperJob API"""
