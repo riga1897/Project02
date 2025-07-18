@@ -23,19 +23,19 @@ class SuperJobAPI(BaseAPI):
         """
         self.base_url = "https://api.superjob.ru/2.0"
         self.config = config or SJAPIConfig()
-        
+
         # Получаем API ключ из переменных окружения (включая .env файл)
         api_key = EnvLoader.get_env_var('SUPERJOB_API_KEY', 'v3.r.137440105.example.test_tool')
-        
+
         self.headers = {
             "X-Api-App-Id": api_key,
             "User-Agent": "VacancySearchApp/1.0"
         }
         self.request_delay = 0.5
-        
+
         # Инициализируем файловый кэш для SuperJob
         self.file_cache = FileCache("data/cache/sj")
-        
+
         # Логируем, какой ключ используется (скрываем реальный ключ)
         if api_key == 'v3.r.137440105.example.test_tool':
             logger.warning("Используется тестовый API ключ SuperJob. Для полной функциональности добавьте реальный ключ в переменную окружения SUPERJOB_API_KEY")
@@ -113,7 +113,7 @@ class SuperJobAPI(BaseAPI):
             "query": search_query,
             "params": params
         }
-        
+
         cached_data = self.file_cache.load_response("sj", cache_key_params)
         if cached_data:
             logger.info(f"Found cached data for SuperJob query: '{search_query}'")
@@ -124,7 +124,7 @@ class SuperJobAPI(BaseAPI):
 
         all_vacancies = []
         page = 0
-        max_pages = kwargs.get('max_pages', 100)  # Еще больше увеличиваем количество страниц
+        max_pages = kwargs.get('max_pages', 5)  # Еще больше увеличиваем количество страниц
         consecutive_empty_pages = 0
         max_empty_pages = 3  # Останавливаемся после 3 пустых страниц подряд
 
@@ -160,7 +160,7 @@ class SuperJobAPI(BaseAPI):
                     break
             else:
                 consecutive_empty_pages = 0  # Сбрасываем счетчик пустых страниц
-                
+
                 # Добавляем источник к каждой вакансии
                 for vacancy in vacancies:
                     vacancy["source"] = "superjob.ru"
@@ -176,12 +176,12 @@ class SuperJobAPI(BaseAPI):
             page += 1
 
         logger.info(f"Total SuperJob vacancies found: {len(all_vacancies)}")
-        
+
         # Сохраняем результаты в кэш
         if all_vacancies:
             self.file_cache.save_response("sj", cache_key_params, all_vacancies)
             logger.debug(f"Saved {len(all_vacancies)} SuperJob vacancies to cache")
-        
+
         return all_vacancies
 
     def clear_cache(self) -> None:
