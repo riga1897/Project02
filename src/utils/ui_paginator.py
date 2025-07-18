@@ -64,8 +64,10 @@ def paginate_display(
         # Навигация
         if total_pages > 1:
             print("\nНавигация:")
-            print("'n' или 'next' - следующая страница")
-            print("'p' или 'prev' - предыдущая страница")
+            if current_page < total_pages:
+                print("'n' или 'next' - следующая страница")
+            if current_page > 1:
+                print("'p' или 'prev' - предыдущая страница")
             print("'q' или 'quit' - выход")
             print("Номер страницы - переход к странице")
             
