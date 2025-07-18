@@ -1,0 +1,155 @@
+{
+  "meta": {
+    "params": "[('area', 1), ('only_with_salary', False), ('page', 0), ('per_page', 1), ('text', 'python')]"
+  },
+  "data": {
+    "items": [
+      {
+        "id": "122838005",
+        "premium": false,
+        "name": "QA engineer (Middle/Middle+)",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "улица 8 Марта",
+          "building": "1с12",
+          "lat": 55.800726,
+          "lng": 37.554933,
+          "description": null,
+          "raw": "Москва, улица 8 Марта, 1с12",
+          "metro": {
+            "station_name": "Динамо",
+            "line_name": "Замоскворецкая",
+            "station_id": "2.34",
+            "line_id": "2",
+            "lat": 55.789704,
+            "lng": 37.558212
+          },
+          "metro_stations": [
+            {
+              "station_name": "Динамо",
+              "line_name": "Замоскворецкая",
+              "station_id": "2.34",
+              "line_id": "2",
+              "lat": 55.789704,
+              "lng": 37.558212
+            }
+          ],
+          "id": "2317878"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-15T19:47:56+0300",
+        "created_at": "2025-07-15T19:47:56+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122838005",
+        "branding": {
+          "type": "MAKEUP",
+          "tariff": null
+        },
+        "show_logo_in_search": true,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122838005?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122838005",
+        "relations": [],
+        "employer": {
+          "id": "852361",
+          "name": "Ростелеком - Центры обработки данных",
+          "url": "https://api.hh.ru/employers/852361",
+          "alternate_url": "https://hh.ru/employer/852361",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1406234.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7244604.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7244605.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=852361",
+          "accredited_it_employer": true,
+          "employer_rating": {
+            "total_rating": "4.1",
+            "reviews_count": 110
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Высшее образование, желательно техническое. Опыт тестирования ПО от 3 лет. Опыт написания тестовой документации и анализа требований. Умение анализировать информацию...",
+          "responsibility": "Написание тестовых сценариев на основе документации аналитиков. Cоставление тест-планов. Поддержка имеющихся сценариев. Работа с дефектами. Онбордин и наставничество младших..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "124",
+            "name": "Тестировщик"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between3And6",
+          "name": "От 3 до 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 5137,
+    "pages": 2000,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&text=python"
+  }
+}
