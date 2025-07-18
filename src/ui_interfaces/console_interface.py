@@ -75,7 +75,7 @@ class UserInterface:
         print("\n")
         print_menu_separator()
         print("Выберите действие:")
-        print("1. Поиск вакансий по запросу (запрос к API)")
+        print("1. Поиск вакансий по запросу (выбор источника + запрос к API)")
         print("2. Показать все сохраненные вакансии")
         print("3. Топ N сохраненных вакансий по зарплате")
         print("4. Поиск в сохраненных вакансиях по ключевому слову")
@@ -91,17 +91,19 @@ class UserInterface:
 
     def _search_vacancies(self) -> None:
         """Поиск вакансий по запросу пользователя"""
-        query = get_user_input("\nВведите поисковый запрос: ")
-
-        if not query:
-            return
-
-        # Выбор источников
+        # Сначала выбираем источники
         sources = self.source_selector.get_user_source_choice()
         if not sources:
             return
 
         self.source_selector.display_sources_info(sources)
+        
+        # Затем вводим поисковый запрос
+        query = get_user_input("\nВведите поисковый запрос: ")
+
+        if not query:
+            return
+
         print(f"\nИщем вакансии по запросу: '{query}'...")
 
         try:
