@@ -1,3 +1,4 @@
+
 import pytest
 import os
 from unittest.mock import patch
@@ -212,44 +213,39 @@ def sample_vacancies():
     ]
 
 
-
 @pytest.fixture
-def hh_api(api_config, temp_cache_dir):
+def hh_api_instance(api_config, temp_cache_dir):
     """HeadHunter API с временным кэшем"""
+    # Импортируем внутри фикстуры
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    
     from src.api_modules.hh_api import HeadHunterAPI
     
-    original_cache_dir = HeadHunterAPI.DEFAULT_CACHE_DIR
-    HeadHunterAPI.DEFAULT_CACHE_DIR = temp_cache_dir
-    
-    try:
-        api = HeadHunterAPI(api_config)
-        yield api
-    finally:
-        HeadHunterAPI.DEFAULT_CACHE_DIR = original_cache_dir
+    return HeadHunterAPI(api_config['hh'])
 
 
 @pytest.fixture
-def sj_api(api_config, temp_cache_dir):
+def sj_api_instance(api_config, temp_cache_dir):
     """SuperJob API с временным кэшем"""
+    # Импортируем внутри фикстуры
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    
     from src.api_modules.sj_api import SuperJobAPI
     
-    original_cache_dir = SuperJobAPI.DEFAULT_CACHE_DIR
-    SuperJobAPI.DEFAULT_CACHE_DIR = temp_cache_dir
-    
-    try:
-        api = SuperJobAPI(api_config)
-        yield api
-    finally:
-        SuperJobAPI.DEFAULT_CACHE_DIR = original_cache_dir
-
+    return SuperJobAPI(api_config['sj'])
 
 
 @pytest.fixture
-def json_saver(temp_json_file):
+def json_saver_instance(temp_json_file):
     """JSONSaver с временным файлом"""
+    # Импортируем внутри фикстуры
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    
     from src.storage.json_saver import JSONSaver
     return JSONSaver(str(temp_json_file))
-
 
 
 @pytest.fixture
@@ -263,14 +259,22 @@ def salary_data():
 
 
 @pytest.fixture
-def empty_salary():
+def empty_salary_instance():
     """Пустая зарплата"""
+    # Импортируем внутри фикстуры
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    
     from src.utils.salary import Salary
     return Salary()
 
 
 @pytest.fixture
-def full_salary(salary_data):
+def full_salary_instance(salary_data):
     """Полная зарплата"""
+    # Импортируем внутри фикстуры
+    import sys
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+    
     from src.utils.salary import Salary
     return Salary(salary_data)

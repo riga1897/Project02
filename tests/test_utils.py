@@ -1,10 +1,15 @@
+
 import pytest
-from unittest.mock import Mock, patch, mock_open
+import sys
 from pathlib import Path
+from unittest.mock import Mock, patch, mock_open
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.utils.cache import FileCache
 from src.utils.env_loader import EnvLoader
 from src.utils.paginator import Paginator
-
 
 
 class TestFileCache:
@@ -148,4 +153,3 @@ class TestPaginator:
         result = paginator.paginate(mock_fetch, 3)
         assert len(result) == 1  # Should stop at page 1
         assert result == ["item_0"]
-

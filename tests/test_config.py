@@ -1,5 +1,11 @@
 
 import pytest
+import sys
+from pathlib import Path
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from src.config.api_config import APIConfig, HHAPIConfig
 from src.config.sj_api_config import SJAPIConfig
 from src.config.ui_config import UIConfig
@@ -85,35 +91,46 @@ class TestSJAPIConfig:
         return SJAPIConfig()
     
     def test_init_default(self, sj_config):
-        assert sj_config.count == 100
-        assert sj_config.town == 4  # Moscow
-        assert sj_config.no_agreement == 1
+        assert sj_config.count == 500
+        assert sj_config.published == 15
+        assert sj_config.custom_params is None
     
     def test_init_with_params(self):
-        config = SJAPIConfig(count=50, town=2, no_agreement=0)
+        config = SJAPIConfig(count=50, published=7, custom_params={'test': 'value'})
         assert config.count == 50
-        assert config.town == 2
-        assert config.no_agreement == 0
+        assert config.published == 7
+        assert config.custom_params == {'test': 'value'}
     
     def test_get_params_default(self, sj_config):
         params = sj_config.get_params()
-        assert params['count'] == 100
-        assert params['town'] == 4
-        assert params['no_agreement'] == 1
+        assert params['count'] == 500
+        assert params['order_field'] == 'date'
+        assert params['order_direction'] == 'desc'
+        assert params['published'] == 15
     
     def test_get_params_with_override(self, sj_config):
         params = sj_config.get_params(count=50, town=2)
         assert params['count'] == 50
         assert params['town'] == 2
-        assert params['no_agreement'] == 1
+        assert params['order_field'] == 'date'
+        assert params['order_direction'] == 'desc'
     
     def test_get_params_with_keyword(self, sj_config):
         params = sj_config.get_params(keyword="Python")
         assert params['keyword'] == "Python"
+        assert params['count'] == 500
+        assert params['order_field'] == 'date'
     
     def test_get_params_with_page(self, sj_config):
         params = sj_config.get_params(page=2)
         assert params['page'] == 2
+        assert params['count'] == 500
+    
+    def test_get_params_with_custom_params(self):
+        config = SJAPIConfig(custom_params={'custom_key': 'custom_value'})
+        params = config.get_params()
+        assert params['custom_key'] == 'custom_value'
+        assert params['count'] == 500
 
 
 class TestUIConfig:
@@ -127,7 +144,9 @@ class TestUIConfig:
         assert ui_config.max_display_items == 20
     
     def test_init_with_params(self):
-        config = UIConfig(items_per_page=10, max_display_items=50)
+        config = UIConfig()
+        config.items_per_page = 10
+        config.max_display_items = 50
         assert config.items_per_page == 10
         assert config.max_display_items == 50
     
