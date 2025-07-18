@@ -776,24 +776,6 @@ class UserInterface:
                     print(f"Введите номер от 1 до {len(vacancies)}")
             else:
                 print("Неверный выбор. Попробуйте снова.")
-<replit_final_file>
-import logging
-from typing import List, Optional
-from src.vacancies.models import Vacancy
-from src.storage.json_saver import JSONSaver
-from src.utils.ui_paginator import paginate_display
-from src.utils.ui_helpers import (
-    get_user_input, get_positive_integer, parse_salary_range, confirm_action,
-    filter_vacancies_by_keyword, display_vacancy_info
-)
-from src.utils.vacancy_operations import VacancyOperations
-from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
-from src.ui_interfaces.source_selector import SourceSelector
-from src.api_modules.hh_api import HeadHunterAPI
-from src.api_modules.sj_api import SuperJobAPI
-from src.api_modules.unified_api import UnifiedAPI
-
-logger = logging.getLogger(__name__)
 
 
 class UserInterface:
