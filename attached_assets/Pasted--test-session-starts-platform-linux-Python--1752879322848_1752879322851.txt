@@ -1,0 +1,521 @@
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 69 items                                                      
+
+tests/test_api_modules.py ....................................... [ 56%]
+...................F..........                                    [100%]
+
+=============================== FAILURES ================================
+____________ TestUnifiedAPI.test_clear_all_cache_with_error _____________
+
+self = <MagicMock name='clear_cache' id='140076058096208'>
+
+    def assert_called_once(self):
+        """assert that the mock was called only once.
+        """
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to have been called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'clear_cache' to have been called once. Called 0 times.
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:886: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7f65ffaa5310>
+unified_api = <src.api_modules.unified_api.UnifiedAPI object at 0x7f65ff8159a0>
+
+    def test_clear_all_cache_with_error(self, unified_api):
+        # Тестируем ошибку при очистке всего кэша (строки 128-129)
+        with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")) as mock_hh_clear:
+            with patch.object(unified_api.sj_api, 'clear_cache') as mock_sj_clear:
+                unified_api.clear_all_cache()
+                # Проверяем что методы были вызваны
+                mock_hh_clear.assert_called_once()
+>               mock_sj_clear.assert_called_once()
+E               AssertionError: Expected 'clear_cache' to have been called once. Called 0 times.
+
+tests/test_api_modules.py:587: AssertionError
+--------------------------- Captured log call ---------------------------
+ERROR    src.api_modules.unified_api:unified_api.py:129 Ошибка очистки кэша: HH clear error
+======================== short test summary info ========================
+FAILED tests/test_api_modules.py::TestUnifiedAPI::test_clear_all_cache_with_error - AssertionError: Expected 'clear_cache' to have been called once. Cal...
+===================== 1 failed, 68 passed in 8.66s ======================
+~/workspace$ pytest tests/test_api_modules.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 69 items                                                      
+
+tests/test_api_modules.py ....................................... [ 56%]
+..............................                                    [100%]
+
+========================== 69 passed in 8.46s ===========================
+~/workspace$ pytest tests/test_с
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 0 items                                                       
+
+========================= no tests ran in 0.06s =========================
+ERROR: file or directory not found: tests/test_с
+
+~/workspace$ pytest tests/test_config.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 20 items                                                      
+
+tests/test_config.py ....................                         [100%]
+
+========================== 20 passed in 0.11s ===========================
+~/workspace$ pytest tests/test_storage.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 6 items                                                       
+
+tests/test_storage.py ......                                      [100%]
+
+=========================== 6 passed in 0.09s ===========================
+~/workspace$ pytest tests/test_utils.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 17 items                                                      
+
+tests/test_utils.py .................                             [100%]
+
+========================== 17 passed in 0.15s ===========================
+~/workspace$ pytest tests/test_vacancies.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 25 items                                                      
+
+tests/test_vacancies.py ..F...................FFF                 [100%]
+
+=============================== FAILURES ================================
+__________________ TestVacancy.test_str_representation __________________
+
+self = <tests.test_vacancies.TestVacancy object at 0x7f61643bcfd0>
+sample_vacancy_data = {'description': 'Разработка на Python', 'employer': 'Test Company', 'requirements': 'Python, Django', 'salary': {'currency': 'RUR', 'from': 100000, 'to': 150000}, ...}
+
+    def test_str_representation(self, sample_vacancy_data):
+        vacancy = Vacancy(**sample_vacancy_data)
+>       str_repr = str(vacancy)
+
+tests/test_vacancies.py:286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.vacancies.models.Vacancy object at 0x7f616403a300>
+
+    def __str__(self) -> str:
+        """Строковое представление вакансии"""
+        parts = [
+            f"Должность: {self.title}",
+>           f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
+            f"Зарплата: {self.salary}",
+            f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
+            f"Ссылка: {self.url}"
+        ]
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/vacancies/models.py:171: AttributeError
+_____________________ TestSuperJobVacancy.test_init _____________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e1e50>
+
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com"
+>       assert vacancy.salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:397: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+______________ TestSuperJobVacancy.test_str_representation ______________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e4c40>
+
+    def test_str_representation(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={},
+            description="Test description"
+        )
+    
+        str_repr = str(vacancy)
+>       assert "Python Developer" in str_repr
+E       AssertionError: assert 'Python Developer' in '<src.vacancies.sj_models.SuperJobVacancy object at 0x7f6164b06130>'
+
+tests/test_vacancies.py:408: AssertionError
+_______________ TestSuperJobVacancy.test_salary_property ________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f61642e48e0>
+
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            title="Test",
+            url="test",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        salary = vacancy.salary
+>       assert salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:419: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+======================== short test summary info ========================
+FAILED tests/test_vacancies.py::TestVacancy::test_str_representation - AttributeError: 'str' object has no attribute 'get'
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_init - TypeError: 'NoneType' object is not subscriptable
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_str_representation - AssertionError: assert 'Python Developer' in '<src.vacancies.sj_mode...
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_salary_property - TypeError: 'NoneType' object is not subscriptable
+===================== 4 failed, 21 passed in 0.34s ======================
+~/workspace$ 
+~/workspace$ pytest tests/test_vacancies.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 27 items                                                      
+
+tests/test_vacancies.py ..F...........FFF..........               [100%]
+
+=============================== FAILURES ================================
+__________________ TestVacancy.test_str_representation __________________
+
+self = <tests.test_vacancies.TestVacancy object at 0x7f04bc1d14c0>
+sample_vacancy_data = {'description': 'Разработка на Python', 'employer': 'Test Company', 'requirements': 'Python, Django', 'salary': {'currency': 'RUR', 'from': 100000, 'to': 150000}, ...}
+
+    def test_str_representation(self, sample_vacancy_data):
+        vacancy = Vacancy(**sample_vacancy_data)
+>       str_repr = str(vacancy)
+
+tests/test_vacancies.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.vacancies.models.Vacancy object at 0x7f04bbf65250>
+
+    def __str__(self) -> str:
+        """Строковое представление вакансии"""
+        parts = [
+            f"Должность: {self.title}",
+>           f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
+            f"Зарплата: {self.salary}",
+            f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
+            f"Ссылка: {self.url}"
+        ]
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/vacancies/models.py:171: AttributeError
+_____________________ TestSuperJobVacancy.test_init _____________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f04bc1d4790>
+
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com"
+>       assert vacancy.salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:196: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+______________ TestSuperJobVacancy.test_str_representation ______________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f04bc1d4400>
+
+    def test_str_representation(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        str_repr = str(vacancy)
+>       assert "Python Developer" in str_repr
+E       AssertionError: assert 'Python Developer' in '<src.vacancies.sj_models.SuperJobVacancy object at 0x7f04bc1c7040>'
+
+tests/test_vacancies.py:207: AssertionError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+_______________ TestSuperJobVacancy.test_salary_property ________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f04bc1d4a60>
+
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            title="Test",
+            url="test",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        salary = vacancy.salary
+>       assert salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:218: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+======================== short test summary info ========================
+FAILED tests/test_vacancies.py::TestVacancy::test_str_representation - AttributeError: 'str' object has no attribute 'get'
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_init - TypeError: 'NoneType' object is not subscriptable
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_str_representation - AssertionError: assert 'Python Developer' in '<src.vacancies.sj_mode...
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_salary_property - TypeError: 'NoneType' object is not subscriptable
+===================== 4 failed, 23 passed in 0.32s ======================
+~/workspace$ git push
+fatal: The current branch feature/project02_1_14 has no upstream branch.
+To push the current branch and set the remote as upstream, use
+
+    git push --set-upstream origin feature/project02_1_14
+
+To have this happen automatically for branches without a tracking
+upstream, see 'push.autoSetupRemote' in 'git help config'.
+
+~/workspace$ git push --set-upstream origin feature/project02_1_14
+Enumerating objects: 139, done.
+Counting objects: 100% (139/139), done.
+Delta compression using up to 8 threads
+Compressing objects: 100% (120/120), done.
+Writing objects: 100% (121/121), 38.04 KiB | 7.61 MiB/s, done.
+Total 121 (delta 87), reused 0 (delta 0), pack-reused 0 (from 0)
+remote: Resolving deltas: 100% (87/87), completed with 15 local objects.
+remote: 
+remote: Create a pull request for 'feature/project02_1_14' on GitHub by visiting:
+remote:      https://github.com/riga1897/Project02/pull/new/feature/project02_1_14
+remote: 
+To https://github.com/riga1897/Project02
+ * [new branch]      feature/project02_1_14 -> feature/project02_1_14
+branch 'feature/project02_1_14' set up to track 'origin/feature/project02_1_14'.
+~/workspace$ git push --set-upstream origin feature/project02_1_14
+branch 'feature/project02_1_14' set up to track 'origin/feature/project02_1_14'.
+Everything up-to-date
+~/workspace$ pytest tests/test_vacancies.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 27 items                                                      
+
+tests/test_vacancies.py ..F...........FFF..........               [100%]
+
+=============================== FAILURES ================================
+__________________ TestVacancy.test_str_representation __________________
+
+self = <tests.test_vacancies.TestVacancy object at 0x7f8c57caad60>
+sample_vacancy_data = {'description': 'Разработка на Python', 'employer': 'Test Company', 'requirements': 'Python, Django', 'salary': {'currency': 'RUR', 'from': 100000, 'to': 150000}, ...}
+
+    def test_str_representation(self, sample_vacancy_data):
+        vacancy = Vacancy(**sample_vacancy_data)
+>       str_repr = str(vacancy)
+
+tests/test_vacancies.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.vacancies.models.Vacancy object at 0x7f8c571981a0>
+
+    def __str__(self) -> str:
+        """Строковое представление вакансии"""
+        parts = [
+            f"Должность: {self.title}",
+>           f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
+            f"Зарплата: {self.salary}",
+            f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
+            f"Ссылка: {self.url}"
+        ]
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/vacancies/models.py:171: AttributeError
+_____________________ TestSuperJobVacancy.test_init _____________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f8c574cf7c0>
+
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com"
+>       assert vacancy.salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:196: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+______________ TestSuperJobVacancy.test_str_representation ______________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f8c574cfdf0>
+
+    def test_str_representation(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        str_repr = str(vacancy)
+>       assert "Python Developer" in str_repr
+E       AssertionError: assert 'Python Developer' in '<src.vacancies.sj_models.SuperJobVacancy object at 0x7f8c57436a60>'
+
+tests/test_vacancies.py:207: AssertionError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+_______________ TestSuperJobVacancy.test_salary_property ________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f8c574cf310>
+
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            title="Test",
+            url="test",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        salary = vacancy.salary
+>       assert salary["payment_from"] == 100000
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests/test_vacancies.py:218: TypeError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+======================== short test summary info ========================
+FAILED tests/test_vacancies.py::TestVacancy::test_str_representation - AttributeError: 'str' object has no attribute 'get'
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_init - TypeError: 'NoneType' object is not subscriptable
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_str_representation - AssertionError: assert 'Python Developer' in '<src.vacancies.sj_mode...
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_salary_property - TypeError: 'NoneType' object is not subscriptable
+===================== 4 failed, 23 passed in 0.21s ======================
+~/workspace$ pytest tests/test_vacancies.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 28 items                                                      
+
+tests/test_vacancies.py ..F...........F.F...........              [100%]
+
+=============================== FAILURES ================================
+__________________ TestVacancy.test_str_representation __________________
+
+self = <tests.test_vacancies.TestVacancy object at 0x7f080c3e5b50>
+sample_vacancy_data = {'description': 'Разработка на Python', 'employer': 'Test Company', 'requirements': 'Python, Django', 'salary': {'currency': 'RUR', 'from': 100000, 'to': 150000}, ...}
+
+    def test_str_representation(self, sample_vacancy_data):
+        # Тест с employer как строкой
+        vacancy = Vacancy(**sample_vacancy_data)
+>       str_repr = str(vacancy)
+
+tests/test_vacancies.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.vacancies.models.Vacancy object at 0x7f080c22c300>
+
+    def __str__(self) -> str:
+        """Строковое представление вакансии"""
+        parts = [
+            f"Должность: {self.title}",
+>           f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
+            f"Зарплата: {self.salary}",
+            f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
+            f"Ссылка: {self.url}"
+        ]
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/vacancies/models.py:171: AttributeError
+_____________________ TestSuperJobVacancy.test_init _____________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f080c622520>
+
+    def test_init(self):
+        vacancy = SuperJobVacancy(
+            title="Python Developer",
+            url="https://test.com",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Python Developer"
+        assert vacancy.url == "https://test.com"
+>       assert vacancy.salary is not None
+E       assert None is not None
+E        +  where None = <src.vacancies.sj_models.SuperJobVacancy object at 0x7f080ce2d040>.salary
+
+tests/test_vacancies.py:198: AssertionError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+_______________ TestSuperJobVacancy.test_salary_property ________________
+
+self = <tests.test_vacancies.TestSuperJobVacancy object at 0x7f080c6316d0>
+
+    def test_salary_property(self):
+        vacancy = SuperJobVacancy(
+            title="Test",
+            url="test",
+            salary={"payment_from": 100000, "payment_to": 150000, "currency": "rub"},
+            description="Test description"
+        )
+    
+        # Проверяем что salary не None
+>       assert vacancy.salary is not None
+E       assert None is not None
+E        +  where None = <src.vacancies.sj_models.SuperJobVacancy object at 0x7f080c432820>.salary
+
+tests/test_vacancies.py:222: AssertionError
+--------------------------- Captured log call ---------------------------
+WARNING  src.vacancies.sj_models:sj_models.py:79 Ошибка создания зарплаты: __init__() got an unexpected keyword argument 'salary_from'
+======================== short test summary info ========================
+FAILED tests/test_vacancies.py::TestVacancy::test_str_representation - AttributeError: 'str' object has no attribute 'get'
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_init - assert None is not None
+FAILED tests/test_vacancies.py::TestSuperJobVacancy::test_salary_property - assert None is not None

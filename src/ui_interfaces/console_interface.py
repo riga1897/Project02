@@ -15,6 +15,8 @@ from src.utils.vacancy_formatter import VacancyFormatter
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
 from src.ui_interfaces.source_selector import SourceSelector
+from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
+from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
 from src.api_modules.unified_api import UnifiedAPI
@@ -24,7 +26,13 @@ logger = logging.getLogger(__name__)
 
 
 class UserInterface:
-    """Класс для взаимодействия с пользователем через консоль"""
+    """
+    Класс для взаимодействия с пользователем через консоль
+
+    Теперь использует принцип единственной ответственности -
+    только управляет навигацией по меню и делегирует операции
+    специализированным обработчикам.
+    """
 
     def __init__(self):
         """Инициализация пользовательского интерфейса"""
@@ -35,6 +43,10 @@ class UserInterface:
         self.menu_manager = create_main_menu()
         self.vacancy_ops = VacancyOperations()
         self.source_selector = SourceSelector()
+
+        # Инициализируем обработчики
+        self.search_handler = VacancySearchHandler(self.unified_api, self.json_saver)
+        self.display_handler = VacancyDisplayHandler(self.json_saver)
 
     def run(self) -> None:
         """Основной цикл взаимодействия с пользователем"""
@@ -101,207 +113,19 @@ class UserInterface:
 
     def _search_vacancies(self) -> None:
         """Поиск вакансий по запросу пользователя"""
-        # Сначала выбираем источники
-        sources = self.source_selector.get_user_source_choice()
-        if not sources:
-            return
-
-        self.source_selector.display_sources_info(sources)
-
-        # Затем вводим поисковый запрос
-        query = get_user_input("\nВведите поисковый запрос: ")
-
-        if not query:
-            return
-
-        # Выбор периода публикации
-        period = self._get_period_choice()
-        if period is None:
-            return  # Пользователь отменил выбор периода
-
-        print(f"\nИщем вакансии по запросу: '{query}' за последние {period} дней...")
-
-        # Получение вакансий с выбранных источников
-        try:
-            all_vacancies = []
-
-            # Получаем вакансии последовательно из каждого источника
-            if "hh" in sources:
-                print("Получение вакансий с HH.ru...")
-                hh_vacancies = self.unified_api.get_hh_vacancies(query, period=period)
-                if hh_vacancies:
-                    all_vacancies.extend(hh_vacancies)
-                    print(f"Найдено {len(hh_vacancies)} вакансий на HH.ru")
-                else:
-                    print("Вакансии на HH.ru не найдены")
-
-            if "sj" in sources:
-                print("Получение вакансий с SuperJob...")
-                sj_vacancies = self.unified_api.get_sj_vacancies(query, period=period)
-                if sj_vacancies:
-                    all_vacancies.extend(sj_vacancies)
-                    print(f"Найдено {len(sj_vacancies)} вакансий на SuperJob")
-                else:
-                    print("Вакансии на SuperJob не найдены")
-
-            if not all_vacancies:
-                print("Вакансии не найдены ни на одном из источников.")
-                return
-
-            print(f"\nВсего найдено {len(all_vacancies)} вакансий")
-
-            # Предпросмотр всех найденных вакансий
-            show_vacancies = confirm_action("Показать найденные вакансии?")
-            if show_vacancies:
-                # Форматируем вакансии для отображения
-                def format_vacancy(vacancy, number=None):
-                    return VacancyFormatter.format_vacancy_info(vacancy, number)
-
-                quick_paginate(
-                    all_vacancies,
-                    formatter=format_vacancy,
-                    header=f"Найденные вакансии по запросу '{query}' из всех источников",
-                    items_per_page=5
-                )
-
-                # Сохранение только после просмотра
-                if confirm_action("Сохранить просмотренные вакансии?"):
-                    update_messages = self.json_saver.add_vacancy(all_vacancies)
-                    if update_messages:
-                        print(f"Обработано {len(all_vacancies)} вакансий:")
-                        for message in update_messages[:5]:  # Показываем первые 5 сообщений
-                            print(f"  • {message}")
-                        if len(update_messages) > 5:
-                            print(f"  ... и еще {len(update_messages) - 5} операций")
-                    else:
-                        print("Вакансии уже существуют в базе данных")
-                else:
-                    print("Вакансии не сохранены")
-            else:
-                # Если не показывали вакансии, все равно предлагаем сохранить
-                if confirm_action("Сохранить найденные вакансии без просмотра?"):
-                    update_messages = self.json_saver.add_vacancy(all_vacancies)
-                    if update_messages:
-                        print(f"Обработано {len(all_vacancies)} вакансий:")
-                        for message in update_messages[:5]:  # Показываем первые 5 сообщений
-                            print(f"  • {message}")
-                        if len(update_messages) > 5:
-                            print(f"  ... и еще {len(update_messages) - 5} операций")
-                    else:
-                        print("Вакансии уже существуют в базе данных")
-                else:
-                    print("Вакансии не сохранены")
-
-        except Exception as e:
-            logger.error(f"Ошибка поиска вакансий: {e}")
-            print(f"Произошла ошибка при поиске: {e}")
+        self.search_handler.search_vacancies()
 
     def _show_saved_vacancies(self) -> None:
         """Отображение сохраненных вакансий с постраничным просмотром"""
-        try:
-            vacancies = self.json_saver.get_vacancies()
-
-            if not vacancies:
-                print("\nНет сохраненных вакансий.")
-                return
-
-            print(f"\nСохраненных вакансий: {len(vacancies)}")
-
-            # Форматируем вакансии для отображения
-            def format_vacancy(vacancy, number=None):
-                return VacancyFormatter.format_vacancy_info(vacancy, number)
-
-            # Используем унифицированную навигацию
-            quick_paginate(
-                vacancies,
-                formatter=format_vacancy,
-                header="Сохраненные вакансии",
-                items_per_page=ui_pagination_config.get_items_per_page('saved')
-            )
-
-        except Exception as e:
-            logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
-            print(f"Ошибка при загрузке вакансий: {e}")
+        self.display_handler.show_all_saved_vacancies()
 
     def _get_top_saved_vacancies_by_salary(self) -> None:
         """Получение топ N сохраненных вакансий по зарплате"""
-        n = get_positive_integer("\nВведите количество вакансий для отображения: ")
-        if n is None:
-            return
-
-        try:
-            vacancies = self.json_saver.get_vacancies()
-
-            if not vacancies:
-                print("Нет сохраненных вакансий.")
-                return
-
-            # Фильтруем вакансии с зарплатой
-            vacancies_with_salary = self.vacancy_ops.get_vacancies_with_salary(vacancies)
-
-            if not vacancies_with_salary:
-                print("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
-                return
-
-            # Сортируем по убыванию зарплаты
-            sorted_vacancies = self.vacancy_ops.sort_vacancies_by_salary(vacancies_with_salary)
-
-            top_vacancies = sorted_vacancies[:n]
-
-            print(f"\nТоп {len(top_vacancies)} сохраненных вакансий по зарплате:")
-
-            # Постраничный просмотр
-            def format_vacancy(vacancy, number=None):
-                return VacancyFormatter.format_vacancy_info(vacancy, number)
-
-            quick_paginate(
-                top_vacancies,
-                formatter=format_vacancy,
-                header=f"Топ {len(top_vacancies)} вакансий по зарплате",
-                items_per_page=ui_pagination_config.get_items_per_page('top')
-            )
-
-        except Exception as e:
-            logger.error(f"Ошибка при получении топ сохраненных вакансий: {e}")
-            print(f"Ошибка при поиске: {e}")
+        self.display_handler.show_top_vacancies_by_salary()
 
     def _search_saved_vacancies_by_keyword(self) -> None:
         """Поиск в сохраненных вакансиях с ключевым словом в описании"""
-        keyword = get_user_input("\nВведите ключевое слово для поиска в описании: ")
-
-        if not keyword:
-            return
-
-        try:
-            vacancies = self.json_saver.get_vacancies()
-
-            if not vacancies:
-                print("Нет сохраненных вакансий.")
-                return
-
-            # Фильтруем по ключевому слову в описании
-            filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
-
-            if not filtered_vacancies:
-                print(f"Среди сохраненных вакансий не найдено ни одной с ключевым словом '{keyword}'.")
-                return
-
-            print(f"\nНайдено {len(filtered_vacancies)} сохраненных вакансий с ключевым словом '{keyword}':")
-
-            # Постраничный просмотр
-            def format_vacancy(vacancy, number=None):
-                return VacancyFormatter.format_vacancy_info(vacancy, number)
-
-            quick_paginate(
-                filtered_vacancies,
-                formatter=format_vacancy,
-                header=f"Вакансии с ключевым словом '{keyword}'",
-                items_per_page=ui_pagination_config.get_items_per_page('search')
-            )
-
-        except Exception as e:
-            logger.error(f"Ошибка при поиске по ключевому слову: {e}")
-            print(f"Ошибка при поиске: {e}")
+        self.display_handler.search_saved_vacancies_by_keyword()
 
     def _advanced_search_vacancies(self) -> None:
         """Расширенный поиск по вакансиям"""

@@ -1,19 +1,34 @@
+
 from typing import Dict, Any, Optional
+from dataclasses import dataclass
 
 
+@dataclass
 class HHAPIConfig:
-    """HH.ru API configuration class."""
+    """Конфигурация специфичных параметров HH API"""
+    area: int = 113  # Россия по умолчанию
+    per_page: int = 50  # Количество элементов на странице
+    only_with_salary: bool = False
+    period: int = 15  # Период 15 дней по умолчанию
+    custom_params: Dict[str, Any] = None
 
-    def __init__(self, default_hh_params: Optional[Dict[str, Any]] = None):
-        self._default_hh_params = default_hh_params or {
-            "area": 113,  # Russia (исключая Казахстан)
-            "period": 15,  # Период 15 дней по умолчанию
-            "per_page": 100  # Максимальное значение для HH.ru API
+    def __post_init__(self):
+        if self.custom_params is None:
+            self.custom_params = {}
+
+    def get_params(self, **kwargs) -> Dict[str, Any]:
+        """Генерация параметров запроса с учетом переопределений"""
+        params = {
+            "area": kwargs.get("area", self.area),
+            "per_page": kwargs.get("per_page", self.per_page),
+            "only_with_salary": kwargs.get("only_with_salary", self.only_with_salary),
+            "period": kwargs.get("period", self.period)
         }
-
-    def get_hh_params(self, **kwargs) -> Dict[str, Any]:
-        """Get HH API params with overrides."""
-        params = self._default_hh_params.copy()
+        if self.custom_params:
+            params.update(self.custom_params)
         params.update(kwargs)
         return params
-      
+
+    def get_hh_params(self, **kwargs) -> Dict[str, Any]:
+        """Get HH API params with overrides (для совместимости со старым интерфейсом)."""
+        return self.get_params(**kwargs)

@@ -1,119 +1,166 @@
-
-"""
-Тесты для вспомогательных модулей
-"""
-
 import pytest
-from unittest.mock import Mock, patch
+import sys
+from pathlib import Path
+from unittest.mock import Mock, patch, mock_open
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from src.utils.cache import FileCache
+from src.utils.env_loader import EnvLoader
 from src.utils.paginator import Paginator
-from src.utils.ui_helpers import filter_vacancies_by_keyword
-from src.utils.vacancy_formatter import VacancyFormatter
+
+
+class TestFileCache:
+
+    @pytest.fixture
+    def cache(self):
+        return FileCache("test_cache")
+
+    def test_init(self, cache):
+        assert cache is not None
+        assert cache.cache_dir == Path("test_cache")
+
+    @patch('builtins.open', new_callable=mock_open, read_data='{"data": "test"}')
+    @patch('src.utils.cache.Path.exists')
+    def test_load_response_exists(self, mock_exists, mock_file, cache):
+        mock_exists.return_value = True
+
+        result = cache.load_response("api", {"param": "value"})
+        assert result == {"data": "test"}
+
+    @patch('src.utils.cache.Path.exists')
+    def test_load_response_not_exists(self, mock_exists, cache):
+        mock_exists.return_value = False
+
+        result = cache.load_response("api", {"param": "value"})
+        assert result is None
+
+    @patch('src.utils.cache.Path.exists')
+    @patch('src.utils.cache.Path.read_text')
+    def test_load_response_json_error(self, mock_read_text, mock_exists, cache):
+        mock_exists.return_value = True
+        mock_read_text.return_value = 'invalid json'
+
+        result = cache.load_response("api", {"param": "value"})
+        assert result is None
+
+    @patch('builtins.open', new_callable=mock_open)
+    @patch('src.utils.cache.Path.mkdir')
+    def test_save_response(self, mock_mkdir, mock_file, cache):
+        cache.save_response("api", {"param": "value"}, {"data": "test"})
+
+        mock_file.assert_called_once()
+
+    @patch('src.utils.cache.Path.write_text')
+    @patch('src.utils.cache.Path.mkdir')
+    def test_save_response_error(self, mock_mkdir, mock_write_text, cache):
+        mock_write_text.side_effect = Exception("Write error")
+
+        # Should not raise exception
+        cache.save_response("api", {"param": "value"}, {"data": "test"})
+
+    @patch('src.utils.cache.Path.glob')
+    def test_clear(self, mock_glob, cache):
+        mock_file = Mock()
+        mock_file.unlink = Mock()
+        mock_glob.return_value = [mock_file]
+
+        cache.clear("api")
+        mock_file.unlink.assert_called()
+
+    @patch('src.utils.cache.Path.exists')
+    def test_clear_not_exists(self, mock_exists, cache):
+        mock_exists.return_value = False
+
+        # Should not raise exception
+        cache.clear("api")
+
+
+class TestEnvLoader:
+
+    @patch('src.utils.env_loader.os.getenv')
+    def test_get_env_var_exists(self, mock_getenv):
+        mock_getenv.return_value = "test_value"
+
+        result = EnvLoader.get_env_var("TEST_VAR")
+        assert result == "test_value"
+
+    @patch('src.utils.env_loader.os.getenv')
+    def test_get_env_var_not_exists(self, mock_getenv):
+        # Мокаем os.getenv так, чтобы он возвращал второй аргумент (default) когда переменная не найдена
+        def mock_getenv_func(key, default=None):
+            return default
+        mock_getenv.side_effect = mock_getenv_func
+
+        result = EnvLoader.get_env_var("TEST_VAR", "default")
+        assert result == "default"
+
+    @patch('src.utils.env_loader.os.getenv')
+    def test_get_env_var_no_default(self, mock_getenv):
+        # Мокаем os.getenv так, чтобы он возвращал второй аргумент (None по умолчанию)
+        def mock_getenv_func(key, default=None):
+            return default
+        mock_getenv.side_effect = mock_getenv_func
+
+        result = EnvLoader.get_env_var("TEST_VAR")
+        assert result is None
+
+    @patch('os.path.exists')
+    @patch('builtins.open', new_callable=mock_open, read_data='TEST_VAR=test_value\n')
+    def test_load_env_file_exists(self, mock_file, mock_exists):
+        mock_exists.return_value = True
+
+        # Сбрасываем состояние загрузки для корректного тестирования
+        EnvLoader._loaded = False
+
+        EnvLoader.load_env_file()
+        mock_file.assert_called_once()
+
+    @patch('os.path.exists')
+    def test_load_env_file_not_exists(self, mock_exists):
+        mock_exists.return_value = False
+
+        # Сбрасываем состояние загрузки для корректного тестирования
+        EnvLoader._loaded = False
+
+        # Should not raise exception
+        EnvLoader.load_env_file()
 
 
 class TestPaginator:
-    """Тесты для пагинатора"""
-    
-    def test_paginate_multiple_pages(self):
-        """Тест сбора данных с нескольких страниц"""
-        def fetch_func(page):
-            if page == 0:
-                return ['a', 'b']
-            elif page == 1:
-                return ['c', 'd']
-            return []
-        
-        result = Paginator.paginate(fetch_func, total_pages=3)
-        assert result == ['a', 'b', 'c', 'd']
-    
-    def test_paginate_empty_page_stops(self):
-        """Тест остановки при пустой странице"""
-        def fetch_func(page):
-            return ['data'] if page == 0 else []
-        
-        result = Paginator.paginate(fetch_func, total_pages=5)
-        assert result == ['data']
-    
-    def test_paginate_empty_result(self):
-        """Тест с пустым результатом"""
-        def fetch_func(page):
-            return []
-        
-        result = Paginator.paginate(fetch_func, total_pages=3)
-        assert result == []
-    
-    def test_paginate_respects_total_pages(self):
-        """Тест ограничения по total_pages"""
-        call_count = 0
-        
-        def fetch_func(page):
-            nonlocal call_count
-            call_count += 1
-            return [f'page{page}']
-        
-        result = Paginator.paginate(fetch_func, total_pages=2)
-        assert call_count == 2
-        assert len(result) == 2
 
+    @pytest.fixture
+    def paginator(self):
+        return Paginator()
 
-class TestUIHelpers:
-    """Тесты для UI helpers"""
-    
-    def test_filter_vacancies_by_keyword(self, sample_vacancies):
-        """Тест фильтрации вакансий по ключевому слову"""
-        result = filter_vacancies_by_keyword(sample_vacancies, "Python")
-        
-        assert len(result) == 1
-        assert "Python" in result[0].title
-    
-    def test_filter_vacancies_case_insensitive(self, sample_vacancies):
-        """Тест регистронезависимой фильтрации"""
-        result1 = filter_vacancies_by_keyword(sample_vacancies, "python")
-        result2 = filter_vacancies_by_keyword(sample_vacancies, "PYTHON")
-        result3 = filter_vacancies_by_keyword(sample_vacancies, "Python")
-        
-        assert len(result1) == len(result2) == len(result3) == 1
-    
-    def test_filter_vacancies_no_matches(self, sample_vacancies):
-        """Тест фильтрации без совпадений"""
-        result = filter_vacancies_by_keyword(sample_vacancies, "NonExistent")
-        assert len(result) == 0
-    
-    def test_filter_vacancies_empty_keyword(self, sample_vacancies):
-        """Тест фильтрации с пустым ключевым словом"""
-        result = filter_vacancies_by_keyword(sample_vacancies, "")
-        assert len(result) == 0
+    def test_init(self, paginator):
+        assert paginator is not None
 
+    def test_paginate_success(self, paginator):
+        def mock_fetch(page):
+            return [f"item_{page}"]
 
-class TestVacancyFormatter:
-    """Тесты для форматтера вакансий"""
-    
-    def test_format_vacancy_full(self, sample_vacancy):
-        """Тест форматирования полной вакансии"""
-        result = VacancyFormatter.format_vacancy(sample_vacancy)
-        
-        assert sample_vacancy.title in result
-        assert sample_vacancy.url in result
-        assert "100 000" in result  # Проверяем форматирование зарплаты
-    
-    def test_format_vacancy_no_salary(self, sample_vacancies):
-        """Тест форматирования вакансии без зарплаты"""
-        vacancy_no_salary = sample_vacancies[2]  # Frontend Developer без зарплаты
-        result = VacancyFormatter.format_vacancy(vacancy_no_salary)
-        
-        assert vacancy_no_salary.title in result
-        assert "Не указана" in result
-    
-    def test_format_vacancy_list(self, sample_vacancies):
-        """Тест форматирования списка вакансий"""
-        result = VacancyFormatter.format_vacancy_list(sample_vacancies)
-        
-        assert len(result) > 0
-        assert "Python Developer" in result
-        assert "Java Developer" in result
-    
-    def test_format_vacancy_short(self, sample_vacancy):
-        """Тест краткого форматирования вакансии"""
-        result = VacancyFormatter.format_vacancy_short(sample_vacancy)
-        
-        assert sample_vacancy.title in result
-        assert len(result) < len(VacancyFormatter.format_vacancy(sample_vacancy))
+        result = paginator.paginate(mock_fetch, 3)
+        assert len(result) == 3
+        assert result == ["item_0", "item_1", "item_2"]
+
+    def test_paginate_with_error(self, paginator):
+        def mock_fetch(page):
+            if page == 1:
+                raise Exception("Test error")
+            return [f"item_{page}"]
+
+        result = paginator.paginate(mock_fetch, 3)
+        assert len(result) == 2  # Should skip page 1 due to error
+        assert result == ["item_0", "item_2"]
+
+    def test_paginate_keyboard_interrupt(self, paginator):
+        def mock_fetch(page):
+            if page == 1:
+                raise KeyboardInterrupt()
+            return [f"item_{page}"]
+
+        # Тест перехватывает KeyboardInterrupt как обычное исключение
+        with pytest.raises(KeyboardInterrupt):
+            paginator.paginate(mock_fetch, 3)

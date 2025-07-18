@@ -6,36 +6,74 @@ from src.api_modules.cached_api import CachedAPI
 from src.api_modules.get_api import APIConnector
 from src.utils.paginator import Paginator
 from src.config.api_config import APIConfig
+from src.config.hh_api_config import HHAPIConfig
 
 logger = logging.getLogger(__name__)
 
 
 class HeadHunterAPI(CachedAPI):
-    """Enhanced HH API client with robust error handling and caching"""
+    """
+    Расширенный клиент API HeadHunter с надежной обработкой ошибок и кэшированием
+
+    Предоставляет полный набор функций для работы с API hh.ru:
+    - Поиск вакансий с пагинацией
+    - Многоуровневое кэширование
+    - Дедупликация результатов
+    - Обработка ошибок и восстановление
+    """
 
     BASE_URL = "https://api.hh.ru/vacancies"
     DEFAULT_CACHE_DIR = "data/cache/hh"
     REQUIRED_VACANCY_FIELDS = {'name', 'alternate_url', 'salary'}
 
     def __init__(self, config: Optional[APIConfig] = None):
+        """
+        Инициализация API клиента HeadHunter
+
+        Args:
+            config: Конфигурация API (если None, используется конфигурация по умолчанию)
+        """
         super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
         self._config = config or APIConfig()
         self._connector = APIConnector(self._config)
         self._paginator = Paginator()
 
     def _get_empty_response(self) -> Dict:
-        """Get empty response structure for HH API"""
+        """
+        Получить пустую структуру ответа для HH API
+
+        Returns:
+            Dict: Пустая структура ответа с полем 'items'
+        """
         return {'items': []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
-        """Validate vacancy structure"""
+        """
+        Валидация структуры вакансии
+
+        Args:
+            vacancy: Словарь с данными вакансии
+
+        Returns:
+            bool: True если структура валидна, False иначе
+        """
         return (
             isinstance(vacancy, dict) and 
             all(field in vacancy for field in self.REQUIRED_VACANCY_FIELDS)
         )
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
-        """Get and validate single page of vacancies"""
+        """
+        Получение и валидация одной страницы вакансий
+
+        Args:
+            search_query: Поисковый запрос
+            page: Номер страницы (начиная с 0)
+            **kwargs: Дополнительные параметры поиска
+
+        Returns:
+            List[Dict]: Список валидных вакансий со страницы
+        """
         try:
             params = {
                 "text": search_query,
@@ -53,7 +91,21 @@ class HeadHunterAPI(CachedAPI):
             return []
 
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
-        """Get all vacancies with pagination and validation"""
+        """
+        Получение всех вакансий с пагинацией и валидацией
+
+        Выполняет полный цикл получения вакансий:
+        1. Получает метаданные о количестве страниц
+        2. Обрабатывает все страницы с помощью пагинатора
+        3. Валидирует каждую вакансию
+
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры поиска
+
+        Returns:
+            List[Dict]: Список всех найденных и валидных вакансий
+        """
         try:
             # Initial request for metadata
             initial_data = self._CachedAPI__connect_to_api(
@@ -98,11 +150,62 @@ class HeadHunterAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
+    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+        """
+        Удаление дублирующихся вакансий HH по названию и компании
+
+        Args:
+            vacancies: Список вакансий с HH.ru
+
+        Returns:
+            List[Dict]: Список уникальных вакансий
+        """
+        seen = set()
+        unique_vacancies = []
+
+        for vacancy in vacancies:
+            # Создаем ключ для дедупликации HH вакансий
+            title = vacancy.get('name', '').lower().strip()
+            company = vacancy.get('employer', {}).get('name', '').lower().strip()
+
+            # Нормализуем зарплату для сравнения
+            salary_key = ''
+            if 'salary' in vacancy and vacancy['salary']:
+                salary = vacancy['salary']
+                salary_from = salary.get('from', 0) or 0
+                salary_to = salary.get('to', 0) or 0
+                salary_key = f"{salary_from}-{salary_to}"
+
+            dedup_key = (title, company, salary_key)
+
+            if dedup_key not in seen:
+                seen.add(dedup_key)
+                unique_vacancies.append(vacancy)
+            else:
+                logger.debug(f"Дублирующаяся HH вакансия отфильтрована: {title} в {company}")
+
+        logger.info(f"HH дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
+        return unique_vacancies
+
+    def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
+        """
+        Получение вакансий с HH.ru с дедупликацией
+
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры
+
+        Returns:
+            List[Dict]: Список уникальных вакансий
+        """
+        vacancies = self.get_vacancies(search_query, **kwargs)
+        return self._deduplicate_vacancies(vacancies)
+
     def clear_cache(self) -> None:
         """
         Очищает кэш API
 
         Удаляет все сохраненные ответы API из кэша для освобождения места
-        и обеспечения получения актуальных данных при следующих запросах.
+        и обеспечения получения актуальных данных при следующих запросам.
         """
         super().clear_cache("hh")

@@ -1,0 +1,146 @@
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 122 items                                                     
+
+tests/test_api_modules.py FF...F.......................F......... [ 31%]
+...............F                                                  [ 45%]
+tests/test_config.py ....................                         [ 61%]
+tests/test_storage.py ........                                    [ 68%]
+tests/test_utils.py .................                             [ 81%]
+tests/test_vacancies.py ......................                    [100%]
+
+=============================== FAILURES ================================
+___________________ TestBaseAPI.test_init_with_config ___________________
+
+self = <tests.test_api_modules.TestBaseAPI object at 0x7fc92ba6f1c0>
+
+    def test_init_with_config(self):
+        from src.config.api_config import APIConfig
+        config = APIConfig(user_agent='TestApp')
+    
+        # Создаем мок класс, наследующий от BaseAPI
+>       class MockAPI(BaseAPI):
+E       NameError: name 'BaseAPI' is not defined
+
+tests/test_api_modules.py:25: NameError
+_________________ TestBaseAPI.test_init_without_config __________________
+
+self = <tests.test_api_modules.TestBaseAPI object at 0x7fc92bbf05e0>
+
+    def test_init_without_config(self):
+        # Создаем мок класс, наследующий от BaseAPI
+>       class MockAPI(BaseAPI):
+E       NameError: name 'BaseAPI' is not defined
+
+tests/test_api_modules.py:37: NameError
+_____________________ TestCachedAPI.test_cache_hit ______________________
+
+self = <tests.test_api_modules.TestCachedAPI object at 0x7fc92bbf0b80>
+mock_cache = <MagicMock name='FileCache' id='140501982147104'>
+cached_api_mock = <tests.test_api_modules.TestCachedAPI.cached_api_mock.<locals>.MockCachedAPI object at 0x7fc92abc2fa0>
+
+    @patch('src.api_modules.cached_api.FileCache')
+    def test_cache_hit(self, mock_cache, cached_api_mock):
+        # Тестируем получение данных из кэша
+        mock_cache_instance = mock_cache.return_value
+        mock_cache_instance.load_response.return_value = {'data': {'items': [{'test': 'cached'}]}}
+    
+        result = cached_api_mock._CachedAPI__connect_to_api("http://test.com", {}, "test")
+>       assert result == {'items': [{'test': 'cached'}]}
+E       AssertionError: assert {'items': []} == {'items': [{'...': 'cached'}]}
+E         
+E         Differing items:
+E         {'items': []} != {'items': [{'test': 'cached'}]}
+E         Use -v to get more diff
+
+tests/test_api_modules.py:94: AssertionError
+--------------------------- Captured log call ---------------------------
+ERROR    src.api_modules.cached_api:cached_api.py:63 Ошибка API запроса: HTTP error 403: <!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en-US"> <![endif]-->
+<!--[if IE 8]>    <html class="no-
+_____ TestSuperJobAPI.test_validate_vacancy_missing_required_fields _____
+
+self = <tests.test_api_modules.TestSuperJobAPI object at 0x7fc92af8f610>
+sj_api = <src.api_modules.sj_api.SuperJobAPI object at 0x7fc92ab81460>
+
+    def test_validate_vacancy_missing_required_fields(self, sj_api):
+        # Тестируем валидацию с отсутствующими полями
+        invalid_vacancy = {'id': 1}  # Нет profession и link
+        assert sj_api._validate_vacancy(invalid_vacancy) is False
+    
+        # Тестируем с None значениями
+        invalid_vacancy2 = {'profession': None, 'link': 'test'}
+>       assert sj_api._validate_vacancy(invalid_vacancy2) is False
+E       AssertionError: assert True is False
+E        +  where True = _validate_vacancy({'link': 'test', 'profession': None})
+E        +    where _validate_vacancy = <src.api_modules.sj_api.SuperJobAPI object at 0x7fc92ab81460>._validate_vacancy
+
+tests/test_api_modules.py:327: AssertionError
+____________ TestAPIConnector.test_connect_generic_exception ____________
+
+self = <tests.test_api_modules.TestAPIConnector object at 0x7fc92ae84430>
+mock_get = <MagicMock name='get' id='140501980740672'>
+api_connector = <src.api_modules.get_api.APIConnector object at 0x7fc92aa6fac0>
+
+    @patch('requests.get')
+    def test_connect_generic_exception(self, mock_get, api_connector):
+        mock_get.side_effect = Exception("Generic error")
+    
+        with pytest.raises(ConnectionError):
+>           api_connector.connect("https://test.com", {})
+
+tests/test_api_modules.py:561: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/api_modules/get_api.py:60: in connect
+    response = requests.get(
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:1093: in __call__
+    return self._mock_call(*args, **kwargs)
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:1097: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <MagicMock name='get' id='140501980740672'>
+args = ('https://test.com',)
+kwargs = {'headers': {'Accept': 'application/json', 'User-Agent': 'MyVacancyApp/1.0'}, 'params': {}, 'timeout': 15}
+effect = Exception('Generic error')
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+>               raise effect
+E               Exception: Generic error
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:1152: Exception
+=========================== warnings summary ============================
+.pythonlibs/lib/python3.11/site-packages/coverage/core.py:97
+  /home/runner/workspace/.pythonlibs/lib/python3.11/site-packages/coverage/core.py:97: CoverageWarning: Couldn't import C tracer: No module named 'coverage.tracer' (no-ctracer)
+    warn(f"Couldn't import C tracer: {IMPORT_ERROR}", slug="no-ctracer", once=True)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+============================ tests coverage =============================
+____________ coverage: platform linux, python 3.9.6-final-0 _____________
+
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+src/api_modules/__init__.py          0      0   100%
+src/api_modules/base_api.py         14      2    86%   24, 29
+src/api_modules/cached_api.py       46      4    91%   83, 88, 93, 98
+src/api_modules/get_api.py          49      1    98%   88
+src/api_modules/hh_api.py           50      3    94%   94-96
+src/api_modules/sj_api.py           66      4    94%   47, 130-132
+src/api_modules/unified_api.py      85      6    93%   59, 100, 116-117, 128-129
+--------------------------------------------------------------
+TOTAL                              310     20    94%
+======================== short test summary info ========================
+FAILED tests/test_api_modules.py::TestBaseAPI::test_init_with_config - NameError: name 'BaseAPI' is not defined
+FAILED tests/test_api_modules.py::TestBaseAPI::test_init_without_config - NameError: name 'BaseAPI' is not defined
+FAILED tests/test_api_modules.py::TestCachedAPI::test_cache_hit - AssertionError: assert {'items': []} == {'items': [{'...': 'cached'}]}
+FAILED tests/test_api_modules.py::TestSuperJobAPI::test_validate_vacancy_missing_required_fields - AssertionError: assert True is False
+FAILED tests/test_api_modules.py::TestAPIConnector::test_connect_generic_exception - Exception: Generic error

@@ -1,0 +1,109 @@
+FAILED tests/test_api_modules.py::TestUnifiedAPI::test_get_sj_vacancies_with_period_conversion - AssertionError: expected call not found.
+=============== 1 failed, 131 passed, 1 warning in 12.43s ===============
+~/workspace$ pytest tests/test_api_modules.py 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 65 items                                                      
+
+tests/test_api_modules.py ....................................... [ 60%]
+..............F...........                                        [100%]
+
+=============================== FAILURES ================================
+______ TestUnifiedAPI.test_get_sj_vacancies_with_period_conversion ______
+
+self = <MagicMock name='get_vacancies_from_sources' id='139670564935184'>
+args = ('Python',), kwargs = {'published': 7, 'sources': ['sj']}
+expected = call('Python', sources=['sj'], published=7)
+actual = call('Python', sources=['sj'], period=7, published=7)
+_error_message = <function NonCallableMock.assert_called_with.<locals>._error_message at 0x7f0796ff64c0>
+cause = None
+
+    def assert_called_with(self, /, *args, **kwargs):
+        """assert that the last call was made with the specified arguments.
+    
+        Raises an AssertionError if the args and keyword args passed in are
+        different to the last call to the mock."""
+        if self.call_args is None:
+            expected = self._format_mock_call_signature(args, kwargs)
+            actual = 'not called.'
+            error_message = ('expected call not found.\nExpected: %s\nActual: %s'
+                    % (expected, actual))
+            raise AssertionError(error_message)
+    
+        def _error_message():
+            msg = self._format_mock_failure_message(args, kwargs)
+            return msg
+        expected = self._call_matcher(_Call((args, kwargs), two=True))
+        actual = self._call_matcher(self.call_args)
+        if actual != expected:
+            cause = expected if isinstance(expected, Exception) else None
+>           raise AssertionError(_error_message()) from cause
+E           AssertionError: expected call not found.
+E           Expected: get_vacancies_from_sources('Python', sources=['sj'], published=7)
+E           Actual: get_vacancies_from_sources('Python', sources=['sj'], period=7, published=7)
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:907: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <MagicMock name='get_vacancies_from_sources' id='139670564935184'>
+args = ('Python',), kwargs = {'published': 7, 'sources': ['sj']}
+
+    def assert_called_once_with(self, /, *args, **kwargs):
+        """assert that the mock was called exactly once and that that call was
+        with the specified arguments."""
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to be called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+            raise AssertionError(msg)
+>       return self.assert_called_with(*args, **kwargs)
+E       AssertionError: expected call not found.
+E       Expected: get_vacancies_from_sources('Python', sources=['sj'], published=7)
+E       Actual: get_vacancies_from_sources('Python', sources=['sj'], period=7, published=7)
+E       
+E       pytest introspection follows:
+E       
+E       Kwargs:
+E       assert {'period': 7,...rces': ['sj']} == {'published':...rces': ['sj']}
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'period': 7}
+E         Use -v to get more diff
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:919: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7f07975d0ca0>
+unified_api = <src.api_modules.unified_api.UnifiedAPI object at 0x7f0796689c10>
+
+    def test_get_sj_vacancies_with_period_conversion(self, unified_api):
+        # Тестируем конвертацию параметра period в published для SJ API
+        with patch.object(unified_api, 'get_vacancies_from_sources', return_value=[]) as mock_get:
+            unified_api.get_sj_vacancies("Python", period=7)
+    
+            # Проверяем что period конвертируется в published
+>           mock_get.assert_called_once_with("Python", sources=['sj'], published=7)
+E           AssertionError: expected call not found.
+E           Expected: get_vacancies_from_sources('Python', sources=['sj'], published=7)
+E           Actual: get_vacancies_from_sources('Python', sources=['sj'], period=7, published=7)
+E           
+E           pytest introspection follows:
+E           
+E           Kwargs:
+E           assert {'period': 7,...rces': ['sj']} == {'published':...rces': ['sj']}
+E             
+E             Omitting 2 identical items, use -vv to show
+E             Left contains 1 more item:
+E             {'period': 7}
+E             Use -v to get more diff
+
+tests/test_api_modules.py:542: AssertionError
+======================== short test summary info ========================
+FAILED tests/test_api_modules.py::TestUnifiedAPI::test_get_sj_vacancies_with_period_conversion - AssertionError: expected call not found.

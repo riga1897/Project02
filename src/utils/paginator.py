@@ -6,7 +6,12 @@ logger = logging.getLogger(__name__)
 
 
 class Paginator:
-    """Enhanced paginator with error handling and progress tracking"""
+    """
+    Улучшенный пагинатор с обработкой ошибок и отслеживанием прогресса
+    
+    Предоставляет функциональность для постраничного получения данных
+    с визуальным индикатором прогресса и обработкой ошибок.
+    """
 
     @staticmethod
     def paginate(
@@ -17,10 +22,20 @@ class Paginator:
             **kwargs
     ) -> List[Dict]:
         """
-        Robust pagination with:
-        - Progress tracking
-        - Error handling
-        - Request throttling
+        Надежная пагинация с функциями:
+        - Отслеживание прогресса
+        - Обработка ошибок
+        - Ограничение запросов
+        
+        Args:
+            fetch_func: Функция для получения данных страницы
+            total_pages: Общее количество страниц
+            start_page: Начальная страница
+            max_pages: Максимальное количество страниц для обработки
+            **kwargs: Дополнительные параметры
+            
+        Returns:
+            List[Dict]: Объединенный список всех полученных данных
         """
         actual_max = min(total_pages, max_pages) if max_pages else total_pages
         results = []
@@ -47,6 +62,9 @@ class Paginator:
                     results.extend(page_data)
                     pbar.set_postfix(vacancies=len(results))
 
+                except KeyboardInterrupt:
+                    logger.info("Прервано пользователем")
+                    raise
                 except Exception as e:
                     logger.error(f"Error on page {page}: {e}")
                 finally:
