@@ -11,8 +11,11 @@ class SJAPIConfig:
 
     def get_params(self, **kwargs) -> Dict[str, Any]:
         """Генерация параметров запроса с учетом переопределений"""
+        # Используем меньший размер страницы для более стабильной работы
+        default_count = kwargs.get("count", min(self.count, 100))
+        
         params = {
-            "count": kwargs.get("count", self.count),
+            "count": default_count,
             "order_field": kwargs.get("order_field", "date"),  # Сортировка по дате
             "order_direction": kwargs.get("order_direction", "desc"),  # Сначала новые
         }

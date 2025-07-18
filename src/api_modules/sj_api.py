@@ -42,54 +42,73 @@ class SuperJobAPI(BaseAPI):
         else:
             logger.info("Используется пользовательский API ключ SuperJob")
 
-    def _connect_to_api(self, url: str, params: Dict) -> Union[Dict, str]:
+    def _connect_to_api(self, url: str, params: Dict, max_retries: int = 3) -> Union[Dict, str]:
         """
-        Подключение к API SuperJob с обработкой ошибок
+        Подключение к API SuperJob с обработкой ошибок и повторными попытками
 
         Args:
             url: URL для запроса
             params: Параметры запроса
+            max_retries: Максимальное количество повторных попыток
 
         Returns:
             Dict: Ответ API в виде словаря
             str: Сообщение об ошибке
         """
-        try:
-            logger.debug(f"Making request to: {url}")
-            logger.debug(f"Request params: {params}")
-            logger.debug(f"Request headers: {self.headers}")
+        for attempt in range(max_retries + 1):
+            try:
+                if attempt > 0:
+                    wait_time = 2 ** attempt  # Экспоненциальная задержка
+                    logger.info(f"Повторная попытка {attempt}/{max_retries} через {wait_time} сек...")
+                    time.sleep(wait_time)
+                
+                logger.debug(f"Making request to: {url} (attempt {attempt + 1})")
+                logger.debug(f"Request params: {params}")
+                logger.debug(f"Request headers: {self.headers}")
 
-            time.sleep(self.request_delay)
+                time.sleep(self.request_delay)
 
-            response = requests.get(
-                url, 
-                params=params, 
-                headers=self.headers, 
-                timeout=15
-            )
+                response = requests.get(
+                    url, 
+                    params=params, 
+                    headers=self.headers, 
+                    timeout=30  # Увеличиваем timeout
+                )
 
-            if response.status_code == 200:
-                return response.json()
-            elif response.status_code == 429:
-                logger.warning("Rate limit exceeded, waiting...")
-                time.sleep(2)
-                return "Rate limit exceeded"
-            elif response.status_code == 403:
-                logger.error("Access forbidden - check API key")
-                return "Access forbidden"
-            else:
-                logger.error(f"HTTP {response.status_code}: {response.text}")
-                return f"HTTP error: {response.status_code}"
+                if response.status_code == 200:
+                    return response.json()
+                elif response.status_code == 429:
+                    logger.warning("Rate limit exceeded, waiting...")
+                    time.sleep(5)
+                    if attempt < max_retries:
+                        continue
+                    return "Rate limit exceeded"
+                elif response.status_code == 403:
+                    logger.error("Access forbidden - check API key")
+                    return "Access forbidden"
+                else:
+                    logger.error(f"HTTP {response.status_code}: {response.text}")
+                    if attempt < max_retries:
+                        continue
+                    return f"HTTP error: {response.status_code}"
 
-        except requests.exceptions.Timeout:
-            logger.error("Request timeout")
-            return "Request timeout"
-        except requests.exceptions.ConnectionError:
-            logger.error("Connection error")
-            return "Connection error"
-        except Exception as e:
-            logger.error(f"Unexpected error: {e}")
-            return f"Unexpected error: {e}"
+            except requests.exceptions.Timeout:
+                logger.error(f"Request timeout (attempt {attempt + 1})")
+                if attempt < max_retries:
+                    continue
+                return "Request timeout"
+            except requests.exceptions.ConnectionError:
+                logger.error(f"Connection error (attempt {attempt + 1})")
+                if attempt < max_retries:
+                    continue
+                return "Connection error"
+            except Exception as e:
+                logger.error(f"Unexpected error (attempt {attempt + 1}): {e}")
+                if attempt < max_retries:
+                    continue
+                return f"Unexpected error: {e}"
+        
+        return "Max retries exceeded"
 
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """
@@ -155,6 +174,20 @@ class SuperJobAPI(BaseAPI):
             if isinstance(response, str):
                 logger.error(f"API error on page {page + 1}: {response}")
                 print(f"DEBUG: API Error: {response}")
+                
+                # Если это первая страница и есть ошибка - прерываем
+                if page == 0:
+                    break
+                
+                # Для последующих страниц - пытаемся продолжить с меньшим count
+                if "Connection error" in response and page > 0:
+                    logger.warning(f"Connection error on page {page + 1}, trying with smaller page size")
+                    # Уменьшаем размер страницы
+                    if params.get("count", 500) > 50:
+                        params["count"] = 50
+                        continue
+                
+                # Если ошибка критическая - останавливаемся
                 break
 
             # Проверяем, что ответ является словарем и содержит данные
