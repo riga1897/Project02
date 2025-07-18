@@ -570,21 +570,22 @@ class TestUnifiedAPI:
         mock_sj.assert_called_once_with("Python", period=30, published=30)
 
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
-    def test_get_vacancies_from_sources_with_period_param(self, mock_sj, unified_api):
-        # Покрытие строки 116 - проверка наличия 'period' в kwargs
+    def test_period_condition_check_line_116(self, mock_sj, unified_api):
+        # Модуль 1: Покрытие строки 116 - условие if 'period' in kwargs
         mock_sj.return_value = []
-        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=7)
-        mock_sj.assert_called_once()
+        # Вызываем БЕЗ period для покрытия False ветки
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'])
+        # Вызываем С period для покрытия True ветки  
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=1)
+        assert mock_sj.call_count == 2
 
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
-    def test_get_vacancies_from_sources_period_to_published_conversion(self, mock_sj, unified_api):
-        # Покрытие строки 117 - присвоение sj_kwargs['published'] = kwargs['period']
+    def test_period_assignment_line_117(self, mock_sj, unified_api):
+        # Модуль 2: Покрытие строки 117 - sj_kwargs['published'] = kwargs['period']
         mock_sj.return_value = []
-        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=30)
-        # Проверяем что published параметр был добавлен из period
-        call_args = mock_sj.call_args
-        assert call_args[1]['published'] == 30
-        assert call_args[1]['period'] == 30
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=42)
+        # Проверяем что выполнилось присваивание published = period
+        mock_sj.assert_called_once_with("Python", period=42, published=42)
 
     def test_clear_all_cache_with_error(self, unified_api):
         # Тестируем ошибку при очистке всего кэша (строки 128-129)
