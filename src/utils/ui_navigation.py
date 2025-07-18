@@ -109,7 +109,7 @@ class UINavigation:
         print("Навигация:")
         print(f"Страница {current_page} из {total_pages}")
         print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(items)}")
-        print("-" * 80)
+        print("-" * 20)
     
     def _display_navigation_menu(
         self,

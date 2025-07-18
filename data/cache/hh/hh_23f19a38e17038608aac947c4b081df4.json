@@ -103,6 +103,97 @@
         "adv_context": null
       },
       {
+        "id": "122975367",
+        "premium": false,
+        "name": "Главный бухгалтер",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "anonymous",
+          "name": "Анонимная"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T11:02:45+0300",
+        "created_at": "2025-07-18T11:02:45+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122975367",
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122975367?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122975367",
+        "relations": [],
+        "employer": {
+          "name": "В стабильную компанию с прочным финансовым положением открыта вакансия на должность главного бухгалтера",
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Высшее образование. Опыт работы от 5 лет в аналогичной должности (желательно сферы: коммерческая недвижимость, бизнес центр, торговый центр). ",
+          "responsibility": "Ведение и контроль бухгалтерского и налогового учета нескольких юридических лиц (ОСНО; УСН) в сфере коммерческой недвижимости. Составление и сдача бухгалтерской..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "moreThan6",
+          "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
         "id": "122976697",
         "premium": false,
         "name": "Бухгалтер по банковским операциям",
@@ -650,154 +741,6 @@
         "adv_context": null
       },
       {
-        "id": "122634623",
-        "premium": false,
-        "name": "Бухгалтер на первичную документацию",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 85000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 85000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Давыдковская улица",
-          "building": "5",
-          "lat": 55.726477,
-          "lng": 37.479474,
-          "description": null,
-          "raw": "Москва, Давыдковская улица, 5",
-          "metro": {
-            "station_name": "Славянский бульвар",
-            "line_name": "Арбатско-Покровская",
-            "station_id": "3.176",
-            "line_id": "3",
-            "lat": 55.729542,
-            "lng": 37.470973
-          },
-          "metro_stations": [
-            {
-              "station_name": "Славянский бульвар",
-              "line_name": "Арбатско-Покровская",
-              "station_id": "3.176",
-              "line_id": "3",
-              "lat": 55.729542,
-              "lng": 37.470973
-            }
-          ],
-          "id": "7001384"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-10T15:33:39+0300",
-        "created_at": "2025-07-10T15:33:39+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122634623",
-        "show_logo_in_search": null,
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122634623?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122634623",
-        "relations": [],
-        "employer": {
-          "id": "128674",
-          "name": "Медцентрсервис",
-          "url": "https://api.hh.ru/employers/128674",
-          "alternate_url": "https://hh.ru/employer/128674",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1026975.jpg",
-            "90": "https://img.hhcdn.ru/employer-logo/5728668.jpeg",
-            "240": "https://img.hhcdn.ru/employer-logo/5728669.jpeg"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=128674",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.3",
-            "reviews_count": 16
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Обязательное знание программы 1С8.3 (<highlighttext>Бухгалтерия</highlighttext>). Знание ЭДО 1С Контур Диадок. Ответственность, исполнительность, внимательность, аккуратность в ведении...",
-          "responsibility": "Ведение участка \"Касса\" (Отчеты о движении средств по торговому эквайрингу, ПКО). Подготовка документов по запросам. Выполнение поручений главного <highlighttext>бухгалтера</highlighttext> и..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_9",
-            "name": "9 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
         "id": "122843450",
         "premium": false,
         "name": "Главный бухгалтер",
@@ -961,9 +904,9 @@
         "adv_context": null
       },
       {
-        "id": "122975367",
+        "id": "122634623",
         "premium": false,
-        "name": "Главный бухгалтер",
+        "name": "Бухгалтер на первичную документацию",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -972,31 +915,88 @@
           "name": "Москва",
           "url": "https://api.hh.ru/areas/1"
         },
-        "salary": null,
-        "salary_range": null,
-        "type": {
-          "id": "anonymous",
-          "name": "Анонимная"
+        "salary": {
+          "from": 85000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
         },
-        "address": null,
+        "salary_range": {
+          "from": 85000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Давыдковская улица",
+          "building": "5",
+          "lat": 55.726477,
+          "lng": 37.479474,
+          "description": null,
+          "raw": "Москва, Давыдковская улица, 5",
+          "metro": {
+            "station_name": "Славянский бульвар",
+            "line_name": "Арбатско-Покровская",
+            "station_id": "3.176",
+            "line_id": "3",
+            "lat": 55.729542,
+            "lng": 37.470973
+          },
+          "metro_stations": [
+            {
+              "station_name": "Славянский бульвар",
+              "line_name": "Арбатско-Покровская",
+              "station_id": "3.176",
+              "line_id": "3",
+              "lat": 55.729542,
+              "lng": 37.470973
+            }
+          ],
+          "id": "7001384"
+        },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-18T11:02:45+0300",
-        "created_at": "2025-07-18T11:02:45+0300",
+        "published_at": "2025-07-10T15:33:39+0300",
+        "created_at": "2025-07-10T15:33:39+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122975367",
-        "show_contacts": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122634623",
+        "show_logo_in_search": null,
+        "show_contacts": true,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122975367?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122975367",
+        "url": "https://api.hh.ru/vacancies/122634623?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122634623",
         "relations": [],
         "employer": {
-          "name": "В стабильную компанию с прочным финансовым положением открыта вакансия на должность главного бухгалтера",
+          "id": "128674",
+          "name": "Медцентрсервис",
+          "url": "https://api.hh.ru/employers/128674",
+          "alternate_url": "https://hh.ru/employer/128674",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1026975.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/5728668.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/5728669.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=128674",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.3",
+            "reviews_count": 16
+          },
           "trusted": true
         },
         "snippet": {
-          "requirement": "Высшее образование. Опыт работы от 5 лет в аналогичной должности (желательно сферы: коммерческая недвижимость, бизнес центр, торговый центр). ",
-          "responsibility": "Ведение и контроль бухгалтерского и налогового учета нескольких юридических лиц (ОСНО; УСН) в сфере коммерческой недвижимости. Составление и сдача бухгалтерской..."
+          "requirement": "Обязательное знание программы 1С8.3 (<highlighttext>Бухгалтерия</highlighttext>). Знание ЭДО 1С Контур Диадок. Ответственность, исполнительность, внимательность, аккуратность в ведении...",
+          "responsibility": "Ведение участка \"Касса\" (Отчеты о движении средств по торговому эквайрингу, ПКО). Подготовка документов по запросам. Выполнение поручений главного <highlighttext>бухгалтера</highlighttext> и..."
         },
         "contacts": null,
         "schedule": {
@@ -1016,8 +1016,8 @@
         ],
         "working_hours": [
           {
-            "id": "HOURS_8",
-            "name": "8 часов"
+            "id": "HOURS_9",
+            "name": "9 часов"
           }
         ],
         "work_schedule_by_days": [
@@ -1035,8 +1035,8 @@
         ],
         "accept_incomplete_resumes": false,
         "experience": {
-          "id": "moreThan6",
-          "name": "Более 6 лет"
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
         },
         "employment": {
           "id": "full",
@@ -1132,6 +1132,151 @@
         "snippet": {
           "requirement": "Высшее экономическое образование. Опыт работы <highlighttext>бухгалтером</highlighttext> от 3 лет (опыт в стройке обязателен). Знание законодательства и нормативных актов, регулирующих бухгалтерский...",
           "responsibility": "...рамках выполнения трудовых функций. Подбор документов по требованиям, в рамках аудиторских проверок и переписка с поставщиками, прочие поручения главного <highlighttext>бухгалтера</highlighttext>."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between3And6",
+          "name": "От 3 до 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122952694",
+        "premium": false,
+        "name": "Главный бухгалтер",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 230000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 230000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Огородный проезд",
+          "building": "16/1с3",
+          "lat": 55.816025,
+          "lng": 37.603496,
+          "description": null,
+          "raw": "Москва, Огородный проезд, 16/1с3",
+          "metro": {
+            "station_name": "Останкино",
+            "line_name": "МЦД-3",
+            "station_id": "135.850",
+            "line_id": "135",
+            "lat": 55.817222,
+            "lng": 37.603611
+          },
+          "metro_stations": [
+            {
+              "station_name": "Останкино",
+              "line_name": "МЦД-3",
+              "station_id": "135.850",
+              "line_id": "135",
+              "lat": 55.817222,
+              "lng": 37.603611
+            }
+          ],
+          "id": "17267711"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-17T16:10:23+0300",
+        "created_at": "2025-07-17T16:10:23+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122952694",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122952694?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122952694",
+        "relations": [],
+        "employer": {
+          "id": "10995493",
+          "name": "Пилада",
+          "url": "https://api.hh.ru/employers/10995493",
+          "alternate_url": "https://hh.ru/employer/10995493",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1266314.png",
+            "90": "https://img.hhcdn.ru/employer-logo/6685578.png",
+            "240": "https://img.hhcdn.ru/employer-logo/6685579.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=10995493",
+          "accredited_it_employer": false,
+          "employer_rating": null,
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "опыт работы в должности главного <highlighttext>бухгалтера</highlighttext>. - владение компьютером на уровне опытного пользователя: офисные программы, 1С <highlighttext>Бухгалтерия</highlighttext>, 1С Управление...",
+          "responsibility": "полный цикл бухгалтерского сопровождения. - ведение и контроль всех участков бухгалтерского и налогового учёта в полном объёме. - подготовка, предоставление и сдача..."
         },
         "contacts": null,
         "schedule": {
@@ -1464,6 +1609,138 @@
         "adv_context": null
       },
       {
+        "id": "122884307",
+        "premium": false,
+        "name": "Главный бухгалтер",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": null,
+          "to": 250000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": null,
+          "to": 250000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "улица Ленинская Слобода",
+          "building": "26с28",
+          "lat": 55.712472,
+          "lng": 37.654394,
+          "description": null,
+          "raw": "Москва, улица Ленинская Слобода, 26с28",
+          "metro": null,
+          "metro_stations": [],
+          "id": "14714444"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-16T17:09:01+0300",
+        "created_at": "2025-07-16T17:09:01+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122884307",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122884307?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122884307",
+        "relations": [],
+        "employer": {
+          "id": "4104949",
+          "name": "Иконтри",
+          "url": "https://api.hh.ru/employers/4104949",
+          "alternate_url": "https://hh.ru/employer/4104949",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1441526.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7385728.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7385729.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4104949",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.3",
+            "reviews_count": 5
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Опыт работы Главным <highlighttext>бухгалтером</highlighttext> от 2 лет. Желателен опыт работы в системной интеграции и ИТ компаниях, а также опыт ВЭД...",
+          "responsibility": "Ведение БУ, НУ в рамках 1-2 ЮЛ, сдача стандартной отчетности. Налоговое планирование. Прохождение аудитов. Управление коллективом: делегирование задач и..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
         "id": "122909642",
         "premium": false,
         "name": "Главный бухгалтер",
@@ -1741,25 +2018,25 @@
         "adv_context": null
       },
       {
-        "id": "122952694",
+        "id": "122969138",
         "premium": false,
-        "name": "Главный бухгалтер",
+        "name": "Бухгалтер",
         "department": null,
         "has_test": false,
-        "response_letter_required": false,
+        "response_letter_required": true,
         "area": {
           "id": "1",
           "name": "Москва",
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 230000,
+          "from": 150000,
           "to": null,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
-          "from": 230000,
+          "from": 150000,
           "to": null,
           "currency": "RUR",
           "gross": false,
@@ -1775,77 +2052,100 @@
         },
         "address": {
           "city": "Москва",
-          "street": "Огородный проезд",
-          "building": "16/1с3",
-          "lat": 55.816025,
-          "lng": 37.603496,
+          "street": "Ленинградский проспект",
+          "building": "31Ас1",
+          "lat": 55.7836,
+          "lng": 37.560197,
           "description": null,
-          "raw": "Москва, Огородный проезд, 16/1с3",
+          "raw": "Москва, Ленинградский проспект, 31Ас1",
           "metro": {
-            "station_name": "Останкино",
-            "line_name": "МЦД-3",
-            "station_id": "135.850",
-            "line_id": "135",
-            "lat": 55.817222,
-            "lng": 37.603611
+            "station_name": "Беговая",
+            "line_name": "Таганско-Краснопресненская",
+            "station_id": "7.18",
+            "line_id": "7",
+            "lat": 55.773505,
+            "lng": 37.545518
           },
           "metro_stations": [
             {
-              "station_name": "Останкино",
-              "line_name": "МЦД-3",
-              "station_id": "135.850",
-              "line_id": "135",
-              "lat": 55.817222,
-              "lng": 37.603611
+              "station_name": "Беговая",
+              "line_name": "Таганско-Краснопресненская",
+              "station_id": "7.18",
+              "line_id": "7",
+              "lat": 55.773505,
+              "lng": 37.545518
+            },
+            {
+              "station_name": "Беговая",
+              "line_name": "МЦД-1",
+              "station_id": "131.701",
+              "line_id": "131",
+              "lat": 55.773505,
+              "lng": 37.545518
+            },
+            {
+              "station_name": "Динамо",
+              "line_name": "Замоскворецкая",
+              "station_id": "2.34",
+              "line_id": "2",
+              "lat": 55.789704,
+              "lng": 37.558212
+            },
+            {
+              "station_name": "Петровский парк",
+              "line_name": "Большая кольцевая линия",
+              "station_id": "97.599",
+              "line_id": "97",
+              "lat": 55.79233,
+              "lng": 37.55952
             }
           ],
-          "id": "17267711"
+          "id": "18377402"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-17T16:10:23+0300",
-        "created_at": "2025-07-17T16:10:23+0300",
+        "published_at": "2025-07-18T09:22:15+0300",
+        "created_at": "2025-07-18T09:22:15+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122952694",
-        "show_logo_in_search": null,
-        "show_contacts": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122969138",
+        "show_contacts": true,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122952694?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122952694",
+        "url": "https://api.hh.ru/vacancies/122969138?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122969138",
         "relations": [],
         "employer": {
-          "id": "10995493",
-          "name": "Пилада",
-          "url": "https://api.hh.ru/employers/10995493",
-          "alternate_url": "https://hh.ru/employer/10995493",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1266314.png",
-            "90": "https://img.hhcdn.ru/employer-logo/6685578.png",
-            "240": "https://img.hhcdn.ru/employer-logo/6685579.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=10995493",
+          "id": "11986660",
+          "name": "Криобанк стволовых клеток",
+          "url": "https://api.hh.ru/employers/11986660",
+          "alternate_url": "https://hh.ru/employer/11986660",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=11986660",
           "accredited_it_employer": false,
           "employer_rating": null,
           "trusted": true
         },
         "snippet": {
-          "requirement": "опыт работы в должности главного <highlighttext>бухгалтера</highlighttext>. - владение компьютером на уровне опытного пользователя: офисные программы, 1С <highlighttext>Бухгалтерия</highlighttext>, 1С Управление...",
-          "responsibility": "полный цикл бухгалтерского сопровождения. - ведение и контроль всех участков бухгалтерского и налогового учёта в полном объёме. - подготовка, предоставление и сдача..."
+          "requirement": null,
+          "responsibility": null
         },
         "contacts": null,
         "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
+          "id": "remote",
+          "name": "Удаленная работа"
         },
         "working_days": [],
         "working_time_intervals": [],
         "working_time_modes": [],
-        "accept_temporary": false,
+        "accept_temporary": true,
         "fly_in_fly_out_duration": [],
         "work_format": [
           {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
+            "id": "REMOTE",
+            "name": "Удалённо"
+          },
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
           }
         ],
         "working_hours": [
@@ -2003,138 +2303,6 @@
         "adv_context": null
       },
       {
-        "id": "122884307",
-        "premium": false,
-        "name": "Главный бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": null,
-          "to": 250000,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": null,
-          "to": 250000,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "улица Ленинская Слобода",
-          "building": "26с28",
-          "lat": 55.712472,
-          "lng": 37.654394,
-          "description": null,
-          "raw": "Москва, улица Ленинская Слобода, 26с28",
-          "metro": null,
-          "metro_stations": [],
-          "id": "14714444"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-16T17:09:01+0300",
-        "created_at": "2025-07-16T17:09:01+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122884307",
-        "show_logo_in_search": null,
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122884307?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122884307",
-        "relations": [],
-        "employer": {
-          "id": "4104949",
-          "name": "Иконтри",
-          "url": "https://api.hh.ru/employers/4104949",
-          "alternate_url": "https://hh.ru/employer/4104949",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1441526.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7385728.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7385729.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4104949",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.3",
-            "reviews_count": 5
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Опыт работы Главным <highlighttext>бухгалтером</highlighttext> от 2 лет. Желателен опыт работы в системной интеграции и ИТ компаниях, а также опыт ВЭД...",
-          "responsibility": "Ведение БУ, НУ в рамках 1-2 ЮЛ, сдача стандартной отчетности. Налоговое планирование. Прохождение аудитов. Управление коллективом: делегирование задач и..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
         "id": "122846550",
         "premium": false,
         "name": "Бухгалтер",
@@ -2259,174 +2427,6 @@
         "accept_temporary": false,
         "fly_in_fly_out_duration": [],
         "work_format": [],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between3And6",
-          "name": "От 3 до 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122969138",
-        "premium": false,
-        "name": "Бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": true,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 150000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 150000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Ленинградский проспект",
-          "building": "31Ас1",
-          "lat": 55.7836,
-          "lng": 37.560197,
-          "description": null,
-          "raw": "Москва, Ленинградский проспект, 31Ас1",
-          "metro": {
-            "station_name": "Беговая",
-            "line_name": "Таганско-Краснопресненская",
-            "station_id": "7.18",
-            "line_id": "7",
-            "lat": 55.773505,
-            "lng": 37.545518
-          },
-          "metro_stations": [
-            {
-              "station_name": "Беговая",
-              "line_name": "Таганско-Краснопресненская",
-              "station_id": "7.18",
-              "line_id": "7",
-              "lat": 55.773505,
-              "lng": 37.545518
-            },
-            {
-              "station_name": "Беговая",
-              "line_name": "МЦД-1",
-              "station_id": "131.701",
-              "line_id": "131",
-              "lat": 55.773505,
-              "lng": 37.545518
-            },
-            {
-              "station_name": "Динамо",
-              "line_name": "Замоскворецкая",
-              "station_id": "2.34",
-              "line_id": "2",
-              "lat": 55.789704,
-              "lng": 37.558212
-            },
-            {
-              "station_name": "Петровский парк",
-              "line_name": "Большая кольцевая линия",
-              "station_id": "97.599",
-              "line_id": "97",
-              "lat": 55.79233,
-              "lng": 37.55952
-            }
-          ],
-          "id": "18377402"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-18T09:22:15+0300",
-        "created_at": "2025-07-18T09:22:15+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122969138",
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122969138?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122969138",
-        "relations": [],
-        "employer": {
-          "id": "11986660",
-          "name": "Криобанк стволовых клеток",
-          "url": "https://api.hh.ru/employers/11986660",
-          "alternate_url": "https://hh.ru/employer/11986660",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=11986660",
-          "accredited_it_employer": false,
-          "employer_rating": null,
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": null,
-          "responsibility": null
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "remote",
-          "name": "Удаленная работа"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": true,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "REMOTE",
-            "name": "Удалённо"
-          },
-          {
-            "id": "HYBRID",
-            "name": "Гибрид"
-          }
-        ],
         "working_hours": [
           {
             "id": "HOURS_8",
@@ -2692,6 +2692,408 @@
         "experience": {
           "id": "moreThan6",
           "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122959621",
+        "premium": false,
+        "name": "Помощник бухгалтера",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 80000,
+          "to": 130000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 80000,
+          "to": 130000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-17T20:56:37+0300",
+        "created_at": "2025-07-17T20:56:37+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122959621",
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122959621?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122959621",
+        "relations": [],
+        "employer": {
+          "id": "2875718",
+          "name": "Малыш",
+          "url": "https://api.hh.ru/employers/2875718",
+          "alternate_url": "https://hh.ru/employer/2875718",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=2875718",
+          "accredited_it_employer": false,
+          "employer_rating": null,
+          "trusted": false
+        },
+        "snippet": {
+          "requirement": "Рассмотрим без опыта. Умение работать в команде и самостоятельно. Коммуникабельность и готовность учиться.",
+          "responsibility": "Проверка правильности оформления документов. Участие в процессе учета хозяйственных операций. Взаимодействие с другими подразделениями компании."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "remote",
+          "name": "Удаленная работа"
+        },
+        "working_days": [],
+        "working_time_intervals": [
+          {
+            "id": "from_four_to_six_hours_in_a_day",
+            "name": "Можно сменами по 4-6 часов в день"
+          }
+        ],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "REMOTE",
+            "name": "Удалённо"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_4",
+            "name": "4 часа"
+          },
+          {
+            "id": "HOURS_6",
+            "name": "6 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": true,
+        "experience": {
+          "id": "noExperience",
+          "name": "Нет опыта"
+        },
+        "employment": {
+          "id": "part",
+          "name": "Частичная занятость"
+        },
+        "employment_form": {
+          "id": "PART",
+          "name": "Частичная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122975345",
+        "premium": false,
+        "name": "Бухгалтер в единственном лице (ИТ-компания)",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 160000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 160000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Калужско-Рижская линия",
+          "building": "метро Китай-город",
+          "lat": 55.757009,
+          "lng": 37.631299,
+          "description": null,
+          "raw": "Москва, Калужско-Рижская линия, метро Китай-город",
+          "metro": {
+            "station_name": "Китай-город",
+            "line_name": "Калужско-Рижская",
+            "station_id": "6.50",
+            "line_id": "6",
+            "lat": 55.756498,
+            "lng": 37.631326
+          },
+          "metro_stations": [
+            {
+              "station_name": "Китай-город",
+              "line_name": "Калужско-Рижская",
+              "station_id": "6.50",
+              "line_id": "6",
+              "lat": 55.756498,
+              "lng": 37.631326
+            }
+          ],
+          "id": "17186400"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T11:02:13+0300",
+        "created_at": "2025-07-18T11:02:13+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122975345",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122975345?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122975345",
+        "relations": [],
+        "employer": {
+          "id": "1869751",
+          "name": "АйТи Сервис Менеджмент",
+          "url": "https://api.hh.ru/employers/1869751",
+          "alternate_url": "https://hh.ru/employer/1869751",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/269353.png",
+            "90": "https://img.hhcdn.ru/employer-logo/1519942.png",
+            "240": "https://img.hhcdn.ru/employer-logo/1519943.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1869751",
+          "accredited_it_employer": true,
+          "employer_rating": {
+            "total_rating": "4.5",
+            "reviews_count": 4
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Умение работать с большими объемами информации. Опыт работы в 1С: <highlighttext>Бухгалтерия</highlighttext>, 1С: ЗУП. Знание систем электронного документооборота: ЭДО...",
+          "responsibility": "Самостоятельное ведение бухгалтерского и налогового учета в полном объеме (1 юридическое лицо, ОСНО, включение в Реестр Минцифры). Расчет налога на..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "moreThan6",
+          "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122977187",
+        "premium": false,
+        "name": "Бухгалтер-калькулятор (Москва)",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 120000,
+          "to": 150000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 120000,
+          "to": 150000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "12-й проезд Марьиной Рощи",
+          "building": "8с1",
+          "lat": 55.80485,
+          "lng": 37.618956,
+          "description": null,
+          "raw": "Москва, 12-й проезд Марьиной Рощи, 8с1",
+          "metro": null,
+          "metro_stations": [],
+          "id": "6942908"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T11:29:37+0300",
+        "created_at": "2025-07-18T11:29:37+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122977187",
+        "show_logo_in_search": null,
+        "show_contacts": true,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122977187?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122977187",
+        "relations": [],
+        "employer": {
+          "id": "4518101",
+          "name": "Голубая лагуна",
+          "url": "https://api.hh.ru/employers/4518101",
+          "alternate_url": "https://hh.ru/employer/4518101",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1173251.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/6313430.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/6313431.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4518101",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.2",
+            "reviews_count": 34
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Высшее образование. Опыт работы <highlighttext>бухгалтером</highlighttext>-калькулятором в общепите обязателен, от 3 лет. Обязательное знание программ Store House, Меркурий, 1С...",
+          "responsibility": "Операционный учет в программе Store House v.5. Сбор первичной документации. Взаимодействие с руководителем подразделения по документальным и финансовым вопросам. "
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between3And6",
+          "name": "От 3 до 6 лет"
         },
         "employment": {
           "id": "full",
@@ -2986,173 +3388,6 @@
         "adv_context": null
       },
       {
-        "id": "122823669",
-        "premium": false,
-        "name": "Главный бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": null,
-          "street": null,
-          "building": null,
-          "lat": null,
-          "lng": null,
-          "description": null,
-          "raw": null,
-          "metro": {
-            "station_name": "Курская",
-            "line_name": "Арбатско-Покровская",
-            "station_id": "3.70",
-            "line_id": "3",
-            "lat": 55.758564,
-            "lng": 37.659039
-          },
-          "metro_stations": [
-            {
-              "station_name": "Курская",
-              "line_name": "Арбатско-Покровская",
-              "station_id": "3.70",
-              "line_id": "3",
-              "lat": 55.758564,
-              "lng": 37.659039
-            },
-            {
-              "station_name": "Курская",
-              "line_name": "Кольцевая",
-              "station_id": "5.71",
-              "line_id": "5",
-              "lat": 55.758631,
-              "lng": 37.661059
-            },
-            {
-              "station_name": "Курская",
-              "line_name": "МЦД-2",
-              "station_id": "132.726",
-              "line_id": "132",
-              "lat": 55.757622,
-              "lng": 37.660767
-            },
-            {
-              "station_name": "Чкаловская",
-              "line_name": "Люблинско-Дмитровская",
-              "station_id": "10.72",
-              "line_id": "10",
-              "lat": 55.755951,
-              "lng": 37.659293
-            }
-          ],
-          "id": "18668672"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-18T14:51:26+0300",
-        "created_at": "2025-07-18T14:51:26+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122823669",
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122823669?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122823669",
-        "relations": [],
-        "employer": {
-          "id": "11774402",
-          "name": "Гиперион",
-          "url": "https://api.hh.ru/employers/11774402",
-          "alternate_url": "https://hh.ru/employer/11774402",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=11774402",
-          "accredited_it_employer": false,
-          "employer_rating": null,
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Опыт работы от 6 лет. Обязателен опыт работы в строительной, подрядной организации. Выполнение функциональных обязанностей.",
-          "responsibility": "Ведение бухгалтерского и налогового учета в 1С <highlighttext>Бухгалтерия</highlighttext> в соответствии с действующими законодательными нормами, инструкциями и положениями. "
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "moreThan6",
-          "name": "Более 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
         "id": "122863464",
         "premium": false,
         "name": "Главный бухгалтер на пищевое производство",
@@ -3166,13 +3401,13 @@
         },
         "salary": {
           "from": 300000,
-          "to": 300000,
+          "to": 400000,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
           "from": 300000,
-          "to": 300000,
+          "to": 400000,
           "currency": "RUR",
           "gross": false,
           "mode": {
@@ -3328,9 +3563,9 @@
         "adv_context": null
       },
       {
-        "id": "122959621",
+        "id": "122864750",
         "premium": false,
-        "name": "Помощник бухгалтера",
+        "name": "Бухгалтер на первичную документацию",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -3340,136 +3575,14 @@
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 80000,
-          "to": 130000,
+          "from": 130000,
+          "to": 140000,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
-          "from": 80000,
-          "to": 130000,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": null,
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-17T20:56:37+0300",
-        "created_at": "2025-07-17T20:56:37+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122959621",
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122959621?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122959621",
-        "relations": [],
-        "employer": {
-          "id": "2875718",
-          "name": "Малыш",
-          "url": "https://api.hh.ru/employers/2875718",
-          "alternate_url": "https://hh.ru/employer/2875718",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=2875718",
-          "accredited_it_employer": false,
-          "employer_rating": null,
-          "trusted": false
-        },
-        "snippet": {
-          "requirement": "Рассмотрим без опыта. Умение работать в команде и самостоятельно. Коммуникабельность и готовность учиться.",
-          "responsibility": "Проверка правильности оформления документов. Участие в процессе учета хозяйственных операций. Взаимодействие с другими подразделениями компании."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "remote",
-          "name": "Удаленная работа"
-        },
-        "working_days": [],
-        "working_time_intervals": [
-          {
-            "id": "from_four_to_six_hours_in_a_day",
-            "name": "Можно сменами по 4-6 часов в день"
-          }
-        ],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "REMOTE",
-            "name": "Удалённо"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_4",
-            "name": "4 часа"
-          },
-          {
-            "id": "HOURS_6",
-            "name": "6 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": true,
-        "experience": {
-          "id": "noExperience",
-          "name": "Нет опыта"
-        },
-        "employment": {
-          "id": "part",
-          "name": "Частичная занятость"
-        },
-        "employment_form": {
-          "id": "PART",
-          "name": "Частичная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122829602",
-        "premium": false,
-        "name": "Главный бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 200000,
-          "to": 250000,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 200000,
-          "to": 250000,
+          "from": 130000,
+          "to": 140000,
           "currency": "RUR",
           "gross": false,
           "mode": {
@@ -3485,32 +3598,80 @@
           "id": "open",
           "name": "Открытая"
         },
-        "address": null,
+        "address": {
+          "city": "Москва",
+          "street": "Павелецкая площадь",
+          "building": "2с3",
+          "lat": 55.729696,
+          "lng": 37.636311,
+          "description": null,
+          "raw": "Москва, Павелецкая площадь, 2с3",
+          "metro": {
+            "station_name": "Павелецкая",
+            "line_name": "Замоскворецкая",
+            "station_id": "2.101",
+            "line_id": "2",
+            "lat": 55.729741,
+            "lng": 37.638693
+          },
+          "metro_stations": [
+            {
+              "station_name": "Павелецкая",
+              "line_name": "Замоскворецкая",
+              "station_id": "2.101",
+              "line_id": "2",
+              "lat": 55.729741,
+              "lng": 37.638693
+            },
+            {
+              "station_name": "Павелецкая",
+              "line_name": "Кольцевая",
+              "station_id": "5.102",
+              "line_id": "5",
+              "lat": 55.731414,
+              "lng": 37.636294
+            },
+            {
+              "station_name": "Серпуховская",
+              "line_name": "Серпуховско-Тимирязевская",
+              "station_id": "9.37",
+              "line_id": "9",
+              "lat": 55.726548,
+              "lng": 37.624792
+            }
+          ],
+          "id": "16190034"
+        },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-18T15:41:20+0300",
-        "created_at": "2025-07-18T15:41:20+0300",
+        "published_at": "2025-07-16T13:09:53+0300",
+        "created_at": "2025-07-16T13:09:53+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122829602",
-        "show_contacts": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122864750",
+        "show_logo_in_search": null,
+        "show_contacts": true,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122829602?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122829602",
+        "url": "https://api.hh.ru/vacancies/122864750?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122864750",
         "relations": [],
         "employer": {
-          "id": "9706911",
-          "name": "Майстрова Анна Сергеевна",
-          "url": "https://api.hh.ru/employers/9706911",
-          "alternate_url": "https://hh.ru/employer/9706911",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9706911",
+          "id": "5632320",
+          "name": "ОНЛИП ОФИС ПРО",
+          "url": "https://api.hh.ru/employers/5632320",
+          "alternate_url": "https://hh.ru/employer/5632320",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/947262.png",
+            "90": "https://img.hhcdn.ru/employer-logo/4229584.png",
+            "240": "https://img.hhcdn.ru/employer-logo/4229585.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=5632320",
           "accredited_it_employer": false,
           "employer_rating": null,
           "trusted": true
         },
         "snippet": {
-          "requirement": "Инициативен — умеет предлагать решения и улучшения в работе <highlighttext>бухгалтерии</highlighttext> и смежных процессов. Уверенный пользователь ПК, легко осваивает новые программы и...",
-          "responsibility": "Ведение бухгалтерского и налогового учета ООО на ОСНО. Сдача всей отчетности (включая бухгалтерскую, налоговую). Работа с контрагентами: сверки, выставление счетов..."
+          "requirement": "Уверенное знание \"1С-Предприятие\" 8.3, Управление торговлей. Опыт работы в <highlighttext>бухгалтерии</highlighttext> более 5 лет. Завершенное высшее образование. ",
+          "responsibility": "Работа в <highlighttext>бухгалтерии</highlighttext> предприятия (три организации на ОСНО) под руководством главного <highlighttext>бухгалтера</highlighttext>. Основной профиль деятельности организации: оптовая торговля импортной офисной..."
         },
         "contacts": null,
         "schedule": {
@@ -3526,20 +3687,12 @@
           {
             "id": "ON_SITE",
             "name": "На месте работодателя"
-          },
-          {
-            "id": "HYBRID",
-            "name": "Гибрид"
           }
         ],
         "working_hours": [
           {
             "id": "HOURS_8",
             "name": "8 часов"
-          },
-          {
-            "id": "HOURS_9",
-            "name": "9 часов"
           }
         ],
         "work_schedule_by_days": [
@@ -3559,165 +3712,6 @@
         "experience": {
           "id": "between3And6",
           "name": "От 3 до 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "120858262",
-        "premium": false,
-        "name": "Бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 200000,
-          "to": 220000,
-          "currency": "RUR",
-          "gross": true
-        },
-        "salary_range": {
-          "from": 200000,
-          "to": 220000,
-          "currency": "RUR",
-          "gross": true,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Пресненская набережная",
-          "building": "12",
-          "lat": 55.749511,
-          "lng": 37.537083,
-          "description": null,
-          "raw": "Москва, Пресненская набережная, 12",
-          "metro": {
-            "station_name": "Деловой центр",
-            "line_name": "Большая кольцевая линия",
-            "station_id": "97.603",
-            "line_id": "97",
-            "lat": 55.7491,
-            "lng": 37.5395
-          },
-          "metro_stations": [
-            {
-              "station_name": "Деловой центр",
-              "line_name": "Большая кольцевая линия",
-              "station_id": "97.603",
-              "line_id": "97",
-              "lat": 55.7491,
-              "lng": 37.5395
-            },
-            {
-              "station_name": "Деловой центр",
-              "line_name": "Солнцевская",
-              "station_id": "133.468",
-              "line_id": "133",
-              "lat": 55.7491,
-              "lng": 37.5395
-            },
-            {
-              "station_name": "Москва-Сити",
-              "line_name": "Филевская",
-              "station_id": "4.179",
-              "line_id": "4",
-              "lat": 55.748056,
-              "lng": 37.532778
-            }
-          ],
-          "id": "3545969"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-15T17:58:28+0300",
-        "created_at": "2025-07-15T17:58:28+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=120858262",
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/120858262?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/120858262",
-        "relations": [],
-        "employer": {
-          "id": "4236227",
-          "name": "Ртс",
-          "url": "https://api.hh.ru/employers/4236227",
-          "alternate_url": "https://hh.ru/employer/4236227",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4236227",
-          "accredited_it_employer": false,
-          "employer_rating": null,
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Образование: высшее экономическое. Опыт и стаж работы: опыт работы не менее 3-х лет на аналогичной должности; Приветствуется опыт работы...",
-          "responsibility": "Предоставление ежемесячной информации для формирования бухгалтерских и налоговых расчетов. Выполнение иных поручений Генерального директора и Главного <highlighttext>бухгалтера</highlighttext>, в рамках деятельности..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
         },
         "employment": {
           "id": "full",
@@ -3989,9 +3983,9 @@
         "adv_context": null
       },
       {
-        "id": "122977187",
+        "id": "120858262",
         "premium": false,
-        "name": "Бухгалтер-калькулятор (Москва)",
+        "name": "Бухгалтер",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -4001,21 +3995,24 @@
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 120000,
-          "to": 150000,
+          "from": 200000,
+          "to": 220000,
           "currency": "RUR",
-          "gross": false
+          "gross": true
         },
         "salary_range": {
-          "from": 120000,
-          "to": 150000,
+          "from": 200000,
+          "to": 220000,
           "currency": "RUR",
-          "gross": false,
+          "gross": true,
           "mode": {
             "id": "MONTH",
             "name": "За месяц"
           },
-          "frequency": null
+          "frequency": {
+            "id": "TWICE_PER_MONTH",
+            "name": "Два раза в месяц"
+          }
         },
         "type": {
           "id": "open",
@@ -4023,49 +4020,73 @@
         },
         "address": {
           "city": "Москва",
-          "street": "12-й проезд Марьиной Рощи",
-          "building": "8с1",
-          "lat": 55.80485,
-          "lng": 37.618956,
+          "street": "Пресненская набережная",
+          "building": "12",
+          "lat": 55.749511,
+          "lng": 37.537083,
           "description": null,
-          "raw": "Москва, 12-й проезд Марьиной Рощи, 8с1",
-          "metro": null,
-          "metro_stations": [],
-          "id": "6942908"
+          "raw": "Москва, Пресненская набережная, 12",
+          "metro": {
+            "station_name": "Деловой центр",
+            "line_name": "Большая кольцевая линия",
+            "station_id": "97.603",
+            "line_id": "97",
+            "lat": 55.7491,
+            "lng": 37.5395
+          },
+          "metro_stations": [
+            {
+              "station_name": "Деловой центр",
+              "line_name": "Большая кольцевая линия",
+              "station_id": "97.603",
+              "line_id": "97",
+              "lat": 55.7491,
+              "lng": 37.5395
+            },
+            {
+              "station_name": "Деловой центр",
+              "line_name": "Солнцевская",
+              "station_id": "133.468",
+              "line_id": "133",
+              "lat": 55.7491,
+              "lng": 37.5395
+            },
+            {
+              "station_name": "Москва-Сити",
+              "line_name": "Филевская",
+              "station_id": "4.179",
+              "line_id": "4",
+              "lat": 55.748056,
+              "lng": 37.532778
+            }
+          ],
+          "id": "3545969"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-18T11:29:37+0300",
-        "created_at": "2025-07-18T11:29:37+0300",
+        "published_at": "2025-07-15T17:58:28+0300",
+        "created_at": "2025-07-15T17:58:28+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122977187",
-        "show_logo_in_search": null,
-        "show_contacts": true,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=120858262",
+        "show_contacts": false,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122977187?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122977187",
+        "url": "https://api.hh.ru/vacancies/120858262?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/120858262",
         "relations": [],
         "employer": {
-          "id": "4518101",
-          "name": "Голубая лагуна",
-          "url": "https://api.hh.ru/employers/4518101",
-          "alternate_url": "https://hh.ru/employer/4518101",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1173251.jpg",
-            "90": "https://img.hhcdn.ru/employer-logo/6313430.jpeg",
-            "240": "https://img.hhcdn.ru/employer-logo/6313431.jpeg"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4518101",
+          "id": "4236227",
+          "name": "Ртс",
+          "url": "https://api.hh.ru/employers/4236227",
+          "alternate_url": "https://hh.ru/employer/4236227",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4236227",
           "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.2",
-            "reviews_count": 34
-          },
+          "employer_rating": null,
           "trusted": true
         },
         "snippet": {
-          "requirement": "Высшее образование. Опыт работы <highlighttext>бухгалтером</highlighttext>-калькулятором в общепите обязателен, от 3 лет. Обязательное знание программ Store House, Меркурий, 1С...",
-          "responsibility": "Операционный учет в программе Store House v.5. Сбор первичной документации. Взаимодействие с руководителем подразделения по документальным и финансовым вопросам. "
+          "requirement": "Образование: высшее экономическое. Опыт и стаж работы: опыт работы не менее 3-х лет на аналогичной должности; Приветствуется опыт работы...",
+          "responsibility": "Предоставление ежемесячной информации для формирования бухгалтерских и налоговых расчетов. Выполнение иных поручений Генерального директора и Главного <highlighttext>бухгалтера</highlighttext>, в рамках деятельности..."
         },
         "contacts": null,
         "schedule": {
@@ -4104,6 +4125,130 @@
         ],
         "accept_incomplete_resumes": false,
         "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122829602",
+        "premium": false,
+        "name": "Главный бухгалтер",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 200000,
+          "to": 250000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 200000,
+          "to": 250000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": {
+            "id": "TWICE_PER_MONTH",
+            "name": "Два раза в месяц"
+          }
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T15:41:20+0300",
+        "created_at": "2025-07-18T15:41:20+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122829602",
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122829602?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122829602",
+        "relations": [],
+        "employer": {
+          "id": "9706911",
+          "name": "Майстрова Анна Сергеевна",
+          "url": "https://api.hh.ru/employers/9706911",
+          "alternate_url": "https://hh.ru/employer/9706911",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9706911",
+          "accredited_it_employer": false,
+          "employer_rating": null,
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Инициативен — умеет предлагать решения и улучшения в работе <highlighttext>бухгалтерии</highlighttext> и смежных процессов. Уверенный пользователь ПК, легко осваивает новые программы и...",
+          "responsibility": "Ведение бухгалтерского и налогового учета ООО на ОСНО. Сдача всей отчетности (включая бухгалтерскую, налоговую). Работа с контрагентами: сверки, выставление счетов..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          },
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          },
+          {
+            "id": "HOURS_9",
+            "name": "9 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
           "id": "between3And6",
           "name": "От 3 до 6 лет"
         },
@@ -4121,9 +4266,112 @@
         "adv_context": null
       },
       {
-        "id": "122864750",
+        "id": "122394836",
         "premium": false,
-        "name": "Бухгалтер на первичную документацию",
+        "name": "Помощник бухгалтера по первичной документации",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-04T11:58:04+0300",
+        "created_at": "2025-07-04T11:58:04+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122394836",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122394836?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122394836",
+        "relations": [],
+        "employer": {
+          "id": "3500216",
+          "name": "НДС365",
+          "url": "https://api.hh.ru/employers/3500216",
+          "alternate_url": "https://hh.ru/employer/3500216",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/989161.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/5577456.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/5577457.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3500216",
+          "accredited_it_employer": false,
+          "employer_rating": null,
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "...мощностью для работы с 1С и Excel. *Не бойся отсутствия опыта! Мы всему научим и поможем стать профессиональным <highlighttext>бухгалтером</highlighttext>.*.",
+          "responsibility": "Обработка первичных документов (накладные, акты, счета). Ведение электронного документооборота. Взаимодействие с контрагентами по вопросам документации. Контроль исполнения условий договоров. "
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "remote",
+          "name": "Удаленная работа"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": true,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "REMOTE",
+            "name": "Удалённо"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": true,
+        "experience": {
+          "id": "noExperience",
+          "name": "Нет опыта"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122823669",
+        "premium": false,
+        "name": "Главный бухгалтер",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -4133,14 +4381,14 @@
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 130000,
-          "to": 140000,
+          "from": 250000,
+          "to": null,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
-          "from": 130000,
-          "to": 140000,
+          "from": 250000,
+          "to": null,
           "currency": "RUR",
           "gross": false,
           "mode": {
@@ -4157,79 +4405,82 @@
           "name": "Открытая"
         },
         "address": {
-          "city": "Москва",
-          "street": "Павелецкая площадь",
-          "building": "2с3",
-          "lat": 55.729696,
-          "lng": 37.636311,
+          "city": null,
+          "street": null,
+          "building": null,
+          "lat": null,
+          "lng": null,
           "description": null,
-          "raw": "Москва, Павелецкая площадь, 2с3",
+          "raw": null,
           "metro": {
-            "station_name": "Павелецкая",
-            "line_name": "Замоскворецкая",
-            "station_id": "2.101",
-            "line_id": "2",
-            "lat": 55.729741,
-            "lng": 37.638693
+            "station_name": "Курская",
+            "line_name": "Арбатско-Покровская",
+            "station_id": "3.70",
+            "line_id": "3",
+            "lat": 55.758564,
+            "lng": 37.659039
           },
           "metro_stations": [
             {
-              "station_name": "Павелецкая",
-              "line_name": "Замоскворецкая",
-              "station_id": "2.101",
-              "line_id": "2",
-              "lat": 55.729741,
-              "lng": 37.638693
+              "station_name": "Курская",
+              "line_name": "Арбатско-Покровская",
+              "station_id": "3.70",
+              "line_id": "3",
+              "lat": 55.758564,
+              "lng": 37.659039
             },
             {
-              "station_name": "Павелецкая",
+              "station_name": "Курская",
               "line_name": "Кольцевая",
-              "station_id": "5.102",
+              "station_id": "5.71",
               "line_id": "5",
-              "lat": 55.731414,
-              "lng": 37.636294
+              "lat": 55.758631,
+              "lng": 37.661059
             },
             {
-              "station_name": "Серпуховская",
-              "line_name": "Серпуховско-Тимирязевская",
-              "station_id": "9.37",
-              "line_id": "9",
-              "lat": 55.726548,
-              "lng": 37.624792
+              "station_name": "Курская",
+              "line_name": "МЦД-2",
+              "station_id": "132.726",
+              "line_id": "132",
+              "lat": 55.757622,
+              "lng": 37.660767
+            },
+            {
+              "station_name": "Чкаловская",
+              "line_name": "Люблинско-Дмитровская",
+              "station_id": "10.72",
+              "line_id": "10",
+              "lat": 55.755951,
+              "lng": 37.659293
             }
           ],
-          "id": "16190034"
+          "id": "18668672"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-16T13:09:53+0300",
-        "created_at": "2025-07-16T13:09:53+0300",
+        "published_at": "2025-07-18T14:51:26+0300",
+        "created_at": "2025-07-18T14:51:26+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122864750",
-        "show_logo_in_search": null,
-        "show_contacts": true,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122823669",
+        "show_contacts": false,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122864750?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122864750",
+        "url": "https://api.hh.ru/vacancies/122823669?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122823669",
         "relations": [],
         "employer": {
-          "id": "5632320",
-          "name": "ОНЛИП ОФИС ПРО",
-          "url": "https://api.hh.ru/employers/5632320",
-          "alternate_url": "https://hh.ru/employer/5632320",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/947262.png",
-            "90": "https://img.hhcdn.ru/employer-logo/4229584.png",
-            "240": "https://img.hhcdn.ru/employer-logo/4229585.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=5632320",
+          "id": "11774402",
+          "name": "Гиперион",
+          "url": "https://api.hh.ru/employers/11774402",
+          "alternate_url": "https://hh.ru/employer/11774402",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=11774402",
           "accredited_it_employer": false,
           "employer_rating": null,
           "trusted": true
         },
         "snippet": {
-          "requirement": "Уверенное знание \"1С-Предприятие\" 8.3, Управление торговлей. Опыт работы в <highlighttext>бухгалтерии</highlighttext> более 5 лет. Завершенное высшее образование. ",
-          "responsibility": "Работа в <highlighttext>бухгалтерии</highlighttext> предприятия (три организации на ОСНО) под руководством главного <highlighttext>бухгалтера</highlighttext>. Основной профиль деятельности организации: оптовая торговля импортной офисной..."
+          "requirement": "Опыт работы от 6 лет. Обязателен опыт работы в строительной, подрядной организации. Выполнение функциональных обязанностей.",
+          "responsibility": "Ведение бухгалтерского и налогового учета в 1С <highlighttext>Бухгалтерия</highlighttext> в соответствии с действующими законодательными нормами, инструкциями и положениями. "
         },
         "contacts": null,
         "schedule": {
@@ -4245,154 +4496,6 @@
           {
             "id": "ON_SITE",
             "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between3And6",
-          "name": "От 3 до 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122975345",
-        "premium": false,
-        "name": "Бухгалтер в единственном лице (ИТ-компания)",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 160000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 160000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Калужско-Рижская линия",
-          "building": "метро Китай-город",
-          "lat": 55.757009,
-          "lng": 37.631299,
-          "description": null,
-          "raw": "Москва, Калужско-Рижская линия, метро Китай-город",
-          "metro": {
-            "station_name": "Китай-город",
-            "line_name": "Калужско-Рижская",
-            "station_id": "6.50",
-            "line_id": "6",
-            "lat": 55.756498,
-            "lng": 37.631326
-          },
-          "metro_stations": [
-            {
-              "station_name": "Китай-город",
-              "line_name": "Калужско-Рижская",
-              "station_id": "6.50",
-              "line_id": "6",
-              "lat": 55.756498,
-              "lng": 37.631326
-            }
-          ],
-          "id": "17186400"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-18T11:02:13+0300",
-        "created_at": "2025-07-18T11:02:13+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122975345",
-        "show_logo_in_search": null,
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122975345?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122975345",
-        "relations": [],
-        "employer": {
-          "id": "1869751",
-          "name": "АйТи Сервис Менеджмент",
-          "url": "https://api.hh.ru/employers/1869751",
-          "alternate_url": "https://hh.ru/employer/1869751",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/269353.png",
-            "90": "https://img.hhcdn.ru/employer-logo/1519942.png",
-            "240": "https://img.hhcdn.ru/employer-logo/1519943.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1869751",
-          "accredited_it_employer": true,
-          "employer_rating": {
-            "total_rating": "4.5",
-            "reviews_count": 4
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Умение работать с большими объемами информации. Опыт работы в 1С: <highlighttext>Бухгалтерия</highlighttext>, 1С: ЗУП. Знание систем электронного документооборота: ЭДО...",
-          "responsibility": "Самостоятельное ведение бухгалтерского и налогового учета в полном объеме (1 юридическое лицо, ОСНО, включение в Реестр Минцифры). Расчет налога на..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "HYBRID",
-            "name": "Гибрид"
           }
         ],
         "working_hours": [
@@ -4418,6 +4521,252 @@
         "experience": {
           "id": "moreThan6",
           "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122957017",
+        "premium": false,
+        "name": "Главный бухгалтер группы компаний",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Дубининская улица",
+          "building": "57с2",
+          "lat": 55.721123,
+          "lng": 37.636976,
+          "description": null,
+          "raw": "Москва, Дубининская улица, 57с2",
+          "metro": null,
+          "metro_stations": [],
+          "id": "2727677"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-17T17:40:53+0300",
+        "created_at": "2025-07-17T17:40:53+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122957017",
+        "branding": {
+          "type": "MAKEUP",
+          "tariff": null
+        },
+        "show_logo_in_search": true,
+        "show_contacts": true,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122957017?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122957017",
+        "relations": [],
+        "employer": {
+          "id": "3697658",
+          "name": "Здоровье",
+          "url": "https://api.hh.ru/employers/3697658",
+          "alternate_url": "https://hh.ru/employer/3697658",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/587426.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/2790959.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/2790960.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3697658",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.3",
+            "reviews_count": 7
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Опыт успешной работы главным <highlighttext>бухгалтером</highlighttext> от 6 лет. Опыт прохождения аудиторских проверок, проверок контролирующих органов, ответы на требования контролирующих органов. ",
+          "responsibility": "Полное ведение бухгалтерского и налогового учёта согласно действующему законодательству, включая подготовку и сдачу отчётности. Организация процесса закрытия месяца и обеспечение..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "moreThan6",
+          "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122869373",
+        "premium": false,
+        "name": "Бухгалтер на первичную документацию",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 120000,
+          "to": 120000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 120000,
+          "to": 120000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-16T14:22:50+0300",
+        "created_at": "2025-07-16T14:22:50+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122869373",
+        "branding": {
+          "type": "MAKEUP",
+          "tariff": null
+        },
+        "show_logo_in_search": true,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122869373?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122869373",
+        "relations": [],
+        "employer": {
+          "id": "108647",
+          "name": "Росводоканал,ООО",
+          "url": "https://api.hh.ru/employers/108647",
+          "alternate_url": "https://hh.ru/employer/108647",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1388499.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7173783.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7173784.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=108647",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "3.8",
+            "reviews_count": 22
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Опыт работы с программами Word, Excel, Power Point, Internet Explorer, Outlook, СЭДО, СПУ, 1С Управление строительной организацией 2, редакция...",
+          "responsibility": "Оформление документов первичной бухгалтерской отчетности в части закрытия объектов проектирования (универсальный передаточный документ или счет-фактура), работа с документами первичной..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
         },
         "employment": {
           "id": "full",
@@ -4700,9 +5049,9 @@
         "adv_context": null
       },
       {
-        "id": "122869373",
+        "id": "122923204",
         "premium": false,
-        "name": "Бухгалтер на первичную документацию",
+        "name": "Главный бухгалтер",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -4712,14 +5061,14 @@
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 120000,
-          "to": 120000,
+          "from": 250000,
+          "to": null,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
-          "from": 120000,
-          "to": 120000,
+          "from": 250000,
+          "to": null,
           "currency": "RUR",
           "gross": false,
           "mode": {
@@ -4727,255 +5076,6 @@
             "name": "За месяц"
           },
           "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": null,
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-16T14:22:50+0300",
-        "created_at": "2025-07-16T14:22:50+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122869373",
-        "branding": {
-          "type": "MAKEUP",
-          "tariff": null
-        },
-        "show_logo_in_search": true,
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122869373?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122869373",
-        "relations": [],
-        "employer": {
-          "id": "108647",
-          "name": "Росводоканал,ООО",
-          "url": "https://api.hh.ru/employers/108647",
-          "alternate_url": "https://hh.ru/employer/108647",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1388499.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7173783.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7173784.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=108647",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "3.8",
-            "reviews_count": 22
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Опыт работы с программами Word, Excel, Power Point, Internet Explorer, Outlook, СЭДО, СПУ, 1С Управление строительной организацией 2, редакция...",
-          "responsibility": "Оформление документов первичной бухгалтерской отчетности в части закрытия объектов проектирования (универсальный передаточный документ или счет-фактура), работа с документами первичной..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122957017",
-        "premium": false,
-        "name": "Главный бухгалтер группы компаний",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": null,
-        "salary_range": null,
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Дубининская улица",
-          "building": "57с2",
-          "lat": 55.721123,
-          "lng": 37.636976,
-          "description": null,
-          "raw": "Москва, Дубининская улица, 57с2",
-          "metro": null,
-          "metro_stations": [],
-          "id": "2727677"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-17T17:40:53+0300",
-        "created_at": "2025-07-17T17:40:53+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122957017",
-        "branding": {
-          "type": "MAKEUP",
-          "tariff": null
-        },
-        "show_logo_in_search": true,
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122957017?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122957017",
-        "relations": [],
-        "employer": {
-          "id": "3697658",
-          "name": "Здоровье",
-          "url": "https://api.hh.ru/employers/3697658",
-          "alternate_url": "https://hh.ru/employer/3697658",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/587426.jpg",
-            "90": "https://img.hhcdn.ru/employer-logo/2790959.jpeg",
-            "240": "https://img.hhcdn.ru/employer-logo/2790960.jpeg"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3697658",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.3",
-            "reviews_count": 7
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Опыт успешной работы главным <highlighttext>бухгалтером</highlighttext> от 6 лет. Опыт прохождения аудиторских проверок, проверок контролирующих органов, ответы на требования контролирующих органов. ",
-          "responsibility": "Полное ведение бухгалтерского и налогового учёта согласно действующему законодательству, включая подготовку и сдачу отчётности. Организация процесса закрытия месяца и обеспечение..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "moreThan6",
-          "name": "Более 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122762017",
-        "premium": false,
-        "name": "Старший бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 170000,
-          "to": null,
-          "currency": "RUR",
-          "gross": true
-        },
-        "salary_range": {
-          "from": 170000,
-          "to": null,
-          "currency": "RUR",
-          "gross": true,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
         },
         "type": {
           "id": "open",
@@ -4990,55 +5090,77 @@
           "description": null,
           "raw": null,
           "metro": {
-            "station_name": "Аэропорт",
-            "line_name": "Замоскворецкая",
-            "station_id": "2.12",
-            "line_id": "2",
-            "lat": 55.800441,
-            "lng": 37.530477
+            "station_name": "Алтуфьево",
+            "line_name": "Серпуховско-Тимирязевская",
+            "station_id": "9.9",
+            "line_id": "9",
+            "lat": 55.899034,
+            "lng": 37.586473
           },
           "metro_stations": [
             {
-              "station_name": "Аэропорт",
-              "line_name": "Замоскворецкая",
-              "station_id": "2.12",
-              "line_id": "2",
-              "lat": 55.800441,
-              "lng": 37.530477
+              "station_name": "Алтуфьево",
+              "line_name": "Серпуховско-Тимирязевская",
+              "station_id": "9.9",
+              "line_id": "9",
+              "lat": 55.899034,
+              "lng": 37.586473
+            },
+            {
+              "station_name": "Лианозово",
+              "line_name": "МЦД-1",
+              "station_id": "131.694",
+              "line_id": "131",
+              "lat": 55.897316,
+              "lng": 37.553261
+            },
+            {
+              "station_name": "Марк",
+              "line_name": "МЦД-1",
+              "station_id": "131.693",
+              "line_id": "131",
+              "lat": 55.904458,
+              "lng": 37.538242
+            },
+            {
+              "station_name": "Физтех",
+              "line_name": "Люблинско-Дмитровская",
+              "station_id": "10.833",
+              "line_id": "10",
+              "lat": 55.921389,
+              "lng": 37.546389
             }
           ],
-          "id": "4411717"
+          "id": "18499057"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-14T12:00:21+0300",
-        "created_at": "2025-07-14T12:00:21+0300",
+        "published_at": "2025-07-17T10:38:27+0300",
+        "created_at": "2025-07-17T10:38:27+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122762017",
-        "show_logo_in_search": null,
-        "show_contacts": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122923204",
+        "show_contacts": true,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122762017?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122762017",
+        "url": "https://api.hh.ru/vacancies/122923204?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122923204",
         "relations": [],
         "employer": {
-          "id": "1635723",
-          "name": "TRUE INTELLIGENCE",
-          "url": "https://api.hh.ru/employers/1635723",
-          "alternate_url": "https://hh.ru/employer/1635723",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1397484.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7209711.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7209712.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1635723",
+          "id": "4241470",
+          "name": "Петра+",
+          "url": "https://api.hh.ru/employers/4241470",
+          "alternate_url": "https://hh.ru/employer/4241470",
+          "logo_urls": null,
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4241470",
           "accredited_it_employer": false,
-          "employer_rating": null,
+          "employer_rating": {
+            "total_rating": "4.3",
+            "reviews_count": 2
+          },
           "trusted": true
         },
         "snippet": {
-          "requirement": "Аналогичный практический опыт работы не менее трех лет. Знание программы 1С «<highlighttext>Бухгалтерия</highlighttext>» 8.3 . Уверенные знания в области бухгалтерского...",
-          "responsibility": "...бухгалтерского учета) при необходимости. Подготовка документов по требованиям из ИФНС. Решение текущих задач отдела <highlighttext>бухгалтерии</highlighttext> и выполнение поручений главного <highlighttext>бухгалтера</highlighttext>."
+          "requirement": "Высшее профессиональное образование (экономика, финансы, бухгалтерский учет и аудит). Опыт работы на позиции главного <highlighttext>бухгалтера</highlighttext> от 3 лет. ",
+          "responsibility": "...средств, финансовых, расчетных и кредитных операций, финансовых результатов деятельности организации. Организация и координация взаимодействия между <highlighttext>бухгалтерией</highlighttext> и структурными подразделениями учреждения."
         },
         "contacts": null,
         "schedule": {
@@ -5052,8 +5174,8 @@
         "fly_in_fly_out_duration": [],
         "work_format": [
           {
-            "id": "HYBRID",
-            "name": "Гибрид"
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
           }
         ],
         "working_hours": [
@@ -5381,28 +5503,28 @@
         "adv_context": null
       },
       {
-        "id": "122950269",
+        "id": "122762017",
         "premium": false,
-        "name": "Бухгалтер на первичную документацию",
+        "name": "Старший бухгалтер",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
         "area": {
-          "id": "4",
-          "name": "Новосибирск",
-          "url": "https://api.hh.ru/areas/4"
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 60000,
-          "to": 80000,
+          "from": 170000,
+          "to": null,
           "currency": "RUR",
-          "gross": false
+          "gross": true
         },
         "salary_range": {
-          "from": 60000,
-          "to": 80000,
+          "from": 170000,
+          "to": null,
           "currency": "RUR",
-          "gross": false,
+          "gross": true,
           "mode": {
             "id": "MONTH",
             "name": "За месяц"
@@ -5417,178 +5539,6 @@
           "name": "Открытая"
         },
         "address": {
-          "city": "Москва",
-          "street": "Рязанский проспект",
-          "building": "86/1с1",
-          "lat": 55.708029,
-          "lng": 37.83041,
-          "description": null,
-          "raw": "Москва, Рязанский проспект, 86/1с1",
-          "metro": {
-            "station_name": "Выхино",
-            "line_name": "Таганско-Краснопресненская",
-            "station_id": "7.33",
-            "line_id": "7",
-            "lat": 55.715983,
-            "lng": 37.816788
-          },
-          "metro_stations": [
-            {
-              "station_name": "Выхино",
-              "line_name": "Таганско-Краснопресненская",
-              "station_id": "7.33",
-              "line_id": "7",
-              "lat": 55.715983,
-              "lng": 37.816788
-            },
-            {
-              "station_name": "Косино",
-              "line_name": "Некрасовская",
-              "station_id": "98.675",
-              "line_id": "98",
-              "lat": 55.7026,
-              "lng": 37.8511
-            },
-            {
-              "station_name": "Косино",
-              "line_name": "МЦД-3",
-              "station_id": "135.861",
-              "line_id": "135",
-              "lat": 55.714167,
-              "lng": 37.8475
-            },
-            {
-              "station_name": "Юго-Восточная",
-              "line_name": "Некрасовская",
-              "station_id": "98.762",
-              "line_id": "98",
-              "lat": 55.71,
-              "lng": 37.82
-            }
-          ],
-          "id": "16966813"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-17T15:28:00+0300",
-        "created_at": "2025-07-17T15:28:00+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122950269",
-        "show_logo_in_search": null,
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122950269?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122950269",
-        "relations": [],
-        "employer": {
-          "id": "3006945",
-          "name": "Лукьянова Елена Юрьевна",
-          "url": "https://api.hh.ru/employers/3006945",
-          "alternate_url": "https://hh.ru/employer/3006945",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/485851.jpg",
-            "90": "https://img.hhcdn.ru/employer-logo/2385256.jpeg",
-            "240": "https://img.hhcdn.ru/employer-logo/2385257.jpeg"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3006945",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.1",
-            "reviews_count": 25
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Знает основы бухгалтерского и налогового учета. Понимает документооборот в организации. Имеет опыт работы с первичной документацией. Умеет работать в режиме...",
-          "responsibility": "Помогать ведущему <highlighttext>бухгалтеру</highlighttext> в подготовке и сдаче отчетности. Осуществлять поездки в CФР, МИФНС, на почту. Выполнение поручений ведущего <highlighttext>бухгалтера</highlighttext>."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "noExperience",
-          "name": "Нет опыта"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122923204",
-        "premium": false,
-        "name": "Главный бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
           "city": null,
           "street": null,
           "building": null,
@@ -5597,77 +5547,55 @@
           "description": null,
           "raw": null,
           "metro": {
-            "station_name": "Алтуфьево",
-            "line_name": "Серпуховско-Тимирязевская",
-            "station_id": "9.9",
-            "line_id": "9",
-            "lat": 55.899034,
-            "lng": 37.586473
+            "station_name": "Аэропорт",
+            "line_name": "Замоскворецкая",
+            "station_id": "2.12",
+            "line_id": "2",
+            "lat": 55.800441,
+            "lng": 37.530477
           },
           "metro_stations": [
             {
-              "station_name": "Алтуфьево",
-              "line_name": "Серпуховско-Тимирязевская",
-              "station_id": "9.9",
-              "line_id": "9",
-              "lat": 55.899034,
-              "lng": 37.586473
-            },
-            {
-              "station_name": "Лианозово",
-              "line_name": "МЦД-1",
-              "station_id": "131.694",
-              "line_id": "131",
-              "lat": 55.897316,
-              "lng": 37.553261
-            },
-            {
-              "station_name": "Марк",
-              "line_name": "МЦД-1",
-              "station_id": "131.693",
-              "line_id": "131",
-              "lat": 55.904458,
-              "lng": 37.538242
-            },
-            {
-              "station_name": "Физтех",
-              "line_name": "Люблинско-Дмитровская",
-              "station_id": "10.833",
-              "line_id": "10",
-              "lat": 55.921389,
-              "lng": 37.546389
+              "station_name": "Аэропорт",
+              "line_name": "Замоскворецкая",
+              "station_id": "2.12",
+              "line_id": "2",
+              "lat": 55.800441,
+              "lng": 37.530477
             }
           ],
-          "id": "18499057"
+          "id": "4411717"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-17T10:38:27+0300",
-        "created_at": "2025-07-17T10:38:27+0300",
+        "published_at": "2025-07-14T12:00:21+0300",
+        "created_at": "2025-07-14T12:00:21+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122923204",
-        "show_contacts": true,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122762017",
+        "show_logo_in_search": null,
+        "show_contacts": false,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122923204?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122923204",
+        "url": "https://api.hh.ru/vacancies/122762017?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122762017",
         "relations": [],
         "employer": {
-          "id": "4241470",
-          "name": "Петра+",
-          "url": "https://api.hh.ru/employers/4241470",
-          "alternate_url": "https://hh.ru/employer/4241470",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4241470",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.3",
-            "reviews_count": 2
+          "id": "1635723",
+          "name": "TRUE INTELLIGENCE",
+          "url": "https://api.hh.ru/employers/1635723",
+          "alternate_url": "https://hh.ru/employer/1635723",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1397484.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7209711.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7209712.png"
           },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1635723",
+          "accredited_it_employer": false,
+          "employer_rating": null,
           "trusted": true
         },
         "snippet": {
-          "requirement": "Высшее профессиональное образование (экономика, финансы, бухгалтерский учет и аудит). Опыт работы на позиции главного <highlighttext>бухгалтера</highlighttext> от 3 лет. ",
-          "responsibility": "...средств, финансовых, расчетных и кредитных операций, финансовых результатов деятельности организации. Организация и координация взаимодействия между <highlighttext>бухгалтерией</highlighttext> и структурными подразделениями учреждения."
+          "requirement": "Аналогичный практический опыт работы не менее трех лет. Знание программы 1С «<highlighttext>Бухгалтерия</highlighttext>» 8.3 . Уверенные знания в области бухгалтерского...",
+          "responsibility": "...бухгалтерского учета) при необходимости. Подготовка документов по требованиям из ИФНС. Решение текущих задач отдела <highlighttext>бухгалтерии</highlighttext> и выполнение поручений главного <highlighttext>бухгалтера</highlighttext>."
         },
         "contacts": null,
         "schedule": {
@@ -5681,8 +5609,8 @@
         "fly_in_fly_out_duration": [],
         "work_format": [
           {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
+            "id": "HYBRID",
+            "name": "Гибрид"
           }
         ],
         "working_hours": [
@@ -5882,9 +5810,9 @@
         "adv_context": null
       },
       {
-        "id": "122846702",
+        "id": "122958788",
         "premium": false,
-        "name": "Главный/Ведущий бухгалтер",
+        "name": "Бухгалтер",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -5894,13 +5822,13 @@
           "url": "https://api.hh.ru/areas/1"
         },
         "salary": {
-          "from": 200000,
+          "from": 140000,
           "to": null,
           "currency": "RUR",
           "gross": false
         },
         "salary_range": {
-          "from": 200000,
+          "from": 140000,
           "to": null,
           "currency": "RUR",
           "gross": false,
@@ -5916,49 +5844,49 @@
         },
         "address": {
           "city": "Москва",
-          "street": "Малый Кисельный переулок",
-          "building": "1/9",
-          "lat": 55.764931,
-          "lng": 37.626511,
+          "street": "Орликов переулок",
+          "building": "3с1",
+          "lat": 55.770811,
+          "lng": 37.647405,
           "description": null,
-          "raw": "Москва, Малый Кисельный переулок, 1/9",
+          "raw": "Москва, Орликов переулок, 3с1",
           "metro": null,
           "metro_stations": [],
-          "id": "170232"
+          "id": "3709342"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-16T09:06:30+0300",
-        "created_at": "2025-07-16T09:06:30+0300",
+        "published_at": "2025-07-17T19:01:20+0300",
+        "created_at": "2025-07-17T19:01:20+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122846702",
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122958788",
         "show_logo_in_search": null,
         "show_contacts": false,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122846702?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122846702",
+        "url": "https://api.hh.ru/vacancies/122958788?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122958788",
         "relations": [],
         "employer": {
-          "id": "202288",
-          "name": "ТАКО",
-          "url": "https://api.hh.ru/employers/202288",
-          "alternate_url": "https://hh.ru/employer/202288",
+          "id": "3934",
+          "name": "Объединённая зерновая компания",
+          "url": "https://api.hh.ru/employers/3934",
+          "alternate_url": "https://hh.ru/employer/3934",
           "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/595348.bmp",
-            "90": "https://img.hhcdn.ru/employer-logo/2822647.png",
-            "240": "https://img.hhcdn.ru/employer-logo/2822648.png"
+            "original": "https://img.hhcdn.ru/employer-logo-original/1355813.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/7043162.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/7043163.jpeg"
           },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=202288",
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3934",
           "accredited_it_employer": false,
           "employer_rating": {
-            "total_rating": "5",
-            "reviews_count": 1
+            "total_rating": "4.6",
+            "reviews_count": 6
           },
           "trusted": true
         },
         "snippet": {
-          "requirement": "Опыт работы от пяти лет в должности <highlighttext>бухгалтера</highlighttext>. Знание 1С:<highlighttext>Бухгалтерия</highlighttext> 8.3, <highlighttext>Бухгалтерия</highlighttext> предприятия Корп, 1С: ЗУП...",
-          "responsibility": "Ведение в полном объеме нескольких юридических лиц с различными видами деятельности. Консультирование клиентов по вопросам бухучета и налогообложения. "
+          "requirement": "Опыт работы ведущим / старшим <highlighttext>бухгалтером</highlighttext>, руководителем направления (производство /оптовая торговля сельхозпродукцией) от 3-х лет. Высшее экономическое образование. ",
+          "responsibility": "...1С:<highlighttext>Бухгалтерия</highlighttext> на разных базисах поставок. Контроль автоматической загрузки данных по учету товара в 1С:<highlighttext>Бухгалтерия</highlighttext>. "
         },
         "contacts": null,
         "schedule": {
@@ -5997,8 +5925,8 @@
         ],
         "accept_incomplete_resumes": false,
         "experience": {
-          "id": "moreThan6",
-          "name": "Более 6 лет"
+          "id": "between3And6",
+          "name": "От 3 до 6 лет"
         },
         "employment": {
           "id": "full",
@@ -6165,9 +6093,9 @@
         "adv_context": null
       },
       {
-        "id": "122958788",
+        "id": "120407707",
         "premium": false,
-        "name": "Бухгалтер",
+        "name": "Бухгалтер (на первичную документацию)",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
@@ -6199,49 +6127,180 @@
         },
         "address": {
           "city": "Москва",
-          "street": "Орликов переулок",
-          "building": "3с1",
-          "lat": 55.770811,
-          "lng": 37.647405,
+          "street": "Рябиновая",
+          "building": "44",
+          "lat": 55.674956,
+          "lng": 37.435107,
           "description": null,
-          "raw": "Москва, Орликов переулок, 3с1",
+          "raw": "Москва, Рябиновая, 44",
           "metro": null,
           "metro_stations": [],
-          "id": "3709342"
+          "id": "6140"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-17T19:01:20+0300",
-        "created_at": "2025-07-17T19:01:20+0300",
+        "published_at": "2025-07-15T11:11:48+0300",
+        "created_at": "2025-07-15T11:11:48+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122958788",
-        "show_logo_in_search": null,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=120407707",
+        "branding": {
+          "type": "CONSTRUCTOR",
+          "tariff": "BASIC"
+        },
+        "show_logo_in_search": true,
         "show_contacts": false,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122958788?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122958788",
+        "url": "https://api.hh.ru/vacancies/120407707?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/120407707",
         "relations": [],
         "employer": {
-          "id": "3934",
-          "name": "Объединённая зерновая компания",
-          "url": "https://api.hh.ru/employers/3934",
-          "alternate_url": "https://hh.ru/employer/3934",
+          "id": "9520",
+          "name": "Ликви Моли Руссланд",
+          "url": "https://api.hh.ru/employers/9520",
+          "alternate_url": "https://hh.ru/employer/9520",
           "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1355813.jpg",
-            "90": "https://img.hhcdn.ru/employer-logo/7043162.jpeg",
-            "240": "https://img.hhcdn.ru/employer-logo/7043163.jpeg"
+            "original": "https://img.hhcdn.ru/employer-logo-original/1406435.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7245408.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7245409.png"
           },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3934",
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9520",
           "accredited_it_employer": false,
           "employer_rating": {
-            "total_rating": "4.6",
-            "reviews_count": 6
+            "total_rating": "4.2",
+            "reviews_count": 29
           },
           "trusted": true
         },
         "snippet": {
-          "requirement": "Опыт работы ведущим / старшим <highlighttext>бухгалтером</highlighttext>, руководителем направления (производство /оптовая торговля сельхозпродукцией) от 3-х лет. Высшее экономическое образование. ",
-          "responsibility": "...1С:<highlighttext>Бухгалтерия</highlighttext> на разных базисах поставок. Контроль автоматической загрузки данных по учету товара в 1С:<highlighttext>Бухгалтерия</highlighttext>. "
+          "requirement": "Опыт работы <highlighttext>бухгалтером</highlighttext> от 1-го года. Образование профильное, не ниже средне-специального. Знания основ законодательства РФ о бухучете. ",
+          "responsibility": "Обработка первичных документов по реализации товаров в программе 1С 8.3. Ввод и обработка изменений первичных документов в программе..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122846702",
+        "premium": false,
+        "name": "Главный/Ведущий бухгалтер",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 200000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 200000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Малый Кисельный переулок",
+          "building": "1/9",
+          "lat": 55.764931,
+          "lng": 37.626511,
+          "description": null,
+          "raw": "Москва, Малый Кисельный переулок, 1/9",
+          "metro": null,
+          "metro_stations": [],
+          "id": "170232"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-16T09:06:30+0300",
+        "created_at": "2025-07-16T09:06:30+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122846702",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122846702?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122846702",
+        "relations": [],
+        "employer": {
+          "id": "202288",
+          "name": "ТАКО",
+          "url": "https://api.hh.ru/employers/202288",
+          "alternate_url": "https://hh.ru/employer/202288",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/595348.bmp",
+            "90": "https://img.hhcdn.ru/employer-logo/2822647.png",
+            "240": "https://img.hhcdn.ru/employer-logo/2822648.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=202288",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "5",
+            "reviews_count": 1
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Опыт работы от пяти лет в должности <highlighttext>бухгалтера</highlighttext>. Знание 1С:<highlighttext>Бухгалтерия</highlighttext> 8.3, <highlighttext>Бухгалтерия</highlighttext> предприятия Корп, 1С: ЗУП...",
+          "responsibility": "Ведение в полном объеме нескольких юридических лиц с различными видами деятельности. Консультирование клиентов по вопросам бухучета и налогообложения. "
         },
         "contacts": null,
         "schedule": {
@@ -6280,8 +6339,183 @@
         ],
         "accept_incomplete_resumes": false,
         "experience": {
-          "id": "between3And6",
-          "name": "От 3 до 6 лет"
+          "id": "moreThan6",
+          "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122950269",
+        "premium": false,
+        "name": "Бухгалтер на первичную документацию",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "4",
+          "name": "Новосибирск",
+          "url": "https://api.hh.ru/areas/4"
+        },
+        "salary": {
+          "from": 60000,
+          "to": 80000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 60000,
+          "to": 80000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": {
+            "id": "TWICE_PER_MONTH",
+            "name": "Два раза в месяц"
+          }
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Рязанский проспект",
+          "building": "86/1с1",
+          "lat": 55.708029,
+          "lng": 37.83041,
+          "description": null,
+          "raw": "Москва, Рязанский проспект, 86/1с1",
+          "metro": {
+            "station_name": "Выхино",
+            "line_name": "Таганско-Краснопресненская",
+            "station_id": "7.33",
+            "line_id": "7",
+            "lat": 55.715983,
+            "lng": 37.816788
+          },
+          "metro_stations": [
+            {
+              "station_name": "Выхино",
+              "line_name": "Таганско-Краснопресненская",
+              "station_id": "7.33",
+              "line_id": "7",
+              "lat": 55.715983,
+              "lng": 37.816788
+            },
+            {
+              "station_name": "Косино",
+              "line_name": "Некрасовская",
+              "station_id": "98.675",
+              "line_id": "98",
+              "lat": 55.7026,
+              "lng": 37.8511
+            },
+            {
+              "station_name": "Косино",
+              "line_name": "МЦД-3",
+              "station_id": "135.861",
+              "line_id": "135",
+              "lat": 55.714167,
+              "lng": 37.8475
+            },
+            {
+              "station_name": "Юго-Восточная",
+              "line_name": "Некрасовская",
+              "station_id": "98.762",
+              "line_id": "98",
+              "lat": 55.71,
+              "lng": 37.82
+            }
+          ],
+          "id": "16966813"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-17T15:28:00+0300",
+        "created_at": "2025-07-17T15:28:00+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122950269",
+        "show_logo_in_search": null,
+        "show_contacts": true,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122950269?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122950269",
+        "relations": [],
+        "employer": {
+          "id": "3006945",
+          "name": "Лукьянова Елена Юрьевна",
+          "url": "https://api.hh.ru/employers/3006945",
+          "alternate_url": "https://hh.ru/employer/3006945",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/485851.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/2385256.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/2385257.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=3006945",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.1",
+            "reviews_count": 25
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Знает основы бухгалтерского и налогового учета. Понимает документооборот в организации. Имеет опыт работы с первичной документацией. Умеет работать в режиме...",
+          "responsibility": "Помогать ведущему <highlighttext>бухгалтеру</highlighttext> в подготовке и сдаче отчетности. Осуществлять поездки в CФР, МИФНС, на почту. Выполнение поручений ведущего <highlighttext>бухгалтера</highlighttext>."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "noExperience",
+          "name": "Нет опыта"
         },
         "employment": {
           "id": "full",
@@ -6402,6 +6636,163 @@
         "experience": {
           "id": "between3And6",
           "name": "От 3 до 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      },
+      {
+        "id": "122995922",
+        "premium": false,
+        "name": "Бухгалтер на первичную документацию",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": true,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": 80000,
+          "to": 90000,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 80000,
+          "to": 90000,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "Марксистская улица",
+          "building": "20с1",
+          "lat": 55.738404,
+          "lng": 37.659802,
+          "description": null,
+          "raw": "Москва, Марксистская улица, 20с1",
+          "metro": {
+            "station_name": "Марксистская",
+            "line_name": "Калининская",
+            "station_id": "8.78",
+            "line_id": "8",
+            "lat": 55.740746,
+            "lng": 37.65604
+          },
+          "metro_stations": [
+            {
+              "station_name": "Марксистская",
+              "line_name": "Калининская",
+              "station_id": "8.78",
+              "line_id": "8",
+              "lat": 55.740746,
+              "lng": 37.65604
+            },
+            {
+              "station_name": "Таганская",
+              "line_name": "Таганско-Краснопресненская",
+              "station_id": "7.77",
+              "line_id": "7",
+              "lat": 55.739502,
+              "lng": 37.653605
+            }
+          ],
+          "id": "16797116"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-18T16:21:45+0300",
+        "created_at": "2025-07-18T16:21:45+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122995922",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122995922?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122995922",
+        "relations": [],
+        "employer": {
+          "id": "9551248",
+          "name": "ГК Марфа",
+          "url": "https://api.hh.ru/employers/9551248",
+          "alternate_url": "https://hh.ru/employer/9551248",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1069284.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/5897765.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/5897766.jpeg"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9551248",
+          "accredited_it_employer": false,
+          "employer_rating": null,
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Опыт работы в <highlighttext>бухгалтерии</highlighttext> от 1-го года. - Законченное высшее образование по профилю <highlighttext>бухгалтерии</highlighttext>. - Знание ЭДО (Контур, СБИС). - ",
+          "responsibility": "Работа в <highlighttext>бухгалтерии</highlighttext> предприятия (4 юр. лица, ОСНО, УСН) под руководством главного <highlighttext>бухгалтера</highlighttext>. - Основной профиль деятельности организации: продажи женской одежды..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "remote",
+          "name": "Удаленная работа"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": true,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "REMOTE",
+            "name": "Удалённо"
+          },
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "18",
+            "name": "Бухгалтер"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
         },
         "employment": {
           "id": "full",
@@ -6563,413 +6954,9 @@
         "adv_response_url": null,
         "is_adv_vacancy": false,
         "adv_context": null
-      },
-      {
-        "id": "120407707",
-        "premium": false,
-        "name": "Бухгалтер (на первичную документацию)",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 140000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 140000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": null
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Рябиновая",
-          "building": "44",
-          "lat": 55.674956,
-          "lng": 37.435107,
-          "description": null,
-          "raw": "Москва, Рябиновая, 44",
-          "metro": null,
-          "metro_stations": [],
-          "id": "6140"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-15T11:11:48+0300",
-        "created_at": "2025-07-15T11:11:48+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=120407707",
-        "branding": {
-          "type": "CONSTRUCTOR",
-          "tariff": "BASIC"
-        },
-        "show_logo_in_search": true,
-        "show_contacts": false,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/120407707?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/120407707",
-        "relations": [],
-        "employer": {
-          "id": "9520",
-          "name": "Ликви Моли Руссланд",
-          "url": "https://api.hh.ru/employers/9520",
-          "alternate_url": "https://hh.ru/employer/9520",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1406435.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7245408.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7245409.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=9520",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.2",
-            "reviews_count": 29
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "Опыт работы <highlighttext>бухгалтером</highlighttext> от 1-го года. Образование профильное, не ниже средне-специального. Знания основ законодательства РФ о бухучете. ",
-          "responsibility": "Обработка первичных документов по реализации товаров в программе 1С 8.3. Ввод и обработка изменений первичных документов в программе..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122724445",
-        "premium": false,
-        "name": "Бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 120000,
-          "to": 150000,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 120000,
-          "to": 150000,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Большой Спасоглинищевский переулок",
-          "building": "4",
-          "lat": 55.75709,
-          "lng": 37.634065,
-          "description": null,
-          "raw": "Москва, Большой Спасоглинищевский переулок, 4",
-          "metro": {
-            "station_name": "Китай-город",
-            "line_name": "Калужско-Рижская",
-            "station_id": "6.50",
-            "line_id": "6",
-            "lat": 55.756498,
-            "lng": 37.631326
-          },
-          "metro_stations": [
-            {
-              "station_name": "Китай-город",
-              "line_name": "Калужско-Рижская",
-              "station_id": "6.50",
-              "line_id": "6",
-              "lat": 55.756498,
-              "lng": 37.631326
-            }
-          ],
-          "id": "13195506"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-11T20:56:37+0300",
-        "created_at": "2025-07-11T20:56:37+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122724445",
-        "show_logo_in_search": null,
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122724445?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122724445",
-        "relations": [],
-        "employer": {
-          "id": "4540456",
-          "name": "ФБУ РФЦСЭ при Минюсте России",
-          "url": "https://api.hh.ru/employers/4540456",
-          "alternate_url": "https://hh.ru/employer/4540456",
-          "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1400685.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7222511.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7222512.png"
-          },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=4540456",
-          "accredited_it_employer": false,
-          "employer_rating": {
-            "total_rating": "4.3",
-            "reviews_count": 1
-          },
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "высшее образование по направлениям бухгалтерский учет, анализ и аудит. - опыт работы в должности <highlighttext>бухгалтера</highlighttext> в государственных учреждениях не менее 3...",
-          "responsibility": "Ведение бухгалтерского и налогового учета, работа с первичной документацией. - Формирование и сдача всех видов отчетности, контроль соответствия осуществления хозяйственных операций..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [],
-        "working_hours": [
-          {
-            "id": "HOURS_8",
-            "name": "8 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between3And6",
-          "name": "От 3 до 6 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
-      },
-      {
-        "id": "122776180",
-        "premium": false,
-        "name": "Главный бухгалтер",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
-        "area": {
-          "id": "1",
-          "name": "Москва",
-          "url": "https://api.hh.ru/areas/1"
-        },
-        "salary": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": true
-        },
-        "salary_range": {
-          "from": 250000,
-          "to": null,
-          "currency": "RUR",
-          "gross": true,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
-        },
-        "type": {
-          "id": "open",
-          "name": "Открытая"
-        },
-        "address": {
-          "city": "Москва",
-          "street": "Московское центральное кольцо",
-          "building": "станция Москва-Сити",
-          "lat": 55.74759,
-          "lng": 37.53194,
-          "description": null,
-          "raw": "Москва, Московское центральное кольцо, станция Москва-Сити",
-          "metro": null,
-          "metro_stations": [],
-          "id": "18648383"
-        },
-        "response_url": null,
-        "sort_point_distance": null,
-        "published_at": "2025-07-14T15:29:31+0300",
-        "created_at": "2025-07-14T15:29:31+0300",
-        "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122776180",
-        "show_contacts": true,
-        "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/122776180?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/122776180",
-        "relations": [],
-        "employer": {
-          "id": "12138278",
-          "name": "Спутник ЦФА",
-          "url": "https://api.hh.ru/employers/12138278",
-          "alternate_url": "https://hh.ru/employer/12138278",
-          "logo_urls": null,
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=12138278",
-          "accredited_it_employer": false,
-          "employer_rating": null,
-          "trusted": true
-        },
-        "snippet": {
-          "requirement": "ОБЯЗАТЕЛЕН ОПЫТ В ФИНАНСОВОЙ ОРГАНИЗАЦИИ НЕ МЕНЕЕ 1 ГОДА! Опыт работы связанной с ведением бухгалтерского учета, составлением бухгалтерской (финансовой) отчетности...",
-          "responsibility": "Разработка учётной политики и методики ведения всех участков учёта. Организация системы делопроизводства в <highlighttext>бухгалтерии</highlighttext>, включая электронный документооборот. Проверка контрагентов и..."
-        },
-        "contacts": null,
-        "schedule": {
-          "id": "fullDay",
-          "name": "Полный день"
-        },
-        "working_days": [],
-        "working_time_intervals": [],
-        "working_time_modes": [],
-        "accept_temporary": false,
-        "fly_in_fly_out_duration": [],
-        "work_format": [
-          {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          }
-        ],
-        "working_hours": [
-          {
-            "id": "HOURS_9",
-            "name": "9 часов"
-          }
-        ],
-        "work_schedule_by_days": [
-          {
-            "id": "FIVE_ON_TWO_OFF",
-            "name": "5/2"
-          }
-        ],
-        "night_shifts": false,
-        "professional_roles": [
-          {
-            "id": "18",
-            "name": "Бухгалтер"
-          }
-        ],
-        "accept_incomplete_resumes": false,
-        "experience": {
-          "id": "between1And3",
-          "name": "От 1 года до 3 лет"
-        },
-        "employment": {
-          "id": "full",
-          "name": "Полная занятость"
-        },
-        "employment_form": {
-          "id": "FULL",
-          "name": "Полная"
-        },
-        "internship": false,
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
       }
     ],
-    "found": 4020,
+    "found": 4011,
     "pages": 40,
     "page": 0,
     "per_page": 50,
