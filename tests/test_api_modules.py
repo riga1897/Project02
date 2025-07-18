@@ -15,10 +15,6 @@ from pathlib import Path
 # Добавляем путь к исходному коду
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-
-
-
-
 class TestBaseAPI:
 
     def test_init_with_config(self):
