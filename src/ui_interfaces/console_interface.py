@@ -1528,8 +1528,9 @@ class UserInterface:
                             # Пересчитываем страницы
                             total_pages = (len(vacancies) + page_size - 1) // page_size
                             if current_page > total_pages:
-                                current_page = total_pages                        else:
-                            print("Ошибка при удалении вакансии.")
+                                current_page = total_pages
+                            else:
+                                print("Ошибка при удалении вакансии.")
                     else:
                         print("Удаление отменено.")
                 else:
