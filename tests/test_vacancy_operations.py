@@ -114,7 +114,7 @@ class TestVacancyOperations:
         assert len(result) == 1
         assert result[0].title == "Job 1"
     
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch('src.utils.search_utils.filter_vacancies_by_keyword')
     def test_filter_vacancies_by_multiple_keywords(self, mock_filter):
         """Тест фильтрации по нескольким ключевым словам"""
         vacancies = [
@@ -141,7 +141,7 @@ class TestVacancyOperations:
         
         assert result == vacancies
     
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch('src.utils.search_utils.filter_vacancies_by_keyword')
     def test_search_vacancies_advanced_and(self, mock_filter):
         """Тест продвинутого поиска с оператором AND"""
         vacancies = [self.create_test_vacancy("Test")]
@@ -165,7 +165,7 @@ class TestVacancyOperations:
         
         mock_filter.assert_called_once_with(vacancies, ['python', 'java'])
     
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch('src.utils.search_utils.filter_vacancies_by_keyword')
     def test_search_vacancies_advanced_simple(self, mock_filter):
         """Тест простого продвинутого поиска"""
         vacancies = [self.create_test_vacancy("Test")]
