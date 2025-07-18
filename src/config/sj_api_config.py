@@ -11,8 +11,8 @@ class SJAPIConfig:
 
     def get_params(self, **kwargs) -> Dict[str, Any]:
         """Генерация параметров запроса с учетом переопределений"""
-        # Используем меньший размер страницы для более стабильной работы
-        default_count = kwargs.get("count", min(self.count, 100))
+        # Используем оптимальный размер страницы для стабильной работы
+        default_count = kwargs.get("count", min(self.count, 50))
         
         params = {
             "count": default_count,

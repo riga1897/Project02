@@ -126,6 +126,9 @@ class SuperJobAPI(BaseAPI):
         # Базовые параметры из конфигурации
         params = self.config.get_params(**kwargs)
         params["keyword"] = search_query
+        
+        # Используем более безопасный размер страницы
+        params["count"] = min(params.get("count", 100), 100)
 
         # Проверяем кэш
         cache_key_params = {
@@ -148,14 +151,21 @@ class SuperJobAPI(BaseAPI):
 
         all_vacancies = []
         page = 0
-        max_pages = kwargs.get('max_pages', 10)  # Увеличиваем до 10 страниц (до 5000 вакансий)
+        max_pages = kwargs.get('max_pages', 20)  # Увеличиваем количество страниц
         consecutive_empty_pages = 0
-        max_empty_pages = 2  # Останавливаемся после 2 пустых страниц подряд
+        max_empty_pages = 3  # Увеличиваем терпимость к пустым страницам
+        total_found = 0
 
         while page < max_pages and consecutive_empty_pages < max_empty_pages:
             params["page"] = page
 
             logger.debug(f"Requesting page {page + 1}")
+            
+            # Показываем прогресс
+            if page == 0:
+                print(f"🔍 Загружаем вакансии SuperJob...")
+            else:
+                print(f"📄 Загружаем страницу {page + 1}... (найдено: {len(all_vacancies)})")
 
             response = self._connect_to_api(url, params)
             
@@ -173,18 +183,31 @@ class SuperJobAPI(BaseAPI):
             # Если получили строку - это ошибка
             if isinstance(response, str):
                 logger.error(f"API error on page {page + 1}: {response}")
-                print(f"DEBUG: API Error: {response}")
+                print(f"⚠️  Ошибка на странице {page + 1}: {response}")
                 
                 # Если это первая страница и есть ошибка - прерываем
                 if page == 0:
                     break
                 
-                # Для последующих страниц - пытаемся продолжить с меньшим count
+                # Для последующих страниц - пытаемся продолжить с разными стратегиями
                 if "Connection error" in response and page > 0:
-                    logger.warning(f"Connection error on page {page + 1}, trying with smaller page size")
-                    # Уменьшаем размер страницы
-                    if params.get("count", 500) > 50:
-                        params["count"] = 50
+                    logger.warning(f"Connection error on page {page + 1}, trying recovery strategies")
+                    
+                    # Стратегия 1: Уменьшаем размер страницы
+                    if params.get("count", 100) > 20:
+                        params["count"] = 20
+                        print(f"🔄 Уменьшаем размер страницы до {params['count']} и повторяем...")
+                        continue
+                    
+                    # Стратегия 2: Увеличиваем задержку
+                    print(f"⏳ Увеличиваем задержку и повторяем...")
+                    time.sleep(2)
+                    
+                    # Стратегия 3: Пропускаем эту страницу
+                    if consecutive_empty_pages < max_empty_pages - 1:
+                        consecutive_empty_pages += 1
+                        page += 1
+                        print(f"⏭️  Пропускаем страницу {page}, переходим к следующей...")
                         continue
                 
                 # Если ошибка критическая - останавливаемся
@@ -221,18 +244,32 @@ class SuperJobAPI(BaseAPI):
 
             # Проверяем, есть ли еще страницы
             has_more = response.get("more", False)
-            total_found = response.get("total", 0)
+            if page == 0:  # Сохраняем общее количество с первой страницы
+                total_found = response.get("total", 0)
             
             logger.debug(f"Page {page + 1}: has_more={has_more}, total_found={total_found}, current_total={len(all_vacancies)}")
+            
+            # Показываем прогресс
+            if total_found > 0:
+                progress = min(100, (len(all_vacancies) / total_found) * 100)
+                print(f"📊 Прогресс: {len(all_vacancies)}/{total_found} ({progress:.1f}%)")
             
             # Останавливаемся если API сообщает что больше нет данных
             if not has_more:
                 logger.info(f"API indicates no more pages available. Total processed: {len(all_vacancies)}")
+                print(f"✅ Загрузка завершена - больше страниц нет")
                 break
 
             page += 1
 
         logger.info(f"Total SuperJob vacancies found: {len(all_vacancies)}")
+        
+        # Финальная статистика
+        if total_found > 0:
+            coverage = (len(all_vacancies) / total_found) * 100
+            print(f"📈 Итого загружено: {len(all_vacancies)} из {total_found} ({coverage:.1f}%)")
+        else:
+            print(f"📈 Итого загружено: {len(all_vacancies)} вакансий")
 
         # Сохраняем результаты в кэш
         if all_vacancies:
