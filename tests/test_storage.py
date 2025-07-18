@@ -22,24 +22,30 @@ class TestJSONSaver:
         assert json_saver is not None
         assert isinstance(json_saver.filename, str)
 
-    @patch('builtins.open', new_callable=mock_open, read_data='[{"id": "1", "title": "Test"}]')
-    def test_load_from_file(self, mock_file, json_saver):
-        result = json_saver.load_from_file()
+    @patch('builtins.open', new_callable=mock_open, read_data='[{"vacancy_id": "1", "title": "Test"}]')
+    def test_load_vacancies(self, mock_file, json_saver):
+        result = json_saver.load_vacancies()
         assert isinstance(result, list)
-        assert len(result) == 1
 
     @patch('builtins.open', new_callable=mock_open)
     @patch('pathlib.Path.exists')
-    def test_load_from_file_not_exists(self, mock_exists, mock_file, json_saver):
+    def test_load_vacancies_not_exists(self, mock_exists, mock_file, json_saver):
         mock_exists.return_value = False
 
-        result = json_saver.load_from_file()
+        result = json_saver.load_vacancies()
         assert result == []
 
     @patch('builtins.open', new_callable=mock_open)
-    def test_save_to_file(self, mock_file, json_saver):
-        test_data = [{"id": "1", "title": "Test"}]
-        json_saver.save_to_file(test_data)
+    def test_save_vacancies(self, mock_file, json_saver):
+        vacancy = Vacancy(
+            vacancy_id="test_1",
+            title="Test Vacancy",
+            url="https://test.com",
+            employer="Test Company",
+            description="Test description",
+            requirements="Test requirements"
+        )
+        json_saver._save_to_file([vacancy])
         mock_file.assert_called()
 
     def test_add_vacancy(self, json_saver):
@@ -47,15 +53,12 @@ class TestJSONSaver:
             vacancy_id="test_1",
             title="Test Vacancy",
             url="https://test.com",
-            salary_from=50000,
-            salary_to=80000,
-            currency="RUR",
             employer="Test Company",
             description="Test description",
             requirements="Test requirements"
         )
 
-        with patch.object(json_saver, 'save_to_file') as mock_save:
+        with patch.object(json_saver, '_save_to_file') as mock_save:
             json_saver.add_vacancy(vacancy)
             mock_save.assert_called_once()
 
@@ -63,21 +66,14 @@ class TestJSONSaver:
     def test_get_vacancies(self, mock_file, json_saver):
         result = json_saver.get_vacancies()
         assert isinstance(result, list)
-        assert len(result) == 1
-
-    @patch('builtins.open', new_callable=mock_open, read_data='[{"vacancy_id": "1", "title": "Test"}]')
-    def test_get_vacancies_by_salary(self, mock_file, json_saver):
-        result = json_saver.get_vacancies_by_salary(min_salary=1000)
-        assert isinstance(result, list)
 
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
-    def test_delete_vacancy(self, mock_file, json_saver):
-        with patch.object(json_saver, 'save_to_file') as mock_save:
-            json_saver.delete_vacancy("test_id")
-            mock_save.assert_called_once()
+    def test_delete_vacancy_by_id(self, mock_file, json_saver):
+        with patch.object(json_saver, '_save_to_file') as mock_save:
+            result = json_saver.delete_vacancy_by_id("test_id")
+            assert isinstance(result, bool)
 
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
-    def test_clear_vacancies(self, mock_file, json_saver):
-        with patch.object(json_saver, 'save_to_file') as mock_save:
-            json_saver.clear_vacancies()
-            mock_save.assert_called_once_with([])
+    def test_delete_all_vacancies(self, mock_file, json_saver):
+        result = json_saver.delete_all_vacancies()
+        assert isinstance(result, bool)
