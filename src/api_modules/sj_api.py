@@ -88,7 +88,7 @@ class SuperJobAPI(CachedAPI):
         """Get all vacancies with pagination and validation (адаптировано под паттерн HH API)"""
         try:
             # Initial request for metadata (как в HH API)
-            initial_data = self._connect_to_api(
+            initial_data = self._CachedAPI__connect_to_api(
                 self.BASE_URL,
                 self.config.get_params(
                     keyword=search_query,
