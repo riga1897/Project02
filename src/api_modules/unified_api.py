@@ -121,12 +121,18 @@ class UnifiedAPI:
 
     def clear_all_cache(self) -> None:
         """Очистка кэша всех API"""
+        # Очищаем кэш каждого API отдельно, чтобы ошибка в одном не влияла на другой
         try:
             self.hh_api.clear_cache()
-            self.sj_api.clear_cache()
-            logger.info("Кэш всех API очищен")
+            logger.info("Кэш HH.ru очищен")
         except Exception as e:
-            logger.error(f"Ошибка очистки кэша: {e}")
+            logger.error(f"Ошибка очистки кэша HH.ru: {e}")
+
+        try:
+            self.sj_api.clear_cache()
+            logger.info("Кэш SuperJob очищен")
+        except Exception as e:
+            logger.error(f"Ошибка очистки кэша SuperJob: {e}")
 
     def get_available_sources(self) -> List[str]:
         """Получение списка доступных источников"""
