@@ -80,21 +80,21 @@ class TestFileCache:
 
 class TestEnvLoader:
     
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_exists(self, mock_getenv):
         mock_getenv.return_value = "test_value"
         
         result = EnvLoader.get_env_var("TEST_VAR")
         assert result == "test_value"
     
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_not_exists(self, mock_getenv):
         mock_getenv.return_value = None
         
         result = EnvLoader.get_env_var("TEST_VAR", "default")
         assert result == "default"
     
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_no_default(self, mock_getenv):
         mock_getenv.return_value = None
         
@@ -106,12 +106,18 @@ class TestEnvLoader:
     def test_load_env_file_exists(self, mock_file, mock_exists):
         mock_exists.return_value = True
         
+        # Сбрасываем состояние загрузки для корректного тестирования
+        EnvLoader._loaded = False
+        
         EnvLoader.load_env_file()
         mock_file.assert_called_once()
     
     @patch('os.path.exists')
     def test_load_env_file_not_exists(self, mock_exists):
         mock_exists.return_value = False
+        
+        # Сбрасываем состояние загрузки для корректного тестирования
+        EnvLoader._loaded = False
         
         # Should not raise exception
         EnvLoader.load_env_file()
