@@ -8,7 +8,6 @@ class HHAPIConfig:
         self._default_hh_params = default_hh_params or {
             "area": 113,  # Russia
             "period": 7,
-            "only_with_salary": True,
             "per_page": 50
         }
 
