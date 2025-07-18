@@ -47,13 +47,22 @@ class SuperJobParser:
         Returns:
             Dict[str, Any]: Унифицированный словарь вакансии
         """
+        # Обрабатываем зарплату для корректного отображения
+        salary_dict = None
+        if sj_vacancy.salary:
+            salary_dict = sj_vacancy.salary.to_dict()
+            # Исправляем период для SuperJob
+            if salary_dict and 'period' in salary_dict:
+                if salary_dict['period'] in ['месяц', 'month']:
+                    salary_dict['period'] = 'месяц'
+        
         return {
             "id": sj_vacancy.vacancy_id,
             "name": sj_vacancy.title,
             "title": sj_vacancy.title,
             "url": sj_vacancy.url,
             "alternate_url": sj_vacancy.url,
-            "salary": sj_vacancy.salary.to_dict() if sj_vacancy.salary else None,
+            "salary": salary_dict,
             "description": sj_vacancy.description,
             "requirements": sj_vacancy.requirements,
             "responsibilities": sj_vacancy.responsibilities,

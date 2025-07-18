@@ -1,4 +1,3 @@
-
 from typing import List, Dict, Any, Optional
 import uuid
 from datetime import datetime
@@ -11,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class SuperJobVacancy(AbstractVacancy):
     """Класс для представления вакансии SuperJob"""
-    
+
     def __init__(
         self,
         title: str,
@@ -50,26 +49,35 @@ class SuperJobVacancy(AbstractVacancy):
         self.benefits = benefits
         self.source = source
 
-    def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Salary:
-        """Валидация данных о зарплате для SuperJob"""
+    def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Optional[Salary]:
+        """Валидация и создание объекта зарплаты"""
         if not salary_data:
-            return Salary()
-        
-        # SuperJob использует другую структуру зарплаты
-        payment_from = salary_data.get("payment_from")
-        payment_to = salary_data.get("payment_to")
-        currency = salary_data.get("currency", "rub")
-        
-        # Преобразуем в формат, понятный классу Salary
-        salary_dict = {}
-        if payment_from and payment_from > 0:
-            salary_dict["from"] = payment_from
-        if payment_to and payment_to > 0:
-            salary_dict["to"] = payment_to
-        if currency:
-            salary_dict["currency"] = currency
-        
-        return Salary(salary_dict) if salary_dict else Salary()
+            return None
+
+        try:
+            # Получаем значения зарплаты
+            salary_from = salary_data.get("payment_from")
+            salary_to = salary_data.get("payment_to")
+
+            # Если оба значения равны 0, считаем что зарплата не указана
+            if not salary_from and not salary_to:
+                return None
+
+            # Конвертируем 0 в None для корректного отображения
+            if salary_from == 0:
+                salary_from = None
+            if salary_to == 0:
+                salary_to = None
+
+            return Salary(
+                salary_from=salary_from,
+                salary_to=salary_to,
+                currency="RUB",  # SuperJob всегда использует RUB
+                period="месяц"
+            )
+        except Exception as e:
+            logger.warning(f"Ошибка создания зарплаты: {e}")
+            return None
 
     @staticmethod
     def _parse_datetime(timestamp) -> datetime:
