@@ -1,6 +1,7 @@
 import requests
 import time
 import logging
+import os
 from typing import Dict, List, Union, Optional
 from .base_api import BaseAPI
 from src.config.sj_api_config import SJAPIConfig
@@ -21,11 +22,21 @@ class SuperJobAPI(BaseAPI):
         """
         self.base_url = "https://api.superjob.ru/2.0"
         self.config = config or SJAPIConfig()
+        
+        # Получаем API ключ из переменных окружения или используем тестовый
+        api_key = os.getenv('SUPERJOB_API_KEY', 'v3.r.137440105.example.test_tool')
+        
         self.headers = {
-            "X-Api-App-Id": "v3.r.137440105.example.test_tool",  # Тестовый ключ
+            "X-Api-App-Id": api_key,
             "User-Agent": "VacancySearchApp/1.0"
         }
         self.request_delay = 0.5
+        
+        # Логируем, какой ключ используется (скрываем реальный ключ)
+        if api_key == 'v3.r.137440105.example.test_tool':
+            logger.warning("Используется тестовый API ключ SuperJob. Для полной функциональности добавьте реальный ключ в переменную окружения SUPERJOB_API_KEY")
+        else:
+            logger.info("Используется пользовательский API ключ SuperJob")
 
     def _connect_to_api(self, url: str, params: Dict) -> Union[Dict, str]:
         """

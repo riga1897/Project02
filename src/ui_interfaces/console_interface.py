@@ -52,6 +52,8 @@ class UserInterface:
                     self._delete_saved_vacancies()
                 elif choice == "9":
                     self._clear_api_cache()
+                elif choice == "10":
+                    self._setup_superjob_api()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -84,6 +86,7 @@ class UserInterface:
         print("7. Статистика по ключевым словам")
         print("8. Удалить сохраненные вакансии")
         print("9. Очистить кэш API")
+        print("10. Настройка SuperJob API")
         print("0. Выход")
         print_menu_separator()
 
@@ -97,7 +100,7 @@ class UserInterface:
             return
 
         self.source_selector.display_sources_info(sources)
-        
+
         # Затем вводим поисковый запрос
         query = get_user_input("\nВведите поисковый запрос: ")
 
@@ -461,7 +464,7 @@ class UserInterface:
             sources = self.source_selector.get_user_source_choice()
             if not sources:
                 return
-                
+
             self.source_selector.display_sources_info(sources)
             if confirm_action("Вы уверены, что хотите очистить кэш выбранных источников?"):
                 self.unified_api.clear_cache(sources)
@@ -471,6 +474,36 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при очистке кэша: {e}")
             print(f"Ошибка при очистке кэша: {e}")
+
+    def _setup_superjob_api(self) -> None:
+        """Настройка SuperJob API"""
+        import os
+
+        print("\n" + "="*60)
+        print("НАСТРОЙКА SUPERJOB API")
+        print("="*60)
+
+        current_key = os.getenv('SUPERJOB_API_KEY')
+        if current_key and current_key != 'v3.r.137440105.example.test_tool':
+            print("✅ SuperJob API ключ уже настроен")
+        else:
+            print("❌ SuperJob API ключ не настроен или используется тестовый")
+
+        print("\nДля получения API ключа SuperJob:")
+        print("1. Перейдите на https://api.superjob.ru/register/")
+        print("2. Зарегистрируйте ваше приложение")
+        print("3. Получите Secret key")
+        print("4. Добавьте его в Secrets как SUPERJOB_API_KEY")
+        print("\nИнструкция по добавлению секретов:")
+        print("• Откройте панель Secrets в левом меню")
+        print("• Нажмите 'New Secret'")
+        print("• Введите Key: SUPERJOB_API_KEY")
+        print("• Введите Value: ваш настоящий API ключ")
+        print("• Нажмите 'Add Secret'")
+        print("• Перезапустите приложение")
+        print("\n" + "="*60)
+
+        input("\nНажмите Enter для продолжения...")
 
     def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
         """
