@@ -107,12 +107,15 @@ class SuperJobAPI(BaseAPI):
         params["keyword"] = search_query
 
         logger.info(f"Searching SuperJob vacancies for: '{search_query}'")
+        logger.info(f"Request parameters: {params}")
 
         all_vacancies = []
         page = 0
-        max_pages = kwargs.get('max_pages', 50)  # Увеличиваем количество страниц для SuperJob
+        max_pages = kwargs.get('max_pages', 100)  # Еще больше увеличиваем количество страниц
+        consecutive_empty_pages = 0
+        max_empty_pages = 3  # Останавливаемся после 3 пустых страниц подряд
 
-        while page < max_pages:
+        while page < max_pages and consecutive_empty_pages < max_empty_pages:
             params["page"] = page
 
             logger.debug(f"Requesting page {page + 1}")
@@ -137,19 +140,24 @@ class SuperJobAPI(BaseAPI):
             vacancies = response.get("objects", [])
 
             if not vacancies:
-                logger.info(f"No more vacancies found after page {page}")
-                break
+                consecutive_empty_pages += 1
+                logger.info(f"Empty page {page + 1}, consecutive empty: {consecutive_empty_pages}")
+                if consecutive_empty_pages >= max_empty_pages:
+                    logger.info(f"Stopping after {consecutive_empty_pages} consecutive empty pages")
+                    break
+            else:
+                consecutive_empty_pages = 0  # Сбрасываем счетчик пустых страниц
+                
+                # Добавляем источник к каждой вакансии
+                for vacancy in vacancies:
+                    vacancy["source"] = "superjob.ru"
 
-            # Добавляем источник к каждой вакансии
-            for vacancy in vacancies:
-                vacancy["source"] = "superjob.ru"
-
-            all_vacancies.extend(vacancies)
-            logger.info(f"Page {page + 1}: found {len(vacancies)} vacancies")
+                all_vacancies.extend(vacancies)
+                logger.info(f"Page {page + 1}: found {len(vacancies)} vacancies")
 
             # Проверяем, есть ли еще страницы
-            if not response.get("more", False):
-                logger.info("All pages processed")
+            if not response.get("more", False) and not vacancies:
+                logger.info("API indicates no more pages available")
                 break
 
             page += 1
