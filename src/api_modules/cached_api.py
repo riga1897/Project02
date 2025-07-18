@@ -1,8 +1,8 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, Union
-from abc import ABC
+from typing import Dict, Union, List, Optional
+from abc import ABC, abstractmethod
 
 from .base_api import BaseAPI
 from src.utils.cache import FileCache
@@ -11,82 +11,115 @@ logger = logging.getLogger(__name__)
 
 
 class CachedAPI(BaseAPI, ABC):
-    """Base class with shared caching logic for API modules"""
-    
-    DEFAULT_CACHE_DIR = None  # To be overridden by subclasses
-    
-    def __init__(self, cache_dir: str = None):
-        """Initialize with caching support"""
-        if cache_dir is None and self.DEFAULT_CACHE_DIR is None:
-            raise ValueError("cache_dir must be provided or DEFAULT_CACHE_DIR must be set")
+    """Абстрактный базовый класс для API с кэшированием"""
+
+    def __init__(self, cache_dir: str):
+        """
+        Инициализация базового API с кэшем
+
+        Args:
+            cache_dir: Директория для кэша
+        """
+        super().__init__()
+        self.cache_dir = Path(cache_dir)
+        self._init_cache()
+
+    def _init_cache(self) -> None:
+        """Инициализация кэша"""
+        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        self.cache = FileCache(str(self.cache_dir))
+
+    def _generate_cache_key(self, url: str, params: Dict, api_prefix: str) -> str:
+        """
+        Генерация ключа кэша на основе URL и параметров
+
+        Args:
+            url: URL запроса
+            params: Параметры запроса
+            api_prefix: Префикс API (hh, sj)
+
+        Returns:
+            str: Ключ кэша
+        """
+        import hashlib
         
-        cache_directory = cache_dir or self.DEFAULT_CACHE_DIR
-        self.cache = FileCache(cache_directory)
-        self._init_cache(cache_directory)
-    
-    def _init_cache(self, cache_dir: str) -> None:
-        """Initialize cache directory with validation"""
+        # Сортируем параметры для консистентности
+        sorted_params = sorted(params.items())
+        cache_string = f"{url}_{sorted_params}"
+        
+        # Создаем хэш
+        hash_object = hashlib.md5(cache_string.encode())
+        hash_hex = hash_object.hexdigest()
+        
+        return f"{api_prefix}_{hash_hex}"
+
+    def _connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
+        """
+        Подключение к API с использованием кэша
+
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+            api_prefix: Префикс для кэша
+
+        Returns:
+            Dict: Ответ API
+        """
+        # Генерируем ключ кэша
+        cache_key = self._generate_cache_key(url, params, api_prefix)
+        
+        # Проверяем кэш
+        cached_data = self.cache.get(cache_key)
+        if cached_data is not None:
+            logger.debug(f"Данные получены из кэша: {cache_key}")
+            return cached_data
+        
+        # Если кэш пуст, делаем запрос
         try:
-            Path(cache_dir).mkdir(parents=True, exist_ok=True)
-            logger.info(f"Cache directory initialized: {cache_dir}")
-        except Exception as e:
-            logger.error(f"Failed to initialize cache: {e}")
-            raise
-
-    def _connect_to_api(self, url: str, params: Dict, source_name: str) -> Dict:
-        """Execute API request with caching and enhanced error handling"""
-        cache_key = self._generate_cache_key(params)
-
-        try:
-            # Проверяем кэш
-            cached = self.cache.load_response(source_name, cache_key)
-            if cached and self.validate_response(cached.get("data")):
-                logger.debug(f"Cache hit for {source_name} params: {params}")
-                return cached["data"]
-
-            # Делаем реальный API запрос если кэш отсутствует
-            logger.info(f"Making API request to {url} with params: {params}")
-            response = self.connector.connect(url, params)
-
-            if not self.validate_response(response):
-                logger.error(f"Invalid API response structure: {response}")
-                return self._get_empty_response()
-
+            data = self.connector.connect(url, params)
+            
             # Сохраняем в кэш
-            self.cache.save_response(source_name, cache_key, response)
-            logger.info(f"Response cached for {source_name} params: {params}")
-            return response
-
+            self.cache.set(cache_key, data)
+            logger.debug(f"Данные сохранены в кэш: {cache_key}")
+            
+            return data
+            
         except Exception as e:
-            logger.error(f"API connection failed: {e}")
-            # Попробуем сделать запрос без кэша
-            try:
-                logger.info("Attempting direct API call without cache...")
-                response = self.connector.connect(url, params)
-                if self.validate_response(response):
-                    return response
-            except Exception as e2:
-                logger.error(f"Direct API call also failed: {e2}")
+            logger.error(f"Ошибка API запроса: {e}")
+            # Возвращаем пустой ответ соответствующей структуры
             return self._get_empty_response()
 
-    def _generate_cache_key(self, params: Dict) -> str:
-        """Generate consistent cache key from params"""
-        return str(sorted(params.items()))
-
-    def _get_empty_response(self) -> Dict:
-        """Get empty response structure - to be overridden by subclasses"""
-        return {'items': []}
-    
-    def clear_cache(self, source_name: str) -> None:
+    def clear_cache(self, api_prefix: str) -> None:
         """
-        Очищает кэш API
+        Очистка кэша для конкретного API
 
-        Удаляет все сохраненные ответы API из кэша для освобождения места
-        и обеспечения получения актуальных данных при следующих запросах.
+        Args:
+            api_prefix: Префикс API (hh, sj)
         """
         try:
-            from src.utils.cache_manager import cache_manager
-            cache_manager.clear_cache_for_source(source_name)
-            logger.info(f"Кэш {source_name} очищен")
+            if self.cache_dir.exists():
+                for cache_file in self.cache_dir.glob(f"{api_prefix}_*.json"):
+                    cache_file.unlink()
+                logger.info(f"Кэш {api_prefix} очищен")
         except Exception as e:
-            logger.error(f"Ошибка очистки кэша {source_name}: {e}")
+            logger.error(f"Ошибка очистки кэша {api_prefix}: {e}")
+
+    @abstractmethod
+    def _get_empty_response(self) -> Dict:
+        """Получить пустую структуру ответа для конкретного API"""
+        pass
+
+    @abstractmethod
+    def _validate_vacancy(self, vacancy: Dict) -> bool:
+        """Валидация структуры вакансии для конкретного API"""
+        pass
+
+    @abstractmethod
+    def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
+        """Получить одну страницу вакансий"""
+        pass
+
+    @abstractmethod
+    def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
+        """Получить все вакансии с пагинацией"""
+        pass
