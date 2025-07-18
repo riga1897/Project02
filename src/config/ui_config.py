@@ -58,5 +58,26 @@ class UIPaginationConfig:
         return value
 
 
-# Глобальный экземпляр конфигурации
+@dataclass
+class UIConfig:
+    """Основная конфигурация пользовательского интерфейса"""
+    
+    items_per_page: int = 5
+    max_display_items: int = 20
+    
+    def get_pagination_settings(self, **kwargs) -> dict:
+        """
+        Получить настройки пагинации
+        
+        Returns:
+            Словарь с настройками пагинации
+        """
+        return {
+            'items_per_page': kwargs.get('items_per_page', self.items_per_page),
+            'max_display_items': kwargs.get('max_display_items', self.max_display_items)
+        }
+
+
+# Глобальные экземпляры конфигурации
 ui_pagination_config = UIPaginationConfig()
+ui_config = UIConfig()
