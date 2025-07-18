@@ -1,6 +1,7 @@
+
 #!/usr/bin/env python3
 """
-Модуль для запуска пользовательского интерфейса
+Унифицированное приложение для поиска вакансий на HH.ru и SuperJob
 """
 
 import logging
@@ -8,13 +9,13 @@ from src.ui_interfaces.console_interface import UserInterface
 
 
 def main() -> None:
-    """Точка входа для пользовательского интерфейса"""
+    """Точка входа для унифицированного пользовательского интерфейса"""
     # Настройка логирования
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler("user_interface.log"),
+            logging.FileHandler("unified_interface.log"),
             logging.StreamHandler()
         ]
     )

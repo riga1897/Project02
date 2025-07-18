@@ -1,6 +1,6 @@
 import logging
 from typing import List, Optional
-from src.api_modules.hh_api import HeadHunterAPI
+from src.api_modules.unified_api import UnifiedVacancyAPI
 from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
 from src.utils.ui_paginator import paginate_display
@@ -10,6 +10,7 @@ from src.utils.ui_helpers import (
 )
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
+from src.ui_interfaces.source_selector import SourceSelector
 
 logger = logging.getLogger(__name__)
 
@@ -19,14 +20,15 @@ class UserInterface:
 
     def __init__(self):
         """Инициализация пользовательского интерфейса"""
-        self.hh_api = HeadHunterAPI()
+        self.unified_api = UnifiedVacancyAPI()
         self.json_saver = JSONSaver()
         self.menu_manager = create_main_menu()
         self.vacancy_ops = VacancyOperations()
+        self.source_selector = SourceSelector()
 
     def run(self) -> None:
         """Основной цикл взаимодействия с пользователем"""
-        print_section_header("Добро пожаловать в поисковик вакансий HH.ru!")
+        print_section_header("Добро пожаловать в поисковик вакансий!")
 
         while True:
             try:
@@ -94,16 +96,20 @@ class UserInterface:
         if not query:
             return
 
+        # Выбор источников
+        sources = self.source_selector.get_user_source_choice()
+        if not sources:
+            return
+
+        self.source_selector.display_sources_info(sources)
         print(f"\nИщем вакансии по запросу: '{query}'...")
 
         try:
-            vacancies_data = self.hh_api.get_vacancies(query)
+            vacancies = self.unified_api.get_vacancies(query, sources=sources)
 
-            if not vacancies_data:
+            if not vacancies:
                 print("Вакансии не найдены.")
                 return
-
-            vacancies = Vacancy.cast_to_object_list(vacancies_data)
 
             print(f"\nНайдено {len(vacancies)} вакансий:")
 
@@ -117,7 +123,7 @@ class UserInterface:
         except KeyboardInterrupt:
             print("\nПоиск прерван пользователем.")
             if confirm_action("Очистить кэш от этого запроса?"):
-                self.hh_api.clear_cache()
+                self.unified_api.clear_cache(sources)
                 print("Кэш очищен.")
         except Exception as e:
             logger.error(f"Ошибка при поиске вакансий: {e}")
@@ -450,9 +456,14 @@ class UserInterface:
     def _clear_api_cache(self) -> None:
         """Очистка кэша API"""
         try:
-            if confirm_action("Вы уверены, что хотите очистить кэш API?"):
-                self.hh_api.clear_cache()
-                print("Кэш API успешно очищен.")
+            sources = self.source_selector.get_user_source_choice()
+            if not sources:
+                return
+                
+            self.source_selector.display_sources_info(sources)
+            if confirm_action("Вы уверены, что хотите очистить кэш выбранных источников?"):
+                self.unified_api.clear_cache(sources)
+                print("Кэш выбранных источников успешно очищен.")
             else:
                 print("Очистка кэша отменена.")
         except Exception as e:

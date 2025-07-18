@@ -11,7 +11,7 @@ class Vacancy(AbstractVacancy):
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
         'employment', 'schedule', 'published_at', 'skills', 'keywords',
-        'detailed_description', 'benefits'
+        'detailed_description', 'benefits', 'source'
     )
     def __init__(
         self,
@@ -30,7 +30,8 @@ class Vacancy(AbstractVacancy):
         keywords: Optional[List[str]] = None,
         detailed_description: Optional[str] = None,
         benefits: Optional[str] = None,
-        vacancy_id: Optional[str] = None
+        vacancy_id: Optional[str] = None,
+        source: str = "hh.ru"
     ):
         self.vacancy_id = vacancy_id or str(uuid.uuid4())
         self.title = title
@@ -48,6 +49,7 @@ class Vacancy(AbstractVacancy):
         self.keywords = self._extract_keywords(keywords, description, requirements, responsibilities)
         self.detailed_description = detailed_description or description
         self.benefits = benefits
+        self.source = source
     def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Salary:
         """Приватный метод валидации данных о зарплате"""
         return Salary(salary_data) if salary_data else Salary()
@@ -149,7 +151,8 @@ class Vacancy(AbstractVacancy):
                 published_at=data.get('published_at'),
                 keywords=data.get('keywords'),
                 detailed_description=data.get('detailed_description'),
-                benefits=data.get('benefits'))
+                benefits=data.get('benefits'),
+                source=data.get('source', 'hh.ru'))
 
         except Exception as e:
             logging.error(f"Ошибка создания вакансии из данных: {data}\nОшибка: {e}")
@@ -174,13 +177,15 @@ class Vacancy(AbstractVacancy):
             'skills': self.skills,
             'keywords': self.keywords,
             'detailed_description': self.detailed_description,
-            'benefits': self.benefits
+            'benefits': self.benefits,
+            'source': self.source
         }
     def __str__(self) -> str:
         """Строковое представление вакансии"""
         parts = [
             f"Должность: {self.title}",
             f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
+            f"Источник: {self.source}",
             f"Зарплата: {self.salary}",
             f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
             f"Ссылка: {self.url}"
