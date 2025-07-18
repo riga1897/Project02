@@ -21,9 +21,7 @@ class BaseAPI(ABC):
     @abstractmethod
     def get_vacancies(self, search_query: str, **kwargs):
         """Абстрактный метод получения вакансий"""
-        pass
 
     @abstractmethod
     def clear_cache(self):
         """Абстрактный метод очистки кэша"""
-        pass

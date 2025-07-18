@@ -80,19 +80,16 @@ class CachedAPI(BaseAPI, ABC):
     @abstractmethod
     def _get_empty_response(self) -> Dict:
         """Получить пустую структуру ответа для конкретного API"""
-        pass
 
     @abstractmethod
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """Валидация структуры вакансии для конкретного API"""
-        pass
 
     @abstractmethod
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
         """Получить одну страницу вакансий"""
-        pass
 
     @abstractmethod
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """Получить все вакансии с пагинацией"""
-        pass
+
