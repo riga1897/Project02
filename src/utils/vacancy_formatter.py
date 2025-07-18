@@ -113,7 +113,7 @@ class VacancyFormatter:
             Отформатированная строка с информацией о вакансии
         """
         lines = VacancyFormatter._build_vacancy_lines(vacancy, number)
-        return "\n".join(lines)
+        return "\n".join(lines) + "\n" + "-" * 50
 
     @staticmethod
     def display_vacancy_info(vacancy: Vacancy, number: Optional[int] = None) -> None:

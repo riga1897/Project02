@@ -2,7 +2,7 @@ import logging
 from typing import List, Optional
 from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
-from src.utils.ui_paginator import paginate_display
+from src.utils.ui_navigation import quick_paginate
 from src.utils.ui_helpers import (
     confirm_action, 
     get_user_input,
@@ -159,14 +159,14 @@ class UserInterface:
             show_vacancies = confirm_action("Показать найденные вакансии?")
             if show_vacancies:
                 # Форматируем вакансии для отображения
-                def format_vacancy(vacancy):
-                    return VacancyFormatter.format_vacancy_info(vacancy)
+                def format_vacancy(vacancy, number=None):
+                    return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-                paginate_display(
+                quick_paginate(
                     all_vacancies,
-                    items_per_page=5,
                     formatter=format_vacancy,
-                    header=f"Найденные вакансии по запросу '{query}' из всех источников"
+                    header=f"Найденные вакансии по запросу '{query}' из всех источников",
+                    items_per_page=5
                 )
 
                 # Сохранение только после просмотра
@@ -212,64 +212,17 @@ class UserInterface:
 
             print(f"\nСохраненных вакансий: {len(vacancies)}")
 
-            # Постраничный просмотр с нумерацией
-            def format_vacancy_with_number(vacancy, number):
+            # Форматируем вакансии для отображения
+            def format_vacancy(vacancy, number=None):
                 return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            # Используем пагинацию с нумерацией
-            page_size = 10
-            total_pages = (len(vacancies) + page_size - 1) // page_size
-            current_page = 1
-            
-            while True:
-                # Вычисляем индексы для текущей страницы
-                start_idx = (current_page - 1) * page_size
-                end_idx = min(start_idx + page_size, len(vacancies))
-                current_vacancies = vacancies[start_idx:end_idx]
-                
-                print("\n\nСохраненные вакансии")
-                print("=" * 20)
-                
-                # Всегда отображаем вакансии
-                for i, vacancy in enumerate(current_vacancies, start_idx + 1):
-                    print(format_vacancy_with_number(vacancy, i))
-                
-                # Если только одна страница, просто ждем Enter и выходим
-                if total_pages == 1:
-                    input("\nНажмите Enter для продолжения...")
-                    break
-                
-                # Меню навигации для многостраничного просмотра - внизу
-                print("\n" + "=" * 20)
-                print("Навигация:")
-                print(f"Страница {current_page} из {total_pages}")
-                print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(vacancies)}")
-                print("=" * 20)
-                if current_page > 1:
-                    print("'p' или 'prev' - предыдущая страница")
-                if current_page < total_pages:
-                    print("'n' или 'next' - следующая страница")
-                print("'q' или 'quit' - выход")
-                print("Номер страницы - переход к странице")
-                
-                choice = input("\nВыберите действие: ").strip().lower()
-                
-                if choice in ['q', 'quit']:
-                    break
-                elif choice in ['n', 'next'] and current_page < total_pages:
-                    current_page += 1
-                elif choice in ['p', 'prev'] and current_page > 1:
-                    current_page -= 1
-                elif choice.isdigit():
-                    page_num = int(choice)
-                    if 1 <= page_num <= total_pages:
-                        current_page = page_num
-                    else:
-                        print(f"Некорректный номер страницы. Доступно: 1-{total_pages}")
-                        input("Нажмите Enter для продолжения...")
-                else:
-                    print("Некорректный ввод")
-                    input("Нажмите Enter для продолжения...")
+            # Используем унифицированную навигацию
+            quick_paginate(
+                vacancies,
+                formatter=format_vacancy,
+                header="Сохраненные вакансии",
+                items_per_page=10
+            )
 
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
@@ -303,14 +256,14 @@ class UserInterface:
             print(f"\nТоп {len(top_vacancies)} сохраненных вакансий по зарплате:")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy):
-                return VacancyFormatter.format_vacancy_info(vacancy)
+            def format_vacancy(vacancy, number=None):
+                return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            paginate_display(
+            quick_paginate(
                 top_vacancies,
-                items_per_page=10,
                 formatter=format_vacancy,
-                header=f"Топ {len(top_vacancies)} вакансий по зарплате"
+                header=f"Топ {len(top_vacancies)} вакансий по зарплате",
+                items_per_page=10
             )
 
         except Exception as e:
@@ -341,14 +294,14 @@ class UserInterface:
             print(f"\nНайдено {len(filtered_vacancies)} сохраненных вакансий с ключевым словом '{keyword}':")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy):
-                return VacancyFormatter.format_vacancy_info(vacancy)
+            def format_vacancy(vacancy, number=None):
+                return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            paginate_display(
+            quick_paginate(
                 filtered_vacancies,
-                items_per_page=10,
                 formatter=format_vacancy,
-                header=f"Вакансии с ключевым словом '{keyword}'"
+                header=f"Вакансии с ключевым словом '{keyword}'",
+                items_per_page=10
             )
 
         except Exception as e:
@@ -395,14 +348,14 @@ class UserInterface:
             print(f"Найдено {len(filtered_vacancies)} вакансий:")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy):
-                return VacancyFormatter.format_vacancy_info(vacancy)
+            def format_vacancy(vacancy, number=None):
+                return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            paginate_display(
+            quick_paginate(
                 filtered_vacancies,
-                items_per_page=10,
                 formatter=format_vacancy,
-                header="Результаты расширенного поиска"
+                header="Результаты расширенного поиска",
+                items_per_page=10
             )
 
         except Exception as e:
@@ -469,14 +422,14 @@ class UserInterface:
             print(f"Найдено {len(sorted_vacancies)} вакансий:")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy):
-                return VacancyFormatter.format_vacancy_info(vacancy)
+            def format_vacancy(vacancy, number=None):
+                return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-            paginate_display(
+            quick_paginate(
                 sorted_vacancies,
-                items_per_page=10,
                 formatter=format_vacancy,
-                header="Вакансии по зарплате"
+                header="Вакансии по зарплате",
+                items_per_page=10
             )
 
         except Exception as e:
@@ -519,14 +472,14 @@ class UserInterface:
                     print(f"\nВакансии с ключевым словом '{keyword}':")
 
                     # Постраничный просмотр
-                    def format_vacancy(vacancy):
-                        return VacancyFormatter.format_vacancy_info(vacancy)
+                    def format_vacancy(vacancy, number=None):
+                        return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-                    paginate_display(
+                    quick_paginate(
                         filtered_vacancies,
-                        items_per_page=10,
                         formatter=format_vacancy,
-                        header=f"Вакансии с ключевым словом '{keyword}'"
+                        header=f"Вакансии с ключевым словом '{keyword}'",
+                        items_per_page=10
                     )
             except ValueError:
                 pass
