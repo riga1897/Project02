@@ -167,7 +167,7 @@ class VacancyOperations:
                     current_keyword.append(part)
             if current_keyword:
                 keywords.append(' '.join(current_keyword))
-            
+
             # Для AND ищем вакансии, которые содержат ВСЕ ключевые слова
             result = []
             for vacancy in vacancies:
@@ -195,7 +195,7 @@ class VacancyOperations:
                     current_keyword.append(part)
             if current_keyword:
                 keywords.append(' '.join(current_keyword))
-            
+
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, [kw.strip() for kw in keywords])
         elif ',' in query:
             # Поиск с запятой как разделителем (OR)
@@ -243,7 +243,7 @@ class VacancyOperations:
             bool: True, если ключевое слово найдено
         """
         keyword_lower = keyword.lower()
-        
+
         # Проверяем в заголовке
         if vacancy.title and keyword_lower in vacancy.title.lower():
             return True
@@ -276,3 +276,64 @@ class VacancyOperations:
                         return True
 
         return False
+
+    @staticmethod
+    def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
+        """
+        Отладочная функция для проверки содержимого вакансии при поиске
+
+        Выводит подробную информацию о вакансии и показывает, в каких полях
+        найдено ключевое слово.
+        """
+        print(f"\n=== ОТЛАДКА ПОИСКА: '{keyword}' ===")
+        print(f"Вакансия: {vacancy.name}")
+        print(f"Компания: {vacancy.employer}")
+        print(f"Ключевые слова: {vacancy.keywords}")
+        print(f"URL: {vacancy.url}")
+
+        # Проверяем каждое поле
+        fields_to_check = [
+            ('Название', vacancy.name),
+            ('Описание', vacancy.description),
+            ('Требования', vacancy.requirements),
+            ('Обязанности', vacancy.responsibilities),
+            ('Компания', vacancy.employer),
+        ]
+
+        for field_name, field_value in fields_to_check:
+            if field_value and keyword.lower() in str(field_value).lower():
+                print(f"  ✓ Найдено в поле '{field_name}': ...{str(field_value)[:100]}...")
+
+        print("=" * 50)
+
+    @staticmethod
+    def debug_vacancy_keywords(vacancy: Vacancy) -> None:
+        """
+        Отладочная функция для проверки извлечения ключевых слов
+        """
+        print(f"\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
+        print(f"Вакансия: {vacancy.name}")
+        print(f"URL: {vacancy.url}")
+        print(f"Автоматически извлеченные ключевые слова: {vacancy.keywords}")
+
+        # Показываем текст, из которого извлекались ключевые слова
+        full_text = ' '.join([
+            vacancy.description or '',
+            vacancy.requirements or '',
+            vacancy.responsibilities or ''
+        ]).lower()
+
+        print(f"Полный текст для анализа (первые 200 символов): {full_text[:200]}...")
+
+        # Проверяем конкретные ключевые слова
+        test_keywords = ['excel', '1c', '1с', 'r']
+        for keyword in test_keywords:
+            import re
+            pattern = r'\b' + re.escape(keyword) + r'\b'
+            matches = re.findall(pattern, full_text)
+            if matches:
+                print(f"  ✓ Найдено '{keyword}': {matches}")
+            else:
+                print(f"  ✗ НЕ найдено '{keyword}'")
+
+        print("=" * 50)

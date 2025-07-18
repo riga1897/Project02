@@ -63,6 +63,8 @@ class UserInterface:
                     self._clear_api_cache()
                 elif choice == "10":
                     self._setup_superjob_api()
+                elif choice == "11":
+                    self._debug_vacancy_keywords()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -96,6 +98,7 @@ class UserInterface:
         print("8. Удалить сохраненные вакансии")
         print("9. Очистить кэш API")
         print("10. Настройка SuperJob API")
+        print("11. Отладка ключевых слов вакансии")
         print("0. Выход")
         print_menu_separator()
 
@@ -799,7 +802,7 @@ class UserInterface:
                 if 1 <= vacancy_num <= len(vacancies):
                     vacancy_to_delete = vacancies[vacancy_num - 1]
                     print(f"\nВакансия для удаления:")
-                    print(f"ID: {vacancy_to_delete.vacancy_id}")
+                    print(f"ID: {vacancy_to_delete.vacancyy_id}")
                     print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
                     if vacancy_to_delete.employer:
                         print(f"Компания: {vacancy_to_delete.employer.get('name', 'Не указана')}")
@@ -829,3 +832,58 @@ class UserInterface:
                     print(f"Введите номер от 1 до {len(vacancies)}")
             else:
                 print("Неверный выбор. Попробуйте снова.")
+
+    def _configure_superjob_api(self) -> None:
+        """Настройка SuperJob API"""
+        import os
+
+        print("\n" + "="*60)
+        print("НАСТРОЙКА SUPERJOB API")
+        print("="*60)
+
+        current_key = os.getenv('SUPERJOB_API_KEY')
+        if current_key and current_key != 'v3.r.137440105.example.test_tool':
+            print("✅ SuperJob API ключ уже настроен")
+        else:
+            print("❌ SuperJob API ключ не настроен или используется тестовый")
+
+        print("\nДля получения API ключа SuperJob:")
+        print("1. Перейдите на https://api.superjob.ru/register/")
+        print("2. Зарегистрируйте ваше приложение")
+        print("3. Получите Secret key")
+        print("4. Добавьте его в Secrets как SUPERJOB_API_KEY")
+        print("\nИнструкция по добавлению секретов:")
+        print("• Откройте панель Secrets в левом меню")
+        print("• Нажмите 'New Secret'")
+        print("• Введите Key: SUPERJOB_API_KEY")
+        print("• Введите Value: ваш настоящий API ключ")
+        print("• Нажмите 'Add Secret'")
+        print("• Перезапустите приложение")
+        print("\n" + "="*60)
+
+        input("\nНажмите Enter для продолжения...")
+
+    def _debug_vacancy_keywords(self):
+        """Отладка ключевых слов конкретной вакансии"""
+        print("\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
+
+        vacancies = self.json_saver.get_vacancies()
+        if not vacancies:
+            print("Нет сохраненных вакансий для отладки")
+            return
+
+        print(f"Найдено {len(vacancies)} сохраненных вакансий")
+        vacancy_id = input("Введите ID вакансии для отладки: ").strip()
+
+        target_vacancy = None
+        for vacancy in vacancies:
+            if str(vacancy.vacancy_id) == vacancy_id:
+                target_vacancy = vacancy
+                break
+
+        if not target_vacancy:
+            print(f"Вакансия с ID {vacancy_id} не найдена")
+            return
+
+        from src.utils.vacancy_operations import VacancyOperations
+        VacancyOperations.debug_vacancy_keywords(target_vacancy)

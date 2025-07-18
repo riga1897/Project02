@@ -88,6 +88,8 @@ class Vacancy(AbstractVacancy):
     def _extract_keywords(self, keywords: Optional[List[str]], description: str, 
                          requirements: Optional[str], responsibilities: Optional[str]) -> List[str]:
         """Извлечение ключевых слов из текста вакансии"""
+        import re
+
         if keywords:
             return keywords
 
@@ -116,7 +118,10 @@ class Vacancy(AbstractVacancy):
 
         extracted_keywords = []
         for keyword in tech_keywords:
-            if keyword in full_text:
+            # Используем регулярное выражение для поиска целых слов
+            # \b - граница слова, чтобы избежать ложных совпадений
+            pattern = r'\b' + re.escape(keyword) + r'\b'
+            if re.search(pattern, full_text):
                 extracted_keywords.append(keyword)
 
         return extracted_keywords
@@ -213,37 +218,37 @@ class Vacancy(AbstractVacancy):
             f"Ссылка: {self.url}"
         ]
         return "\n".join(parts)
-    
+
     def __eq__(self, other) -> bool:
         """Сравнение вакансий по ID"""
         if not isinstance(other, Vacancy):
             return False
         return self.vacancy_id == other.vacancy_id
-    
+
     def __lt__(self, other) -> bool:
         """Сравнение по зарплате для сортировки"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary.average < other.salary.average
-    
+
     def __le__(self, other) -> bool:
         """Сравнение по зарплате (меньше или равно)"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary.average <= other.salary.average
-    
+
     def __gt__(self, other) -> bool:
         """Сравнение по зарплате (больше)"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary.average > other.salary.average
-    
+
     def __ge__(self, other) -> bool:
         """Сравнение по зарплате (больше или равно)"""
         if not isinstance(other, Vacancy):
             return NotImplemented
         return self.salary.average >= other.salary.average
-    
+
     def __hash__(self) -> int:
         """Хеш для использования в множествах и словарях"""
         return hash(self.vacancy_id)
