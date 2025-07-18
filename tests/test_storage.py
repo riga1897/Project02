@@ -41,6 +41,7 @@ class TestJSONSaver:
             vacancy_id="test_1",
             title="Test Vacancy",
             url="https://test.com",
+            salary=None,
             employer="Test Company",
             description="Test description",
             requirements="Test requirements"
@@ -53,14 +54,16 @@ class TestJSONSaver:
             vacancy_id="test_1",
             title="Test Vacancy",
             url="https://test.com",
+            salary=None,
             employer="Test Company",
             description="Test description",
             requirements="Test requirements"
         )
 
-        with patch.object(json_saver, '_save_to_file') as mock_save:
-            json_saver.add_vacancy(vacancy)
-            mock_save.assert_called_once()
+        with patch.object(json_saver, 'load_vacancies', return_value=[]):
+            with patch.object(json_saver, '_save_to_file') as mock_save:
+                json_saver.add_vacancy(vacancy)
+                mock_save.assert_called_once()
 
     @patch('builtins.open', new_callable=mock_open, read_data='[{"vacancy_id": "1", "title": "Test"}]')
     def test_get_vacancies(self, mock_file, json_saver):
@@ -69,9 +72,10 @@ class TestJSONSaver:
 
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
     def test_delete_vacancy_by_id(self, mock_file, json_saver):
-        with patch.object(json_saver, '_save_to_file') as mock_save:
-            result = json_saver.delete_vacancy_by_id("test_id")
-            assert isinstance(result, bool)
+        with patch.object(json_saver, 'load_vacancies', return_value=[]):
+            with patch.object(json_saver, '_save_to_file') as mock_save:
+                result = json_saver.delete_vacancy_by_id("test_id")
+                assert isinstance(result, bool)
 
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
     def test_delete_all_vacancies(self, mock_file, json_saver):
