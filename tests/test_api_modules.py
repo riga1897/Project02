@@ -1,4 +1,3 @@
-
 import pytest
 import sys
 from pathlib import Path
@@ -17,34 +16,34 @@ from src.config.api_config import APIConfig
 
 
 class TestBaseAPI:
-    
+
     def test_init_with_config(self):
         from src.config.api_config import APIConfig
         config = APIConfig(user_agent='TestApp')
-        
+
         # Создаем мок класс, наследующий от BaseAPI
         class MockAPI(BaseAPI):
             def get_vacancies(self, search_query: str, **kwargs):
                 return []
-            
+
             def clear_cache(self):
                 pass
-        
+
         api = MockAPI(config)
         assert api.config.user_agent == 'TestApp'
-    
+
     def test_init_without_config(self):
         # Создаем мок класс, наследующий от BaseAPI
         class MockAPI(BaseAPI):
             def get_vacancies(self, search_query: str, **kwargs):
                 return []
-            
+
             def clear_cache(self):
                 pass
-        
+
         api = MockAPI()
         assert api.config.user_agent == "MyVacancyApp/1.0"
-    
+
     def test_abstract_methods(self):
         # Тест что абстрактные методы действительно абстрактные
         with pytest.raises(TypeError):
@@ -52,80 +51,80 @@ class TestBaseAPI:
 
 
 class TestCachedAPI:
-    
+
     @pytest.fixture
     def cached_api_mock(self, tmp_path):
         """Мок CachedAPI для тестирования"""
         class MockCachedAPI(CachedAPI):
             def _get_empty_response(self):
                 return {'items': []}
-            
+
             def _validate_vacancy(self, vacancy):
                 return True
-            
+
             def get_vacancies_page(self, search_query, page=0, **kwargs):
                 return [{'id': f'{page}_1', 'name': 'Test'}]
-            
+
             def get_vacancies(self, search_query, **kwargs):
                 return [{'id': '1', 'name': 'Test'}]
-        
+
         return MockCachedAPI(str(tmp_path))
-    
+
     def test_init_cache(self, cached_api_mock):
         assert cached_api_mock.cache_dir.exists()
         assert hasattr(cached_api_mock, 'cache')
-    
+
     def test_clear_cache(self, cached_api_mock):
         cached_api_mock.clear_cache("test")
         # Проверяем что метод выполняется без ошибок
         assert True
-    
+
     @patch('src.api_modules.cached_api.FileCache')
     def test_cache_operations(self, mock_cache, cached_api_mock):
         # Тестируем кэширование
         mock_cache_instance = mock_cache.return_value
         mock_cache_instance.load_response.return_value = None
-        
+
         # Вызываем защищенный метод через имя с мангулированием
         result = cached_api_mock._CachedAPI__connect_to_api("http://test.com", {}, "test")
         assert isinstance(result, dict)
-    
+
     @patch('src.api_modules.cached_api.FileCache')
     def test_cache_hit(self, mock_cache, cached_api_mock):
         # Тестируем получение данных из кэша
         mock_cache_instance = mock_cache.return_value
         mock_cache_instance.load_response.return_value = {'data': {'items': [{'test': 'cached'}]}}
-        
+
         # Мокаем кэш экземпляра
         cached_api_mock.cache = mock_cache_instance
-        
+
         result = cached_api_mock._CachedAPI__connect_to_api("http://test.com", {}, "test")
         assert result == {'items': [{'test': 'cached'}]}
-    
+
     def test_clear_cache_error(self, cached_api_mock):
         # Тестируем обработку ошибок при очистке кэша
         with patch.object(cached_api_mock.cache, 'clear', side_effect=Exception("Clear error")):
             cached_api_mock.clear_cache("test")
             # Проверяем что ошибка обрабатывается без исключения
             assert True
-    
+
     def test_abstract_methods_cached_api(self):
         # Тест абстрактных методов CachedAPI
         from src.api_modules.cached_api import CachedAPI
-        
+
         with pytest.raises(TypeError):
             CachedAPI("test_dir")  # Нельзя создать экземпляр абстрактного класса
-    
+
     @patch('src.api_modules.cached_api.FileCache')
     def test_cache_connect_api_error_handling(self, mock_cache, cached_api_mock):
         # Тестируем обработку ошибок в __connect_to_api
         mock_cache_instance = mock_cache.return_value
         mock_cache_instance.load_response.return_value = None
-        
+
         # Мокаем connector чтобы бросить исключение
         with patch.object(cached_api_mock, 'connector') as mock_connector:
             mock_connector.connect.side_effect = Exception("API Error")
-            
+
             result = cached_api_mock._CachedAPI__connect_to_api("http://test.com", {}, "test")
             assert result == {'items': []}  # Должен вернуть пустой ответ
 
@@ -165,7 +164,7 @@ class TestHeadHunterAPI:
             'salary': {'from': 100000}
         }
         invalid_vacancy = {'name': 'Test Job'}
-        
+
         assert hh_api._validate_vacancy(valid_vacancy) is True
         assert hh_api._validate_vacancy(invalid_vacancy) is False
 
@@ -181,7 +180,7 @@ class TestHeadHunterAPI:
                 {'invalid': 'vacancy'}  # Будет отфильтрована
             ]
         }
-        
+
         result = hh_api.get_vacancies_page("Python", 0)
         assert len(result) == 1
         assert result[0]['name'] == 'Test'
@@ -189,14 +188,14 @@ class TestHeadHunterAPI:
     @patch('src.api_modules.hh_api.HeadHunterAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_page_error(self, mock_connect, hh_api):
         mock_connect.side_effect = Exception("Error")
-        
+
         result = hh_api.get_vacancies_page("Python", 0)
         assert result == []
 
     @patch('src.api_modules.hh_api.HeadHunterAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_no_found(self, mock_connect, hh_api):
         mock_connect.return_value = {'found': 0, 'items': []}
-        
+
         result = hh_api.get_vacancies("Python")
         assert result == []
 
@@ -209,7 +208,7 @@ class TestHeadHunterAPI:
             'items': []
         }
         mock_get_page.return_value = [{'name': 'Test', 'alternate_url': 'url', 'salary': {}}]
-        
+
         result = hh_api.get_vacancies("Python")
         assert isinstance(result, list)
 
@@ -237,30 +236,30 @@ class TestHeadHunterAPI:
         hh_api.clear_cache()
         # Проверяем что метод выполняется без ошибок
         assert True
-    
+
     @patch('src.api_modules.hh_api.HeadHunterAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_with_timeout(self, mock_connect, hh_api):
         # Тестируем обработку таймаута
         mock_connect.side_effect = ConnectionError("Timeout")
-        
+
         result = hh_api.get_vacancies("Python")
         assert result == []
-        
+
     @patch('src.api_modules.hh_api.HeadHunterAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_with_connection_error(self, mock_connect, hh_api):
         # Тестируем обработку ошибки соединения
         mock_connect.side_effect = Exception("Connection failed")
-        
+
         result = hh_api.get_vacancies("Python")
         assert result == []
-    
+
     @patch('src.api_modules.hh_api.HeadHunterAPI.get_vacancies_page')
     @patch('src.api_modules.hh_api.HeadHunterAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_keyboard_interrupt(self, mock_connect, mock_get_page, hh_api):
         # Тестируем обработку KeyboardInterrupt
         mock_connect.return_value = {'found': 100, 'pages': 5, 'items': []}
         mock_get_page.side_effect = KeyboardInterrupt()
-        
+
         result = hh_api.get_vacancies("Python")
         assert result == []
 
@@ -283,7 +282,7 @@ class TestSuperJobAPI:
             'link': 'https://test.com'
         }
         invalid_vacancy = {'profession': 'Test Job'}
-        
+
         assert sj_api._validate_vacancy(valid_vacancy) is True
         assert sj_api._validate_vacancy(invalid_vacancy) is False
 
@@ -299,7 +298,7 @@ class TestSuperJobAPI:
                 {'invalid': 'vacancy'}  # Будет отфильтрована
             ]
         }
-        
+
         result = sj_api.get_vacancies_page("Python", 0)
         assert len(result) == 1
         assert result[0]['profession'] == 'Test'
@@ -308,14 +307,14 @@ class TestSuperJobAPI:
     @patch('src.api_modules.sj_api.SuperJobAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_page_error(self, mock_connect, sj_api):
         mock_connect.side_effect = Exception("Error")
-        
+
         result = sj_api.get_vacancies_page("Python", 0)
         assert result == []
 
     @patch('src.api_modules.sj_api.SuperJobAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_no_total(self, mock_connect, sj_api):
         mock_connect.return_value = {'total': 0, 'objects': []}
-        
+
         result = sj_api.get_vacancies("Python")
         assert result == []
 
@@ -327,7 +326,7 @@ class TestSuperJobAPI:
             'objects': []
         }
         mock_get_page.return_value = [{'profession': 'Test', 'link': 'url', 'source': 'superjob.ru'}]
-        
+
         result = sj_api.get_vacancies("Python")
         assert isinstance(result, list)
 
@@ -355,42 +354,42 @@ class TestSuperJobAPI:
         sj_api.clear_cache()
         # Проверяем что метод выполняется без ошибок
         assert True
-    
+
     def test_validate_vacancy_missing_required_fields(self, sj_api):
         # Тестируем валидацию с отсутствующими полями
         invalid_vacancy = {'id': 1}  # Нет profession и link
         assert sj_api._validate_vacancy(invalid_vacancy) is False
-        
+
         # Тестируем с None значениями
         invalid_vacancy2 = {'profession': None, 'link': 'test'}
         assert sj_api._validate_vacancy(invalid_vacancy2) is False
-        
+
         # Тестируем с пустыми строками
         invalid_vacancy3 = {'profession': '', 'link': 'test'}
         assert sj_api._validate_vacancy(invalid_vacancy3) is False
-    
+
     @patch('src.api_modules.sj_api.SuperJobAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_connection_error(self, mock_connect, sj_api):
         # Тестируем обработку ошибки соединения
         mock_connect.side_effect = ConnectionError("Connection failed")
-        
+
         result = sj_api.get_vacancies("Python")
         assert result == []
-    
+
     def test_init_with_test_api_key(self):
         # Тестируем инициализацию с тестовым ключом
         with patch.dict('os.environ', {}, clear=True):
             with patch('src.utils.env_loader.EnvLoader.get_env_var', return_value='v3.r.137440105.example.test_tool'):
                 sj_api = SuperJobAPI()
                 assert sj_api is not None
-    
+
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies_page')
     @patch('src.api_modules.sj_api.SuperJobAPI._CachedAPI__connect_to_api')
     def test_get_vacancies_keyboard_interrupt(self, mock_connect, mock_get_page, sj_api):
         # Тестируем обработку KeyboardInterrupt
         mock_connect.return_value = {'total': 100, 'objects': []}
         mock_get_page.side_effect = KeyboardInterrupt()
-        
+
         result = sj_api.get_vacancies("Python")
         assert result == []
 
@@ -433,7 +432,7 @@ class TestUnifiedAPI:
                 'salary': {'from': 100000}, 'employer': {'name': 'HH Company'}
             }
         ]
-        
+
         # Мокаем SJ данные
         mock_sj.return_value = [
             {
@@ -502,60 +501,60 @@ class TestUnifiedAPI:
             unified_api.clear_cache({'hh': True})
             # Проверяем что ошибка обрабатывается
             assert True
-    
+
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
     def test_get_vacancies_sj_conversion_error(self, mock_sj, unified_api):
         # Тестируем ошибку конвертации SJ вакансий
         mock_sj.return_value = [
             {'id': 1, 'profession': 'Test', 'link': 'http://test.com'}
         ]
-        
+
         with patch.object(unified_api.parser, 'parse_vacancies', side_effect=Exception("Parse error")):
             result = unified_api.get_vacancies_from_sources("Python", sources=['sj'])
             assert result == []
-    
+
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
     def test_get_vacancies_sj_no_data(self, mock_sj, unified_api):
         # Тестируем случай когда SJ не возвращает данные
         mock_sj.return_value = []
-        
+
         result = unified_api.get_vacancies_from_sources("Python", sources=['sj'])
         assert result == []
-    
+
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
     def test_get_vacancies_sj_unified_conversion_error(self, mock_sj, unified_api):
         # Тестируем ошибку конвертации в унифицированный формат
         mock_sj.return_value = [
             {'id': 1, 'profession': 'Test', 'link': 'http://test.com'}
         ]
-        
+
         with patch.object(unified_api.parser, 'convert_to_unified_format', side_effect=Exception("Convert error")):
             result = unified_api.get_vacancies_from_sources("Python", sources=['sj'])
             assert result == []
-    
+
     def test_get_sj_vacancies_with_period_conversion(self, unified_api):
         # Тестируем конвертацию параметра period в published для SJ API
         with patch.object(unified_api, 'get_vacancies_from_sources', return_value=[]) as mock_get:
             unified_api.get_sj_vacancies("Python", period=7)
-            
+
             # Проверяем что period конвертируется в published и оба параметра передаются
             mock_get.assert_called_once_with("Python", sources=['sj'], period=7, published=7)
-    
+
     @patch('src.api_modules.hh_api.HeadHunterAPI.get_vacancies')
     def test_get_hh_vacancies_error_logging(self, mock_hh, unified_api):
         # Тестируем логирование ошибок HH API
         mock_hh.side_effect = Exception("HH API Error")
-        
+
         result = unified_api.get_vacancies_from_sources("Python", sources=['hh'])
         assert result == []
-    
+
     @patch('src.vacancies.models.Vacancy.from_dict')  
     @patch('src.api_modules.hh_api.HeadHunterAPI.get_vacancies')
     def test_get_hh_vacancies_conversion_error(self, mock_hh, mock_vacancy, unified_api):
         # Тестируем ошибку конвертации HH вакансий
         mock_hh.return_value = [{'id': '1', 'name': 'Test'}]
         mock_vacancy.side_effect = Exception("Conversion error")
-        
+
         result = unified_api.get_vacancies_from_sources("Python", sources=['hh'])
         assert result == []
 
@@ -563,7 +562,7 @@ class TestUnifiedAPI:
     def test_get_vacancies_from_sources_sj_none_data(self, mock_sj, unified_api):
         # Тестируем случай когда SJ возвращает None (строка 59)
         mock_sj.return_value = None
-        
+
         result = unified_api.get_vacancies_from_sources("Python", sources=['sj'])
         assert result == []
 
@@ -571,9 +570,9 @@ class TestUnifiedAPI:
     def test_get_vacancies_from_sources_period_sync(self, mock_sj, unified_api):
         # Тестируем синхронизацию параметра period (строки 116-117)
         mock_sj.return_value = []
-        
+
         unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=30)
-        
+
         # Проверяем что period был передан как published
         mock_sj.assert_called_once_with("Python", period=30, published=30)
 
@@ -582,7 +581,18 @@ class TestUnifiedAPI:
         with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")) as mock_hh_clear:
             with patch.object(unified_api.sj_api, 'clear_cache') as mock_sj_clear:
                 unified_api.clear_all_cache()
-                # Проверяем что методы были вызваны
+
+                # Проверяем что оба метода были вызваны несмотря на ошибку в первом
+                mock_hh_clear.assert_called_once()
+                mock_sj_clear.assert_called_once()
+
+    def test_clear_all_cache_with_sj_error(self, unified_api):
+        # Тестируем ошибку при очистке SJ кэша (строки 134-135)
+        with patch.object(unified_api.hh_api, 'clear_cache') as mock_hh_clear:
+            with patch.object(unified_api.sj_api, 'clear_cache', side_effect=Exception("SJ clear error")) as mock_sj_clear:
+                unified_api.clear_all_cache()
+
+                # Проверяем что оба метода были вызваны
                 mock_hh_clear.assert_called_once()
                 mock_sj_clear.assert_called_once()
 
@@ -642,11 +652,11 @@ class TestAPIConnector:
         mock_response_429 = Mock()
         mock_response_429.status_code = 429
         mock_response_429.headers = {'Retry-After': '0'}
-        
+
         mock_response_200 = Mock()
         mock_response_200.status_code = 200
         mock_response_200.json.return_value = {'data': 'success'}
-        
+
         mock_get.side_effect = [mock_response_429, mock_response_200]
 
         result = api_connector.connect("https://test.com", {})
@@ -661,21 +671,21 @@ class TestAPIConnector:
 
         with pytest.raises(ConnectionError):
             api_connector.connect("https://test.com", {})
-    
+
     @patch('requests.get')
     def test_connect_generic_exception(self, mock_get, api_connector):
         mock_get.side_effect = Exception("Generic error")
-        
+
         with pytest.raises(ConnectionError, match="Unexpected error"):
             api_connector.connect("https://test.com", {})
-    
+
     @patch('requests.get')
     def test_connect_http_error_no_response(self, mock_get, api_connector):
         import requests
         http_error = requests.HTTPError("HTTP Error")
         http_error.response = None
         mock_get.side_effect = http_error
-        
+
         with pytest.raises(ConnectionError, match="HTTP error \\(no response details\\)"):
             api_connector.connect("https://test.com", {})
 
@@ -684,6 +694,6 @@ class TestAPIConnector:
         # Тестируем RequestException (строка 88)
         import requests
         mock_get.side_effect = requests.RequestException("Request failed")
-        
+
         with pytest.raises(ConnectionError, match="Connection error"):
-            api_connector.connect("https://test.com", {})
+            api_connector.connect("https://test.com", {})```python
