@@ -112,8 +112,9 @@ class TestCachedAPI:
         # Тест абстрактных методов CachedAPI
         from src.api_modules.cached_api import CachedAPI
 
-        with pytest.raises(TypeError):
-            CachedAPI("test_dir")  # Нельзя создать экземпляр абстрактного класса
+        # Проверяем что нельзя создать экземпляр абстрактного класса
+        with pytest.raises(TypeError, match="Can't instantiate abstract class CachedAPI"):
+            CachedAPI("test_dir")
 
     @patch('src.api_modules.cached_api.FileCache')
     def test_cache_connect_api_error_handling(self, mock_cache, cached_api_mock):
