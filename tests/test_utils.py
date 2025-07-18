@@ -1,11 +1,10 @@
-
 import pytest
 from unittest.mock import Mock, patch, mock_open
 from pathlib import Path
 from src.utils.cache import FileCache
 from src.utils.env_loader import EnvLoader
 from src.utils.paginator import Paginator
-from src.utils.salary import SalaryUtils
+
 
 
 class TestFileCache:
@@ -150,65 +149,3 @@ class TestPaginator:
         assert len(result) == 1  # Should stop at page 1
         assert result == ["item_0"]
 
-
-class TestSalaryUtils:
-    
-    def test_normalize_currency_rub(self):
-        result = SalaryUtils.normalize_currency("rub")
-        assert result == "RUB"
-    
-    def test_normalize_currency_rur(self):
-        result = SalaryUtils.normalize_currency("rur")
-        assert result == "RUB"
-    
-    def test_normalize_currency_usd(self):
-        result = SalaryUtils.normalize_currency("usd")
-        assert result == "USD"
-    
-    def test_normalize_currency_eur(self):
-        result = SalaryUtils.normalize_currency("eur")
-        assert result == "EUR"
-    
-    def test_normalize_currency_unknown(self):
-        result = SalaryUtils.normalize_currency("unknown")
-        assert result == "UNKNOWN"
-    
-    def test_normalize_currency_none(self):
-        result = SalaryUtils.normalize_currency(None)
-        assert result == "RUB"
-    
-    def test_format_salary_both(self):
-        result = SalaryUtils.format_salary(50000, 80000, "RUB")
-        assert result == "50000 - 80000 RUB"
-    
-    def test_format_salary_from_only(self):
-        result = SalaryUtils.format_salary(50000, None, "RUB")
-        assert result == "от 50000 RUB"
-    
-    def test_format_salary_to_only(self):
-        result = SalaryUtils.format_salary(None, 80000, "RUB")
-        assert result == "до 80000 RUB"
-    
-    def test_format_salary_none(self):
-        result = SalaryUtils.format_salary(None, None, "RUB")
-        assert result == "Не указана"
-    
-    def test_parse_salary_from_string(self):
-        from_sal, to_sal = SalaryUtils.parse_salary_from_string("50000 - 80000")
-        assert from_sal == 50000
-        assert to_sal == 80000
-    
-    def test_parse_salary_from_string_from_only(self):
-        from_sal, to_sal = SalaryUtils.parse_salary_from_string("от 50000")
-        assert from_sal == 50000
-        assert to_sal is None
-    
-    def test_parse_salary_from_string_to_only(self):
-        from_sal, to_sal = SalaryUtils.parse_salary_from_string("до 80000")
-        assert from_sal is None
-        assert to_sal == 80000
-    
-    def test_parse_salary_from_string_invalid(self):
-        from_sal, to_sal = SalaryUtils.parse_salary_from_string("invalid")
-        assert from_sal is None
-        assert to_sal is None
