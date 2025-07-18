@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Union, Dict, Any, Optional
 import json
 import logging
+import shutil
 from pathlib import Path
 from src.vacancies.models import Vacancy
 
@@ -39,6 +40,27 @@ class JSONSaver:
         file_path = Path(self.filename)
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.touch(exist_ok=True)
+
+    def _backup_corrupted_file(self) -> None:
+        """Создает резервную копию поврежденного файла"""
+        try:
+            from datetime import datetime
+            
+            file_path = Path(self.filename)
+            if file_path.exists():
+                backup_name = f"{file_path.stem}_corrupted_{datetime.now().strftime('%Y%m%d_%H%M%S')}{file_path.suffix}"
+                backup_path = file_path.parent / backup_name
+                
+                import shutil
+                shutil.copy2(file_path, backup_path)
+                logger.info(f"Создана резервная копия поврежденного файла: {backup_path}")
+                
+                # Создаем новый пустой файл
+                with open(self.filename, 'w', encoding='utf-8') as f:
+                    json.dump([], f, ensure_ascii=False, indent=2)
+                logger.info(f"Создан новый пустой файл: {self.filename}")
+        except Exception as e:
+            logger.error(f"Ошибка создания резервной копии: {e}")
 
         from typing import List, Union, Optional
 
@@ -103,10 +125,19 @@ class JSONSaver:
         """Загружает вакансии с улучшенной обработкой ошибок"""
         try:
             with open(self.filename, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+                content = f.read().strip()
+                
+                # Если файл пустой, возвращаем пустой список
+                if not content:
+                    logger.info("Файл пустой, возвращаем пустой список")
+                    return []
+                
+                data = json.loads(content)
 
                 if not isinstance(data, list):
-                    raise ValueError(f"Ожидался список, получен {type(data)}")
+                    logger.warning(f"Ожидался список, получен {type(data)}. Создаем резервную копию и возвращаем пустой список")
+                    self._backup_corrupted_file()
+                    return []
 
                 vacancies = []
                 for item in data:
@@ -125,15 +156,13 @@ class JSONSaver:
         except FileNotFoundError:
             logger.info("Файл не найден, будет создан новый")
             return []
-        except json.JSONDecodeError:
-            logger.error("Ошибка формата файла")
+        except json.JSONDecodeError as e:
+            logger.error(f"Ошибка формата JSON файла: {e}. Создаем резервную копию и возвращаем пустой список")
+            self._backup_corrupted_file()
             return []
         except Exception as e:
-            logger.critical(f"Критическая ошибка загрузки: {e}")
-            raise
-
-        except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.warning(f"Ошибка загрузки файла: {e}")
+            logger.error(f"Ошибка загрузки файла: {e}. Создаем резервную копию и возвращаем пустой список")
+            self._backup_corrupted_file()
             return []
 
     def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[Vacancy]:
