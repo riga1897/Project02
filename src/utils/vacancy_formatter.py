@@ -95,7 +95,7 @@ class VacancyFormatter:
         """
         # Печатаем номер отдельно
         if number:
-            print(f"{number}.")
+            print(f"{number}.\n")
         
         # Печатаем название
         title = vacancy.title or getattr(vacancy, 'name', None) or 'Не указано'

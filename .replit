@@ -1,6 +1,6 @@
 modules = ["python-3.11"]
 [nix]
-packages = ["python39Packages.pytest", "gdb"]
+packages = ["gdb", "python39Packages.pytest"]
 
 [workflows]
 runButton = "Run"
