@@ -154,7 +154,6 @@ class VacancyOperations:
         """
         # Простая обработка AND/OR операторов
         if ' AND ' in query.upper():
-            keywords = [kw.strip() for kw in query.split(' AND ') if 'AND' not in kw.upper()]
             # Разбираем более аккуратно, сохраняя регистр
             parts = query.split()
             keywords = []
@@ -169,9 +168,17 @@ class VacancyOperations:
             if current_keyword:
                 keywords.append(' '.join(current_keyword))
             
-            result = vacancies
-            for keyword in keywords:
-                result = filter_vacancies_by_keyword(result, keyword.strip())
+            # Для AND ищем вакансии, которые содержат ВСЕ ключевые слова
+            result = []
+            for vacancy in vacancies:
+                found_all = True
+                for keyword in keywords:
+                    # Проверяем наличие каждого ключевого слова в вакансии
+                    if not VacancyOperations._vacancy_contains_keyword(vacancy, keyword.strip()):
+                        found_all = False
+                        break
+                if found_all:
+                    result.append(vacancy)
             return result
 
         elif ' OR ' in query.upper():
@@ -222,3 +229,50 @@ class VacancyOperations:
 
         # Сортируем по популярности
         return dict(sorted(keyword_count.items(), key=lambda x: x[1], reverse=True))
+
+    @staticmethod
+    def _vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
+        """
+        Проверяет, содержит ли вакансия указанное ключевое слово
+
+        Args:
+            vacancy: Вакансия для проверки
+            keyword: Ключевое слово для поиска
+
+        Returns:
+            bool: True, если ключевое слово найдено
+        """
+        keyword_lower = keyword.lower()
+        
+        # Проверяем в заголовке
+        if vacancy.title and keyword_lower in vacancy.title.lower():
+            return True
+
+        # Проверяем в ключевых словах
+        if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
+            return True
+
+        # Проверяем в требованиях
+        if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
+            return True
+
+        # Проверяем в обязанностях  
+        if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
+            return True
+
+        # Проверяем в описании
+        if vacancy.description and keyword_lower in vacancy.description.lower():
+            return True
+
+        # Проверяем в детальном описании
+        if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
+            return True
+
+        # Проверяем в навыках
+        if vacancy.skills:
+            for skill in vacancy.skills:
+                if isinstance(skill, dict) and 'name' in skill:
+                    if keyword_lower in skill['name'].lower():
+                        return True
+
+        return False
