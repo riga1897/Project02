@@ -71,7 +71,7 @@ class SuperJobAPI(BaseAPI):
                 return cached["data"]
 
             # Делаем реальный API запрос если кэш отсутствует
-            logger.debug(f"Making API request to {url} with params: {params}")
+            logger.info(f"Making API request to {url} with params: {params}")
             response = self.connector.connect(url, params)
 
             if not self.validate_response(response):
@@ -80,11 +80,19 @@ class SuperJobAPI(BaseAPI):
 
             # Сохраняем в кэш
             self.cache.save_response("sj", cache_key, response)
-            logger.debug(f"Response cached for SJ params: {params}")
+            logger.info(f"Response cached for SJ params: {params}")
             return response
 
         except Exception as e:
             logger.error(f"API connection failed: {e}")
+            # Попробуем сделать запрос без кэша
+            try:
+                logger.info("Attempting direct API call without cache...")
+                response = self.connector.connect(url, params)
+                if self.validate_response(response):
+                    return response
+            except Exception as e2:
+                logger.error(f"Direct API call also failed: {e2}")
             return {'objects': []}
 
     def _generate_cache_key(self, params: Dict) -> str:

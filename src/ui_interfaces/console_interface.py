@@ -113,95 +113,58 @@ class UserInterface:
 
         print(f"\nИщем вакансии по запросу: '{query}'...")
 
-        # Получение вакансий с выбранных источников через UnifiedAPI
+        # Получение вакансий с выбранных источников
         try:
-            print(f"Поиск вакансий по запросу: '{query}'...")
+            all_vacancies = []
 
-            # Определяем источники для поиска
-            selected_sources = []
+            # Получаем вакансии последовательно из каждого источника
             if "hh" in sources:
-                selected_sources.append("hh")
+                print("Получение вакансий с HH.ru...")
+                hh_vacancies = self.unified_api.get_hh_vacancies(query)
+                if hh_vacancies:
+                    all_vacancies.extend(hh_vacancies)
+                    print(f"Найдено {len(hh_vacancies)} вакансий на HH.ru")
+                else:
+                    print("Вакансии на HH.ru не найдены")
+
             if "sj" in sources:
-                selected_sources.append("sj")
-
-            if not selected_sources:
-                print("Не выбран ни один источник для поиска.")
-                return
-
-            # Получаем вакансии из кэша API
-            all_vacancies = self.unified_api.get_vacancies_from_sources(query, selected_sources)
+                print("Получение вакансий с SuperJob...")
+                sj_vacancies = self.unified_api.get_sj_vacancies(query)
+                if sj_vacancies:
+                    all_vacancies.extend(sj_vacancies)
+                    print(f"Найдено {len(sj_vacancies)} вакансий на SuperJob")
+                else:
+                    print("Вакансии на SuperJob не найдены")
 
             if not all_vacancies:
-                print("Вакансии не найдены.")
+                print("Вакансии не найдены ни на одном из источников.")
                 return
 
-            # Показываем статистику по источникам
-            hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
-            sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
+            print(f"\nВсего найдено {len(all_vacancies)} вакансий")
 
-            print(f"\nПоиск завершен. Всего найдено: {len(all_vacancies)} вакансий")
-            if hh_count > 0:
-                print(f"  • HH.ru: {hh_count} вакансий")
-            if sj_count > 0:
-                print(f"  • SuperJob: {sj_count} вакансий")
+            # Предпросмотр всех найденных вакансий
+            if confirm_action("Показать найденные вакансии?"):
+                # Форматируем вакансии для отображения
+                def format_vacancy(vacancy):
+                    return display_vacancy_info(vacancy)
 
-            # Показываем предварительный просмотр вакансий
-            print(f"\nПредварительный просмотр найденных вакансий:")
-            print("=" * 60)
-            
-            # Показываем до 10 первых вакансий для предварительного просмотра
-            preview_count = min(10, len(all_vacancies))
-            for i, vacancy in enumerate(all_vacancies[:preview_count], 1):
-                print(f"\n{i}. {vacancy.title or 'Без названия'}")
-                if vacancy.employer:
-                    company_name = vacancy.employer.get('name', 'Не указана') if isinstance(vacancy.employer, dict) else str(vacancy.employer)
-                    print(f"   Компания: {company_name}")
-                if vacancy.salary:
-                    print(f"   Зарплата: {vacancy.salary}")
-                else:
-                    print("   Зарплата: Не указана")
-                print(f"   Источник: {vacancy.source}")
-                print(f"   Ссылка: {vacancy.url}")
-                print("-" * 40)
+                paginate_display(
+                    all_vacancies,
+                    items_per_page=5,
+                    formatter=format_vacancy,
+                    header=f"Найденные вакансии по запросу '{query}' из всех источников"
+                )
 
-            if len(all_vacancies) > preview_count:
-                print(f"\n... и еще {len(all_vacancies) - preview_count} вакансий")
-
-            # Спрашиваем пользователя о сохранении
-            print("\n" + "=" * 60)
-            save_choice = input(f"Сохранить {len(all_vacancies)} найденных вакансий в файл? (y/n): ").strip().lower()
-            
-            if save_choice in ['y', 'yes', 'да', 'д']:
-                # Сохраняем найденные вакансии в файл через интерфейс
-                try:
-                    update_messages = self.json_saver.add_vacancy(all_vacancies)
-                    
-                    # Показываем сообщения об обновлениях
-                    if update_messages:
-                        new_count = sum(1 for msg in update_messages if "Добавлена новая вакансия" in msg)
-                        updated_count = len(update_messages) - new_count
-                        
-                        if new_count > 0:
-                            print(f"✅ Добавлено новых вакансий: {new_count}")
-                        if updated_count > 0:
-                            print(f"🔄 Обновлено существующих вакансий: {updated_count}")
-                        
-                        print("✅ Вакансии успешно сохранены!")
-                    else:
-                        print("ℹ️  Все найденные вакансии уже существуют в базе")
-                        
-                except Exception as save_error:
-                    logger.error(f"Ошибка сохранения вакансий в файл: {save_error}")
-                    print(f"❌ Ошибка сохранения: {save_error}")
-                    print("Вакансии остались в кэше API и будут доступны до очистки кэша.")
+            # Сохранение
+            if confirm_action("Сохранить найденные вакансии?"):
+                saved_count = self.json_saver.add_vacancy(all_vacancies)
+                print(f"Сохранено {saved_count} вакансий")
             else:
-                print("❌ Сохранение отменено. Вакансии остались в кэше API.")
-                print("Вы можете найти их снова или очистить кэш через соответствующий пункт меню.")
+                print("Вакансии не сохранены")
 
         except Exception as e:
-            print(f"Ошибка при поиске вакансий: {e}")
-            logger.error(f"Ошибка в search_vacancies: {e}")
-            return
+            logger.error(f"Ошибка поиска вакансий: {e}")
+            print(f"Произошла ошибка при поиске: {e}")
 
     def _show_saved_vacancies(self) -> None:
         """Отображение сохраненных вакансий с постраничным просмотром"""
