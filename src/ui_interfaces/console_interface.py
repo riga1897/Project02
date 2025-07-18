@@ -56,15 +56,11 @@ class UserInterface:
                 elif choice == "6":
                     self._filter_saved_vacancies_by_salary()
                 elif choice == "7":
-                    self._show_keywords_statistics()
-                elif choice == "8":
                     self._delete_saved_vacancies()
-                elif choice == "9":
+                elif choice == "8":
                     self._clear_api_cache()
-                elif choice == "10":
+                elif choice == "9":
                     self._setup_superjob_api()
-                elif choice == "11":
-                    self._debug_vacancy_keywords()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -94,11 +90,9 @@ class UserInterface:
         print("4. Поиск в сохраненных вакансиях по ключевому слову")
         print("5. Расширенный поиск (несколько ключевых слов)")
         print("6. Фильтр сохраненных вакансий по зарплате")
-        print("7. Статистика по ключевым словам")
-        print("8. Удалить сохраненные вакансии")
-        print("9. Очистить кэш API")
-        print("10. Настройка SuperJob API")
-        print("11. Отладка ключевых слов вакансии")
+        print("7. Удалить сохраненные вакансии")
+        print("8. Очистить кэш API")
+        print("9. Настройка SuperJob API")
         print("0. Выход")
         print_menu_separator()
 
@@ -435,58 +429,6 @@ class UserInterface:
         except Exception as e:
             logger.error(f"Ошибка при фильтрации по зарплате: {e}")
             print(f"Ошибка при фильтрации: {e}")
-
-    def _show_keywords_statistics(self) -> None:
-        """Показать статистику по ключевым словам"""
-        try:
-            vacancies = self.json_saver.get_vacancies()
-
-            if not vacancies:
-                print("Нет сохраненных вакансий.")
-                return
-
-            keywords_stats = self.vacancy_ops.get_vacancy_keywords_summary(vacancies)
-
-            if not keywords_stats:
-                print("Ключевые слова не найдены в сохраненных вакансиях.")
-                return
-
-            print(f"\nСтатистика по ключевым словам (всего вакансий: {len(vacancies)}):")
-            print("-" * 50)
-
-            # Показываем топ-20 ключевых слов
-            for i, (keyword, count) in enumerate(list(keywords_stats.items())[:20], 1):
-                percentage = (count / len(vacancies)) * 100
-                print(f"{i:2}. {keyword:<20} - {count:3} вакансий ({percentage:.1f}%)")
-
-            if len(keywords_stats) > 20:
-                print(f"\n... и еще {len(keywords_stats) - 20} ключевых слов")
-
-            # Предлагаем поиск по популярным ключевым словам
-            print("\nВыберите ключевое слово для поиска (введите номер) или 0 для возврата:")
-            try:
-                choice = int(input("Ваш выбор: "))
-                if 1 <= choice <= min(20, len(keywords_stats)):
-                    keyword = list(keywords_stats.keys())[choice - 1]
-                    filtered_vacancies = filter_vacancies_by_keyword(vacancies, keyword)
-                    print(f"\nВакансии с ключевым словом '{keyword}':")
-
-                    # Постраничный просмотр
-                    def format_vacancy(vacancy, number=None):
-                        return VacancyFormatter.format_vacancy_info(vacancy, number)
-
-                    quick_paginate(
-                        filtered_vacancies,
-                        formatter=format_vacancy,
-                        header=f"Вакансии с ключевым словом '{keyword}'",
-                        items_per_page=10
-                    )
-            except ValueError:
-                pass
-
-        except Exception as e:
-            logger.error(f"Ошибка при показе статистики: {e}")
-            print(f"Ошибка при загрузке статистики: {e}")
 
     def _delete_saved_vacancies(self) -> None:
         """Удаление сохраненных вакансий"""
@@ -852,7 +794,7 @@ class UserInterface:
         """Настройка SuperJob API"""
         import os
 
-        print("\n" + "="*60)
+        print("\n" + "="*60)```python
         print("НАСТРОЙКА SUPERJOB API")
         print("="*60)
 
@@ -877,28 +819,3 @@ class UserInterface:
         print("\n" + "="*60)
 
         input("\nНажмите Enter для продолжения...")
-
-    def _debug_vacancy_keywords(self):
-        """Отладка ключевых слов конкретной вакансии"""
-        print("\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
-
-        vacancies = self.json_saver.get_vacancies()
-        if not vacancies:
-            print("Нет сохраненных вакансий для отладки")
-            return
-
-        print(f"Найдено {len(vacancies)} сохраненных вакансий")
-        vacancy_id = input("Введите ID вакансии для отладки: ").strip()
-
-        target_vacancy = None
-        for vacancy in vacancies:
-            if str(vacancy.vacancy_id) == vacancy_id:
-                target_vacancy = vacancy
-                break
-
-        if not target_vacancy:
-            print(f"Вакансия с ID {vacancy_id} не найдена")
-            return
-
-        from src.utils.vacancy_operations import VacancyOperations
-        VacancyOperations.debug_vacancy_keywords(target_vacancy)

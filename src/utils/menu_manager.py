@@ -106,12 +106,10 @@ def create_main_menu() -> MenuManager:
     menu.add_menu_item("5", "Расширенный поиск (несколько ключевых слов)", None)
     menu.add_menu_item("6", "Фильтр сохраненных вакансий по зарплате", None)
     
-    # Группа аналитики
-    menu.add_menu_item("7", "Статистика по ключевым словам", None)
-    
     # Группа управления данными
-    menu.add_menu_item("8", "Удалить сохраненные вакансии", None)
-    menu.add_menu_item("9", "Очистить кэш API", None)
+    menu.add_menu_item("7", "Удалить сохраненные вакансии", None)
+    menu.add_menu_item("8", "Очистить кэш API", None)
+    menu.add_menu_item("9", "Настройка SuperJob API", None)
     
     return menu
 
