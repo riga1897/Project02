@@ -242,8 +242,9 @@ class UserInterface:
                     input("\nНажмите Enter для продолжения...")
                     break
                 
-                # Меню навигации для многостраничного просмотра
-                print("\nНавигация:")
+                # Меню навигации для многостраничного просмотра - внизу
+                print("\n" + "=" * 20)
+                print("Навигация:")
                 if current_page > 1:
                     print("'p' или 'prev' - предыдущая страница")
                 if current_page < total_pages:
