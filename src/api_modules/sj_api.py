@@ -121,6 +121,11 @@ class SuperJobAPI(BaseAPI):
 
         logger.info(f"Searching SuperJob vacancies for: '{search_query}'")
         logger.info(f"Request parameters: {params}")
+        
+        # Добавляем отладочную информацию
+        print(f"DEBUG: SuperJob API URL: {url}")
+        print(f"DEBUG: SuperJob API params: {params}")
+        print(f"DEBUG: SuperJob API headers: {self.headers}")
 
         all_vacancies = []
         page = 0
@@ -134,10 +139,22 @@ class SuperJobAPI(BaseAPI):
             logger.debug(f"Requesting page {page + 1}")
 
             response = self._connect_to_api(url, params)
+            
+            # Добавляем отладочную информацию о ответе
+            print(f"DEBUG: Response type: {type(response)}")
+            if isinstance(response, dict):
+                print(f"DEBUG: Response keys: {list(response.keys())}")
+                print(f"DEBUG: Total found: {response.get('total', 'N/A')}")
+                print(f"DEBUG: More available: {response.get('more', 'N/A')}")
+                if response.get('objects'):
+                    print(f"DEBUG: Objects count: {len(response.get('objects', []))}")
+                else:
+                    print("DEBUG: No 'objects' key or empty objects")
 
             # Если получили строку - это ошибка
             if isinstance(response, str):
                 logger.error(f"API error on page {page + 1}: {response}")
+                print(f"DEBUG: API Error: {response}")
                 break
 
             # Проверяем, что ответ является словарем и содержит данные
@@ -148,6 +165,7 @@ class SuperJobAPI(BaseAPI):
             if not response.get("objects") and page == 0:
                 logger.warning(f"No 'objects' key in response on page {page + 1}")
                 logger.debug(f"Response keys: {list(response.keys())}")
+                print(f"DEBUG: Full response: {response}")
                 break
 
             vacancies = response.get("objects", [])
