@@ -171,15 +171,29 @@ class UserInterface:
 
                 # Сохранение только после просмотра
                 if confirm_action("Сохранить просмотренные вакансии?"):
-                    saved_count = self.json_saver.add_vacancy(all_vacancies)
-                    print(f"Сохранено {len(all_vacancies)} вакансий")
+                    update_messages = self.json_saver.add_vacancy(all_vacancies)
+                    if update_messages:
+                        print(f"Обработано {len(all_vacancies)} вакансий:")
+                        for message in update_messages[:5]:  # Показываем первые 5 сообщений
+                            print(f"  • {message}")
+                        if len(update_messages) > 5:
+                            print(f"  ... и еще {len(update_messages) - 5} операций")
+                    else:
+                        print("Вакансии уже существуют в базе данных")
                 else:
                     print("Вакансии не сохранены")
             else:
                 # Если не показывали вакансии, все равно предлагаем сохранить
                 if confirm_action("Сохранить найденные вакансии без просмотра?"):
-                    saved_count = self.json_saver.add_vacancy(all_vacancies)
-                    print(f"Сохранено {len(all_vacancies)} вакансий")
+                    update_messages = self.json_saver.add_vacancy(all_vacancies)
+                    if update_messages:
+                        print(f"Обработано {len(all_vacancies)} вакансий:")
+                        for message in update_messages[:5]:  # Показываем первые 5 сообщений
+                            print(f"  • {message}")
+                        if len(update_messages) > 5:
+                            print(f"  ... и еще {len(update_messages) - 5} операций")
+                    else:
+                        print("Вакансии уже существуют в базе данных")
                 else:
                     print("Вакансии не сохранены")
 
