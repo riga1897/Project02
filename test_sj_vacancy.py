@@ -77,10 +77,13 @@ def test_specific_vacancy():
         
         print(f"\n=== Анализ текстовых полей ===")
         for field_name, field_value in text_fields.items():
+            # Обрабатываем случай, когда field_value может быть None
+            if field_value is None:
+                field_value = ''
             print(f"{field_name}: {len(field_value)} символов")
         
-        # Объединяем весь текст
-        all_text = ' '.join(text_fields.values()).lower()
+        # Объединяем весь текст (фильтруем None значения)
+        all_text = ' '.join(str(value) if value is not None else '' for value in text_fields.values()).lower()
         print(f"Общий объем текста: {len(all_text)} символов")
         
         # Проверяем ключевые слова

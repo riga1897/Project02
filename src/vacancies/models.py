@@ -95,12 +95,12 @@ class Vacancy(AbstractVacancy):
 
         # Автоматическое извлечение ключевых слов
         text_parts = [description or ""]
-        if requirements:
+        if requirements and isinstance(requirements, str):
             text_parts.append(requirements)
-        if responsibilities:
+        if responsibilities and isinstance(responsibilities, str):
             text_parts.append(responsibilities)
 
-        full_text = " ".join(text_parts).lower()
+        full_text = " ".join(str(part) if part is not None else "" for part in text_parts).lower()
 
         # Популярные IT-навыки и технологии
         tech_keywords = [
