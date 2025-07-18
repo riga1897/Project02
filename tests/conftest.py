@@ -4,7 +4,6 @@ from unittest.mock import patch
 from pathlib import Path
 import tempfile
 
-from src.config.api_config import APIConfig
 from src.vacancies.models import Vacancy
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
