@@ -72,9 +72,27 @@ class SuperJobVacancy(AbstractVacancy):
         return Salary(salary_dict) if salary_dict else Salary()
 
     @staticmethod
-    def _parse_datetime(timestamp: int) -> datetime:
-        """Парсинг времени из timestamp SuperJob"""
-        return datetime.fromtimestamp(timestamp)
+    def _parse_datetime(timestamp) -> datetime:
+        """Парсинг времени из timestamp или строки SuperJob"""
+        if isinstance(timestamp, int):
+            return datetime.fromtimestamp(timestamp)
+        elif isinstance(timestamp, str):
+            # Обработка строкового формата даты SuperJob
+            try:
+                # Попробуем несколько форматов
+                for fmt in ['%Y-%m-%dT%H:%M:%S', '%Y-%m-%dT%H:%M:%S%z']:
+                    try:
+                        return datetime.strptime(timestamp, fmt)
+                    except ValueError:
+                        continue
+                # Если не удалось распарсить, используем текущее время
+                logger.warning(f"Не удалось распарсить дату: {timestamp}")
+                return datetime.now()
+            except Exception as e:
+                logger.error(f"Ошибка парсинга даты {timestamp}: {e}")
+                return datetime.now()
+        else:
+            return datetime.now()
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'SuperJobVacancy':

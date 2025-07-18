@@ -58,26 +58,48 @@ class Vacancy(AbstractVacancy):
         """Очистка HTML-тегов из текста"""
         import re
         return re.sub(r'<[^>]+>', '', text)
-    @staticmethod
-    def _parse_datetime(dt_str: str) -> datetime:
-        """Парсинг даты из строки"""
-        return datetime.strptime(dt_str, "%Y-%m-%dT%H:%M:%S%z")
-    
+    def _parse_datetime(self, published_at_str: str) -> datetime:
+        """Парсинг строки с датой и временем в объект datetime"""
+        if not published_at_str:
+            return datetime.now()
+
+        try:
+            # Попробуем разные форматы даты
+            formats = [
+                '%Y-%m-%dT%H:%M:%S%z',  # '2024-01-15T10:30:45+0300'
+                '%Y-%m-%dT%H:%M:%S',    # '2024-01-15T10:30:45'
+                '%Y-%m-%d %H:%M:%S',    # '2024-01-15 10:30:45'
+            ]
+
+            for fmt in formats:
+                try:
+                    return datetime.strptime(published_at_str, fmt)
+                except ValueError:
+                    continue
+
+            # Если ни один формат не подошел
+            logging.warning(f"Не удалось распарсить дату '{published_at_str}', используем текущее время")
+            return datetime.now()
+
+        except Exception as e:
+            logging.error(f"Ошибка парсинга даты '{published_at_str}': {e}")
+            return datetime.now()
+
     def _extract_keywords(self, keywords: Optional[List[str]], description: str, 
                          requirements: Optional[str], responsibilities: Optional[str]) -> List[str]:
         """Извлечение ключевых слов из текста вакансии"""
         if keywords:
             return keywords
-        
+
         # Автоматическое извлечение ключевых слов
         text_parts = [description or ""]
         if requirements:
             text_parts.append(requirements)
         if responsibilities:
             text_parts.append(responsibilities)
-        
+
         full_text = " ".join(text_parts).lower()
-        
+
         # Популярные IT-навыки и технологии
         tech_keywords = [
             'python', 'java', 'javascript', 'react', 'angular', 'vue', 'node.js',
@@ -91,12 +113,12 @@ class Vacancy(AbstractVacancy):
             'ai', 'data science', 'big data', 'spark', 'hadoop', 'kafka',
             'elasticsearch', 'kibana', 'prometheus', 'grafana', 'nginx', 'apache'
         ]
-        
+
         extracted_keywords = []
         for keyword in tech_keywords:
             if keyword in full_text:
                 extracted_keywords.append(keyword)
-        
+
         return extracted_keywords
     @classmethod
     def cast_to_object_list(cls, data):
