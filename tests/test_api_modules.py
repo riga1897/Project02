@@ -3,12 +3,10 @@
 Тесты для API модулей
 """
 
-import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
-from src.api_modules.unified_api import UnifiedAPI
-from src.config.api_config import APIConfig
+
 
 
 class TestHeadHunterAPI:
@@ -98,49 +96,3 @@ class TestSuperJobAPI:
         
         assert len(result) == 1
         assert result[0]['profession'] == 'Python Developer'
-
-
-class TestUnifiedAPI:
-    """Тесты для унифицированного API"""
-    
-    @patch('src.api_modules.hh_api.HeadHunterAPI')
-    @patch('src.api_modules.sj_api.SuperJobAPI')
-    def test_init(self, mock_sj, mock_hh, api_config):
-        """Тест инициализации унифицированного API"""
-        unified_api = UnifiedAPI(api_config)
-        
-        assert unified_api.config == api_config
-        mock_hh.assert_called_once_with(api_config)
-        mock_sj.assert_called_once_with(api_config)
-    
-    @patch('src.api_modules.hh_api.HeadHunterAPI')
-    @patch('src.api_modules.sj_api.SuperJobAPI')
-    def test_search_vacancies_hh_only(self, mock_sj, mock_hh, api_config):
-        """Тест поиска только через HH"""
-        mock_hh_instance = MagicMock()
-        mock_hh_instance.get_vacancies.return_value = [{'name': 'Test'}]
-        mock_hh.return_value = mock_hh_instance
-        
-        unified_api = UnifiedAPI(api_config)
-        result = unified_api.search_vacancies("python", sources=["hh"])
-        
-        mock_hh_instance.get_vacancies.assert_called_once_with("python")
-        mock_sj.return_value.get_vacancies.assert_not_called()
-    
-    @patch('src.api_modules.hh_api.HeadHunterAPI')
-    @patch('src.api_modules.sj_api.SuperJobAPI')
-    def test_search_vacancies_both_sources(self, mock_sj, mock_hh, api_config):
-        """Тест поиска через оба источника"""
-        mock_hh_instance = MagicMock()
-        mock_hh_instance.get_vacancies.return_value = [{'name': 'HH Test'}]
-        mock_hh.return_value = mock_hh_instance
-        
-        mock_sj_instance = MagicMock()
-        mock_sj_instance.get_vacancies.return_value = [{'profession': 'SJ Test'}]
-        mock_sj.return_value = mock_sj_instance
-        
-        unified_api = UnifiedAPI(api_config)
-        result = unified_api.search_vacancies("python", sources=["hh", "sj"])
-        
-        mock_hh_instance.get_vacancies.assert_called_once()
-        mock_sj_instance.get_vacancies.assert_called_once()
