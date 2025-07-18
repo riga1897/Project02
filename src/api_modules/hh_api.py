@@ -137,4 +137,5 @@ class HeadHunterAPI(BaseAPI):
         Удаляет все сохраненные ответы API из кэша для освобождения места
         и обеспечения получения актуальных данных при следующих запросах.
         """
-        self.cache.clear_cache()
+        from src.utils.cache_manager import cache_manager
+        cache_manager.clear_cache_for_source("hh")

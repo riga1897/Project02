@@ -229,67 +229,7 @@ def get_vacancy_keywords_summary(vacancies: List[Vacancy]) -> Dict[str, int]:
     return VacancyOperations.get_vacancy_keywords_summary(vacancies)
 
 
-def display_vacancy_info(vacancy: Vacancy, number: int) -> None:
-    """
-    Отображение расширенной информации об одной вакансии
 
-    Args:
-        vacancy: Вакансия для отображения
-        number: Номер вакансии в списке
-    """
-    title = vacancy.title if vacancy.title and vacancy.title.strip() else "Не указано"
-    print(f"\n{number}.")
-    print(f"Название: {title}")
-    print(f"ID: {vacancy.vacancy_id}")
-
-    if vacancy.employer:
-        company = vacancy.employer.get('name', 'Не указана')
-        print(f"Компания: {company}")
-    else:
-        print(f"Компания: Не указана")
-
-    if vacancy.salary and hasattr(vacancy.salary, '__str__'):
-        print(f"Зарплата: {vacancy.salary}")
-    else:
-        print(f"Зарплата: Зарплата не указана")
-
-    if vacancy.experience:
-        print(f"Опыт: {vacancy.experience}")
-
-    if vacancy.url:
-        print(f"Ссылка: {vacancy.url}")
-
-    # Показываем ключевые слова
-    if vacancy.keywords:
-        keywords_str = ", ".join(vacancy.keywords[:10])  # Показываем первые 10
-        if len(vacancy.keywords) > 10:
-            keywords_str += f" и еще {len(vacancy.keywords) - 10}"
-        print(f"Ключевые слова: {keywords_str}")
-
-    # Показываем навыки
-    if vacancy.skills:
-        skills_list = []
-        for skill in vacancy.skills[:5]:  # Показываем первые 5 навыков
-            if isinstance(skill, dict) and 'name' in skill:
-                skills_list.append(skill['name'])
-            elif isinstance(skill, str):
-                skills_list.append(skill)
-        if skills_list:
-            skills_str = ", ".join(skills_list)
-            if len(vacancy.skills) > 5:
-                skills_str += f" и еще {len(vacancy.skills) - 5}"
-            print(f"Навыки: {skills_str}")
-
-    # Показываем краткое описание требований
-    if vacancy.requirements:
-        requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
-        print(f"Требования: {requirements_short}")
-
-    # Показываем оценку релевантности, если есть
-    if hasattr(vacancy, '_relevance_score'):
-        print(f"Релевантность: {vacancy._relevance_score}")
-
-    print("-" * 80)
 
 
 def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
@@ -356,35 +296,15 @@ def debug_search_vacancies(vacancies: List[Vacancy], keyword: str) -> None:
         debug_vacancy_search(vacancy, keyword)
 
 
+# Импорт унифицированного форматтера
+from src.utils.vacancy_formatter import vacancy_formatter
+
 def display_vacancy_info(vacancy: 'Vacancy', number: int = None) -> None:
     """
-    Отображение информации о вакансии
-
+    Отображение информации о вакансии (устаревшая функция)
+    
     Args:
         vacancy: Объект вакансии
         number: Порядковый номер (опционально)
     """
-    header = f"{number}. " if number else ""
-    header += f"{vacancy.title or 'Не указано'}"
-
-    print(f"{header}")
-    print(f"   Источник: {getattr(vacancy, 'source', 'Не указан')}")
-    print(f"   Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
-
-    if vacancy.salary:
-        print(f"   Зарплата: {vacancy.salary}")
-    else:
-        print("   Зарплата: Не указана")
-
-    if vacancy.experience:
-        print(f"   Опыт: {vacancy.experience}")
-
-    if vacancy.employment:
-        print(f"   Занятость: {vacancy.employment}")
-
-    if vacancy.schedule:
-        print(f"   График: {vacancy.schedule}")
-
-    print(f"   Ссылка: {vacancy.url}")
-    print(f"   ID: {vacancy.vacancy_id}")
-    print("-" * 80)
+    vacancy_formatter.display_vacancy_info(vacancy, number)

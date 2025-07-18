@@ -133,15 +133,5 @@ class SuperJobAPI(BaseAPI):
 
     def clear_cache(self) -> None:
         """Очистка кэша SuperJob API"""
-        import os
-        import glob
-        
-        cache_dir = "data/cache/sj"
-        if os.path.exists(cache_dir):
-            cache_files = glob.glob(os.path.join(cache_dir, "sj_*.json"))
-            for file_path in cache_files:
-                try:
-                    os.remove(file_path)
-                    logger.info(f"Removed cache file: {file_path}")
-                except Exception as e:
-                    logger.error(f"Error removing cache file {file_path}: {e}")
+        from src.utils.cache_manager import cache_manager
+        cache_manager.clear_cache_for_source("sj")
