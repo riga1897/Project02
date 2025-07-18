@@ -29,5 +29,7 @@ class BaseAPI(ABC):
         if isinstance(response, str):
             logger.error(f"API returned error: {response}")
             return False
-        return True
-        
+        if isinstance(response, dict):
+            # Для SuperJob API используется 'objects', для HH.ru используется 'items'
+            return 'items' in response or 'objects' in response
+        return False

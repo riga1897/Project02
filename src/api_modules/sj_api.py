@@ -1,4 +1,3 @@
-
 import requests
 import time
 import logging
@@ -16,7 +15,7 @@ class SuperJobAPI(BaseAPI):
     def __init__(self, config: Optional[SJAPIConfig] = None):
         """
         Инициализация SuperJob API
-        
+
         Args:
             config: Конфигурация SuperJob API
         """
@@ -31,25 +30,29 @@ class SuperJobAPI(BaseAPI):
     def _connect_to_api(self, url: str, params: Dict) -> Union[Dict, str]:
         """
         Подключение к API SuperJob с обработкой ошибок
-        
+
         Args:
             url: URL для запроса
             params: Параметры запроса
-            
+
         Returns:
             Dict: Ответ API в виде словаря
             str: Сообщение об ошибке
         """
         try:
+            logger.debug(f"Making request to: {url}")
+            logger.debug(f"Request params: {params}")
+            logger.debug(f"Request headers: {self.headers}")
+
             time.sleep(self.request_delay)
-            
+
             response = requests.get(
                 url, 
                 params=params, 
                 headers=self.headers, 
                 timeout=15
             )
-            
+
             if response.status_code == 200:
                 return response.json()
             elif response.status_code == 429:
@@ -62,7 +65,7 @@ class SuperJobAPI(BaseAPI):
             else:
                 logger.error(f"HTTP {response.status_code}: {response.text}")
                 return f"HTTP error: {response.status_code}"
-                
+
         except requests.exceptions.Timeout:
             logger.error("Request timeout")
             return "Request timeout"
@@ -77,57 +80,68 @@ class SuperJobAPI(BaseAPI):
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """
         Получение вакансий по поисковому запросу
-        
+
         Args:
             search_query: Поисковый запрос
             **kwargs: Дополнительные параметры поиска
-            
+
         Returns:
             List[Dict]: Список вакансий
         """
         url = f"{self.base_url}/vacancies/"
-        
+
         # Базовые параметры из конфигурации
         params = self.config.get_params(**kwargs)
         params["keyword"] = search_query
-        
+
         logger.info(f"Searching SuperJob vacancies for: '{search_query}'")
-        
+
         all_vacancies = []
         page = 0
         max_pages = kwargs.get('max_pages', 20)
-        
+
         while page < max_pages:
             params["page"] = page
-            
+
             logger.debug(f"Requesting page {page + 1}")
-            
+
             response = self._connect_to_api(url, params)
-            
-            if not self.validate_response(response):
-                logger.error(f"Invalid response on page {page + 1}")
+
+            # Если получили строку - это ошибка
+            if isinstance(response, str):
+                logger.error(f"API error on page {page + 1}: {response}")
                 break
-            
+
+            # Проверяем, что ответ является словарем и содержит данные
+            if not isinstance(response, dict):
+                logger.error(f"Invalid response type on page {page + 1}: {type(response)}")
+                break
+
+            if not response.get("objects") and page == 0:
+                logger.warning(f"No 'objects' key in response on page {page + 1}")
+                logger.debug(f"Response keys: {list(response.keys())}")
+                break
+
             vacancies = response.get("objects", [])
-            
+
             if not vacancies:
                 logger.info(f"No more vacancies found after page {page}")
                 break
-            
+
             # Добавляем источник к каждой вакансии
             for vacancy in vacancies:
                 vacancy["source"] = "superjob.ru"
-            
+
             all_vacancies.extend(vacancies)
             logger.info(f"Page {page + 1}: found {len(vacancies)} vacancies")
-            
+
             # Проверяем, есть ли еще страницы
             if not response.get("more", False):
                 logger.info("All pages processed")
                 break
-                
+
             page += 1
-        
+
         logger.info(f"Total SuperJob vacancies found: {len(all_vacancies)}")
         return all_vacancies
 
