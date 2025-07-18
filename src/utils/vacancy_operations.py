@@ -79,8 +79,12 @@ class VacancyOperations:
         return [
             v for v in vacancies 
             if v.salary and (
-                (v.salary.salary_from and v.salary.salary_from <= max_salary) or
-                (v.salary.salary_to and v.salary.salary_to <= max_salary)
+                # Если есть только нижняя граница - она должна быть <= max_salary
+                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from <= max_salary) or
+                # Если есть только верхняя граница - она должна быть <= max_salary
+                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to <= max_salary) or
+                # Если есть обе границы - нижняя граница должна быть <= max_salary
+                (v.salary.salary_from and v.salary.salary_to and v.salary.salary_from <= max_salary)
             )
         ]
 
