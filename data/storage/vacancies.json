@@ -41190,55 +41190,6 @@
     "source": "hh.ru"
   },
   {
-    "id": "122871111",
-    "name": "Аналитик по цифровому маркетингу / Digital Marketing Analyst (Google Ads)",
-    "title": "Аналитик по цифровому маркетингу / Digital Marketing Analyst (Google Ads)",
-    "url": "https://hh.ru/vacancy/122871111",
-    "alternate_url": "https://hh.ru/vacancy/122871111",
-    "salary": {
-      "from": 0,
-      "to": 0,
-      "currency": "RUR",
-      "gross": false,
-      "period": "month"
-    },
-    "description": "",
-    "requirements": null,
-    "responsibilities": null,
-    "employer": {
-      "id": "11468734",
-      "name": "Максис",
-      "url": "https://api.hh.ru/employers/11468734",
-      "alternate_url": "https://hh.ru/employer/11468734",
-      "logo_urls": {
-        "original": "https://img.hhcdn.ru/employer-logo-original/1377289.jpg",
-        "90": "https://img.hhcdn.ru/employer-logo/7129054.jpeg",
-        "240": "https://img.hhcdn.ru/employer-logo/7129055.jpeg"
-      },
-      "vacancies_url": "https://api.hh.ru/vacancies?employer_id=11468734",
-      "accredited_it_employer": false,
-      "employer_rating": {
-        "total_rating": "4.7",
-        "reviews_count": 4
-      },
-      "trusted": true
-    },
-    "experience": "От 3 до 6 лет",
-    "employment": null,
-    "schedule": null,
-    "published_at": "2025-07-16T14:50:49+03:00",
-    "skills": [],
-    "keywords": [
-      "python",
-      "sql",
-      "go",
-      "r"
-    ],
-    "detailed_description": "",
-    "benefits": null,
-    "source": "hh.ru"
-  },
-  {
     "id": "122982771",
     "name": "Руководитель направления BI-аналитики",
     "title": "Руководитель направления BI-аналитики",
