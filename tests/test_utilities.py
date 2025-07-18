@@ -5,7 +5,7 @@
 
 import pytest
 from src.utils.salary import Salary
-from src.utils.search_utils import VacancySearcher
+from src.utils.search_utils import filter_vacancies_by_keyword, vacancy_contains_keyword
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.vacancy_formatter import VacancyFormatter
 from src.vacancies.models import Vacancy
@@ -62,8 +62,8 @@ class TestSalary:
         assert 'RUR' in result
 
 
-class TestVacancySearcher:
-    """Тесты для VacancySearcher"""
+class TestSearchUtils:
+    """Тесты для функций поиска"""
     
     @pytest.fixture
     def sample_vacancies(self):
@@ -92,34 +92,30 @@ class TestVacancySearcher:
             )
         ]
     
-    def test_search_by_keyword(self, sample_vacancies):
-        """Тест поиска по ключевому слову"""
-        searcher = VacancySearcher()
-        
-        result = searcher.search_by_keyword(sample_vacancies, "Python")
+    def test_filter_by_keyword(self, sample_vacancies):
+        """Тест фильтрации по ключевому слову"""
+        result = filter_vacancies_by_keyword(sample_vacancies, "Python")
         assert len(result) == 1
         assert result[0].title == "Python Developer"
     
-    def test_search_case_insensitive(self, sample_vacancies):
-        """Тест регистронезависимого поиска"""
-        searcher = VacancySearcher()
-        
-        result = searcher.search_by_keyword(sample_vacancies, "python")
+    def test_filter_case_insensitive(self, sample_vacancies):
+        """Тест регистронезависимой фильтрации"""
+        result = filter_vacancies_by_keyword(sample_vacancies, "python")
         assert len(result) == 1
         assert result[0].title == "Python Developer"
     
-    def test_search_multiple_keywords(self, sample_vacancies):
-        """Тест поиска по нескольким ключевым словам"""
-        searcher = VacancySearcher()
+    def test_vacancy_contains_keyword(self, sample_vacancies):
+        """Тест проверки содержания ключевого слова"""
+        python_vacancy = sample_vacancies[0]
+        java_vacancy = sample_vacancies[1]
         
-        result = searcher.search_by_keywords(sample_vacancies, ["Python", "Java"])
-        assert len(result) == 2
+        assert vacancy_contains_keyword(python_vacancy, "Python")
+        assert vacancy_contains_keyword(python_vacancy, "python")
+        assert not vacancy_contains_keyword(java_vacancy, "Python")
     
-    def test_search_no_results(self, sample_vacancies):
-        """Тест поиска без результатов"""
-        searcher = VacancySearcher()
-        
-        result = searcher.search_by_keyword(sample_vacancies, "C++")
+    def test_filter_no_results(self, sample_vacancies):
+        """Тест фильтрации без результатов"""
+        result = filter_vacancies_by_keyword(sample_vacancies, "C++")
         assert len(result) == 0
 
 
