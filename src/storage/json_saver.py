@@ -309,6 +309,22 @@ class JSONSaver:
         with open(self.filename, 'w', encoding='utf-8') as f:
             json.dump(valid_data, f, ensure_ascii=False, indent=2)
 
+    def get_file_size(self) -> int:
+        """
+        Получает размер файла в байтах
+        
+        Returns:
+            int: Размер файла в байтах, 0 если файл не существует
+        """
+        try:
+            file_path = Path(self.filename)
+            if file_path.exists():
+                return file_path.stat().st_size
+            return 0
+        except Exception as e:
+            logger.error(f"Ошибка получения размера файла: {e}")
+            return 0
+
     def _vacancy_to_dict(self, vacancy: Vacancy) -> Dict[str, Any]:
         """Преобразование объекта Vacancy в словарь"""
         salary_dict = None

@@ -15,18 +15,19 @@ class TestJSONSaver:
     @pytest.fixture
     def sample_vacancy(self):
         return Vacancy(
-            id="123",
-            name="Python Developer",
+            vacancy_id="123",
+            title="Python Developer",
             url="https://example.com",
-            salary_from=50000,
-            salary_to=80000,
-            currency="RUB",
-            employer="Test Company",
+            salary=None,
             description="Test description",
             requirements="Python, Django",
+            responsibilities="",
+            experience="",
+            employment="",
+            schedule="",
+            employer="Test Company",
             area="Moscow",
-            published="2024-01-01",
-            source="hh.ru"
+            published_at="2024-01-01"
         )
     
     def test_init(self, json_saver):
