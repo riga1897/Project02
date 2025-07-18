@@ -569,6 +569,21 @@ class TestUnifiedAPI:
         # Проверяем что period был передан как published
         mock_sj.assert_called_once_with("Python", period=30, published=30)
 
+    @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
+    def test_get_vacancies_from_sources_period_sync_coverage(self, mock_sj, unified_api):
+        # Тестируем покрытие строк 116-117 - синхронизация параметра period
+        mock_sj.return_value = []
+
+        # Вызываем с параметром period для покрытия строк 116-117
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=7)
+
+        # Проверяем что kwargs содержит и period и published
+        call_args = mock_sj.call_args
+        assert 'period' in call_args[1]
+        assert 'published' in call_args[1]
+        assert call_args[1]['period'] == 7
+        assert call_args[1]['published'] == 7
+
     def test_clear_all_cache_with_error(self, unified_api):
         # Тестируем ошибку при очистке всего кэша (строки 128-129)
         with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")) as mock_hh_clear:
