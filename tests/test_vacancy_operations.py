@@ -163,7 +163,7 @@ class TestVacancyOperations:
             vacancies, "python OR java"
         )
         
-        mock_filter.assert_called_once_with(vacancies, ['PYTHON', 'JAVA'])
+        mock_filter.assert_called_once_with(vacancies, ['python', 'java'])
     
     @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
     def test_search_vacancies_advanced_simple(self, mock_filter):
