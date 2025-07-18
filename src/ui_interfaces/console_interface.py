@@ -113,6 +113,8 @@ class UserInterface:
 
         # Выбор периода публикации
         period = self._get_period_choice()
+        if period is None:
+            return  # Пользователь отменил выбор периода
 
         print(f"\nИщем вакансии по запросу: '{query}' за последние {period} дней...")
 
@@ -146,7 +148,8 @@ class UserInterface:
             print(f"\nВсего найдено {len(all_vacancies)} вакансий")
 
             # Предпросмотр всех найденных вакансий
-            if confirm_action("Показать найденные вакансии?"):
+            show_vacancies = confirm_action("Показать найденные вакансии?")
+            if show_vacancies:
                 # Форматируем вакансии для отображения
                 def format_vacancy(vacancy):
                     return display_vacancy_info(vacancy)
@@ -158,12 +161,19 @@ class UserInterface:
                     header=f"Найденные вакансии по запросу '{query}' из всех источников"
                 )
 
-            # Сохранение
-            if confirm_action("Сохранить найденные вакансии?"):
-                saved_count = self.json_saver.add_vacancy(all_vacancies)
-                print(f"Сохранено {saved_count} вакансий")
+                # Сохранение только после просмотра
+                if confirm_action("Сохранить просмотренные вакансии?"):
+                    saved_count = self.json_saver.add_vacancy(all_vacancies)
+                    print(f"Сохранено {saved_count} вакансий")
+                else:
+                    print("Вакансии не сохранены")
             else:
-                print("Вакансии не сохранены")
+                # Если не показывали вакансии, все равно предлагаем сохранить
+                if confirm_action("Сохранить найденные вакансии без просмотра?"):
+                    saved_count = self.json_saver.add_vacancy(all_vacancies)
+                    print(f"Сохранено {saved_count} вакансий")
+                else:
+                    print("Вакансии не сохранены")
 
         except Exception as e:
             logger.error(f"Ошибка поиска вакансий: {e}")
@@ -515,48 +525,57 @@ class UserInterface:
             logger.error(f"Ошибка при очистке кэша: {e}")
             print(f"Ошибка при очистке кэша: {e}")
 
-    def _get_period_choice(self) -> int:
+    def _get_period_choice(self) -> Optional[int]:
         """
         Выбор периода публикации вакансий
 
         Returns:
-            int: Количество дней для поиска
+            Optional[int]: Количество дней для поиска или None при отмене
         """
-        print("\nВыберите период публикации вакансий:")
-        print("1. 1 день")
-        print("2. 3 дня")
-        print("3. 7 дней")
-        print("4. 15 дней (по умолчанию)")
-        print("5. 30 дней")
-        print("6. Ввести свой период")
+        try:
+            print("\nВыберите период публикации вакансий:")
+            print("1. 1 день")
+            print("2. 3 дня")
+            print("3. 7 дней")
+            print("4. 15 дней (по умолчанию)")
+            print("5. 30 дней")
+            print("6. Ввести свой период")
+            print("0. Отмена")
 
-        choice = input("Ваш выбор (по умолчанию 15 дней): ").strip()
+            choice = input("Ваш выбор (по умолчанию 15 дней): ").strip()
 
-        period_map = {
-            "1": 1,
-            "2": 3,
-            "3": 7,
-            "4": 15,
-            "5": 30,
-            "": 15  # По умолчанию
-        }
+            period_map = {
+                "1": 1,
+                "2": 3,
+                "3": 7,
+                "4": 15,
+                "5": 30,
+                "": 15  # По умолчанию
+            }
 
-        if choice in period_map:
-            return period_map[choice]
-        elif choice == "6":
-            try:
-                custom_period = int(input("Введите количество дней (1-365): "))
-                if 1 <= custom_period <= 365:
-                    return custom_period
-                else:
-                    print("Некорректный период. Используется 15 дней по умолчанию.")
+            if choice == "0":
+                print("Выбор периода отменен.")
+                return None
+            elif choice in period_map:
+                return period_map[choice]
+            elif choice == "6":
+                try:
+                    custom_period = int(input("Введите количество дней (1-365): "))
+                    if 1 <= custom_period <= 365:
+                        return custom_period
+                    else:
+                        print("Некорректный период. Используется 15 дней по умолчанию.")
+                        return 15
+                except ValueError:
+                    print("Некорректный ввод. Используется 15 дней по умолчанию.")
                     return 15
-            except ValueError:
-                print("Некорректный ввод. Используется 15 дней по умолчанию.")
+            else:
+                print("Некорректный выбор. Используется 15 дней по умолчанию.")
                 return 15
-        else:
-            print("Некорректный выбор. Используется 15 дней по умолчанию.")
-            return 15
+        
+        except KeyboardInterrupt:
+            print("\nВыбор периода отменен.")
+            return None
 
     def _setup_superjob_api(self) -> None:
         """Настройка SuperJob API"""
