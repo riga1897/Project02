@@ -79,21 +79,21 @@ class TestFileCache:
 
 class TestEnvLoader:
 
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_exists(self, mock_getenv):
         mock_getenv.return_value = "test_value"
 
         result = EnvLoader.get_env_var("TEST_VAR")
         assert result == "test_value"
 
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_not_exists(self, mock_getenv):
         mock_getenv.return_value = None
 
         result = EnvLoader.get_env_var("TEST_VAR", "default")
         assert result == "default"
 
-    @patch('src.utils.env_loader.os.getenv')
+    @patch('os.getenv')
     def test_get_env_var_no_default(self, mock_getenv):
         mock_getenv.return_value = None
 
