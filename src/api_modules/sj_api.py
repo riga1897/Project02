@@ -124,9 +124,9 @@ class SuperJobAPI(BaseAPI):
 
         all_vacancies = []
         page = 0
-        max_pages = kwargs.get('max_pages', 5)  # Еще больше увеличиваем количество страниц
+        max_pages = kwargs.get('max_pages', 10)  # Увеличиваем до 10 страниц (до 5000 вакансий)
         consecutive_empty_pages = 0
-        max_empty_pages = 3  # Останавливаемся после 3 пустых страниц подряд
+        max_empty_pages = 2  # Останавливаемся после 2 пустых страниц подряд
 
         while page < max_pages and consecutive_empty_pages < max_empty_pages:
             params["page"] = page
@@ -169,8 +169,14 @@ class SuperJobAPI(BaseAPI):
                 logger.info(f"Page {page + 1}: found {len(vacancies)} vacancies")
 
             # Проверяем, есть ли еще страницы
-            if not response.get("more", False) and not vacancies:
-                logger.info("API indicates no more pages available")
+            has_more = response.get("more", False)
+            total_found = response.get("total", 0)
+            
+            logger.debug(f"Page {page + 1}: has_more={has_more}, total_found={total_found}, current_total={len(all_vacancies)}")
+            
+            # Останавливаемся если API сообщает что больше нет данных
+            if not has_more:
+                logger.info(f"API indicates no more pages available. Total processed: {len(all_vacancies)}")
                 break
 
             page += 1
