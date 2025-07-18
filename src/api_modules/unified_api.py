@@ -52,7 +52,12 @@ class UnifiedAPI:
         if 'sj' in sources:
             try:
                 logger.info(f"Получение вакансий с SuperJob по запросу: '{query}'")
-                sj_data = self.sj_api.get_vacancies(query, **kwargs)
+                # Синхронизируем параметры периода между API
+                sj_kwargs = kwargs.copy()
+                if 'period' in kwargs:
+                    # HH использует 'period', SuperJob использует 'published'
+                    sj_kwargs['published'] = kwargs['period']
+                sj_data = self.sj_api.get_vacancies(query, **sj_kwargs)
 
                 if sj_data:
                     # Парсим данные SuperJob в объекты SuperJobVacancy
@@ -88,7 +93,12 @@ class UnifiedAPI:
 
     def get_sj_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
         """Получение вакансий только с SuperJob"""
-        return self.get_vacancies_from_sources(query, sources=['sj'], **kwargs)
+        # Синхронизируем параметры периода
+        sj_kwargs = kwargs.copy()
+        if 'period' in kwargs:
+            # HH использует 'period', SuperJob использует 'published'
+            sj_kwargs['published'] = kwargs['period']
+        return self.get_vacancies_from_sources(query, sources=['sj'], **sj_kwargs)
 
     def clear_cache(self, sources: Dict[str, bool]) -> None:
         """
