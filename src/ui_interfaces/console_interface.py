@@ -530,7 +530,7 @@ class UserInterface:
         print("5. 30 дней")
         print("6. Ввести свой период")
 
-        choice = input("Ваш выбор (по умолчанию 4): ").strip()
+        choice = input("Ваш выбор (по умолчанию 15 дней): ").strip()
 
         period_map = {
             "1": 1,
