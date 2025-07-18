@@ -208,7 +208,7 @@ class VacancyOperations:
             if current_keyword:
                 keywords.append(' '.join(current_keyword))
 
-            return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, [kw.strip().upper() for kw in keywords])
+            return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, [kw.strip() for kw in keywords])
         elif ',' in query:
             # Поиск с запятой как разделителем (OR)
             keywords = [kw.strip() for kw in query.split(',') if kw.strip()]
