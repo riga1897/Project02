@@ -4,10 +4,10 @@
       "count": 500,
       "order_field": "date",
       "order_direction": "desc",
-      "published": 15,
+      "published": 60,
       "page": 4,
       "keyword": "Бухгалтер",
-      "period": 15
+      "period": 60
     }
   },
   "data": {
