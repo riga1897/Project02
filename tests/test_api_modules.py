@@ -1,11 +1,7 @@
 import pytest
 import sys
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-
-# Добавляем путь к исходному коду
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
+from unittest.mock import Mock, patch
 from src.api_modules.base_api import BaseAPI
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
@@ -13,12 +9,19 @@ from src.api_modules.unified_api import UnifiedAPI
 from src.api_modules.get_api import APIConnector
 from src.api_modules.cached_api import CachedAPI
 from src.config.api_config import APIConfig
+import sys
+from pathlib import Path
+
+# Добавляем путь к исходному коду
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
+
 
 
 class TestBaseAPI:
 
     def test_init_with_config(self):
-        from src.config.api_config import APIConfig
         config = APIConfig(user_agent='TestApp')
 
         # Создаем мок класс, наследующий от BaseAPI
@@ -131,19 +134,8 @@ class TestCachedAPI:
 
 
 
-import pytest
-import sys
-from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
-
 # Добавляем путь к исходному коду
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from src.api_modules.hh_api import HeadHunterAPI
-from src.api_modules.sj_api import SuperJobAPI
-from src.api_modules.unified_api import UnifiedAPI
-from src.api_modules.get_api import APIConnector
-from src.config.api_config import APIConfig
 
 
 class TestHeadHunterAPI:

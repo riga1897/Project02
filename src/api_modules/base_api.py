@@ -1,6 +1,6 @@
 
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Any, Optional
 from src.config.api_config import APIConfig
 from .get_api import APIConnector
 
@@ -19,7 +19,7 @@ class BaseAPI(ABC):
         self.connector = APIConnector(self.config)
 
     @abstractmethod
-    def get_vacancies(self, search_query: str, **kwargs):
+    def get_vacancies(self, search_query: str, **kwargs) -> Any:
         """Абстрактный метод получения вакансий"""
 
     @abstractmethod
