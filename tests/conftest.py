@@ -4,12 +4,6 @@ from unittest.mock import patch
 from pathlib import Path
 import tempfile
 
-from src.vacancies.models import Vacancy
-from src.api_modules.hh_api import HeadHunterAPI
-from src.api_modules.sj_api import SuperJobAPI
-from src.storage.json_saver import JSONSaver
-from src.utils.salary import Salary
-
 
 @pytest.fixture(autouse=True)
 def setup_test_environment():
@@ -176,45 +170,45 @@ def temp_json_file(tmp_path):
 @pytest.fixture
 def sample_vacancy():
     """Тестовая вакансия"""
-    return Vacancy(
-        title="Python Developer",
-        url="https://test.com/vacancy/1",
-        salary={"from": 100000, "to": 150000, "currency": "RUR"},
-        description="Разработка на Python",
-        vacancy_id="test_1",
-        requirements="Знание Python",
-        responsibilities="Написание кода"
-    )
+    return {
+        "title": "Python Developer",
+        "url": "https://test.com/vacancy/1",
+        "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+        "description": "Разработка на Python",
+        "vacancy_id": "test_1",
+        "requirements": "Знание Python",
+        "responsibilities": "Написание кода"
+    }
 
 
 @pytest.fixture
 def sample_vacancies():
     """Список тестовых вакансий"""
     return [
-        Vacancy(
-            title="Python Developer",
-            url="https://test1.com/vacancy/1",
-            salary={"from": 100000, "to": 150000, "currency": "RUR"},
-            description="Python разработчик",
-            vacancy_id="1",
-            requirements="Python, Django"
-        ),
-        Vacancy(
-            title="Java Developer",
-            url="https://test2.com/vacancy/2",
-            salary={"from": 120000, "to": 180000, "currency": "RUR"},
-            description="Java разработчик",
-            vacancy_id="2",
-            requirements="Java, Spring"
-        ),
-        Vacancy(
-            title="Frontend Developer",
-            url="https://test3.com/vacancy/3",
-            salary=None,
-            description="Frontend разработчик",
-            vacancy_id="3",
-            requirements="JavaScript, React"
-        )
+        {
+            "title": "Python Developer",
+            "url": "https://test1.com/vacancy/1",
+            "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
+            "description": "Python разработчик",
+            "vacancy_id": "1",
+            "requirements": "Python, Django"
+        },
+        {
+            "title": "Java Developer",
+            "url": "https://test2.com/vacancy/2",
+            "salary": {"from": 120000, "to": 180000, "currency": "RUR"},
+            "description": "Java разработчик",
+            "vacancy_id": "2",
+            "requirements": "Java, Spring"
+        },
+        {
+            "title": "Frontend Developer",
+            "url": "https://test3.com/vacancy/3",
+            "salary": None,
+            "description": "Frontend разработчик",
+            "vacancy_id": "3",
+            "requirements": "JavaScript, React"
+        }
     ]
 
 
@@ -222,6 +216,8 @@ def sample_vacancies():
 @pytest.fixture
 def hh_api(api_config, temp_cache_dir):
     """HeadHunter API с временным кэшем"""
+    from src.api_modules.hh_api import HeadHunterAPI
+    
     original_cache_dir = HeadHunterAPI.DEFAULT_CACHE_DIR
     HeadHunterAPI.DEFAULT_CACHE_DIR = temp_cache_dir
     
@@ -235,6 +231,8 @@ def hh_api(api_config, temp_cache_dir):
 @pytest.fixture
 def sj_api(api_config, temp_cache_dir):
     """SuperJob API с временным кэшем"""
+    from src.api_modules.sj_api import SuperJobAPI
+    
     original_cache_dir = SuperJobAPI.DEFAULT_CACHE_DIR
     SuperJobAPI.DEFAULT_CACHE_DIR = temp_cache_dir
     
@@ -249,6 +247,7 @@ def sj_api(api_config, temp_cache_dir):
 @pytest.fixture
 def json_saver(temp_json_file):
     """JSONSaver с временным файлом"""
+    from src.storage.json_saver import JSONSaver
     return JSONSaver(str(temp_json_file))
 
 
@@ -266,10 +265,12 @@ def salary_data():
 @pytest.fixture
 def empty_salary():
     """Пустая зарплата"""
+    from src.utils.salary import Salary
     return Salary()
 
 
 @pytest.fixture
 def full_salary(salary_data):
     """Полная зарплата"""
+    from src.utils.salary import Salary
     return Salary(salary_data)
