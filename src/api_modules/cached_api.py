@@ -31,7 +31,7 @@ class CachedAPI(BaseAPI, ABC):
 
     
 
-    def _connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
+    def __connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
         Подключение к API с использованием кэша
 

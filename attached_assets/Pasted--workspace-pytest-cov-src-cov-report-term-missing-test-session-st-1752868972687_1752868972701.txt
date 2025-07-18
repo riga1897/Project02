@@ -1,0 +1,511 @@
+~/workspace$ pytest --cov=src --cov-report=term-missing 
+========================== test session starts ==========================
+platform linux -- Python 3.9.6, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 75 items                                                      
+
+test_sj_vacancy.py .                                              [  1%]
+tests/test_api_modules.py ......FFFFF                             [ 16%]
+tests/test_config.py F.FFFF.                                      [ 25%]
+tests/test_json_saver.py ...........                              [ 40%]
+tests/test_salary.py FFFF.FFFFF                                   [ 53%]
+tests/test_utils.py .......FFFFF                                  [ 69%]
+tests/test_vacancy_models.py F.....F..                            [ 81%]
+tests/test_vacancy_operations.py ......F.F.FFFF                   [100%]
+
+=============================== FAILURES ================================
+_______________________ TestSuperJobAPI.test_init _______________________
+
+self = <tests.test_api_modules.TestSuperJobAPI object at 0x7fb3ff091610>
+api_config = <src.config.api_config.APIConfig object at 0x7fb3ff00e190>
+temp_cache_dir = '/tmp/tmpo2ia92dz'
+
+    def test_init(self, api_config, temp_cache_dir):
+        """Тест инициализации SJ API"""
+        original_cache = SuperJobAPI.DEFAULT_CACHE_DIR
+        SuperJobAPI.DEFAULT_CACHE_DIR = temp_cache_dir
+    
+        try:
+            api = SuperJobAPI(api_config)
+>           assert api._config == api_config
+E           AttributeError: 'SuperJobAPI' object has no attribute '_config'
+
+tests/test_api_modules.py:88: AttributeError
+________________ TestSuperJobAPI.test_get_vacancies_page ________________
+
+self = <tests.test_api_modules.TestSuperJobAPI object at 0x7fb3ff0913a0>
+mock_connect = <MagicMock name='_CachedAPI__connect_to_api' id='140411051639136'>
+sj_api = <src.api_modules.sj_api.SuperJobAPI object at 0x7fb3fedb0d30>
+mock_sj_response = {'objects': [{'candidat': 'Знание Python', 'currency': 'rub', 'experience': {'title': 'От 3 до 6 лет'}, 'firm_name': 'Tech Company', ...}], 'total': 1}
+
+    @patch('src.api_modules.cached_api.CachedAPI._CachedAPI__connect_to_api')
+    def test_get_vacancies_page(self, mock_connect, sj_api, mock_sj_response):
+        """Тест получения страницы вакансий SJ"""
+        mock_connect.return_value = mock_sj_response
+    
+        result = sj_api.get_vacancies_page("python", page=0)
+    
+>       assert len(result) == 1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_api_modules.py:99: AssertionError
+------------------------- Captured stderr call --------------------------
+ERROR:src.api_modules.sj_api:Failed to get vacancies page 0: 'APIConfig' object has no attribute 'get_params'
+--------------------------- Captured log call ---------------------------
+ERROR    src.api_modules.sj_api:sj_api.py:84 Failed to get vacancies page 0: 'APIConfig' object has no attribute 'get_params'
+_______________________ TestUnifiedAPI.test_init ________________________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7fb3ff084400>
+mock_sj = <MagicMock name='SuperJobAPI' id='140411052183072'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140411052219696'>
+api_config = <src.config.api_config.APIConfig object at 0x7fb3fee34eb0>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_init(self, mock_sj, mock_hh, api_config):
+        """Тест инициализации унифицированного API"""
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:110: TypeError
+_____________ TestUnifiedAPI.test_search_vacancies_hh_only ______________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7fb3ff091490>
+mock_sj = <MagicMock name='SuperJobAPI' id='140411052264032'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140411052448928'>
+api_config = <src.config.api_config.APIConfig object at 0x7fb3fee482b0>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_search_vacancies_hh_only(self, mock_sj, mock_hh, api_config):
+        """Тест поиска только через HH"""
+        mock_hh_instance = MagicMock()
+        mock_hh_instance.get_vacancies.return_value = [{'name': 'Test'}]
+        mock_hh.return_value = mock_hh_instance
+    
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:124: TypeError
+___________ TestUnifiedAPI.test_search_vacancies_both_sources ___________
+
+self = <tests.test_api_modules.TestUnifiedAPI object at 0x7fb3ff091310>
+mock_sj = <MagicMock name='SuperJobAPI' id='140411051539280'>
+mock_hh = <MagicMock name='HeadHunterAPI' id='140411051549408'>
+api_config = <src.config.api_config.APIConfig object at 0x7fb3fed97ca0>
+
+    @patch('src.api_modules.hh_api.HeadHunterAPI')
+    @patch('src.api_modules.sj_api.SuperJobAPI')
+    def test_search_vacancies_both_sources(self, mock_sj, mock_hh, api_config):
+        """Тест поиска через оба источника"""
+        mock_hh_instance = MagicMock()
+        mock_hh_instance.get_vacancies.return_value = [{'name': 'HH Test'}]
+        mock_hh.return_value = mock_hh_instance
+    
+        mock_sj_instance = MagicMock()
+        mock_sj_instance.get_vacancies.return_value = [{'profession': 'SJ Test'}]
+        mock_sj.return_value = mock_sj_instance
+    
+>       unified_api = UnifiedAPI(api_config)
+E       TypeError: __init__() takes 1 positional argument but 2 were given
+
+tests/test_api_modules.py:142: TypeError
+___________________ TestAPIConfig.test_default_config ___________________
+
+self = <tests.test_config.TestAPIConfig object at 0x7fb3fef42c70>
+
+    def test_default_config(self):
+        """Тест конфигурации по умолчанию"""
+        config = APIConfig()
+    
+        assert config.user_agent is not None
+        assert config.timeout > 0
+>       assert isinstance(config.hh_config, HHAPIConfig)
+E       assert False
+E        +  where False = isinstance(HHAPIConfig(area=1, per_page=50, only_with_salary=False, custom_params=None), HHAPIConfig)
+E        +    where HHAPIConfig(area=1, per_page=50, only_with_salary=False, custom_params=None) = <src.config.api_config.APIConfig object at 0x7fb3fedb5dc0>.hh_config
+
+tests/test_config.py:21: AssertionError
+_________________ TestAPIConfig.test_pagination_params __________________
+
+self = <tests.test_config.TestAPIConfig object at 0x7fb3fef42520>
+
+    def test_pagination_params(self):
+        """Тест параметров пагинации"""
+        config = APIConfig()
+    
+        params = config.get_pagination_params()
+        assert "max_pages" in params
+>       assert "per_page" in params
+E       AssertionError: assert 'per_page' in {'max_pages': 20}
+
+tests/test_config.py:40: AssertionError
+__________________ TestHHAPIConfig.test_default_params __________________
+
+self = <tests.test_config.TestHHAPIConfig object at 0x7fb3ff26e0a0>
+
+    def test_default_params(self):
+        """Тест параметров по умолчанию"""
+        config = HHAPIConfig()
+>       params = config.get_params()
+E       AttributeError: 'HHAPIConfig' object has no attribute 'get_params'
+
+tests/test_config.py:53: AttributeError
+__________________ TestHHAPIConfig.test_custom_params ___________________
+
+self = <tests.test_config.TestHHAPIConfig object at 0x7fb3ff26e3a0>
+
+    def test_custom_params(self):
+        """Тест пользовательских параметров"""
+        config = HHAPIConfig()
+>       params = config.get_params(
+            text="python",
+            area=1,
+            experience="between3And6"
+        )
+E       AttributeError: 'HHAPIConfig' object has no attribute 'get_params'
+
+tests/test_config.py:62: AttributeError
+__________________ TestSJAPIConfig.test_default_params __________________
+
+self = <tests.test_config.TestSJAPIConfig object at 0x7fb3ff26efd0>
+
+    def test_default_params(self):
+        """Тест параметров по умолчанию"""
+        config = SJAPIConfig()
+        params = config.get_params()
+    
+        assert "count" in params
+>       assert "page" in params
+E       AssertionError: assert 'page' in {'count': 500, 'order_direction': 'desc', 'order_field': 'date', 'published': 15}
+
+tests/test_config.py:82: AssertionError
+_____________________ TestSalary.test_empty_salary ______________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff0c2850>
+
+    def test_empty_salary(self):
+        """Тест пустой зарплаты"""
+        salary = Salary()
+    
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7fb3fed9d760>.salary_from
+
+tests/test_salary.py:17: AssertionError
+_________________ TestSalary.test_salary_with_from_only _________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff0c26a0>
+
+    def test_salary_with_from_only(self):
+        """Тест зарплаты только с минимальным значением"""
+        salary_data = {"from": 100000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        assert salary.salary_from == 100000
+>       assert salary.salary_to is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7fb3fedd03a0>.salary_to
+
+tests/test_salary.py:29: AssertionError
+__________________ TestSalary.test_salary_with_to_only __________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23a5b0>
+
+    def test_salary_with_to_only(self):
+        """Тест зарплаты только с максимальным значением"""
+        salary_data = {"to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+>       assert salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7fb3feda0b20>.salary_from
+
+tests/test_salary.py:39: AssertionError
+___________________ TestSalary.test_salary_with_range ___________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23a2e0>
+
+    def test_salary_with_range(self):
+        """Тест зарплаты с диапазоном"""
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        assert salary.salary_from == 100000
+        assert salary.salary_to == 150000
+        assert salary.currency == "RUR"
+        assert salary.average == 125000
+>       assert salary.is_empty() is False
+E       AttributeError: 'Salary' object has no attribute 'is_empty'
+
+tests/test_salary.py:54: AttributeError
+___________________ TestSalary.test_salary_comparison ___________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23a460>
+
+    def test_salary_comparison(self):
+        """Тест сравнения зарплат"""
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+        salary2 = Salary({"from": 200000, "to": 250000, "currency": "RUR"})
+    
+>       assert salary1 < salary2
+E       TypeError: '<' not supported between instances of 'Salary' and 'Salary'
+
+tests/test_salary.py:73: TypeError
+____________________ TestSalary.test_salary_equality ____________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23ac70>
+
+    def test_salary_equality(self):
+        """Тест равенства зарплат"""
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+        salary2 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+    
+>       assert salary1 == salary2
+E       assert <src.utils.salary.Salary object at 0x7fb3feda0be0> == <src.utils.salary.Salary object at 0x7fb3feda3400>
+
+tests/test_salary.py:84: AssertionError
+_______________ TestSalary.test_salary_str_representation _______________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23aac0>
+
+    def test_salary_str_representation(self):
+        """Тест строкового представления"""
+        # С диапазоном
+        salary1 = Salary({"from": 100000, "to": 150000, "currency": "RUR"})
+>       assert "100 000" in str(salary1)
+E       AssertionError: assert '100 000' in 'от 100,000 до 150,000 руб. в месяц'
+E        +  where 'от 100,000 до 150,000 руб. в месяц' = str(<src.utils.salary.Salary object at 0x7fb3feda3220>)
+
+tests/test_salary.py:90: AssertionError
+____________________ TestSalary.test_salary_to_dict _____________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23a940>
+
+    def test_salary_to_dict(self):
+        """Тест преобразования в словарь"""
+        salary_data = {"from": 100000, "to": 150000, "currency": "RUR"}
+        salary = Salary(salary_data)
+    
+        result = salary.to_dict()
+    
+        assert result["from"] == 100000
+        assert result["to"] == 150000
+        assert result["currency"] == "RUR"
+>       assert result["average"] == 125000
+E       KeyError: 'average'
+
+tests/test_salary.py:116: KeyError
+__________________ TestSalary.test_invalid_salary_data __________________
+
+self = <tests.test_salary.TestSalary object at 0x7fb3ff23aa00>
+
+    def test_invalid_salary_data(self):
+        """Тест обработки некорректных данных"""
+        # Некорректный тип данных
+>       salary1 = Salary("invalid")
+
+tests/test_salary.py:121: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <src.utils.salary.Salary object at 0x7fb3fed9d760>
+salary_data = 'invalid'
+
+    def __init__(self, salary_data: Optional[Dict[str, Any]] = None):
+        if salary_data is None:
+            salary_data = {}
+    
+        self.amount_from = 0
+        self.amount_to = 0
+        self.gross = False
+        self.period = 'month'
+    
+>       self._salary_from = self._validate_salary_value(salary_data.get('from'))
+E       AttributeError: 'str' object has no attribute 'get'
+
+src/utils/salary.py:17: AttributeError
+___________ TestUIHelpers.test_filter_vacancies_empty_keyword ___________
+
+self = <tests.test_utils.TestUIHelpers object at 0x7fb3fee6f760>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7fb3fe548670>, <src.vacancies.models.Vacancy object at 0x7fb3fe54fbf0>, <src.vacancies.models.Vacancy object at 0x7fb3fe54fb40>]
+
+    def test_filter_vacancies_empty_keyword(self, sample_vacancies):
+        """Тест фильтрации с пустым ключевым словом"""
+        result = filter_vacancies_by_keyword(sample_vacancies, "")
+>       assert len(result) == 0
+E       assert 3 == 0
+E        +  where 3 = len([<src.vacancies.models.Vacancy object at 0x7fb3fe548670>, <src.vacancies.models.Vacancy object at 0x7fb3fe54fbf0>, <src.vacancies.models.Vacancy object at 0x7fb3fe54fb40>])
+
+tests/test_utils.py:84: AssertionError
+_____________ TestVacancyFormatter.test_format_vacancy_full _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7fb3fef321f0>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7fb3fe546a90>
+
+    def test_format_vacancy_full(self, sample_vacancy):
+        """Тест форматирования полной вакансии"""
+>       result = VacancyFormatter.format_vacancy(sample_vacancy)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy'
+
+tests/test_utils.py:92: AttributeError
+__________ TestVacancyFormatter.test_format_vacancy_no_salary ___________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7fb3fee6fc40>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7fb3fedbe7d0>, <src.vacancies.models.Vacancy object at 0x7fb3fedbe930>, <src.vacancies.models.Vacancy object at 0x7fb3fedbee00>]
+
+    def test_format_vacancy_no_salary(self, sample_vacancies):
+        """Тест форматирования вакансии без зарплаты"""
+        vacancy_no_salary = sample_vacancies[2]  # Frontend Developer без зарплаты
+>       result = VacancyFormatter.format_vacancy(vacancy_no_salary)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy'
+
+tests/test_utils.py:101: AttributeError
+_____________ TestVacancyFormatter.test_format_vacancy_list _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7fb3fee6f640>
+sample_vacancies = [<src.vacancies.models.Vacancy object at 0x7fb3fe57a040>, <src.vacancies.models.Vacancy object at 0x7fb3fe57a0f0>, <src.vacancies.models.Vacancy object at 0x7fb3fe57a1a0>]
+
+    def test_format_vacancy_list(self, sample_vacancies):
+        """Тест форматирования списка вакансий"""
+>       result = VacancyFormatter.format_vacancy_list(sample_vacancies)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy_list'
+
+tests/test_utils.py:108: AttributeError
+____________ TestVacancyFormatter.test_format_vacancy_short _____________
+
+self = <tests.test_utils.TestVacancyFormatter object at 0x7fb3fee6f490>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7fb3fe572510>
+
+    def test_format_vacancy_short(self, sample_vacancy):
+        """Тест краткого форматирования вакансии"""
+>       result = VacancyFormatter.format_vacancy_short(sample_vacancy)
+E       AttributeError: type object 'VacancyFormatter' has no attribute 'format_vacancy_short'
+
+tests/test_utils.py:116: AttributeError
+_______________ TestVacancy.test_vacancy_creation_minimal _______________
+
+self = <tests.test_vacancy_models.TestVacancy object at 0x7fb3fee66550>
+
+    def test_vacancy_creation_minimal(self):
+        """Тест создания вакансии с минимальными данными"""
+        vacancy = Vacancy(
+            title="Test Job",
+            url="https://example.com",
+            salary=None,
+            description="Test description"
+        )
+    
+        assert vacancy.title == "Test Job"
+        assert vacancy.url == "https://example.com"
+        assert vacancy.description == "Test description"
+>       assert vacancy.salary.salary_from is None
+E       assert 0 is None
+E        +  where 0 = <src.utils.salary.Salary object at 0x7fb3fedd4e20>.salary_from
+E        +    where <src.utils.salary.Salary object at 0x7fb3fedd4e20> = <src.vacancies.models.Vacancy object at 0x7fb3fe5787d0>.salary
+
+tests/test_vacancy_models.py:27: AssertionError
+_________________ TestVacancy.test_cast_to_object_list __________________
+
+self = <tests.test_vacancy_models.TestVacancy object at 0x7fb3fee66f70>
+
+    def test_cast_to_object_list(self):
+        """Тест преобразования списка словарей в список вакансий"""
+        data = [
+            {
+                'id': '1',
+                'name': 'Job1',
+                'alternate_url': 'https://example.com/1',
+                'salary': {'from': 100000, 'currency': 'RUR'}
+            },
+            {
+                'id': '2',
+                'name': 'Job2',
+                'alternate_url': 'https://example.com/2'
+            },
+            {'invalid': 'data'}  # Некорректные данные
+        ]
+    
+        result = Vacancy.cast_to_object_list(data)
+    
+>       assert len(result) == 2
+E       assert 3 == 2
+E        +  where 3 = len([<src.vacancies.models.Vacancy object at 0x7fb3fe566930>, <src.vacancies.models.Vacancy object at 0x7fb3fe566a90>, <src.vacancies.models.Vacancy object at 0x7fb3fe566b40>])
+
+tests/test_vacancy_models.py:159: AssertionError
+___ TestVacancyOperations.test_filter_vacancies_by_multiple_keywords ____
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7fb3fee48b20>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140411052142544'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_filter_vacancies_by_multiple_keywords(self, mock_filter):
+        """Тест фильтрации по нескольким ключевым словам"""
+        vacancies = [
+            self.create_test_vacancy("Python Developer"),
+            self.create_test_vacancy("Java Developer")
+        ]
+    
+        mock_filter.return_value = vacancies
+    
+        result = VacancyOperations.filter_vacancies_by_multiple_keywords(
+            vacancies, ["python", "java"]
+        )
+    
+        assert len(result) == 2
+>       assert mock_filter.call_count == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = <MagicMock name='filter_vacancies_by_keyword' id='140411052142544'>.call_count
+
+tests/test_vacancy_operations.py:132: AssertionError
+_______ TestVacancyOperations.test_search_vacancies_advanced_and ________
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7fb3fee48df0>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140411051549408'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_search_vacancies_advanced_and(self, mock_filter):
+        """Тест продвинутого поиска с оператором AND"""
+        vacancies = [self.create_test_vacancy("Test")]
+        mock_filter.return_value = vacancies
+    
+        result = VacancyOperations.search_vacancies_advanced(
+            vacancies, "python AND django"
+        )
+    
+>       assert mock_filter.call_count == 2
+E       AssertionError: assert 0 == 2
+E        +  where 0 = <MagicMock name='filter_vacancies_by_keyword' id='140411051549408'>.call_count
+
+tests/test_vacancy_operations.py:154: AssertionError
+______ TestVacancyOperations.test_search_vacancies_advanced_simple ______
+
+self = <MagicMock name='filter_vacancies_by_keyword' id='140411051539088'>
+args = ([<src.vacancies.models.Vacancy object at 0x7fb3fe546a90>], 'python')
+kwargs = {}
+msg = "Expected 'filter_vacancies_by_keyword' to be called once. Called 0 times."
+
+    def assert_called_once_with(self, /, *args, **kwargs):
+        """assert that the mock was called exactly once and that that call was
+        with the specified arguments."""
+        if not self.call_count == 1:
+            msg = ("Expected '%s' to be called once. Called %s times.%s"
+                   % (self._mock_name or 'mock',
+                      self.call_count,
+                      self._calls_repr()))
+>           raise AssertionError(msg)
+E           AssertionError: Expected 'filter_vacancies_by_keyword' to be called once. Called 0 times.
+
+/nix/store/nki9ywqzbvz68vr75kn2r7g1q84f5agy-python3-3.9.6/lib/python3.9/unittest/mock.py:918: AssertionError
+
+During handling of the above exception, another exception occurred:
+
+self = <tests.test_vacancy_operations.TestVacancyOperations object at 0x7fb3fee33850>
+mock_filter = <MagicMock name='filter_vacancies_by_keyword' id='140411051539088'>
+
+    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    def test_search_vacancies_advanced_simple(self, mock_filter):
+        """Тест простого продвинутого поиска"""
+        vacancies = [self.create_test_vacancy("Test")]

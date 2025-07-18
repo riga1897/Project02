@@ -68,7 +68,7 @@ class SuperJobAPI(CachedAPI):
                 **kwargs
             )
 
-            data = self._connect_to_api(self.BASE_URL, params, "sj")
+            data = self._CachedAPI__connect_to_api(self.BASE_URL, params, "sj")
             items = data.get('objects', [])
 
             # Добавляем источник и валидируем как в HH API

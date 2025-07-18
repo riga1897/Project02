@@ -5,7 +5,7 @@
 from typing import List, Dict, Any, Optional
 import logging
 from src.vacancies.models import Vacancy
-from src.utils.ui_helpers import filter_vacancies_by_keyword
+from src.utils.search_utils import filter_vacancies_by_keyword, vacancy_contains_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +186,7 @@ class VacancyOperations:
                 found_all = True
                 for keyword in keywords:
                     # Проверяем наличие каждого ключевого слова в вакансии
-                    if not VacancyOperations._vacancy_contains_keyword(vacancy, keyword.strip()):
+                    if not vacancy_contains_keyword(vacancy, keyword.strip()):
                         found_all = False
                         break
                 if found_all:
@@ -223,50 +223,7 @@ class VacancyOperations:
 
     
 
-    @staticmethod
-    def _vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
-        """
-        Проверяет, содержит ли вакансия указанное ключевое слово
-
-        Args:
-            vacancy: Вакансия для проверки
-            keyword: Ключевое слово для поиска
-
-        Returns:
-            bool: True, если ключевое слово найдено
-        """
-        keyword_lower = keyword.lower()
-
-        # Проверяем в заголовке
-        if vacancy.title and keyword_lower in vacancy.title.lower():
-            return True
-
-        
-
-        # Проверяем в требованиях
-        if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
-            return True
-
-        # Проверяем в обязанностях  
-        if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
-            return True
-
-        # Проверяем в описании
-        if vacancy.description and keyword_lower in vacancy.description.lower():
-            return True
-
-        # Проверяем в детальном описании
-        if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
-            return True
-
-        # Проверяем в навыках
-        if vacancy.skills:
-            for skill in vacancy.skills:
-                if isinstance(skill, dict) and 'name' in skill:
-                    if keyword_lower in skill['name'].lower():
-                        return True
-
-        return False
+    
 
     @staticmethod
     def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
