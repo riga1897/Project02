@@ -228,6 +228,22 @@ class JSONSaver:
             logger.error(f"Ошибка при удалении вакансий по ключевому слову '{keyword}': {e}")
             return 0
 
+    def _ensure_json_serializable(self, obj):
+        """
+        Обеспечивает JSON-сериализуемость объекта
+        """
+        if obj is None:
+            return None
+        elif isinstance(obj, (str, int, float, bool)):
+            return obj
+        elif isinstance(obj, dict):
+            return {key: self._ensure_json_serializable(value) for key, value in obj.items()}
+        elif isinstance(obj, (list, tuple)):
+            return [self._ensure_json_serializable(item) for item in obj]
+        else:
+            # Преобразуем неподдерживаемые типы в строку
+            return str(obj)
+
     def _save_to_file(self, vacancies: List[Vacancy]) -> None:
         """Сохраняет вакансии с дополнительной валидацией"""
         valid_data = []
