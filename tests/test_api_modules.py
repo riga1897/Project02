@@ -579,10 +579,11 @@ class TestUnifiedAPI:
 
     def test_clear_all_cache_with_error(self, unified_api):
         # Тестируем ошибку при очистке всего кэша (строки 128-129)
-        with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")):
+        with patch.object(unified_api.hh_api, 'clear_cache', side_effect=Exception("HH clear error")) as mock_hh_clear:
             with patch.object(unified_api.sj_api, 'clear_cache') as mock_sj_clear:
                 unified_api.clear_all_cache()
-                # Проверяем что несмотря на ошибку HH, метод продолжает работу
+                # Проверяем что методы были вызваны
+                mock_hh_clear.assert_called_once()
                 mock_sj_clear.assert_called_once()
 
 
