@@ -7,10 +7,9 @@ from src.utils.ui_helpers import (
     confirm_action, 
     get_user_input,
     filter_vacancies_by_keyword,
-    advanced_search,
     display_vacancy_info
 )
-from src.utils.vacancy_formatter import vacancy_formatter
+from src.utils.vacancy_formatter import VacancyFormatter
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
 from src.ui_interfaces.source_selector import SourceSelector
@@ -156,7 +155,7 @@ class UserInterface:
             if show_vacancies:
                 # Форматируем вакансии для отображения
                 def format_vacancy(vacancy):
-                    return display_vacancy_info(vacancy)
+                    return VacancyFormatter.format_vacancy_info(vacancy)
 
                 paginate_display(
                     all_vacancies,
@@ -196,7 +195,7 @@ class UserInterface:
 
             # Постраничный просмотр
             def format_vacancy(vacancy):
-                return display_vacancy_info(vacancy)
+                return VacancyFormatter.format_vacancy_info(vacancy)
 
             paginate_display(
                 vacancies,
@@ -238,7 +237,7 @@ class UserInterface:
 
             # Постраничный просмотр
             def format_vacancy(vacancy):
-                return display_vacancy_info(vacancy)
+                return VacancyFormatter.format_vacancy_info(vacancy)
 
             paginate_display(
                 top_vacancies,
@@ -276,7 +275,7 @@ class UserInterface:
 
             # Постраничный просмотр
             def format_vacancy(vacancy):
-                return display_vacancy_info(vacancy)
+                return VacancyFormatter.format_vacancy_info(vacancy)
 
             paginate_display(
                 filtered_vacancies,
@@ -330,7 +329,7 @@ class UserInterface:
 
             # Постраничный просмотр
             def format_vacancy(vacancy):
-                return display_vacancy_info(vacancy)
+                return VacancyFormatter.format_vacancy_info(vacancy)
 
             paginate_display(
                 filtered_vacancies,
@@ -404,7 +403,7 @@ class UserInterface:
 
             # Постраничный просмотр
             def format_vacancy(vacancy):
-                return display_vacancy_info(vacancy)
+                return VacancyFormatter.format_vacancy_info(vacancy)
 
             paginate_display(
                 sorted_vacancies,
@@ -454,7 +453,7 @@ class UserInterface:
 
                     # Постраничный просмотр
                     def format_vacancy(vacancy):
-                        return display_vacancy_info(vacancy)
+                        return VacancyFormatter.format_vacancy_info(vacancy)
 
                     paginate_display(
                         filtered_vacancies,
