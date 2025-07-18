@@ -4,9 +4,13 @@ from src.vacancies.models import Vacancy
 from src.storage.json_saver import JSONSaver
 from src.utils.ui_paginator import paginate_display
 from src.utils.ui_helpers import (
-    get_user_input, get_positive_integer, parse_salary_range, confirm_action,
-    filter_vacancies_by_keyword, display_vacancy_info
+    confirm_action, 
+    get_user_input,
+    filter_vacancies_by_keyword,
+    advanced_search,
+    display_vacancy_info
 )
+from src.utils.vacancy_formatter import vacancy_formatter
 from src.utils.vacancy_operations import VacancyOperations
 from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
 from src.ui_interfaces.source_selector import SourceSelector

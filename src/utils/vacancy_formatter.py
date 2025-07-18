@@ -11,6 +11,76 @@ class VacancyFormatter:
     """Класс для форматирования и отображения вакансий"""
     
     @staticmethod
+    def format_vacancy_info(vacancy: Vacancy, number: Optional[int] = None) -> str:
+        """
+        Форматирование информации о вакансии в строку
+        
+        Args:
+            vacancy: Объект вакансии
+            number: Порядковый номер (опционально)
+            
+        Returns:
+            Отформатированная строка с информацией о вакансии
+        """
+        lines = []
+        
+        header = f"{number}. " if number else ""
+        header += f"{vacancy.title or 'Не указано'}"
+        lines.append(header)
+        
+        lines.append(f"   Источник: {getattr(vacancy, 'source', 'Не указан')}")
+        lines.append(f"   Компания: {vacancy.employer.get('name') if vacancy.employer else 'Не указана'}")
+        lines.append(f"   ID: {vacancy.vacancy_id}")
+        
+        if vacancy.salary:
+            lines.append(f"   Зарплата: {vacancy.salary}")
+        else:
+            lines.append("   Зарплата: Не указана")
+        
+        if vacancy.experience:
+            lines.append(f"   Опыт: {vacancy.experience}")
+        
+        if vacancy.employment:
+            lines.append(f"   Занятость: {vacancy.employment}")
+        
+        if vacancy.schedule:
+            lines.append(f"   График: {vacancy.schedule}")
+        
+        # Показываем ключевые слова
+        if vacancy.keywords:
+            keywords_str = ", ".join(vacancy.keywords[:10])
+            if len(vacancy.keywords) > 10:
+                keywords_str += f" и еще {len(vacancy.keywords) - 10}"
+            lines.append(f"   Ключевые слова: {keywords_str}")
+        
+        # Показываем навыки
+        if vacancy.skills:
+            skills_list = []
+            for skill in vacancy.skills[:5]:
+                if isinstance(skill, dict) and 'name' in skill:
+                    skills_list.append(skill['name'])
+                elif isinstance(skill, str):
+                    skills_list.append(skill)
+            if skills_list:
+                skills_str = ", ".join(skills_list)
+                if len(vacancy.skills) > 5:
+                    skills_str += f" и еще {len(vacancy.skills) - 5}"
+                lines.append(f"   Навыки: {skills_str}")
+        
+        # Показываем краткое описание требований
+        if vacancy.requirements:
+            requirements_short = vacancy.requirements[:150] + "..." if len(vacancy.requirements) > 150 else vacancy.requirements
+            lines.append(f"   Требования: {requirements_short}")
+        
+        # Показываем оценку релевантности, если есть
+        if hasattr(vacancy, '_relevance_score'):
+            lines.append(f"   Релевантность: {vacancy._relevance_score}")
+        
+        lines.append(f"   Ссылка: {vacancy.url}")
+        
+        return "\n".join(lines)
+    
+    @staticmethod
     def display_vacancy_info(vacancy: Vacancy, number: Optional[int] = None) -> None:
         """
         Отображение информации о вакансии
