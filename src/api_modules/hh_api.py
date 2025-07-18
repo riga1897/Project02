@@ -39,17 +39,23 @@ class HeadHunterAPI(BaseAPI):
         cache_key = self._generate_cache_key(params)
 
         try:
-            if cached := self.cache.load_response("hh", cache_key):
-                if self.validate_response(cached["data"]):
-                    return cached["data"]
+            # Проверяем кэш
+            cached = self.cache.load_response("hh", cache_key)
+            if cached and self.validate_response(cached.get("data")):
+                logger.debug(f"Cache hit for HH params: {params}")
+                return cached["data"]
 
+            # Делаем реальный API запрос если кэш отсутствует
+            logger.debug(f"Making API request to {url} with params: {params}")
             response = self.connector.connect(url, params)
 
             if not self.validate_response(response):
                 logger.error(f"Invalid API response structure: {response}")
                 return {'items': []}
 
+            # Сохраняем в кэш
             self.cache.save_response("hh", cache_key, response)
+            logger.debug(f"Response cached for HH params: {params}")
             return response
 
         except Exception as e:

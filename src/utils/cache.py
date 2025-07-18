@@ -81,17 +81,17 @@ class FileCache:
 
     def load_response(self, source: str, params: Dict[str, Any]) -> Optional[Dict]:
         """Загрузка кэшированного ответа"""
-        params_hash = self._generate_params_hash(params)
-        filename = f"{source}_{params_hash}.json"
-        filepath = self.cache_dir / filename
-
-        if not filepath.exists():
-            return None
-
         try:
+            params_hash = self._generate_params_hash(params)
+            filename = f"{source}_{params_hash}.json"
+            filepath = self.cache_dir / filename
+
+            if not filepath.exists():
+                return None
+
             with open(filepath, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except (json.JSONDecodeError, OSError):
+        except (json.JSONDecodeError, OSError, Exception):
             return None
 
     def clear(self, source: Optional[str] = None) -> None:

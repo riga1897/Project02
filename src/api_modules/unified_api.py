@@ -61,7 +61,7 @@ class UnifiedAPI:
                     # Парсим данные SuperJob в объекты SuperJobVacancy
                     sj_vacancies_raw = self.parser.parse_vacancies(sj_data)
 
-                    # Конвертируем в унифицированный формат Vacancy
+                    # Конвертируем SuperJobVacancy в унифицированный формат
                     sj_vacancies = []
                     for sj_vac in sj_vacancies_raw:
                         try:
@@ -71,8 +71,9 @@ class UnifiedAPI:
                             sj_vacancies.append(vacancy)
                         except Exception as e:
                             logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
-                            if sj_vacancies:
-                                logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
+
+                    if sj_vacancies:
+                        logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
                         all_vacancies.extend(sj_vacancies)
                     else:
                         logger.warning("SuperJob API не вернул вакансий")

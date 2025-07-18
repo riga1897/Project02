@@ -64,18 +64,23 @@ class SuperJobAPI(BaseAPI):
         cache_key = self._generate_cache_key(params)
 
         try:
-            if cached := self.cache.load_response("sj", cache_key):
-                if self.validate_response(cached["data"]):
-                    return cached["data"]
+            # Проверяем кэш
+            cached = self.cache.load_response("sj", cache_key)
+            if cached and self.validate_response(cached.get("data")):
+                logger.debug(f"Cache hit for SJ params: {params}")
+                return cached["data"]
 
-            # Используем общий connector вместо прямых requests
+            # Делаем реальный API запрос если кэш отсутствует
+            logger.debug(f"Making API request to {url} with params: {params}")
             response = self.connector.connect(url, params)
 
             if not self.validate_response(response):
                 logger.error(f"Invalid API response structure: {response}")
                 return {'objects': []}
 
+            # Сохраняем в кэш
             self.cache.save_response("sj", cache_key, response)
+            logger.debug(f"Response cached for SJ params: {params}")
             return response
 
         except Exception as e:
