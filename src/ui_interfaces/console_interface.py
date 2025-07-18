@@ -119,9 +119,9 @@ class UserInterface:
 
             # Определяем источники для поиска
             selected_sources = []
-            if sources.get("hh", False):
+            if "hh" in sources:
                 selected_sources.append("hh")
-            if sources.get("sj", False):
+            if "sj" in sources:
                 selected_sources.append("sj")
 
             if not selected_sources:
