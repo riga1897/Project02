@@ -1,0 +1,20 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "Python",
+      "page": 0
+    }
+  },
+  "data": {
+    "found": 100,
+    "items": [
+      {
+        "id": "1",
+        "name": "Test"
+      }
+    ]
+  }
+}
