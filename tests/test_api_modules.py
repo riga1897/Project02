@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch, MagicMock
 # Добавляем путь к исходному коду
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from src.api_modules.base_api import BaseAPI
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
 from src.api_modules.unified_api import UnifiedAPI
@@ -89,6 +90,9 @@ class TestCachedAPI:
         # Тестируем получение данных из кэша
         mock_cache_instance = mock_cache.return_value
         mock_cache_instance.load_response.return_value = {'data': {'items': [{'test': 'cached'}]}}
+        
+        # Мокаем кэш экземпляра
+        cached_api_mock.cache = mock_cache_instance
         
         result = cached_api_mock._CachedAPI__connect_to_api("http://test.com", {}, "test")
         assert result == {'items': [{'test': 'cached'}]}
@@ -557,5 +561,5 @@ class TestAPIConnector:
     def test_connect_generic_exception(self, mock_get, api_connector):
         mock_get.side_effect = Exception("Generic error")
         
-        with pytest.raises(ConnectionError):
+        with pytest.raises(ConnectionError, match="Unexpected error"):
             api_connector.connect("https://test.com", {})

@@ -56,7 +56,8 @@ class SuperJobAPI(CachedAPI):
         """Validate vacancy structure (как в HH API)"""
         return (
             isinstance(vacancy, dict) and 
-            all(field in vacancy for field in self.REQUIRED_VACANCY_FIELDS)
+            all(field in vacancy and vacancy[field] is not None and vacancy[field] != '' 
+                for field in self.REQUIRED_VACANCY_FIELDS)
         )
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:

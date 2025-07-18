@@ -88,5 +88,7 @@ class APIConnector:
             raise ConnectionError(f"Connection error: {str(e)}")
         except ValueError as e:
             raise ConnectionError(f"JSON decode error: {str(e)}")
+        except Exception as e:
+            raise ConnectionError(f"Unexpected error: {str(e)}")
         finally:
             self._close_progress()
