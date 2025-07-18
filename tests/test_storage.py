@@ -60,8 +60,8 @@ class TestJSONSaver:
             requirements="Test requirements"
         )
 
-        with patch.object(json_saver, 'load_vacancies', return_value=[]):
-            with patch.object(json_saver, '_save_to_file') as mock_save:
+        with patch('src.storage.json_saver.JSONSaver.load_vacancies', return_value=[]):
+            with patch('src.storage.json_saver.JSONSaver._save_to_file') as mock_save:
                 json_saver.add_vacancy(vacancy)
                 mock_save.assert_called_once()
 
@@ -72,8 +72,8 @@ class TestJSONSaver:
 
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
     def test_delete_vacancy_by_id(self, mock_file, json_saver):
-        with patch.object(json_saver, 'load_vacancies', return_value=[]):
-            with patch.object(json_saver, '_save_to_file') as mock_save:
+        with patch('src.storage.json_saver.JSONSaver.load_vacancies', return_value=[]):
+            with patch('src.storage.json_saver.JSONSaver._save_to_file') as mock_save:
                 result = json_saver.delete_vacancy_by_id("test_id")
                 assert isinstance(result, bool)
 
