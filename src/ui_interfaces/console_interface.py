@@ -128,23 +128,43 @@ class UserInterface:
                 print("Не выбран ни один источник для поиска.")
                 return
 
-            # Получаем и автоматически сохраняем вакансии
+            # Получаем вакансии из кэша API
             all_vacancies = self.unified_api.get_vacancies_from_sources(query, selected_sources)
 
             if not all_vacancies:
                 print("Вакансии не найдены.")
                 return
 
-            print(f"\nПоиск завершен. Всего найдено и сохранено: {len(all_vacancies)} вакансий")
+            # Сохраняем найденные вакансии в файл через интерфейс
+            try:
+                update_messages = self.json_saver.add_vacancy(all_vacancies)
+                print(f"\nПоиск завершен. Всего найдено: {len(all_vacancies)} вакансий")
+                
+                # Показываем сообщения об обновлениях
+                if update_messages:
+                    new_count = sum(1 for msg in update_messages if "Добавлена новая вакансия" in msg)
+                    updated_count = len(update_messages) - new_count
+                    
+                    if new_count > 0:
+                        print(f"Добавлено новых вакансий: {new_count}")
+                    if updated_count > 0:
+                        print(f"Обновлено существующих вакансий: {updated_count}")
+                else:
+                    print("Все найденные вакансии уже существуют в базе")
 
-            # Показываем статистику по источникам
-            hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
-            sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
+                # Показываем статистику по источникам
+                hh_count = sum(1 for v in all_vacancies if v.source == "hh.ru")
+                sj_count = sum(1 for v in all_vacancies if v.source == "superjob.ru")
 
-            if hh_count > 0:
-                print(f"  • HH.ru: {hh_count} вакансий")
-            if sj_count > 0:
-                print(f"  • SuperJob: {sj_count} вакансий")
+                if hh_count > 0:
+                    print(f"  • HH.ru: {hh_count} вакансий")
+                if sj_count > 0:
+                    print(f"  • SuperJob: {sj_count} вакансий")
+                    
+            except Exception as save_error:
+                logger.error(f"Ошибка сохранения вакансий в файл: {save_error}")
+                print(f"Вакансии найдены, но ошибка сохранения: {save_error}")
+                print("Вакансии остались в кэше API и будут доступны до очистки кэша.")
 
         except Exception as e:
             print(f"Ошибка при поиске вакансий: {e}")

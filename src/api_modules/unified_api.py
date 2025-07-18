@@ -22,7 +22,7 @@ class UnifiedAPI:
 
     def get_vacancies_from_sources(self, query: str, sources: List[str] = None, **kwargs) -> List[Vacancy]:
         """
-        Получение вакансий из выбранных источников с автоматическим сохранением
+        Получение вакансий из выбранных источников (только кэш, без автосохранения)
 
         Args:
             query: Поисковый запрос
@@ -80,7 +80,7 @@ class UnifiedAPI:
             except Exception as e:
                 logger.error(f"Ошибка получения вакансий с SuperJob: {e}")
 
-        logger.info(f"Всего получено и сохранено {len(all_vacancies)} вакансий")
+        logger.info(f"Всего получено {len(all_vacancies)} вакансий (сохранено в кэш)")
         return all_vacancies
 
     def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:

@@ -159,5 +159,9 @@ class SuperJobAPI(BaseAPI):
 
     def clear_cache(self) -> None:
         """Очистка кэша SuperJob API"""
-        from src.utils.cache_manager import cache_manager
-        cache_manager.clear_cache_for_source("sj")
+        try:
+            from src.utils.cache_manager import cache_manager
+            cache_manager.clear_cache_for_source("sj")
+            logger.info("Кэш SuperJob очищен")
+        except Exception as e:
+            logger.error(f"Ошибка очистки кэша SuperJob: {e}")
