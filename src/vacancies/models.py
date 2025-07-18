@@ -213,3 +213,37 @@ class Vacancy(AbstractVacancy):
             f"Ссылка: {self.url}"
         ]
         return "\n".join(parts)
+    
+    def __eq__(self, other) -> bool:
+        """Сравнение вакансий по ID"""
+        if not isinstance(other, Vacancy):
+            return False
+        return self.vacancy_id == other.vacancy_id
+    
+    def __lt__(self, other) -> bool:
+        """Сравнение по зарплате для сортировки"""
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary.average < other.salary.average
+    
+    def __le__(self, other) -> bool:
+        """Сравнение по зарплате (меньше или равно)"""
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary.average <= other.salary.average
+    
+    def __gt__(self, other) -> bool:
+        """Сравнение по зарплате (больше)"""
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary.average > other.salary.average
+    
+    def __ge__(self, other) -> bool:
+        """Сравнение по зарплате (больше или равно)"""
+        if not isinstance(other, Vacancy):
+            return NotImplemented
+        return self.salary.average >= other.salary.average
+    
+    def __hash__(self) -> int:
+        """Хеш для использования в множествах и словарях"""
+        return hash(self.vacancy_id)

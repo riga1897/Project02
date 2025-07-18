@@ -3,9 +3,7 @@ from typing import List, Dict, Any, Optional, Set
 from .hh_api import HeadHunterAPI
 from .sj_api import SuperJobAPI
 from src.vacancies.models import Vacancy
-from src.vacancies.sj_models import SuperJobVacancy
 from src.vacancies.parsers.sj_parser import SuperJobParser
-from src.utils.source_manager import source_manager
 from src.storage.json_saver import JSONSaver
 
 logger = logging.getLogger(__name__)
@@ -17,7 +15,6 @@ class UnifiedAPI:
     def __init__(self):
         self.hh_api = HeadHunterAPI()
         self.sj_api = SuperJobAPI()
-        self.json_saver = JSONSaver()
         self.parser = SuperJobParser()
 
     def get_vacancies_from_sources(self, query: str, sources: List[str] = None, **kwargs) -> List[Vacancy]:
