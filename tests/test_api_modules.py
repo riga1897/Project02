@@ -570,11 +570,21 @@ class TestUnifiedAPI:
         mock_sj.assert_called_once_with("Python", period=30, published=30)
 
     @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
-    def test_get_vacancies_from_sources_period_sync_coverage(self, mock_sj, unified_api):
-        # Покрытие строк 116-117
+    def test_get_vacancies_from_sources_with_period_param(self, mock_sj, unified_api):
+        # Покрытие строки 116 - проверка наличия 'period' в kwargs
         mock_sj.return_value = []
         unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=7)
-        mock_sj.assert_called_once_with("Python", period=7, published=7)
+        mock_sj.assert_called_once()
+
+    @patch('src.api_modules.sj_api.SuperJobAPI.get_vacancies')
+    def test_get_vacancies_from_sources_period_to_published_conversion(self, mock_sj, unified_api):
+        # Покрытие строки 117 - присвоение sj_kwargs['published'] = kwargs['period']
+        mock_sj.return_value = []
+        unified_api.get_vacancies_from_sources("Python", sources=['sj'], period=30)
+        # Проверяем что published параметр был добавлен из period
+        call_args = mock_sj.call_args
+        assert call_args[1]['published'] == 30
+        assert call_args[1]['period'] == 30
 
     def test_clear_all_cache_with_error(self, unified_api):
         # Тестируем ошибку при очистке всего кэша (строки 128-129)
