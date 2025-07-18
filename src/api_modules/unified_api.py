@@ -1,4 +1,3 @@
-
 import logging
 from typing import List, Dict, Any, Optional, Set
 from .hh_api import HeadHunterAPI
@@ -14,102 +13,88 @@ logger = logging.getLogger(__name__)
 
 class UnifiedAPI:
     """Унифицированный API для работы с несколькими источниками вакансий"""
-    
+
     def __init__(self):
         self.hh_api = HeadHunterAPI()
         self.sj_api = SuperJobAPI()
         self.json_saver = JSONSaver()
         self.parser = SuperJobParser()
-        
+
     def get_vacancies_from_sources(self, query: str, sources: List[str] = None, **kwargs) -> List[Vacancy]:
         """
         Получение вакансий из выбранных источников с автоматическим сохранением
-        
+
         Args:
             query: Поисковый запрос
             sources: Список источников ('hh', 'sj'). Если None - используются все
             **kwargs: Дополнительные параметры
-            
+
         Returns:
             List[Vacancy]: Объединенный список вакансий
         """
         if sources is None:
             sources = ['hh', 'sj']
-            
+
         all_vacancies = []
-        
+
         # Получение из HeadHunter
         if 'hh' in sources:
             try:
                 logger.info(f"Получение вакансий с HH.ru по запросу: '{query}'")
                 hh_data = self.hh_api.get_vacancies(query, **kwargs)
                 hh_vacancies = [Vacancy.from_dict(item) for item in hh_data]
-                
+
                 if hh_vacancies:
                     logger.info(f"Найдено {len(hh_vacancies)} вакансий с HH.ru")
-                    # Сохраняем вакансии HH на диск
-                    messages = self.json_saver.add_vacancy(hh_vacancies)
-                    for msg in messages[:3]:  # Показываем первые 3 сообщения
-                        logger.info(msg)
-                    if len(messages) > 3:
-                        logger.info(f"... и еще {len(messages) - 3} обновлений")
-                    
                     all_vacancies.extend(hh_vacancies)
-                    
+
             except Exception as e:
                 logger.error(f"Ошибка получения вакансий с HH.ru: {e}")
-        
+
         # Получение из SuperJob
         if 'sj' in sources:
             try:
                 logger.info(f"Получение вакансий с SuperJob по запросу: '{query}'")
                 sj_data = self.sj_api.get_vacancies(query, **kwargs)
-                
+
                 if sj_data:
                     # Парсим данные SuperJob в объекты SuperJobVacancy
                     sj_vacancies_raw = self.parser.parse_vacancies(sj_data)
-                    
+
                     # Конвертируем в унифицированный формат Vacancy
                     sj_vacancies = []
                     for sj_vac in sj_vacancies_raw:
                         try:
-                            # Конвертируем SuperJobVacancy в обычный Vacancy
+                            # Конвертируем SuperJobVacancy в унифицированный формат
                             unified_data = self.parser.convert_to_unified_format(sj_vac)
                             vacancy = Vacancy.from_dict(unified_data)
                             sj_vacancies.append(vacancy)
                         except Exception as e:
                             logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
                             continue
-                    
+
                     if sj_vacancies:
                         logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
-                        # Сохраняем вакансии SuperJob на диск
-                        messages = self.json_saver.add_vacancy(sj_vacancies)
-                        for msg in messages[:3]:  # Показываем первые 3 сообщения
-                            logger.info(msg)
-                        if len(messages) > 3:
-                            logger.info(f"... и еще {len(messages) - 3} обновлений")
-                        
                         all_vacancies.extend(sj_vacancies)
-                        
+
             except Exception as e:
                 logger.error(f"Ошибка получения вакансий с SuperJob: {e}")
-        
+
         logger.info(f"Всего получено и сохранено {len(all_vacancies)} вакансий")
         return all_vacancies
-    
+
     def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
         """Получение вакансий только с HH.ru"""
         return self.get_vacancies_from_sources(query, sources=['hh'], **kwargs)
-    
+
     def get_sj_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
         """Получение вакансий только с SuperJob"""
         return self.get_vacancies_from_sources(query, sources=['sj'], **kwargs)
-    
+
     def clear_cache(self, sources: Dict[str, bool]) -> None:
         """
         Очистка кэша выбранных источников
-        
+
         Args:
             sources: Словарь источников {'hh': bool, 'sj': bool}
         """
@@ -117,14 +102,14 @@ class UnifiedAPI:
             if sources.get('hh', False):
                 self.hh_api.clear_cache()
                 logger.info("Кэш HH.ru очищен")
-            
+
             if sources.get('sj', False):
                 self.sj_api.clear_cache()
                 logger.info("Кэш SuperJob очищен")
-                
+
         except Exception as e:
             logger.error(f"Ошибка очистки кэша: {e}")
-    
+
     def clear_all_cache(self) -> None:
         """Очистка кэша всех API"""
         try:
@@ -133,18 +118,18 @@ class UnifiedAPI:
             logger.info("Кэш всех API очищен")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша: {e}")
-    
+
     def get_available_sources(self) -> List[str]:
         """Получение списка доступных источников"""
         return ['hh', 'sj']
-    
+
     def validate_sources(self, sources: List[str]) -> List[str]:
         """Валидация списка источников"""
         available = self.get_available_sources()
         valid_sources = [s for s in sources if s in available]
-        
+
         if not valid_sources:
             logger.warning(f"Нет валидных источников в {sources}, используем все доступные")
             return available
-            
+
         return valid_sources

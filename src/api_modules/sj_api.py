@@ -110,7 +110,7 @@ class SuperJobAPI(BaseAPI):
 
         all_vacancies = []
         page = 0
-        max_pages = kwargs.get('max_pages', 20)
+        max_pages = kwargs.get('max_pages', 50)  # Увеличиваем количество страниц для SuperJob
 
         while page < max_pages:
             params["page"] = page
