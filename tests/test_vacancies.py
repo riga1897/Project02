@@ -247,7 +247,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.vacancies.models import Vacancy
-from src.vacancies.parsers.hh_parser import HeadHunterParser
+from src.vacancies.parsers.hh_parser import HHParser
 from src.vacancies.parsers.sj_parser import SuperJobParser
 from src.vacancies.sj_models import SuperJobVacancy
 
