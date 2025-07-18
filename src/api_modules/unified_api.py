@@ -106,6 +106,25 @@ class UnifiedAPI:
         """Получение вакансий только с SuperJob"""
         return self.get_vacancies_from_sources(query, sources=['sj'], **kwargs)
     
+    def clear_cache(self, sources: Dict[str, bool]) -> None:
+        """
+        Очистка кэша выбранных источников
+        
+        Args:
+            sources: Словарь источников {'hh': bool, 'sj': bool}
+        """
+        try:
+            if sources.get('hh', False):
+                self.hh_api.clear_cache()
+                logger.info("Кэш HH.ru очищен")
+            
+            if sources.get('sj', False):
+                self.sj_api.clear_cache()
+                logger.info("Кэш SuperJob очищен")
+                
+        except Exception as e:
+            logger.error(f"Ошибка очистки кэша: {e}")
+    
     def clear_all_cache(self) -> None:
         """Очистка кэша всех API"""
         try:
