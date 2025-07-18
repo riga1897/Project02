@@ -175,7 +175,11 @@ class JSONSaver:
             initial_count = len(vacancies)
 
             # Фильтруем вакансии, исключая нужную
-            filtered_vacancies = [v for v in vacancies if v.vacancy_id != vacancy_id]
+            # Проверяем как vacancy_id, так и id для совместимости
+            filtered_vacancies = [
+                v for v in vacancies 
+                if v.vacancy_id != vacancy_id and getattr(v, 'id', None) != vacancy_id
+            ]
 
             if len(filtered_vacancies) == initial_count:
                 logger.warning(f"Вакансия с ID {vacancy_id} не найдена")
@@ -236,7 +240,9 @@ class JSONSaver:
 
                 vac_dict = vac.to_dict()
                 # Дополнительная проверка структуры
-                if not all(key in vac_dict for key in ['id', 'title', 'url']):
+                # Проверяем наличие ID (может быть как 'id', так и 'vacancy_id')
+                has_id = 'id' in vac_dict or 'vacancy_id' in vac_dict
+                if not (has_id and 'title' in vac_dict and 'url' in vac_dict):
                     raise ValueError("Отсутствуют обязательные поля")
 
                 valid_data.append(vac_dict)
