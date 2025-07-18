@@ -129,5 +129,5 @@ class TestAPIConnector:
         mock_response.json.return_value = {'items': []}
         mock_get.return_value = mock_response
 
-        result = api_connector.get_data("https://test.com")
+        result = api_connector.connect("https://test.com", {})
         assert mock_get.called
