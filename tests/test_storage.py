@@ -90,16 +90,16 @@ from unittest.mock import patch, mock_open
 # Добавляем путь к исходному коду
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.storage.abstract import AbstractStorage
+from src.storage.abstract import AbstractVacancyStorage
 from src.storage.json_saver import JSONSaver
 
 
-class TestAbstractStorage:
+class TestAbstractVacancyStorage:
     
     def test_abstract_methods(self):
         # Тест что нельзя создать экземпляр абстрактного класса
         with pytest.raises(TypeError):
-            AbstractStorage()
+            AbstractVacancyStorage()
 
 
 class TestJSONSaver:
