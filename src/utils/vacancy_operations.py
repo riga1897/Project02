@@ -5,7 +5,6 @@
 from typing import List, Dict, Any, Optional
 import logging
 from src.vacancies.models import Vacancy
-from src.utils.ui_helpers import filter_vacancies_by_keyword
 
 logger = logging.getLogger(__name__)
 
@@ -134,6 +133,8 @@ class VacancyOperations:
         if not keywords:
             return vacancies
 
+        from src.utils.ui_helpers import filter_vacancies_by_keyword
+        
         filtered_vacancies = []
 
         for vacancy in vacancies:
@@ -219,6 +220,7 @@ class VacancyOperations:
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
         else:
             # Простой поиск по одному ключевому слову
+            from src.utils.ui_helpers import filter_vacancies_by_keyword
             return filter_vacancies_by_keyword(vacancies, query)
 
     
