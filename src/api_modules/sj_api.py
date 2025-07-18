@@ -5,7 +5,7 @@ import os
 from typing import Dict, List, Union, Optional
 from .base_api import BaseAPI
 from src.config.sj_api_config import SJAPIConfig
-from src.utils.cache import simple_cache
+from src.utils.cache import simple_cache, FileCache
 from src.utils.env_loader import EnvLoader
 
 logger = logging.getLogger(__name__)
@@ -32,6 +32,9 @@ class SuperJobAPI(BaseAPI):
             "User-Agent": "VacancySearchApp/1.0"
         }
         self.request_delay = 0.5
+        
+        # Инициализируем файловый кэш для SuperJob
+        self.file_cache = FileCache("data/cache/sj")
         
         # Логируем, какой ключ используется (скрываем реальный ключ)
         if api_key == 'v3.r.137440105.example.test_tool':
@@ -88,7 +91,6 @@ class SuperJobAPI(BaseAPI):
             logger.error(f"Unexpected error: {e}")
             return f"Unexpected error: {e}"
 
-    @simple_cache(ttl=3600)  # 1 час в секундах
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """
         Получение вакансий по поисковому запросу
@@ -105,6 +107,17 @@ class SuperJobAPI(BaseAPI):
         # Базовые параметры из конфигурации
         params = self.config.get_params(**kwargs)
         params["keyword"] = search_query
+
+        # Проверяем кэш
+        cache_key_params = {
+            "query": search_query,
+            "params": params
+        }
+        
+        cached_data = self.file_cache.load_response("sj", cache_key_params)
+        if cached_data:
+            logger.info(f"Found cached data for SuperJob query: '{search_query}'")
+            return cached_data.get("data", [])
 
         logger.info(f"Searching SuperJob vacancies for: '{search_query}'")
         logger.info(f"Request parameters: {params}")
@@ -163,11 +176,20 @@ class SuperJobAPI(BaseAPI):
             page += 1
 
         logger.info(f"Total SuperJob vacancies found: {len(all_vacancies)}")
+        
+        # Сохраняем результаты в кэш
+        if all_vacancies:
+            self.file_cache.save_response("sj", cache_key_params, all_vacancies)
+            logger.debug(f"Saved {len(all_vacancies)} SuperJob vacancies to cache")
+        
         return all_vacancies
 
     def clear_cache(self) -> None:
         """Очистка кэша SuperJob API"""
         try:
+            # Очищаем файловый кэш
+            self.file_cache.clear("sj")
+            # Очищаем через менеджер кэша
             from src.utils.cache_manager import cache_manager
             cache_manager.clear_cache_for_source("sj")
             logger.info("Кэш SuperJob очищен")

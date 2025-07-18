@@ -35,8 +35,8 @@ class CacheManager:
             return
 
         try:
-            pattern = f"{source}_*.json"
-            cache_files = list(cache_dir.glob(pattern))
+            # Ищем все JSON файлы в директории источника
+            cache_files = list(cache_dir.glob("*.json"))
 
             for file_path in cache_files:
                 file_path.unlink()
