@@ -135,6 +135,52 @@ class SuperJobAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
+    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+        """
+        Удаление дублирующихся вакансий SuperJob по названию и компании
+        
+        Args:
+            vacancies: Список вакансий с SuperJob
+            
+        Returns:
+            List[Dict]: Список уникальных вакансий
+        """
+        seen = set()
+        unique_vacancies = []
+        
+        for vacancy in vacancies:
+            # Создаем ключ для дедупликации SJ вакансий
+            title = vacancy.get('profession', '').lower().strip()
+            company = vacancy.get('firm_name', '').lower().strip()
+            
+            # Нормализуем зарплату для сравнения
+            salary_key = f"{vacancy.get('payment_from', 0)}-{vacancy.get('payment_to', 0)}"
+            
+            dedup_key = (title, company, salary_key)
+            
+            if dedup_key not in seen:
+                seen.add(dedup_key)
+                unique_vacancies.append(vacancy)
+            else:
+                logger.debug(f"Дублирующаяся SJ вакансия отфильтрована: {title} в {company}")
+        
+        logger.info(f"SJ дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
+        return unique_vacancies
+
+    def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
+        """
+        Получение вакансий с SuperJob с дедупликацией
+        
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры
+            
+        Returns:
+            List[Dict]: Список уникальных вакансий
+        """
+        vacancies = self.get_vacancies(search_query, **kwargs)
+        return self._deduplicate_vacancies(vacancies)
+
     def clear_cache(self) -> None:
         """
         Очищает кэш API (используя общий механизм как в HH API)

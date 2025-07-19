@@ -17,26 +17,26 @@ class UnifiedAPI:
         self.sj_api = SuperJobAPI()
         self.parser = SuperJobParser()
 
-    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+    def _deduplicate_cross_platform(self, all_vacancies: List[Dict]) -> List[Dict]:
         """
-        Удаление дублирующихся вакансий по названию и компании
-
+        Межплатформенная дедупликация вакансий из разных источников
+        
         Args:
-            vacancies: Список вакансий
-
+            all_vacancies: Список всех вакансий из разных источников
+            
         Returns:
-            List[Dict]: Список уникальных вакансий
+            List[Dict]: Список вакансий без дублей между платформами
         """
         seen = set()
         unique_vacancies = []
-
-        for vacancy in vacancies:
-            # Создаем ключ для дедупликации
+        
+        for vacancy in all_vacancies:
+            # Универсальная логика для дедупликации между источниками
             title = vacancy.get('name', vacancy.get('profession', '')).lower().strip()
             company = vacancy.get('employer', {}).get('name', 
                      vacancy.get('firm_name', '')).lower().strip()
-
-            # Нормализуем зарплату для сравнения
+            
+            # Нормализуем зарплату для межплатформенного сравнения
             salary_key = ''
             if 'salary' in vacancy and vacancy['salary']:
                 salary = vacancy['salary']
@@ -45,16 +45,16 @@ class UnifiedAPI:
                 salary_key = f"{salary_from}-{salary_to}"
             elif 'payment_from' in vacancy:
                 salary_key = f"{vacancy.get('payment_from', 0)}-{vacancy.get('payment_to', 0)}"
-
+            
             dedup_key = (title, company, salary_key)
-
+            
             if dedup_key not in seen:
                 seen.add(dedup_key)
                 unique_vacancies.append(vacancy)
             else:
-                logger.debug(f"Дублирующаяся вакансия отфильтрована: {title} в {company}")
-
-        logger.info(f"Дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
+                logger.debug(f"Межплатформенный дубль отфильтрован: {title} в {company}")
+        
+        logger.info(f"Межплатформенная дедупликация: {len(all_vacancies)} -> {len(unique_vacancies)} вакансий")
         return unique_vacancies
 
     def get_vacancies_from_sources(self, search_query: str, sources: List[str] = None, **kwargs) -> List[Dict]:
@@ -76,15 +76,15 @@ class UnifiedAPI:
 
         all_vacancies = []
 
-        # Получение из HeadHunter
+        # Получение из HeadHunter с дедупликацией
         if 'hh' in sources:
             try:
                 logger.info(f"Получение вакансий с HH.ru по запросу: '{search_query}'")
-                hh_data = self.hh_api.get_vacancies(search_query, **kwargs)
+                hh_data = self.hh_api.get_vacancies_with_deduplication(search_query, **kwargs)
                 hh_vacancies = [Vacancy.from_dict(item).to_dict() for item in hh_data]
 
                 if hh_vacancies:
-                    logger.info(f"Найдено {len(hh_vacancies)} вакансий с HH.ru")
+                    logger.info(f"Найдено {len(hh_vacancies)} уникальных вакансий с HH.ru")
                     all_vacancies.extend(hh_vacancies)
 
             except Exception as e:
@@ -99,7 +99,7 @@ class UnifiedAPI:
                 if 'period' in kwargs:
                     # HH использует 'period', SuperJob использует 'published'
                     sj_kwargs['published'] = kwargs['period']
-                sj_data = self.sj_api.get_vacancies(search_query, **sj_kwargs)
+                sj_data = self.sj_api.get_vacancies_with_deduplication(search_query, **sj_kwargs)
 
                 if sj_data:
                     # Парсим данные SuperJob в объекты SuperJobVacancy
@@ -117,7 +117,7 @@ class UnifiedAPI:
                             logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
 
                     if sj_vacancies:
-                        logger.info(f"Найдено {len(sj_vacancies)} вакансий с SuperJob")
+                        logger.info(f"Найдено {len(sj_vacancies)} уникальных вакансий с SuperJob")
                         all_vacancies.extend(sj_vacancies)
                     else:
                         logger.warning("SuperJob API не вернул вакансий")
@@ -125,23 +125,48 @@ class UnifiedAPI:
             except Exception as e:
                 logger.error(f"Ошибка получения вакансий из SJ: {e}")
 
-        # Применяем дедупликацию к общему списку вакансий
-        return self._deduplicate_vacancies(all_vacancies)
+        # Применяем межплатформенную дедупликацию к общему списку вакансий
+        return self._deduplicate_cross_platform(all_vacancies)
 
     def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
-        """Получение вакансий только с HH.ru"""
-        hh_vacancies = self.get_vacancies_from_sources(query, sources=['hh'], **kwargs)
-        return [Vacancy.from_dict(item) for item in hh_vacancies]
+        """Получение вакансий только с HH.ru с дедупликацией"""
+        try:
+            hh_data = self.hh_api.get_vacancies_with_deduplication(query, **kwargs)
+            return [Vacancy.from_dict(item) for item in hh_data]
+        except Exception as e:
+            logger.error(f"Ошибка получения вакансий HH: {e}")
+            return []
 
     def get_sj_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
-        """Получение вакансий только с SuperJob"""
-        # Синхронизируем параметры периода
-        sj_kwargs = kwargs.copy()
-        if 'period' in kwargs:
-            # HH использует 'period', SuperJob использует 'published'
-            sj_kwargs['published'] = kwargs['period']
-        sj_vacancies = self.get_vacancies_from_sources(query, sources=['sj'], **sj_kwargs)
-        return [Vacancy.from_dict(item) for item in sj_vacancies]
+        """Получение вакансий только с SuperJob с дедупликацией"""
+        try:
+            # Синхронизируем параметры периода
+            sj_kwargs = kwargs.copy()
+            if 'period' in kwargs:
+                # HH использует 'period', SuperJob использует 'published'
+                sj_kwargs['published'] = kwargs['period']
+            
+            sj_data = self.sj_api.get_vacancies_with_deduplication(query, **sj_kwargs)
+            
+            # Парсим данные SuperJob в объекты SuperJobVacancy
+            if sj_data:
+                sj_vacancies_raw = self.parser.parse_vacancies(sj_data)
+                
+                # Конвертируем SuperJobVacancy в унифицированный формат
+                sj_vacancies = []
+                for sj_vac in sj_vacancies_raw:
+                    try:
+                        unified_data = self.parser.convert_to_unified_format(sj_vac)
+                        vacancy = Vacancy.from_dict(unified_data)
+                        sj_vacancies.append(vacancy)
+                    except Exception as e:
+                        logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
+                
+                return sj_vacancies
+            return []
+        except Exception as e:
+            logger.error(f"Ошибка получения вакансий SJ: {e}")
+            return []
 
     def clear_cache(self, sources: Dict[str, bool]) -> None:
         """
