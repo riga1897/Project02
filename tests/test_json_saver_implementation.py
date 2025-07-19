@@ -124,36 +124,33 @@ class TestJSONSaverImplementation():
         assert len(stored_vacancies) == 3
 
     def test_update_existing_vacancy(self, json_saver, sample_vacancy):
-        """Тестируем обновление существующей вакансии"""
-        # Добавляем первоначальную вакансию
+        """Тест обновления существующей вакансии"""
+        # Добавляем вакансию
         json_saver.add_vacancy(sample_vacancy)
 
-        # Создаем обновленную версию
+        # Обновляем поля вакансии
         updated_vacancy = Vacancy(
-            title="Updated Python Developer",  # Изменили название
+            title="Updated Developer",
             url=sample_vacancy.url,
-            salary=sample_vacancy.salary,
-            description="Updated description",  # Изменили описание
-            requirements=sample_vacancy.requirements,
-            responsibilities=sample_vacancy.responsibilities,
-            employer=sample_vacancy.employer,
-            experience=sample_vacancy.experience,
-            employment=sample_vacancy.employment,
-            schedule=sample_vacancy.schedule,
-            published_at=sample_vacancy.published_at,
-            vacancy_id=sample_vacancy.vacancy_id  # Тот же ID
+            salary={'from': 80000, 'to': 120000, 'currency': 'USD'},
+            description="Updated description",
+            vacancy_id=sample_vacancy.vacancy_id
         )
 
-        # Обновляем вакансию
+        # Добавляем обновленную вакансию
         messages = json_saver.add_vacancy(updated_vacancy)
+
+        # Проверяем что получено сообщение об обновлении
         assert len(messages) == 1
         assert "обновлена" in messages[0]
-        assert "title" in messages[0]
+        assert "salary" in messages[0]
 
-        # Проверяем, что вакансия обновилась
-        vacancies = json_saver.get_vacancies()
-        assert len(vacancies) == 1  # Должна быть одна вакансия
-        assert vacancies[0].title == "Updated Python Developer"
+        # Проверяем что вакансия действительно обновлена
+        vacancies = json_saver.load_vacancies()
+        assert len(vacancies) == 1
+        assert vacancies[0].title == "Updated Developer"
+        # Исправляем проверку - у Salary нет метода get, проверяем напрямую атрибуты
+        assert vacancies[0].salary.amount_from == 80000
 
     def test_delete_vacancy_functionality(self, json_saver, sample_vacancy):
         """Тестируем функциональность удаления вакансии"""

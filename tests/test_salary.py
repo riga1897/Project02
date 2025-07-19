@@ -1,4 +1,5 @@
 
+
 import pytest
 from typing import Dict, Any
 
@@ -166,3 +167,36 @@ class TestSalary:
         # Проверяем, что при попытке вызвать get будет ошибка
         with pytest.raises(AttributeError):
             salary.get('some_key')
+
+    def test_private_properties_access(self):
+        """Тест доступа к приватным свойствам"""
+        salary = Salary({'from': 30000, 'to': 50000, 'currency': 'EUR'})
+        
+        # Проверяем доступ через приватные свойства
+        assert salary._salary_from == 30000
+        assert salary._salary_to == 50000
+        assert salary._currency == 'EUR'
+
+    def test_slots_usage(self):
+        """Тест использования __slots__"""
+        salary = Salary()
+        
+        # Проверяем, что __slots__ работает
+        assert hasattr(Salary, '__slots__')
+        
+        # Проверяем, что нельзя добавить новые атрибуты
+        with pytest.raises(AttributeError):
+            salary.new_attribute = "test"
+
+    def test_edge_cases_amount_validation(self):
+        """Тест граничных случаев валидации сумм"""
+        # Тест с float значениями
+        salary_float = Salary({'from': 50000.5, 'to': 70000.9})
+        assert salary_float.salary_from == 50000  # должно конвертироваться в int
+        assert salary_float.salary_to == 70000
+        
+        # Тест с очень большими числами
+        salary_big = Salary({'from': 1000000, 'to': 2000000})
+        assert salary_big.salary_from == 1000000
+        assert salary_big.salary_to == 2000000
+
