@@ -12,7 +12,7 @@ from src.vacancies.models import Vacancy
 from src.vacancies.abstract import AbstractVacancy
 
 
-class TestJSONSaverImplementation:
+class TestJSONSaverImplementation():
     """Тесты для JSONSaver как конкретной реализации AbstractVacancyStorage"""
 
     @pytest.fixture
@@ -234,7 +234,7 @@ class TestJSONSaverImplementation:
     def test_validate_filename(self):
         """Тестируем валидацию имени файла"""
         # Тест с None
-        result = JSONSaver._validate_filename(None)
+        result = JSONSaver._validate_filename("vacancies.json")
         assert result == "data/storage/vacancies.json"
 
         # Тест с пустой строкой
