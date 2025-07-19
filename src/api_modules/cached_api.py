@@ -42,24 +42,21 @@ class CachedAPI(BaseAPI, ABC):
     
 
     @simple_cache(ttl=300)  # Кэш в памяти на 5 минут
-    def _cached_api_request(self, url: str, params_hash: str, api_prefix: str) -> Dict:
+    def _cached_api_request(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
         Кэшированный API запрос в памяти
         
         Args:
             url: URL для запроса
-            params_hash: Хеш параметров для уникальности
+            params: Параметры запроса
             api_prefix: Префикс для логирования
             
         Returns:
             Dict: Ответ API
         """
-        # Восстанавливаем параметры из оригинального вызова
-        params = getattr(self, '_current_params', {})
-        
         try:
             data = self.connector.connect(url, params)
-            logger.debug(f"Данные получены из API для {api_prefix}")
+            logger.debug(f"Данные получены из API для {api_prefix} (кэш в памяти)")
             return data
         except Exception as e:
             logger.error(f"Ошибка API запроса: {e}")
@@ -82,15 +79,9 @@ class CachedAPI(BaseAPI, ABC):
         Returns:
             Dict: Ответ API или пустая структура при ошибке
         """
-        # Сохраняем параметры для кэшированного метода
-        self._current_params = params
-        
-        # Создаем хеш параметров для уникальности кэша в памяти
-        params_hash = self.cache._generate_params_hash(params)
-        
         # 1. Проверяем кэш в памяти (быстрее всего)
         try:
-            memory_result = self._cached_api_request(url, params_hash, api_prefix)
+            memory_result = self._cached_api_request(url, params, api_prefix)
             if memory_result != self._get_empty_response():
                 logger.debug(f"Данные получены из кэша в памяти для {api_prefix}")
                 return memory_result
@@ -107,24 +98,15 @@ class CachedAPI(BaseAPI, ABC):
         
         # 3. Делаем реальный запрос к API с параллельным кэшированием
         try:
-            # Делаем прямой запрос к API, минуя кэш в памяти
+            # Делаем прямой запрос к API
             data = self.connector.connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix}")
             
-            # Параллельно сохраняем в оба кэша только валидные данные
-            if data != self._get_empty_response():
-                # Сохраняем в файловый кэш
+            # Параллельно сохраняем в файловый кэш только валидные данные
+            if data and data != self._get_empty_response():
+                # Сохраняем в файловый кэш в data/cache/
                 self.cache.save_response(api_prefix, params, data)
-                logger.debug(f"Данные сохранены в файловый кэш для {api_prefix}")
-                
-                # Принудительно обновляем кэш в памяти новыми данными
-                # Очищаем старый кэш для данных параметров если есть
-                if hasattr(self._cached_api_request, 'cache') and params_hash in getattr(self._cached_api_request, 'cache', {}):
-                    delattr(self._cached_api_request.cache, params_hash)
-                
-                # Сохраняем в кэш в памяти через вызов кэшированного метода
-                self._cached_api_request(url, params_hash, api_prefix)
-                logger.debug(f"Данные сохранены в кэш в памяти для {api_prefix}")
+                logger.debug(f"Данные сохранены в файловый кэш data/cache/ для {api_prefix}")
             
             return data
             
