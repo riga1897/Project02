@@ -103,10 +103,21 @@ class HHVacancy(AbstractVacancy):
             if data is None:
                 logger.error("Данные не могут быть None")
                 raise ValueError("Данные не могут быть None")
-                
+
             if not isinstance(data, dict):
                 logger.error(f"Данные должны быть словарем, получен тип: {type(data)}")
                 raise ValueError("Данные должны быть словарем")
+
+            # Валидация основных полей для HH
+            required_keys = ['id', 'name', 'alternate_url']
+            if not any(key in data for key in required_keys):
+                logger.error(f"Отсутствуют обязательные поля HH в данных: {list(data.keys())}")
+                raise ValueError("Данные не содержат обязательных полей HH API")
+
+            # Дополнительная валидация для неожиданных структур данных
+            if len(data) == 1 and 'invalid' in data:
+                logger.error(f"Некорректная структура данных HH: {data}")
+                raise ValueError("Некорректная структура данных HH")
 
             # Обработка опыта работы (HH специфичная структура)
             experience = None
