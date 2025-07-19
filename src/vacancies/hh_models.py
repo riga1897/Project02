@@ -100,7 +100,12 @@ class HHVacancy(AbstractVacancy):
     def from_dict(cls, data: Dict[str, Any]) -> 'HHVacancy':
         """Создает объект HHVacancy из данных HH API"""
         try:
+            if data is None:
+                logger.error("Данные не могут быть None")
+                raise ValueError("Данные не могут быть None")
+                
             if not isinstance(data, dict):
+                logger.error(f"Данные должны быть словарем, получен тип: {type(data)}")
                 raise ValueError("Данные должны быть словарем")
 
             # Обработка опыта работы (HH специфичная структура)

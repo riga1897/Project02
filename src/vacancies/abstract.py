@@ -3,7 +3,9 @@ from typing import Dict, Any
 
 
 class AbstractVacancy(ABC):
-    """Абстрактный класс для представления вакансии"""
+    """Абстрактный базовый класс для представления вакансии"""
+
+    __slots__ = ()
 
     @abstractmethod
     def __init__(self):
