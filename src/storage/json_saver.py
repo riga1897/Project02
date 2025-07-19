@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class JSONSaver:
     """Класс для сохранения и загрузки вакансий в JSON формате"""
 
-    # Removed __slots__ to allow test mocking
+    __slots__ = ('_filename',)
 
     def __init__(self, filename: str = "data/storage/vacancies.json"):
         self._filename = self._validate_filename(filename)
@@ -47,16 +47,16 @@ class JSONSaver:
         """Создает резервную копию поврежденного файла"""
         try:
             from datetime import datetime
-
+            
             file_path = Path(self.filename)
             if file_path.exists():
                 backup_name = f"{file_path.stem}_corrupted_{datetime.now().strftime('%Y%m%d_%H%M%S')}{file_path.suffix}"
                 backup_path = file_path.parent / backup_name
-
+                
                 import shutil
                 shutil.copy2(file_path, backup_path)
                 logger.info(f"Создана резервная копия поврежденного файла: {backup_path}")
-
+                
                 # Создаем новый пустой файл
                 with open(self.filename, 'w', encoding='utf-8') as f:
                     json.dump([], f, ensure_ascii=False, indent=2)
@@ -127,12 +127,12 @@ class JSONSaver:
         try:
             with open(self.filename, 'r', encoding='utf-8') as f:
                 content = f.read().strip()
-
+                
                 # Если файл пустой, возвращаем пустой список
                 if not content:
                     logger.info("Файл пустой, возвращаем пустой список")
                     return []
-
+                
                 data = json.loads(content)
 
                 if not isinstance(data, list):
@@ -312,7 +312,7 @@ class JSONSaver:
     def get_file_size(self) -> int:
         """
         Получает размер файла в байтах
-
+        
         Returns:
             int: Размер файла в байтах, 0 если файл не существует
         """
