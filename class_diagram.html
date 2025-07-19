@@ -1,0 +1,427 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диаграмма классов проекта</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .diagram-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .class-box {
+            fill: #e8f4fd;
+            stroke: #1976d2;
+            stroke-width: 2;
+            cursor: pointer;
+        }
+        
+        .abstract-class {
+            fill: #fff3e0;
+            stroke: #f57c00;
+            stroke-dasharray: 5,5;
+        }
+        
+        .model-class {
+            fill: #e8f5e8;
+            stroke: #4caf50;
+        }
+        
+        .api-class {
+            fill: #fce4ec;
+            stroke: #e91e63;
+        }
+        
+        .ui-class {
+            fill: #f3e5f5;
+            stroke: #9c27b0;
+        }
+        
+        .utility-class {
+            fill: #fff8e1;
+            stroke: #ff9800;
+        }
+        
+        .class-title {
+            font-weight: bold;
+            font-size: 14px;
+            fill: #333;
+            text-anchor: middle;
+        }
+        
+        .class-subtitle {
+            font-size: 11px;
+            fill: #666;
+            text-anchor: middle;
+        }
+        
+        .inheritance-line {
+            stroke: #2196f3;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#inheritance-arrow);
+        }
+        
+        .composition-line {
+            stroke: #4caf50;
+            stroke-width: 2;
+            fill: none;
+            marker-end: url(#composition-arrow);
+        }
+        
+        .usage-line {
+            stroke: #ff9800;
+            stroke-width: 1.5;
+            stroke-dasharray: 5,5;
+            fill: none;
+            marker-end: url(#usage-arrow);
+        }
+        
+        .legend {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 15px;
+            margin-right: 8px;
+            border: 1px solid #333;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Диаграмма классов проекта поиска вакансий</h1>
+        
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: #fff3e0; border-style: dashed;"></div>
+                Абстрактные классы
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e8f5e8;"></div>
+                Модели данных
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #fce4ec;"></div>
+                API классы
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f3e5f5;"></div>
+                UI интерфейсы
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #fff8e1;"></div>
+                Утилиты
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #e8f4fd;"></div>
+                Хранение данных
+            </div>
+            <hr style="margin: 10px 0;">
+            <div style="font-weight: bold; margin-bottom: 5px;">Связи:</div>
+            <div class="legend-item">
+                <div style="width: 20px; height: 2px; background: #2196f3; margin-right: 8px;"></div>
+                Наследование
+            </div>
+            <div class="legend-item">
+                <div style="width: 20px; height: 2px; background: #4caf50; margin-right: 8px;"></div>
+                Композиция
+            </div>
+            <div class="legend-item">
+                <div style="width: 20px; height: 2px; background: #ff9800; border-style: dashed; margin-right: 8px;"></div>
+                Использование
+            </div>
+        </div>
+        
+        <div class="diagram-container">
+            <svg id="diagram"></svg>
+        </div>
+        
+        <div class="tooltip" id="tooltip"></div>
+    </div>
+
+    <script>
+        // Данные классов
+        const classes = [
+            // Абстрактные классы
+            { id: 'AbstractVacancy', name: 'AbstractVacancy', type: 'abstract', x: 200, y: 50, file: 'src/vacancies/abstract.py' },
+            { id: 'AbstractVacancyStorage', name: 'AbstractVacancyStorage', type: 'abstract', x: 600, y: 50, file: 'src/storage/abstract.py' },
+            { id: 'BaseAPI', name: 'BaseAPI', type: 'abstract', x: 1000, y: 50, file: 'src/api_modules/base_api.py' },
+            
+            // Модели данных
+            { id: 'Salary', name: 'Salary', type: 'model', x: 50, y: 200, file: 'src/utils/salary.py' },
+            { id: 'Vacancy', name: 'Vacancy', type: 'model', x: 200, y: 200, file: 'src/vacancies/models.py' },
+            { id: 'HHVacancy', name: 'HHVacancy', type: 'model', x: 100, y: 350, file: 'src/vacancies/hh_models.py' },
+            { id: 'SuperJobVacancy', name: 'SuperJobVacancy', type: 'model', x: 300, y: 350, file: 'src/vacancies/sj_models.py' },
+            
+            // Хранение данных
+            { id: 'JSONSaver', name: 'JSONSaver', type: 'storage', x: 600, y: 200, file: 'src/storage/json_saver.py' },
+            
+            // API классы
+            { id: 'HHAPI', name: 'HHAPI', type: 'api', x: 800, y: 200, file: 'src/api_modules/hh_api.py' },
+            { id: 'SuperJobAPI', name: 'SuperJobAPI', type: 'api', x: 1000, y: 200, file: 'src/api_modules/sj_api.py' },
+            { id: 'CachedAPI', name: 'CachedAPI', type: 'api', x: 1200, y: 200, file: 'src/api_modules/cached_api.py' },
+            { id: 'UnifiedAPI', name: 'UnifiedAPI', type: 'api', x: 1000, y: 350, file: 'src/api_modules/unified_api.py' },
+            
+            // Парсеры
+            { id: 'HHParser', name: 'HHParser', type: 'utility', x: 500, y: 350, file: 'src/vacancies/parsers/hh_parser.py' },
+            { id: 'SuperJobParser', name: 'SuperJobParser', type: 'utility', x: 700, y: 350, file: 'src/vacancies/parsers/sj_parser.py' },
+            
+            // UI и утилиты
+            { id: 'ConsoleInterface', name: 'ConsoleInterface', type: 'ui', x: 200, y: 500, file: 'src/ui_interfaces/console_interface.py' },
+            { id: 'VacancyOperations', name: 'VacancyOperations', type: 'utility', x: 500, y: 500, file: 'src/utils/vacancy_operations.py' },
+            { id: 'VacancyFormatter', name: 'VacancyFormatter', type: 'utility', x: 800, y: 500, file: 'src/utils/vacancy_formatter.py' }
+        ];
+
+        // Связи между классами
+        const connections = [
+            // Наследование
+            { from: 'Vacancy', to: 'AbstractVacancy', type: 'inheritance' },
+            { from: 'HHVacancy', to: 'AbstractVacancy', type: 'inheritance' },
+            { from: 'SuperJobVacancy', to: 'AbstractVacancy', type: 'inheritance' },
+            { from: 'JSONSaver', to: 'AbstractVacancyStorage', type: 'inheritance' },
+            { from: 'HHAPI', to: 'BaseAPI', type: 'inheritance' },
+            { from: 'SuperJobAPI', to: 'BaseAPI', type: 'inheritance' },
+            { from: 'CachedAPI', to: 'BaseAPI', type: 'inheritance' },
+            
+            // Композиция (содержит объекты)
+            { from: 'Vacancy', to: 'Salary', type: 'composition' },
+            { from: 'HHVacancy', to: 'Salary', type: 'composition' },
+            { from: 'SuperJobVacancy', to: 'Salary', type: 'composition' },
+            { from: 'JSONSaver', to: 'Vacancy', type: 'composition' },
+            
+            // Использование
+            { from: 'UnifiedAPI', to: 'HHAPI', type: 'usage' },
+            { from: 'UnifiedAPI', to: 'SuperJobAPI', type: 'usage' },
+            { from: 'ConsoleInterface', to: 'JSONSaver', type: 'usage' },
+            { from: 'VacancyOperations', to: 'Vacancy', type: 'usage' },
+            { from: 'VacancyFormatter', to: 'Vacancy', type: 'usage' },
+            { from: 'HHParser', to: 'HHVacancy', type: 'usage' },
+            { from: 'SuperJobParser', to: 'SuperJobVacancy', type: 'usage' }
+        ];
+
+        // Настройка SVG
+        const svg = d3.select('#diagram');
+        const container = document.querySelector('.diagram-container');
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+        
+        svg.attr('width', width).attr('height', height);
+
+        // Определение маркеров для стрелок
+        const defs = svg.append('defs');
+        
+        // Маркер для наследования
+        defs.append('marker')
+            .attr('id', 'inheritance-arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 10)
+            .attr('refY', 0)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')
+            .attr('fill', '#2196f3');
+            
+        // Маркер для композиции
+        defs.append('marker')
+            .attr('id', 'composition-arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 10)
+            .attr('refY', 0)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')
+            .attr('fill', '#4caf50');
+            
+        // Маркер для использования
+        defs.append('marker')
+            .attr('id', 'usage-arrow')
+            .attr('viewBox', '0 -5 10 10')
+            .attr('refX', 10)
+            .attr('refY', 0)
+            .attr('markerWidth', 6)
+            .attr('markerHeight', 6)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M0,-5L10,0L0,5')
+            .attr('fill', '#ff9800');
+
+        // Создание групп для связей
+        const connectionsGroup = svg.append('g').attr('class', 'connections');
+        const classesGroup = svg.append('g').attr('class', 'classes');
+
+        // Функция для получения CSS класса по типу
+        function getClassType(type) {
+            switch(type) {
+                case 'abstract': return 'abstract-class';
+                case 'model': return 'model-class';
+                case 'api': return 'api-class';
+                case 'ui': return 'ui-class';
+                case 'utility': return 'utility-class';
+                case 'storage': return 'class-box';
+                default: return 'class-box';
+            }
+        }
+
+        // Рисование связей
+        connections.forEach(conn => {
+            const fromClass = classes.find(c => c.id === conn.from);
+            const toClass = classes.find(c => c.id === conn.to);
+            
+            if (fromClass && toClass) {
+                connectionsGroup.append('line')
+                    .attr('class', `${conn.type}-line`)
+                    .attr('x1', fromClass.x + 60)
+                    .attr('y1', fromClass.y + 30)
+                    .attr('x2', toClass.x + 60)
+                    .attr('y2', toClass.y + 30);
+            }
+        });
+
+        // Рисование классов
+        const classGroups = classesGroup.selectAll('.class-group')
+            .data(classes)
+            .enter()
+            .append('g')
+            .attr('class', 'class-group')
+            .attr('transform', d => `translate(${d.x}, ${d.y})`);
+
+        // Прямоугольники классов
+        classGroups.append('rect')
+            .attr('class', d => `class-box ${getClassType(d.type)}`)
+            .attr('width', 120)
+            .attr('height', 60)
+            .attr('rx', 5);
+
+        // Названия классов
+        classGroups.append('text')
+            .attr('class', 'class-title')
+            .attr('x', 60)
+            .attr('y', 25)
+            .text(d => d.name);
+
+        // Подписи файлов
+        classGroups.append('text')
+            .attr('class', 'class-subtitle')
+            .attr('x', 60)
+            .attr('y', 40)
+            .text(d => d.file.split('/').pop());
+
+        // Tooltip
+        const tooltip = d3.select('#tooltip');
+
+        classGroups
+            .on('mouseover', function(event, d) {
+                tooltip
+                    .style('opacity', 1)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 10) + 'px')
+                    .html(`
+                        <strong>${d.name}</strong><br>
+                        Файл: ${d.file}<br>
+                        Тип: ${d.type}
+                    `);
+            })
+            .on('mousemove', function(event) {
+                tooltip
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 10) + 'px');
+            })
+            .on('mouseout', function() {
+                tooltip.style('opacity', 0);
+            });
+
+        // Добавление возможности перетаскивания
+        const drag = d3.drag()
+            .on('start', function(event, d) {
+                d3.select(this).raise();
+            })
+            .on('drag', function(event, d) {
+                d.x = event.x;
+                d.y = event.y;
+                d3.select(this).attr('transform', `translate(${d.x}, ${d.y})`);
+                
+                // Обновление связей
+                updateConnections();
+            });
+
+        classGroups.call(drag);
+
+        function updateConnections() {
+            connections.forEach((conn, index) => {
+                const fromClass = classes.find(c => c.id === conn.from);
+                const toClass = classes.find(c => c.id === conn.to);
+                
+                if (fromClass && toClass) {
+                    const line = connectionsGroup.select(`.${conn.type}-line:nth-child(${index + 1})`);
+                    if (!line.empty()) {
+                        line
+                            .attr('x1', fromClass.x + 60)
+                            .attr('y1', fromClass.y + 30)
+                            .attr('x2', toClass.x + 60)
+                            .attr('y2', toClass.y + 30);
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
