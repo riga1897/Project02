@@ -1,8 +1,3 @@
-
-"""
-Модуль для управления меню пользовательского интерфейса
-"""
-
 from typing import Dict, List, Tuple, Callable
 import logging
 
@@ -27,7 +22,7 @@ class MenuManager:
         self.menu_items: Dict[str, Tuple[str, Callable]] = {}
         self.menu_order: List[str] = []
     
-    def add_menu_item(self, key: str, title: str, handler: Callable, position: int = None) -> None:
+    def add_menu_item(self, key: str, title: str, handler: Callable | None, position: int = None) -> None:
         """
         Добавляет пункт меню
         
@@ -88,7 +83,7 @@ class MenuManager:
         Выводит все пункты меню в установленном порядке
         с разделителями и опцией выхода.
         """
-        from src.utils.ui_helpers import print_menu_separator
+        # from src.utils.ui_helpers import print_menu_separator
         
         print("\n")
         print_menu_separator()

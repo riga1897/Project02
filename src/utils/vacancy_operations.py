@@ -1,11 +1,8 @@
-"""
-Модуль для операций с вакансиями
-"""
-
-from typing import List, Dict, Any, Optional
 import logging
-from src.vacancies.models import Vacancy
+from typing import List
+
 from src.utils.search_utils import filter_vacancies_by_keyword, vacancy_contains_keyword
+from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -236,7 +233,7 @@ class VacancyOperations:
         print(f"\n=== ОТЛАДКА ПОИСКА: '{keyword}' ===")
         print(f"Вакансия: {vacancy.title}")
         print(f"Компания: {vacancy.employer}")
-        print(f"Ключевые слова: {vacancy.keywords}")
+        # print(f"Ключевые слова: {vacancy.keywords}")
         print(f"URL: {vacancy.url}")
 
         # Проверяем каждое поле
@@ -262,7 +259,7 @@ class VacancyOperations:
         print(f"\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
         print(f"Вакансия: {vacancy.title}")
         print(f"URL: {vacancy.url}")
-        print(f"Автоматически извлеченные ключевые слова: {vacancy.keywords}")
+        # print(f"Автоматически извлеченные ключевые слова: {vacancy.keywords}")
 
         # Показываем текст, из которого извлекались ключевые слова
         full_text = ' '.join([

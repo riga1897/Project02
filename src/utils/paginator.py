@@ -18,8 +18,8 @@ class Paginator:
             fetch_func: Callable[[int], List[Dict]],
             total_pages: int = 1,
             start_page: int = 0,
-            max_pages: Optional[int] = None,
-            **kwargs
+            max_pages: Optional[int] = None
+
     ) -> List[Dict]:
         """
         Надежная пагинация с функциями:
@@ -32,7 +32,6 @@ class Paginator:
             total_pages: Общее количество страниц
             start_page: Начальная страница
             max_pages: Максимальное количество страниц для обработки
-            **kwargs: Дополнительные параметры
             
         Returns:
             List[Dict]: Объединенный список всех полученных данных

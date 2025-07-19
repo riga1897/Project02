@@ -1,7 +1,3 @@
-"""
-Унифицированный форматтер для отображения вакансий
-"""
-
 from typing import Optional, List
 from src.vacancies.models import Vacancy
 
@@ -20,6 +16,7 @@ class VacancyFormatter:
 
         Returns:
             Список строк с информацией о вакансии
+            :type vacancy: Vacancy
         """
         lines = []
 

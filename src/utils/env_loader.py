@@ -1,8 +1,3 @@
-
-"""
-Утилита для загрузки переменных окружения из .env файла
-"""
-
 import os
 import logging
 from typing import Optional

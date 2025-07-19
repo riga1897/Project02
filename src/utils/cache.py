@@ -8,7 +8,7 @@ from typing import Any, Dict, Optional, Callable, Tuple
 from .env_loader import EnvLoader
 
 
-def simple_cache(ttl: Optional[int] = None, cache_dir: str = "data/cache", max_size: int = 1000) -> Callable:
+def simple_cache(ttl: Optional[int] = None, max_size: int = 1000) -> Callable:
     """
     Декоратор для кэширования результатов функций в памяти с ограничением размера
     :param ttl: Время жизни кэша в секундах (по умолчанию 1 час)

@@ -1,8 +1,3 @@
-
-"""
-Модуль для поиска и фильтрации вакансий
-"""
-
 from typing import List
 import logging
 from src.vacancies.models import Vacancy
@@ -60,8 +55,8 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
                 elif isinstance(skill, str) and keyword_lower in skill.lower():
                     relevance_score += 6
 
-        # Дополнительные проверки для улучшения поиска
-        # Проверяем в информации о работодателе
+        # Дополнительные проверки для улучшения поиска.
+        # Проверяем в информации о работодателе.
         if vacancy.employer and isinstance(vacancy.employer, dict):
             employer_name = vacancy.employer.get('name', '')
             if employer_name and keyword_lower in employer_name.lower():
