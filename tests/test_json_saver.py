@@ -34,6 +34,7 @@ class TestJSONSaver:
             schedule="day",
             published_at="2024-01-01T12:00:00",
             vacancy_id="123"
+            
         )
 
     # Инициализация
