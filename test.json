@@ -1,0 +1,26 @@
+[
+  {
+    "id": "123",
+    "title": "Test",
+    "url": "http://test.com",
+    "salary": {
+      "from": 0,
+      "to": 0,
+      "currency": "RUR",
+      "gross": false,
+      "period": "month"
+    },
+    "description": "desc",
+    "requirements": null,
+    "responsibilities": null,
+    "employer": null,
+    "experience": null,
+    "employment": null,
+    "schedule": null,
+    "published_at": null,
+    "skills": [],
+    "detailed_description": "desc",
+    "benefits": null,
+    "source": "unknown"
+  }
+]
