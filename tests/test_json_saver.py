@@ -1,3 +1,4 @@
+
 import json
 import pytest
 from unittest.mock import Mock, patch, mock_open
@@ -20,8 +21,7 @@ class TestJSONSaver:
 
     @pytest.fixture
     def sample_vacancy(self):
-        return Mock(
-            vacancy_id="123",
+        return Vacancy(
             title="Test",
             url="http://test.com",
             salary=None,
@@ -32,8 +32,8 @@ class TestJSONSaver:
             experience="1-3",
             employment="full",
             schedule="day",
-            area={"name": "Moscow"},
-            published_at="2024-01-01T12:00:00"
+            published_at="2024-01-01T12:00:00",
+            vacancy_id="123"
         )
 
     # Инициализация
@@ -73,17 +73,20 @@ class TestJSONSaver:
         result = json_saver.load_vacancies()
         assert result == []
 
-    @patch('builtins.open', new_callable=mock_open, read_data='[{"id": "1"}]')
-    def test_load_vacancies_valid(self, mock_file, json_saver):
-        with patch('src.vacancies.models.Vacancy.from_dict', return_value=Mock()):
-            result = json_saver.load_vacancies()
-            assert len(result) == 1
+    @patch('builtins.open', new_callable=mock_open, read_data='[{"id": "1", "title": "Test", "url": "test"}]')
+    @patch('src.vacancies.models.Vacancy.from_dict')
+    def test_load_vacancies_valid(self, mock_from_dict, mock_file, json_saver):
+        mock_vacancy = Mock()
+        mock_from_dict.return_value = mock_vacancy
+        result = json_saver.load_vacancies()
+        assert len(result) == 1
 
     @patch('builtins.open', new_callable=mock_open, read_data='invalid')
-    @patch('src.storage.json_saver.JSONSaver._backup_corrupted_file')
-    def test_load_vacancies_invalid_json(self, mock_backup, mock_file, json_saver):
-        result = json_saver.load_vacancies()
-        assert result == []
+    def test_load_vacancies_invalid_json(self, mock_file, json_saver):
+        with patch.object(json_saver, '_backup_corrupted_file') as mock_backup:
+            result = json_saver.load_vacancies()
+            assert result == []
+            mock_backup.assert_called_once()
 
     @patch('builtins.open', side_effect=FileNotFoundError)
     def test_load_vacancies_file_not_found(self, mock_file, json_saver):
@@ -91,37 +94,49 @@ class TestJSONSaver:
         assert result == []
 
     @patch('builtins.open', new_callable=mock_open, read_data='{}')
-    @patch('src.storage.json_saver.JSONSaver._backup_corrupted_file')
-    def test_load_vacancies_not_list(self, mock_backup, mock_file, json_saver):
-        result = json_saver.load_vacancies()
-        assert result == []
+    def test_load_vacancies_not_list(self, mock_file, json_saver):
+        with patch.object(json_saver, '_backup_corrupted_file') as mock_backup:
+            result = json_saver.load_vacancies()
+            assert result == []
+            mock_backup.assert_called_once()
 
     # Добавление вакансий
     @patch('builtins.open', new_callable=mock_open, read_data='[]')
-    @patch('src.storage.json_saver.JSONSaver._save_to_file')
-    def test_add_vacancy_new(self, mock_save, mock_file, json_saver, sample_vacancy):
-        messages = json_saver.add_vacancy(sample_vacancy)
-        assert len(messages) == 1
-        assert "Добавлена новая вакансия" in messages[0]
+    def test_add_vacancy_new(self, mock_file, json_saver, sample_vacancy):
+        with patch.object(json_saver, '_save_to_file') as mock_save:
+            messages = json_saver.add_vacancy(sample_vacancy)
+            assert len(messages) == 1
+            assert "Добавлена новая вакансия" in messages[0]
+            mock_save.assert_called_once()
 
-    @patch('src.storage.json_saver.JSONSaver._save_to_file')
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_add_vacancy_update(self, mock_load, mock_save, json_saver, sample_vacancy):
-        existing = Mock(vacancy_id="123", title="Old", url="old", salary=None, description="old", updated_at="old")
-        mock_load.return_value = [existing]
-        messages = json_saver.add_vacancy(sample_vacancy)
-        assert len(messages) == 1
-        assert "обновлена" in messages[0]
+    def test_add_vacancy_update(self, json_saver, sample_vacancy):
+        existing = Mock()
+        existing.vacancy_id = "123"
+        existing.title = "Old"
+        existing.url = "old"
+        existing.salary = None
+        existing.description = "old"
+        existing.updated_at = "old"
+        
+        with patch.object(json_saver, 'load_vacancies', return_value=[existing]), \
+             patch.object(json_saver, '_save_to_file') as mock_save:
+            messages = json_saver.add_vacancy(sample_vacancy)
+            assert len(messages) == 1
+            assert "обновлена" in messages[0]
+            mock_save.assert_called_once()
 
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_add_vacancy_no_changes(self, mock_load, json_saver, sample_vacancy):
-        existing = Mock(
-            vacancy_id="123", title="Test", url="http://test.com", 
-            salary=None, description="desc", updated_at="2024-01-01T12:00:00"
-        )
-        mock_load.return_value = [existing]
-        messages = json_saver.add_vacancy(sample_vacancy)
-        assert len(messages) == 0
+    def test_add_vacancy_no_changes(self, json_saver, sample_vacancy):
+        existing = Mock()
+        existing.vacancy_id = "123"
+        existing.title = "Test"
+        existing.url = "http://test.com"
+        existing.salary = None
+        existing.description = "desc"
+        existing.updated_at = "2024-01-01T12:00:00"
+        
+        with patch.object(json_saver, 'load_vacancies', return_value=[existing]):
+            messages = json_saver.add_vacancy(sample_vacancy)
+            assert len(messages) == 0
 
     # Удаление
     @patch('builtins.open', new_callable=mock_open)
@@ -134,49 +149,46 @@ class TestJSONSaver:
         result = json_saver.delete_all_vacancies()
         assert result is False
 
-    @patch('src.storage.json_saver.JSONSaver._save_to_file')
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_delete_by_id_success(self, mock_load, mock_save, json_saver, sample_vacancy):
-        mock_load.return_value = [sample_vacancy]
-        result = json_saver.delete_vacancy_by_id("123")
-        assert result is True
+    def test_delete_by_id_success(self, json_saver, sample_vacancy):
+        with patch.object(json_saver, 'load_vacancies', return_value=[sample_vacancy]), \
+             patch.object(json_saver, '_save_to_file') as mock_save:
+            result = json_saver.delete_vacancy_by_id("123")
+            assert result is True
+            mock_save.assert_called_once()
 
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_delete_by_id_not_found(self, mock_load, json_saver, sample_vacancy):
-        mock_load.return_value = [sample_vacancy]
-        result = json_saver.delete_vacancy_by_id("999")
-        assert result is False
+    def test_delete_by_id_not_found(self, json_saver, sample_vacancy):
+        with patch.object(json_saver, 'load_vacancies', return_value=[sample_vacancy]):
+            result = json_saver.delete_vacancy_by_id("999")
+            assert result is False
 
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies', side_effect=Exception)
-    def test_delete_by_id_error(self, mock_load, json_saver):
-        result = json_saver.delete_vacancy_by_id("123")
-        assert result is False
+    def test_delete_by_id_error(self, json_saver):
+        with patch.object(json_saver, 'load_vacancies', side_effect=Exception):
+            result = json_saver.delete_vacancy_by_id("123")
+            assert result is False
 
-    @patch('src.storage.json_saver.JSONSaver._save_to_file')
     @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_delete_by_keyword_success(self, mock_load, mock_filter, mock_save, json_saver, sample_vacancy):
-        mock_load.return_value = [sample_vacancy]
+    def test_delete_by_keyword_success(self, mock_filter, json_saver, sample_vacancy):
         mock_filter.return_value = [sample_vacancy]
-        result = json_saver.delete_vacancies_by_keyword("test")
-        assert result == 1
+        with patch.object(json_saver, 'load_vacancies', return_value=[sample_vacancy]), \
+             patch.object(json_saver, '_save_to_file') as mock_save:
+            result = json_saver.delete_vacancies_by_keyword("test")
+            assert result == 1
+            mock_save.assert_called_once()
 
     @patch('src.utils.ui_helpers.filter_vacancies_by_keyword', return_value=[])
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
-    def test_delete_by_keyword_no_matches(self, mock_load, mock_filter, json_saver, sample_vacancy):
-        mock_load.return_value = [sample_vacancy]
-        result = json_saver.delete_vacancies_by_keyword("java")
-        assert result == 0
+    def test_delete_by_keyword_no_matches(self, mock_filter, json_saver, sample_vacancy):
+        with patch.object(json_saver, 'load_vacancies', return_value=[sample_vacancy]):
+            result = json_saver.delete_vacancies_by_keyword("java")
+            assert result == 0
 
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies', side_effect=Exception)
-    def test_delete_by_keyword_error(self, mock_load, json_saver):
-        result = json_saver.delete_vacancies_by_keyword("test")
-        assert result == 0
+    def test_delete_by_keyword_error(self, json_saver):
+        with patch.object(json_saver, 'load_vacancies', side_effect=Exception):
+            result = json_saver.delete_vacancies_by_keyword("test")
+            assert result == 0
 
     # Сохранение
     @patch('builtins.open', new_callable=mock_open)
     def test_save_to_file_success(self, mock_file, json_saver, sample_vacancy):
-        sample_vacancy.to_dict = Mock(return_value={'id': '123', 'title': 'Test', 'url': 'test'})
         json_saver._save_to_file([sample_vacancy])
         mock_file.assert_called()
 
@@ -185,10 +197,11 @@ class TestJSONSaver:
         with patch('builtins.open', new_callable=mock_open):
             json_saver._save_to_file([invalid])
 
-    def test_save_to_file_missing_fields(self, json_saver, sample_vacancy):
-        sample_vacancy.to_dict = Mock(return_value={'wrong': 'data'})
+    def test_save_to_file_missing_fields(self, json_saver):
+        invalid_vacancy = Mock()
+        invalid_vacancy.to_dict = Mock(return_value={'wrong': 'data'})
         with patch('builtins.open', new_callable=mock_open):
-            json_saver._save_to_file([sample_vacancy])
+            json_saver._save_to_file([invalid_vacancy])
 
     # Утилиты
     @patch('pathlib.Path.stat')
@@ -242,7 +255,12 @@ class TestJSONSaver:
 
     def test_vacancy_to_dict_with_salary(self, json_saver):
         vacancy = Mock()
-        vacancy.salary = Mock(salary_from=100, salary_to=200, currency="RUB")
+        salary_mock = Mock()
+        salary_mock.salary_from = 100
+        salary_mock.salary_to = 200
+        salary_mock.currency = "RUB"
+        
+        vacancy.salary = salary_mock
         vacancy.title = "Test"
         vacancy.url = "test"
         vacancy.description = "desc"
@@ -252,7 +270,6 @@ class TestJSONSaver:
         vacancy.employment = "full"
         vacancy.schedule = "day"
         vacancy.employer = {"name": "Test"}
-        vacancy.area = {"name": "Moscow"}
         vacancy.vacancy_id = "123"
         vacancy.published_at = "2024-01-01"
 
@@ -271,15 +288,14 @@ class TestJSONSaver:
         vacancy.employment = "full"
         vacancy.schedule = "day"
         vacancy.employer = {"name": "Test"}
-        vacancy.area = {"name": "Moscow"}
         vacancy.vacancy_id = "123"
         vacancy.published_at = "2024-01-01"
 
         result = json_saver._vacancy_to_dict(vacancy)
         assert result['salary'] is None
 
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies', return_value=[])
-    def test_get_vacancies_delegates(self, mock_load, json_saver):
-        result = json_saver.get_vacancies()
-        mock_load.assert_called_once()
-        assert result == []
+    def test_get_vacancies_delegates(self, json_saver):
+        with patch.object(json_saver, 'load_vacancies', return_value=[]) as mock_load:
+            result = json_saver.get_vacancies()
+            mock_load.assert_called_once()
+            assert result == []
