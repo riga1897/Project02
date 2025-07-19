@@ -1,10 +1,10 @@
+import hashlib
 import json
 import time
-import os
-import hashlib
 from functools import wraps
 from pathlib import Path
 from typing import Any, Dict, Optional, Callable, Tuple
+
 from .env_loader import EnvLoader
 
 
@@ -58,7 +58,7 @@ def simple_cache(ttl: Optional[int] = None, cache_dir: str = "data/cache", max_s
             cache.clear()
             access_times.clear()
 
-        def cache_info() -> Dict[str, Any]:
+        def cache_info(actual_ttl=None) -> Dict[str, Any]:
             """Информация о состоянии кэша"""
             return {
                 'size': len(cache),
