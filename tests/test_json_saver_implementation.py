@@ -234,7 +234,7 @@ class TestJSONSaverImplementation():
     def test_validate_filename(self):
         """Тестируем валидацию имени файла"""
         # Тест с None
-        result = JSONSaver._validate_filename("vacancies.json")
+        result = JSONSaver._validate_filename(None)
         assert result == "data/storage/vacancies.json"
 
         # Тест с пустой строкой

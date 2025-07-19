@@ -2,25 +2,27 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import List, Union, Dict, Any
+from typing import List, Union, Dict, Any, Optional
 
 from src.vacancies.models import Vacancy
+from src.storage.abstract import AbstractVacancyStorage
+from src.vacancies.abstract import AbstractVacancy
 
 logger = logging.getLogger(__name__)
 
 
-class JSONSaver:
+class JSONSaver(AbstractVacancyStorage):
     """Класс для сохранения и загрузки вакансий в JSON формате"""
 
     __slots__ = ('_filename',)
 
-    def __init__(self, filename: str = "data/storage/vacancies.json"):
+    def __init__(self, filename: Optional[str] = "data/storage/vacancies.json"):
         self._filename = self._validate_filename(filename)
         self._ensure_data_directory()
         self._ensure_file_exists()
 
     @staticmethod
-    def _validate_filename(filename: str) -> str:
+    def _validate_filename(filename: Optional[str]) -> str:
         """Валидация имени файла"""
         if not filename or not isinstance(filename, str):
             return "data/storage/vacancies.json"
@@ -64,13 +66,15 @@ class JSONSaver:
         except Exception as e:
             logger.error(f"Ошибка создания резервной копии: {e}")
 
-    def add_vacancy(self, vacancies: Union[Vacancy, List[Vacancy]]) -> List[str]:
+    def add_vacancy(self, vacancy: Union[AbstractVacancy, List[AbstractVacancy]]) -> List[str]:
         """
         Добавляет вакансии в файл с выводом информационных сообщений об изменениях.
         Возвращает список сообщений об обновлениях.
         """
-        if not isinstance(vacancies, list):
-            vacancies = [vacancies]
+        if not isinstance(vacancy, list):
+            vacancies = [vacancy]
+        else:
+            vacancies = vacancy
 
         existing_vacancies = self.load_vacancies()
         existing_map = {v.vacancy_id: v for v in existing_vacancies}
@@ -166,12 +170,20 @@ class JSONSaver:
             self._backup_corrupted_file()
             return []
 
-    def get_vacancies(self) -> List[Vacancy]:
+    def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[AbstractVacancy]:
         """
         Возвращает список вакансий с учетом фильтров
         :return: Список вакансий
         """
         return self.load_vacancies()
+
+    def delete_vacancy(self, vacancy: AbstractVacancy) -> bool:
+        """
+        Удаляет вакансию из хранилища
+        :param vacancy: Объект вакансии для удаления
+        :return: True если вакансия удалена, False иначе
+        """
+        return self.delete_vacancy_by_id(vacancy.vacancy_id)
 
     def delete_all_vacancies(self) -> bool:
         """
