@@ -7,7 +7,7 @@ from src.config.api_config import APIConfig
 
 
 class APIConnector:
-    """Улучшенный обработчик API-запросов с прогресс-баром"""
+    """Обработчик API-запросов с прогресс-баром"""
 
     def __init__(self, config: Optional[APIConfig] = None):
         self.config = config or APIConfig()
