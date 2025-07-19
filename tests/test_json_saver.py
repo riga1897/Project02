@@ -21,7 +21,7 @@ class TestJSONSaver:
 
     @pytest.fixture
     def sample_vacancy(self):
-        return Vacancy(
+        vacancy = Vacancy(
             title="Test",
             url="http://test.com",
             salary=None,
@@ -34,8 +34,10 @@ class TestJSONSaver:
             schedule="day",
             published_at="2024-01-01T12:00:00",
             vacancy_id="123"
-            
         )
+        # Добавляем updated_at для совместимости с тестами
+        vacancy.updated_at = "2024-01-01T12:00:00"
+        return vacancy
 
     # Инициализация
     def test_init_default(self):
@@ -113,12 +115,13 @@ class TestJSONSaver:
     @patch('src.storage.json_saver.JSONSaver.load_vacancies')
     @patch('src.storage.json_saver.JSONSaver._save_to_file')
     def test_add_vacancy_update(self, mock_save, mock_load, json_saver, sample_vacancy):
-        existing = Mock()
-        existing.vacancy_id = "123"
-        existing.title = "Old"
-        existing.url = "old"
-        existing.salary = None
-        existing.description = "old"
+        existing = Vacancy(
+            title="Old",
+            url="old",
+            salary=None,
+            description="old",
+            vacancy_id="123"
+        )
         existing.updated_at = "old"
         
         mock_load.return_value = [existing]
@@ -129,12 +132,13 @@ class TestJSONSaver:
 
     @patch('src.storage.json_saver.JSONSaver.load_vacancies')
     def test_add_vacancy_no_changes(self, mock_load, json_saver, sample_vacancy):
-        existing = Mock()
-        existing.vacancy_id = "123"
-        existing.title = "Test"
-        existing.url = "http://test.com"
-        existing.salary = None
-        existing.description = "desc"
+        existing = Vacancy(
+            title="Test",
+            url="http://test.com",
+            salary=None,
+            description="desc",
+            vacancy_id="123"
+        )
         existing.updated_at = "2024-01-01T12:00:00"
         
         mock_load.return_value = [existing]
