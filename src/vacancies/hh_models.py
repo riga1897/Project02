@@ -108,16 +108,19 @@ class HHVacancy(AbstractVacancy):
                 logger.error(f"Данные должны быть словарем, получен тип: {type(data)}")
                 raise ValueError("Данные должны быть словарем")
 
-            # Валидация основных полей для HH
-            required_keys = ['id', 'name', 'alternate_url']
-            if not any(key in data for key in required_keys):
-                logger.error(f"Отсутствуют обязательные поля HH в данных: {list(data.keys())}")
-                raise ValueError("Данные не содержат обязательных полей HH API")
-
-            # Дополнительная валидация для неожиданных структур данных
+            # Дополнительная валидация для явно некорректных структур данных
             if len(data) == 1 and 'invalid' in data:
                 logger.error(f"Некорректная структура данных HH: {data}")
                 raise ValueError("Некорректная структура данных HH")
+
+            # Для пустого словаря разрешаем создание с дефолтными значениями
+            # Валидация основных полей только если данные не пустые
+            if data and not any(key in data for key in ['id', 'name', 'alternate_url']):
+                # Проверяем только если есть данные, но нет основных полей
+                has_other_fields = any(key in data for key in ['salary', 'description', 'employer', 'experience'])
+                if has_other_fields:
+                    logger.error(f"Отсутствуют обязательные поля HH в данных: {list(data.keys())}")
+                    raise ValueError("Данные не содержат обязательных полей HH API")
 
             # Обработка опыта работы (HH специфичная структура)
             experience = None
