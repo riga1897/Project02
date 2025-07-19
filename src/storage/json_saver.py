@@ -347,7 +347,7 @@ class JSONSaver:
             'employment': vacancy.employment,
             'schedule': vacancy.schedule,
             'employer': vacancy.employer,
-            'area': vacancy.area,
+            # 'area': vacancy.area,
             'vacancy_id': vacancy.vacancy_id,
             'published_at': vacancy.published_at
         }
