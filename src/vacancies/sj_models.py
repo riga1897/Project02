@@ -69,12 +69,12 @@ class SuperJobVacancy(AbstractVacancy):
             if salary_to == 0:
                 salary_to = None
 
-            return Salary(
-                salary_from=salary_from,
-                salary_to=salary_to,
-                currency="RUB",  # SuperJob всегда использует RUB
-                period="месяц"
-            )
+            return Salary({
+                "from": salary_from,
+                "to": salary_to,
+                "currency": "RUB",
+                "period": "месяц"
+            })
         except Exception as e:
             logger.warning(f"Ошибка создания зарплаты: {e}")
             return None
