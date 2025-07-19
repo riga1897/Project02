@@ -1,6 +1,11 @@
-from typing import List, Dict, Any, Optional
-from src.vacancies.models import Vacancy
+from typing import List, Dict, Any
+import logging
+from ..models import Vacancy
+from ..hh_models import HHVacancy
 from src.utils.cache import FileCache
+
+logger = logging.getLogger(__name__)
+
 
 class HHParser:
     """Парсер вакансий с HeadHunter API"""
@@ -31,32 +36,37 @@ class HHParser:
         return []
 
     def _parse_items(self, raw_data: List[Dict[str, Any]]) -> List[Vacancy]:
-        """Преобразование сырых данных в объекты Vacancy"""
+        """Преобразование сырых данных HH в объекты Vacancy"""
         vacancies = []
         for item in raw_data:
-            vacancy = self._parse_item(item)
-            if vacancy:
-                vacancies.append(vacancy)
+            try:
+                # Сначала создаем HH-специфичную модель
+                hh_vacancy = HHVacancy.from_dict(item)
+                # Затем конвертируем в унифицированный формат
+                unified_vacancy = self.convert_to_unified_format(hh_vacancy)
+                vacancies.append(unified_vacancy)
+            except Exception as e:
+                logger.warning(f"Ошибка парсинга HH вакансии: {e}")
+                continue
         return vacancies
 
-    def _parse_item(self, item: Dict[str, Any]) -> Optional[Vacancy]:
-        """Парсинг одного элемента вакансии"""
-        try:
-            return Vacancy(
-                title=item.get("name", ""),
-                url=item.get("alternate_url", ""),
-                salary=item.get("salary"),
-                description=self._get_description(item),
-            )
-        except (KeyError, TypeError):
-            return None
-
-    @staticmethod
-    def _get_description(item: Dict[str, Any]) -> str:
-        """Извлечение описания вакансии"""
-        snippet = item.get("snippet", {})
-        return (
-            f"Требования: {snippet.get('requirement', '')}\n"
-            f"Обязанности: {snippet.get('responsibility', '')}"
+    def convert_to_unified_format(self, hh_vacancy: HHVacancy) -> Vacancy:
+        """Конвертация HH вакансии в унифицированный формат"""
+        return Vacancy(
+            vacancy_id=hh_vacancy.vacancy_id,
+            title=hh_vacancy.title,
+            url=hh_vacancy.url,
+            salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
+            description=hh_vacancy.description,
+            requirements=hh_vacancy.requirements,
+            responsibilities=hh_vacancy.responsibilities,
+            employer=hh_vacancy.employer,
+            experience=hh_vacancy.experience,
+            employment=hh_vacancy.employment,
+            schedule=hh_vacancy.schedule,
+            published_at=hh_vacancy.published_at.isoformat() if hh_vacancy.published_at else None,
+            skills=hh_vacancy.skills,
+            detailed_description=hh_vacancy.detailed_description,
+            benefits=hh_vacancy.benefits,
+            source=hh_vacancy.source
         )
-        

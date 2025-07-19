@@ -49,7 +49,8 @@ class SuperJobVacancy(AbstractVacancy):
         self.benefits = benefits
         self.source = source
 
-    def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Optional[Salary]:
+    @staticmethod
+    def _validate_salary(salary_data: Optional[Dict[str, Any]]) -> Optional[Salary]:
         """Валидация и создание объекта зарплаты"""
         if not salary_data:
             return None
@@ -69,12 +70,12 @@ class SuperJobVacancy(AbstractVacancy):
             if salary_to == 0:
                 salary_to = None
 
-            return Salary(
-                salary_from=salary_from,
-                salary_to=salary_to,
-                currency="RUB",  # SuperJob всегда использует RUB
-                period="месяц"
-            )
+            return Salary({
+                "from": salary_from,
+                "to": salary_to,
+                "currency": "RUB",
+                "period": "месяц"
+            })
         except Exception as e:
             logger.warning(f"Ошибка создания зарплаты: {e}")
             return None
@@ -149,8 +150,8 @@ class SuperJobVacancy(AbstractVacancy):
             "id": self.vacancy_id,
             "profession": self.title,
             "link": self.url,
-            "payment_from": self.salary.from_salary if self.salary else None,
-            "payment_to": self.salary.to_salary if self.salary else None,
+            "payment_from": self.salary.salary_from if self.salary else None,
+            "payment_to": self.salary.salary_to if self.salary else None,
             "currency": self.salary.currency if self.salary else None,
             "vacancyRichText": self.description,
             "candidat": self.requirements,
