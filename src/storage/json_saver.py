@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class JSONSaver:
     """Класс для сохранения и загрузки вакансий в JSON формате"""
 
-    # Removed __slots__ to allow test mocking
+    __slots__ = ('_filename',)
 
     def __init__(self, filename: str = "data/storage/vacancies.json"):
         self._filename = self._validate_filename(filename)
