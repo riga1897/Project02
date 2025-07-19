@@ -1,11 +1,11 @@
 
 import logging
-from pathlib import Path
-from typing import Dict, Union, List, Optional
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Dict, List
 
-from .base_api import BaseAPI
 from src.utils.cache import FileCache, simple_cache
+from .base_api import BaseAPI
 
 logger = logging.getLogger(__name__)
 
