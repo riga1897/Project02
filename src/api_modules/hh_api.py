@@ -12,31 +12,68 @@ logger = logging.getLogger(__name__)
 
 
 class HeadHunterAPI(CachedAPI):
-    """Enhanced HH API client with robust error handling and caching"""
+    """
+    Расширенный клиент API HeadHunter с надежной обработкой ошибок и кэшированием
+    
+    Предоставляет полный набор функций для работы с API hh.ru:
+    - Поиск вакансий с пагинацией
+    - Многоуровневое кэширование
+    - Дедупликация результатов
+    - Обработка ошибок и восстановление
+    """
 
     BASE_URL = "https://api.hh.ru/vacancies"
     DEFAULT_CACHE_DIR = "data/cache/hh"
     REQUIRED_VACANCY_FIELDS = {'name', 'alternate_url', 'salary'}
 
     def __init__(self, config: Optional[APIConfig] = None):
+        """
+        Инициализация API клиента HeadHunter
+        
+        Args:
+            config: Конфигурация API (если None, используется конфигурация по умолчанию)
+        """
         super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
         self._config = config or APIConfig()
         self._connector = APIConnector(self._config)
         self._paginator = Paginator()
 
     def _get_empty_response(self) -> Dict:
-        """Get empty response structure for HH API"""
+        """
+        Получить пустую структуру ответа для HH API
+        
+        Returns:
+            Dict: Пустая структура ответа с полем 'items'
+        """
         return {'items': []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
-        """Validate vacancy structure"""
+        """
+        Валидация структуры вакансии
+        
+        Args:
+            vacancy: Словарь с данными вакансии
+            
+        Returns:
+            bool: True если структура валидна, False иначе
+        """
         return (
             isinstance(vacancy, dict) and 
             all(field in vacancy for field in self.REQUIRED_VACANCY_FIELDS)
         )
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
-        """Get and validate single page of vacancies"""
+        """
+        Получение и валидация одной страницы вакансий
+        
+        Args:
+            search_query: Поисковый запрос
+            page: Номер страницы (начиная с 0)
+            **kwargs: Дополнительные параметры поиска
+            
+        Returns:
+            List[Dict]: Список валидных вакансий со страницы
+        """
         try:
             params = {
                 "text": search_query,
@@ -54,7 +91,21 @@ class HeadHunterAPI(CachedAPI):
             return []
 
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
-        """Get all vacancies with pagination and validation"""
+        """
+        Получение всех вакансий с пагинацией и валидацией
+        
+        Выполняет полный цикл получения вакансий:
+        1. Получает метаданные о количестве страниц
+        2. Обрабатывает все страницы с помощью пагинатора
+        3. Валидирует каждую вакансию
+        
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры поиска
+            
+        Returns:
+            List[Dict]: Список всех найденных и валидных вакансий
+        """
         try:
             # Initial request for metadata
             initial_data = self._CachedAPI__connect_to_api(

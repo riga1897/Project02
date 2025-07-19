@@ -11,21 +11,31 @@ logger = logging.getLogger(__name__)
 
 
 class CachedAPI(BaseAPI, ABC):
-    """Абстрактный базовый класс для API с кэшированием"""
+    """
+    Абстрактный базовый класс для API с кэшированием
+    
+    Расширяет BaseAPI функциональностью многоуровневого кэширования:
+    - Кэш в памяти для быстрого доступа
+    - Файловый кэш для долгосрочного хранения
+    """
 
     def __init__(self, cache_dir: str):
         """
         Инициализация базового API с кэшем
 
         Args:
-            cache_dir: Директория для кэша
+            cache_dir: Директория для хранения файлового кэша
         """
         super().__init__()
         self.cache_dir = Path(cache_dir)
         self._init_cache()
 
     def _init_cache(self) -> None:
-        """Инициализация кэша"""
+        """
+        Инициализация кэша
+        
+        Создает директорию для кэша и инициализирует файловый кэш.
+        """
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.cache = FileCache(str(self.cache_dir))
 
@@ -59,13 +69,18 @@ class CachedAPI(BaseAPI, ABC):
         """
         Подключение к API с многоуровневым кэшированием
 
+        Реализует стратегию кэширования в три уровня:
+        1. Проверка кэша в памяти (самый быстрый)
+        2. Проверка файлового кэша (средний по скорости)
+        3. Реальный запрос к API (самый медленный)
+
         Args:
             url: URL для запроса
             params: Параметры запроса
-            api_prefix: Префикс для кэша
+            api_prefix: Префикс для кэша (hh, sj и т.д.)
 
         Returns:
-            Dict: Ответ API
+            Dict: Ответ API или пустая структура при ошибке
         """
         # Сохраняем параметры для кэшированного метода
         self._current_params = params
@@ -80,6 +95,7 @@ class CachedAPI(BaseAPI, ABC):
                 logger.debug(f"Данные получены из кэша в памяти для {api_prefix}")
                 return memory_result
         except Exception:
+            # Игнорируем ошибки кэша в памяти, переходим к файловому кэшу
             pass
         
         # 2. Проверяем файловый кэш
@@ -95,7 +111,7 @@ class CachedAPI(BaseAPI, ABC):
         try:
             data = self._cached_api_request(url, params_hash, api_prefix)
             
-            # Сохраняем в файловый кэш
+            # Сохраняем в файловый кэш только валидные данные
             if data != self._get_empty_response():
                 self.cache.save_response(api_prefix, params, data)
                 logger.debug(f"Данные сохранены в файловый кэш для {api_prefix}")

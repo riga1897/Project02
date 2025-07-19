@@ -7,7 +7,12 @@ from src.utils.cache import simple_cache
 logger = logging.getLogger(__name__)
 
 class JSONFileHandler:
-    """Обработчик JSON-файлов с улучшенной обработкой ошибок"""
+    """
+    Обработчик JSON-файлов с улучшенной обработкой ошибок
+    
+    Предоставляет методы для безопасного чтения и записи JSON-файлов
+    с кэшированием, атомарными операциями и обработкой ошибок.
+    """
 
     @simple_cache(ttl=60)
     def read_json(self, file_path: Path) -> List[Dict[str, Any]]:
@@ -60,5 +65,5 @@ class JSONFileHandler:
             if temp_file.exists():
                 temp_file.unlink()
 
-# Глобальный экземпляр для использования
+# Глобальный экземпляр обработчика JSON для использования во всем приложении
 json_handler = JSONFileHandler()

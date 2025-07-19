@@ -12,7 +12,15 @@ logger = logging.getLogger(__name__)
 
 
 class SuperJobAPI(CachedAPI):
-    """SuperJob API для поиска вакансий с использованием общих механизмов"""
+    """
+    API SuperJob для поиска вакансий с использованием общих механизмов
+    
+    Предоставляет полный набор функций для работы с API superjob.ru:
+    - Поиск вакансий с пагинацией
+    - Многоуровневое кэширование
+    - Дедупликация результатов
+    - Автоматическая обработка API ключей
+    """
 
     BASE_URL = "https://api.superjob.ru/2.0/vacancies"
     DEFAULT_CACHE_DIR = "data/cache/sj"
@@ -49,11 +57,24 @@ class SuperJobAPI(CachedAPI):
             logger.info("Используется пользовательский API ключ SuperJob")
 
     def _get_empty_response(self) -> Dict:
-        """Get empty response structure for SJ API"""
+        """
+        Получить пустую структуру ответа для SJ API
+        
+        Returns:
+            Dict: Пустая структура ответа с полем 'objects'
+        """
         return {'objects': []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
-        """Validate vacancy structure (как в HH API)"""
+        """
+        Валидация структуры вакансии (аналогично HH API)
+        
+        Args:
+            vacancy: Словарь с данными вакансии
+            
+        Returns:
+            bool: True если структура валидна, False иначе
+        """
         return (
             isinstance(vacancy, dict) and 
             all(field in vacancy and vacancy[field] is not None and vacancy[field] != '' 
@@ -61,7 +82,17 @@ class SuperJobAPI(CachedAPI):
         )
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
-        """Get and validate single page of vacancies (как в HH API)"""
+        """
+        Получение и валидация одной страницы вакансий (аналогично HH API)
+        
+        Args:
+            search_query: Поисковый запрос
+            page: Номер страницы (начиная с 0)
+            **kwargs: Дополнительные параметры поиска
+            
+        Returns:
+            List[Dict]: Список валидных вакансий со страницы
+        """
         try:
             params = self.config.get_params(
                 keyword=search_query,
@@ -86,7 +117,22 @@ class SuperJobAPI(CachedAPI):
             return []
 
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
-        """Get all vacancies with pagination and validation (адаптировано под паттерн HH API)"""
+        """
+        Получение всех вакансий с пагинацией и валидацией (адаптировано под паттерн HH API)
+        
+        Выполняет полный цикл получения вакансий:
+        1. Получает метаданные о количестве результатов
+        2. Рассчитывает необходимое количество страниц
+        3. Обрабатывает все страницы с помощью унифицированного пагинатора
+        4. Валидирует каждую вакансию
+        
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры поиска
+            
+        Returns:
+            List[Dict]: Список всех найденных и валидных вакансий
+        """
         try:
             # Initial request for metadata (как в HH API)
             initial_data = self._CachedAPI__connect_to_api(
