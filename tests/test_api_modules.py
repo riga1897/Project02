@@ -25,7 +25,7 @@ class TestBaseAPI:
             def get_vacancies(self, search_query: str, **kwargs):
                 return []
 
-            def clear_cache(self):
+            def clear_cache(self, api_prefix: str):
                 pass
 
         api = MockAPI(config)
@@ -37,7 +37,7 @@ class TestBaseAPI:
             def get_vacancies(self, search_query: str, **kwargs):
                 return []
 
-            def clear_cache(self):
+            def clear_cache(self, api_prefix: str):
                 pass
 
         api = MockAPI()
