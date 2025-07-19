@@ -5,8 +5,8 @@ from dataclasses import dataclass
 @dataclass
 class HHAPIConfig:
     """Конфигурация специфичных параметров HH API"""
-    area: int = 1  # Москва по умолчанию
-    per_page: int = 50  # Количество элементов на странице
+    area: int = 113  # Россия по умолчанию
+    per_page: int = 100  # Количество элементов на странице
     only_with_salary: bool = False
     custom_params: Dict[str, Any] = None
 
@@ -30,9 +30,9 @@ class APIConfig:
             self,
             user_agent: str = "MyVacancyApp/1.0",
             timeout: int = 15,
-            request_delay: float = 0.5,
+            request_delay: float = 0.15,
             hh_config: Optional[HHAPIConfig] = None,
-            max_pages: int = 20
+            max_pages: int = 100
     ):
         self.user_agent = user_agent
         self.timeout = timeout
