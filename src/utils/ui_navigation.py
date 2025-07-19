@@ -1,8 +1,4 @@
 
-"""
-Унифицированный модуль навигации для пользовательского интерфейса
-"""
-
 from typing import List, Any, Callable, Optional, Dict
 import math
 import logging
@@ -111,9 +107,9 @@ class UINavigation:
         print(f"Показано элементов: {start_idx + 1}-{end_idx} из {len(items)}")
         print("-" * 20)
     
+    @staticmethod
     def _display_navigation_menu(
-        self,
-        current_page: int,
+            current_page: int,
         total_pages: int,
         custom_actions: Optional[Dict[str, Callable]] = None
     ) -> None:
@@ -135,9 +131,9 @@ class UINavigation:
                 else:
                     print(f"'{key}' - дополнительное действие")
     
+    @staticmethod
     def _handle_navigation_choice(
-        self,
-        choice: str,
+            choice: str,
         current_page: int,
         total_pages: int,
         custom_actions: Optional[Dict[str, Callable]] = None

@@ -39,7 +39,8 @@ class Salary:
                 if mode_id:
                     self.period = mode_id
 
-    def _validate_salary_value(self, value: Any) -> Optional[int]:
+    @staticmethod
+    def _validate_salary_value(value: Any) -> Optional[int]:
         """Валидация значения зарплаты"""
         if value is None:
             return None
@@ -49,7 +50,8 @@ class Salary:
         except (ValueError, TypeError):
             return None
 
-    def _validate_currency(self, value: Any) -> str:
+    @staticmethod
+    def _validate_currency(value: Any) -> str:
         """Валидация валюты"""
         if not value or not isinstance(value, str):
             return 'RUR'
@@ -74,15 +76,6 @@ class Salary:
             return (self.amount_from + self.amount_to) // 2
         return self.amount_from or self.amount_to or 0
 
-    @property
-    def salary_from(self) -> int:
-        """Alias for amount_from for backward compatibility"""
-        return self.amount_from
-
-    @property
-    def salary_to(self) -> int:
-        """Alias for amount_to for backward compatibility"""
-        return self.amount_to
 
     def to_dict(self) -> Dict[str, Any]:
         """Преобразование в словарь"""

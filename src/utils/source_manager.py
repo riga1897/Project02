@@ -1,8 +1,3 @@
-
-"""
-Унифицированный менеджер источников данных
-"""
-
 from typing import Dict, List, Set, Optional
 from enum import Enum
 

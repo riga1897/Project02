@@ -1,11 +1,7 @@
-"""
-Вспомогательные функции для пользовательского интерфейса
-"""
-
-from typing import List, Optional, Dict
 import logging
+from typing import List, Optional
+
 from src.vacancies.models import Vacancy
-# from src.utils.menu_manager import print_section_header, print_menu_separator
 
 logger = logging.getLogger(__name__)
 
@@ -245,7 +241,7 @@ def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
     print(f"Описание: {vacancy.description[:200] if vacancy.description else 'Нет'}...")
     print(f"Требования: {vacancy.requirements[:200] if vacancy.requirements else 'Нет'}...")
     print(f"Обязанности: {vacancy.responsibilities[:200] if vacancy.responsibilities else 'Нет'}...")
-    print(f"Ключевые слова: {vacancy.keywords}")
+    # print(f"Ключевые слова: {vacancy.keywords}")
     print(f"Навыки: {vacancy.skills}")
     print(f"Работодатель: {vacancy.employer}")
     print(f"Опыт: {vacancy.experience}")
@@ -265,8 +261,8 @@ def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
         found_in.append("требования")
     if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
         found_in.append("обязанности")
-    if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
-        found_in.append("ключевые слова")
+    # if vacancy.keywords and any(keyword_lower in kw.lower() for kw in vacancy.keywords):
+    #     found_in.append("ключевые слова")
 
     print(f"Ключевое слово '{keyword}' найдено в: {', '.join(found_in) if found_in else 'НИГДЕ'}")
     print("=" * 50)
