@@ -1,4 +1,3 @@
-
 import pytest
 import json
 import tempfile
@@ -10,6 +9,7 @@ from src.storage.json_saver import JSONSaver
 from src.storage.abstract import AbstractVacancyStorage
 from src.vacancies.models import Vacancy
 from src.vacancies.abstract import AbstractVacancy
+from src.vacancies.models import Salary
 
 
 class TestJSONSaverImplementation():
@@ -56,7 +56,7 @@ class TestJSONSaverImplementation():
         """Проверяем, что JSONSaver реализует все абстрактные методы"""
         # Получаем абстрактные методы из родительского класса
         abstract_methods = AbstractVacancyStorage.__abstractmethods__
-        
+
         # Проверяем, что все методы реализованы в JSONSaver
         for method_name in abstract_methods:
             assert hasattr(JSONSaver, method_name)
@@ -76,7 +76,7 @@ class TestJSONSaverImplementation():
         # Метод должен возвращать список AbstractVacancy
         result = json_saver.get_vacancies()
         assert isinstance(result, list)
-        
+
         # Если есть элементы, проверяем, что они AbstractVacancy
         if result:
             for vacancy in result:
@@ -197,7 +197,7 @@ class TestJSONSaverImplementation():
     def test_file_error_handling(self, mock_file, temp_json_file):
         """Тестируем обработку ошибок файловых операций"""
         json_saver = JSONSaver(temp_json_file)
-        
+
         # При ошибке файла должен возвращаться пустой список
         vacancies = json_saver.get_vacancies()
         assert isinstance(vacancies, list)
@@ -211,7 +211,7 @@ class TestJSONSaverImplementation():
 
         json_saver = JSONSaver(temp_json_file)
         vacancies = json_saver.get_vacancies()
-        
+
         # Должен возвращаться пустой список и создаваться резервная копия
         assert isinstance(vacancies, list)
         assert len(vacancies) == 0
@@ -220,13 +220,13 @@ class TestJSONSaverImplementation():
         """Тестируем создание файла при инициализации"""
         with tempfile.TemporaryDirectory() as temp_dir:
             file_path = Path(temp_dir) / "test_vacancies.json"
-            
+
             # Файл не существует
             assert not file_path.exists()
-            
+
             # Создаем JSONSaver
             json_saver = JSONSaver(str(file_path))
-            
+
             # Файл должен быть создан
             assert file_path.exists()
             assert json_saver.filename == str(file_path)
@@ -301,7 +301,7 @@ class TestJSONSaverImplementation():
         """Тестируем безопасность при одновременном доступе (базовый тест)"""
         # Этот тест проверяет, что операции не приводят к исключениям
         # при последовательном выполнении операций
-        
+
         for i in range(5):
             vacancy = Vacancy(
                 title=f"Concurrent Job {i}",

@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.ERROR)
 
 class Vacancy(AbstractVacancy):
     """Унифицированный класс для представления вакансии из любого источника"""
-    
+
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
@@ -132,7 +132,7 @@ class Vacancy(AbstractVacancy):
 
             # Обработка зарплаты (универсальная для всех источников)
             salary = data.get('salary')
-            
+
             # Обработка работодателя
             employer = data.get('employer')
             if not employer and data.get('firm_name'):
@@ -163,13 +163,13 @@ class Vacancy(AbstractVacancy):
 
             requirements = None
             responsibilities = None
-            
+
             # Для HH (snippet)
             snippet = data.get('snippet', {})
             if isinstance(snippet, dict):
                 requirements = snippet.get('requirement')
                 responsibilities = snippet.get('responsibility')
-            
+
             # Для SuperJob (прямые поля)
             if not requirements:
                 requirements = data.get('candidat')
@@ -243,11 +243,29 @@ class Vacancy(AbstractVacancy):
         ]
         return "\n".join(parts)
 
-    def __eq__(self, other) -> bool:
-        """Сравнение вакансий по ID"""
+    def __eq__(self, other):
+        """Сравнение вакансий"""
         if not isinstance(other, Vacancy):
             return False
-        return self.vacancy_id == other.vacancy_id
+
+        # Сравнение зарплат - учитываем что это объекты Salary, а не словари
+        salary_equal = True
+        if self.salary and other.salary:
+            salary_equal = (
+                self.salary.amount_from == other.salary.amount_from and
+                self.salary.amount_to == other.salary.amount_to and
+                self.salary.currency == other.salary.currency
+            )
+        elif self.salary or other.salary:
+            salary_equal = False
+
+        return (
+            self.vacancy_id == other.vacancy_id and
+            self.title == other.title and
+            self.url == other.url and
+            salary_equal and
+            self.description == other.description
+        )
 
     def __lt__(self, other) -> bool:
         """Сравнение по зарплате для сортировки"""
@@ -276,3 +294,100 @@ class Vacancy(AbstractVacancy):
     def __hash__(self) -> int:
         """Хеш для использования в множествах и словарях"""
         return hash(self.vacancy_id)
+class Salary:
+    """
+    Класс для представления информации о зарплате.
+    """
+
+    CURRENCY_SYMBOLS = {
+        "RUR": "₽",
+        "RUB": "₽",
+        "USD": "$",
+        "EUR": "€",
+        "KZT": "₸",
+    }
+
+    def __init__(
+        self, salary: Optional[Dict[str, Any]] = None
+    ):
+        """
+        Инициализация объекта Salary.
+
+        :param salary: Словарь с данными о зарплате.
+        """
+        self.amount_from: Optional[int] = salary.get('from') if salary else None
+        self.amount_to: Optional[int] = salary.get('to') if salary else None
+        self.currency: Optional[str] = salary.get('currency') if salary else None
+        self.gross: bool = salary.get('gross', False) if salary else False
+        self.period: Optional[str] = salary.get('period') if salary else None
+
+        # Вычисляем среднее значение зарплаты
+        self.average: Optional[float] = self.calculate_average()
+
+    def calculate_average(self) -> Optional[float]:
+        """
+        Вычисляет среднее значение зарплаты на основе указанных границ.
+
+        :return: Среднее значение зарплаты или None, если границы не определены.
+        """
+        if self.amount_from is not None and self.amount_to is not None:
+            return (self.amount_from + self.amount_to) / 2
+        elif self.amount_from is not None:
+            return float(self.amount_from)
+        elif self.amount_to is not None:
+            return float(self.amount_to)
+        else:
+            return None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Преобразует информацию о зарплате в словарь.
+
+        :return: Словарь с данными о зарплате.
+        """
+        return {
+            'from': self.amount_from,
+            'to': self.amount_to,
+            'currency': self.currency,
+            'gross': self.gross,
+            'period': self.period,
+            'average': self.average,
+        }
+
+    def __eq__(self, other):
+        """Сравнение объектов Salary"""
+        if not isinstance(other, Salary):
+            return False
+        return (
+            self.amount_from == other.amount_from and
+            self.amount_to == other.amount_to and
+            self.currency == other.currency and
+            self.gross == other.gross and
+            self.period == other.period
+        )
+
+    def __str__(self) -> str:
+        """Строковое представление зарплаты"""
+        if not self.amount_from and not self.amount_to:
+            return "Зарплата не указана"
+
+        components = []
+        if self.amount_from:
+            components.append(f"от {self.amount_from:,}")
+        if self.amount_to:
+            components.append(f"до {self.amount_to:,}")
+
+        currency = self.CURRENCY_SYMBOLS.get(self.currency, self.currency)
+
+        # Добавляем период если указан
+        period_str = ''
+        if self.period:
+            # Исправляем формат периода для SuperJob
+            if self.period in ['месяц', 'month']:
+                period_str = "в месяц"
+            else:
+                period_str = f"в {self.period}"
+
+        gross = " до вычета налогов" if self.gross else ""
+
+        return f"{' '.join(components)} {currency} {period_str}{gross}".strip()

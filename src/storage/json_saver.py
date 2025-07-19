@@ -88,12 +88,28 @@ class JSONSaver(AbstractVacancyStorage):
                 changed_fields = []
 
                 # Проверяем каждое поле на изменения
-                for field in ['title', 'url', 'salary', 'description', 'updated_at']:
+                for field in ['title', 'url', 'description', 'updated_at']:
                     old_val = getattr(existing_vac, field, None)
                     new_val = getattr(new_vac, field, None)
 
                     if old_val != new_val:
                         changed_fields.append(field)
+                
+                # Отдельная проверка для зарплаты (объекты Salary)
+                old_salary = getattr(existing_vac, 'salary', None)
+                new_salary = getattr(new_vac, 'salary', None)
+                
+                salary_changed = False
+                if old_salary and new_salary:
+                    if (old_salary.amount_from != new_salary.amount_from or 
+                        old_salary.amount_to != new_salary.amount_to or 
+                        old_salary.currency != new_salary.currency):
+                        salary_changed = True
+                elif old_salary or new_salary:
+                    salary_changed = True
+                    
+                if salary_changed:
+                    changed_fields.append('salary')
 
                 if changed_fields:
                     # Обновляем только изменившиеся поля
