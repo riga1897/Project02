@@ -44,7 +44,8 @@ class TestJSONSaver:
             employment="Полная занятость",
             schedule="Полный день",
             published_at=datetime.now().isoformat(),
-            source="test"
+            source="test",
+            area={"name": "Москва"}
         )
 
     @pytest.fixture
@@ -69,7 +70,8 @@ class TestJSONSaver:
                 "employment": "Полная занятость",
                 "schedule": "Полный день",
                 "published_at": "2024-01-01T12:00:00",
-                "source": "test"
+                "source": "test",
+                "area": {"name": "Москва"}
             },
             {
                 "vacancy_id": "456",
@@ -84,7 +86,8 @@ class TestJSONSaver:
                 "employment": "Частичная занятость",
                 "schedule": "Гибкий график",
                 "published_at": "2024-01-02T12:00:00",
-                "source": "test"
+                "source": "test",
+                "area": {"name": "Санкт-Петербург"}
             }
         ]
 
@@ -287,7 +290,8 @@ class TestJSONSaver:
 
     def test_save_to_file_invalid_vacancy(self, json_saver):
         """Тест сохранения с невалидной вакансией"""
-        invalid_vacancy = "not a vacancy object"
+        # Создаем объект без метода to_dict
+        invalid_vacancy = Mock(spec=[])  # Объект без метода to_dict
         
         with patch('builtins.open', new_callable=mock_open):
             json_saver._save_to_file([invalid_vacancy])
@@ -338,6 +342,7 @@ class TestJSONSaver:
         assert result['salary'] is not None
         assert result['salary']['from'] == 100000
         assert result['salary']['to'] == 150000
+        assert result['area'] == {"name": "Москва"}
 
     def test_vacancy_to_dict_without_salary(self, sample_vacancy):
         """Тест преобразования вакансии без зарплаты в словарь"""
@@ -346,6 +351,7 @@ class TestJSONSaver:
         
         assert result['title'] == sample_vacancy.title
         assert result['salary'] is None
+        assert result['area'] == {"name": "Москва"}
 
     def test_ensure_json_serializable_dict(self, json_saver):
         """Тест обеспечения JSON-сериализуемости словаря"""
