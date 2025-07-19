@@ -33,6 +33,7 @@ class Vacancy(AbstractVacancy):
         vacancy_id: Optional[str] = None,
         source: str = "hh.ru"
     ):
+        self.area = None
         self.vacancy_id = vacancy_id or str(uuid.uuid4())
         self.title = title
         self.url = url

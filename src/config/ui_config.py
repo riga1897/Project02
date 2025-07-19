@@ -1,8 +1,3 @@
-
-"""
-Конфигурация пользовательского интерфейса
-"""
-
 from dataclasses import dataclass
 from typing import Optional
 
