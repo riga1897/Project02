@@ -7,7 +7,7 @@ from dataclasses import dataclass
 class HHAPIConfig:
     """Конфигурация специфичных параметров HH API"""
     area: int = 113  # Россия по умолчанию
-    per_page: int = 100  # Количество элементов на странице
+    per_page: int = 50  # Количество элементов на странице
     only_with_salary: bool = False
     period: int = 15  # Период 15 дней по умолчанию
     custom_params: Dict[str, Any] = None

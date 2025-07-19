@@ -78,7 +78,7 @@ def sample_vacancy_data():
         'employer': 'Test Company',
         'description': 'Test job description',
         'requirements': 'Python, Django, PostgreSQL',
-        'area': 'Moscow',
+        'area': 'Russia',
         'published': '2024-01-01T12:00:00',
         'source': 'test_source'
     }

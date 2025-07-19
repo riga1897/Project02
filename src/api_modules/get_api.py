@@ -44,7 +44,7 @@ class APIConnector:
             self,
             url: str,
             params: Dict,
-            delay: float = 0.5,
+            delay: float = 0.15,
             show_progress: bool = False,
             progress_desc: Optional[str] = None
     ) -> Dict:
