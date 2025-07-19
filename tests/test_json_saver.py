@@ -1,4 +1,3 @@
-
 import json
 import pytest
 from unittest.mock import Mock, patch, mock_open
@@ -115,15 +114,24 @@ class TestJSONSaver:
     @patch('src.storage.json_saver.JSONSaver.load_vacancies')
     @patch('src.storage.json_saver.JSONSaver._save_to_file')
     def test_add_vacancy_update(self, mock_save, mock_load, json_saver, sample_vacancy):
+        # Создаем существующую вакансию с отличающимися данными
+        from src.vacancies.models import Vacancy
         existing = Vacancy(
             title="Old",
             url="old",
             salary=None,
             description="old",
+            requirements="old req",
+            responsibilities="old resp",
+            employer={"name": "Old Company"},
+            experience="1-3",
+            employment="full",
+            schedule="day",
+            published_at="2024-01-01T12:00:00",
             vacancy_id="123"
         )
         existing.updated_at = "old"
-        
+
         mock_load.return_value = [existing]
         messages = json_saver.add_vacancy(sample_vacancy)
         assert len(messages) == 1
@@ -132,15 +140,24 @@ class TestJSONSaver:
 
     @patch('src.storage.json_saver.JSONSaver.load_vacancies')
     def test_add_vacancy_no_changes(self, mock_load, json_saver, sample_vacancy):
+        # Создаем существующую вакансию с теми же данными
+        from src.vacancies.models import Vacancy
         existing = Vacancy(
             title="Test",
             url="http://test.com",
             salary=None,
             description="desc",
+            requirements="req",
+            responsibilities="resp",
+            employer={"name": "Test"},
+            experience="1-3",
+            employment="full",
+            schedule="day",
+            published_at="2024-01-01T12:00:00",
             vacancy_id="123"
         )
         existing.updated_at = "2024-01-01T12:00:00"
-        
+
         mock_load.return_value = [existing]
         messages = json_saver.add_vacancy(sample_vacancy)
         assert len(messages) == 0
@@ -270,7 +287,7 @@ class TestJSONSaver:
         salary_mock.salary_from = 100
         salary_mock.salary_to = 200
         salary_mock.currency = "RUB"
-        
+
         vacancy.salary = salary_mock
         vacancy.title = "Test"
         vacancy.url = "test"
