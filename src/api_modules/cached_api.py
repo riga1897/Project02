@@ -65,7 +65,7 @@ class CachedAPI(BaseAPI, ABC):
             logger.error(f"Ошибка API запроса: {e}")
             return self._get_empty_response()
 
-    def _connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
+    def __connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
         Подключение к API с многоуровневым кэшированием
 
