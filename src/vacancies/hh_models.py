@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class HHVacancy(AbstractVacancy):
     """Класс для представления вакансии с HH.ru со специфичными для HH полями"""
-    
+
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
