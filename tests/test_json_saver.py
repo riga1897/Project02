@@ -45,7 +45,6 @@ class TestJSONSaver:
             schedule="Полный день",
             published_at=datetime.now().isoformat(),
             source="test",
-            area={"name": "Москва"}
         )
 
     @pytest.fixture
@@ -70,8 +69,7 @@ class TestJSONSaver:
                 "employment": "Полная занятость",
                 "schedule": "Полный день",
                 "published_at": "2024-01-01T12:00:00",
-                "source": "test",
-                "area": {"name": "Москва"}
+                "source": "test"
             },
             {
                 "vacancy_id": "456",
@@ -86,8 +84,7 @@ class TestJSONSaver:
                 "employment": "Частичная занятость",
                 "schedule": "Гибкий график",
                 "published_at": "2024-01-02T12:00:00",
-                "source": "test",
-                "area": {"name": "Санкт-Петербург"}
+                "source": "test"
             }
         ]
 
