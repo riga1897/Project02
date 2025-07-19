@@ -18,13 +18,14 @@ class HHParser:
 
         # Запрос к API (заглушка для примера)
         # В реальной реализации здесь будет запрос к API
-        vacancies_data = self._fetch_from_api(search_params)
+        vacancies_data = self._fetch_from_api()
 
         # Сохранение в кэш
         self.cache.save_response("hh", search_params, vacancies_data)
         return self._parse_items(vacancies_data)
 
-    def _fetch_from_api(self, params: Dict[str, Any]) -> List[Dict[str, Any]]:
+    @staticmethod
+    def _fetch_from_api() -> List[Dict[str, Any]]:
         """Заглушка для реального запроса к API"""
         # В реальной реализации здесь будет код для работы с API
         return []
@@ -50,7 +51,8 @@ class HHParser:
         except (KeyError, TypeError):
             return None
 
-    def _get_description(self, item: Dict[str, Any]) -> str:
+    @staticmethod
+    def _get_description(item: Dict[str, Any]) -> str:
         """Извлечение описания вакансии"""
         snippet = item.get("snippet", {})
         return (
