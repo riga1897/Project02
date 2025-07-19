@@ -1,10 +1,10 @@
 import logging
-from typing import List, Dict, Any, Optional, Set
-from .hh_api import HeadHunterAPI
-from .sj_api import SuperJobAPI
+from typing import List, Dict
+
 from src.vacancies.models import Vacancy
 from src.vacancies.parsers.sj_parser import SuperJobParser
-from src.storage.json_saver import JSONSaver
+from .hh_api import HeadHunterAPI
+from .sj_api import SuperJobAPI
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,8 @@ class UnifiedAPI:
         self.sj_api = SuperJobAPI()
         self.parser = SuperJobParser()
 
-    def _deduplicate_cross_platform(self, all_vacancies: List[Dict]) -> List[Dict]:
+    @staticmethod
+    def _deduplicate_cross_platform(all_vacancies: List[Dict]) -> List[Dict]:
         """
         Межплатформенная дедупликация вакансий из разных источников
         
@@ -177,11 +178,11 @@ class UnifiedAPI:
         """
         try:
             if sources.get('hh', False):
-                self.hh_api.clear_cache()
+                self.hh_api.clear_cache("hh")
                 logger.info("Кэш HH.ru очищен")
 
             if sources.get('sj', False):
-                self.sj_api.clear_cache()
+                self.sj_api.clear_cache("sj")
                 logger.info("Кэш SuperJob очищен")
 
         except Exception as e:
@@ -191,18 +192,19 @@ class UnifiedAPI:
         """Очистка кэша всех API"""
         # Очищаем кэш каждого API отдельно, чтобы ошибка в одном не влияла на другой
         try:
-            self.hh_api.clear_cache()
+            self.hh_api.clear_cache("hh")
             logger.info("Кэш HH.ru очищен")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша HH.ru: {e}")
 
         try:
-            self.sj_api.clear_cache()
+            self.sj_api.clear_cache("sj")
             logger.info("Кэш SuperJob очищен")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша SuperJob: {e}")
 
-    def get_available_sources(self) -> List[str]:
+    @staticmethod
+    def get_available_sources() -> List[str]:
         """Получение списка доступных источников"""
         return ['hh', 'sj']
 

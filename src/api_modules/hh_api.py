@@ -1,12 +1,10 @@
-# Adding docstrings to the clear_cache method in the HeadHunterAPI class.
-from pathlib import Path
-from typing import List, Dict, Optional, Union
 import logging
+from typing import List, Dict, Optional
+
 from src.api_modules.cached_api import CachedAPI
 from src.api_modules.get_api import APIConnector
-from src.utils.paginator import Paginator
 from src.config.api_config import APIConfig
-from src.config.hh_api_config import HHAPIConfig
+from src.utils.paginator import Paginator
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +148,8 @@ class HeadHunterAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+    @staticmethod
+    def _deduplicate_vacancies(vacancies: List[Dict]) -> List[Dict]:
         """
         Удаление дублирующихся вакансий HH по названию и компании
 
@@ -164,7 +163,7 @@ class HeadHunterAPI(CachedAPI):
         unique_vacancies = []
 
         for vacancy in vacancies:
-            # Создаем ключ для дедупликации HH вакансий
+            # Создаем ключ для HH вакансий
             title = vacancy.get('name', '').lower().strip()
             company = vacancy.get('employer', {}).get('name', '').lower().strip()
 
@@ -189,7 +188,7 @@ class HeadHunterAPI(CachedAPI):
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """
-        Получение вакансий с HH.ru с дедупликацией
+        Получение вакансий с HH.ru
 
         Args:
             search_query: Поисковый запрос
@@ -201,7 +200,7 @@ class HeadHunterAPI(CachedAPI):
         vacancies = self.get_vacancies(search_query, **kwargs)
         return self._deduplicate_vacancies(vacancies)
 
-    def clear_cache(self) -> None:
+    def clear_cache(self, api_prefix: str) -> None:
         """
         Очищает кэш API
 

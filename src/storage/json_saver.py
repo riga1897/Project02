@@ -1,9 +1,9 @@
-from datetime import datetime
-from typing import List, Union, Dict, Any, Optional
 import json
 import logging
-import shutil
+from datetime import datetime
 from pathlib import Path
+from typing import List, Union, Dict, Any
+
 from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
@@ -19,7 +19,8 @@ class JSONSaver:
         self._ensure_data_directory()
         self._ensure_file_exists()
 
-    def _validate_filename(self, filename: str) -> str:
+    @staticmethod
+    def _validate_filename(filename: str) -> str:
         """Валидация имени файла"""
         if not filename or not isinstance(filename, str):
             return "data/storage/vacancies.json"
@@ -30,7 +31,8 @@ class JSONSaver:
         """Получение имени файла"""
         return self._filename
 
-    def _ensure_data_directory(self) -> None:
+    @staticmethod
+    def _ensure_data_directory() -> None:
         """Создает директорию для хранения данных, если она не существует."""
         data_dir = Path("data/storage")
         data_dir.mkdir(parents=True, exist_ok=True)
@@ -61,8 +63,6 @@ class JSONSaver:
                 logger.info(f"Создан новый пустой файл: {self.filename}")
         except Exception as e:
             logger.error(f"Ошибка создания резервной копии: {e}")
-
-        from typing import List, Union, Optional
 
     def add_vacancy(self, vacancies: Union[Vacancy, List[Vacancy]]) -> List[str]:
         """
@@ -114,7 +114,8 @@ class JSONSaver:
 
         return update_messages
 
-    def _parse_date(self, date_str: str) -> datetime:
+    @staticmethod
+    def _parse_date(date_str: str) -> datetime:
         """Парсит дату из строки в объект datetime"""
         try:
             return datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S%z")
@@ -165,10 +166,9 @@ class JSONSaver:
             self._backup_corrupted_file()
             return []
 
-    def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[Vacancy]:
+    def get_vacancies(self) -> List[Vacancy]:
         """
         Возвращает список вакансий с учетом фильтров
-        :param filters: Словарь с критериями фильтрации (не используется в базовой реализации)
         :return: Список вакансий
         """
         return self.load_vacancies()
@@ -203,8 +203,8 @@ class JSONSaver:
             vacancies = self.load_vacancies()
             initial_count = len(vacancies)
 
-            # Фильтруем вакансии, исключая нужную
-            # Проверяем как vacancy_id, так и id для совместимости
+            # Фильтруем вакансии, исключая нужную.
+            # Проверяем vacancy_id и id для совместимости.
             filtered_vacancies = [
                 v for v in vacancies 
                 if v.vacancy_id != vacancy_id and getattr(v, 'id', None) != vacancy_id
@@ -259,7 +259,7 @@ class JSONSaver:
 
     def _ensure_json_serializable(self, obj):
         """
-        Обеспечивает JSON-сериализуемость объекта
+        Обеспечивает JSON-преобразование объекта
         """
         if obj is None:
             return None
@@ -284,8 +284,8 @@ class JSONSaver:
                     raise ValueError(f"Ожидался объект Vacancy, получен {type(vac)}")
 
                 vac_dict = vac.to_dict()
-                # Дополнительная проверка структуры
-                # Проверяем наличие ID (может быть как 'id', так и 'vacancy_id')
+                # Дополнительная проверка структуры.
+                # Проверяем наличие ID (может быть как 'id', так и 'vacancy_id').
                 has_id = 'id' in vac_dict or 'vacancy_id' in vac_dict
                 if not (has_id and 'title' in vac_dict and 'url' in vac_dict):
                     raise ValueError("Отсутствуют обязательные поля")
@@ -325,7 +325,8 @@ class JSONSaver:
             logger.error(f"Ошибка получения размера файла: {e}")
             return 0
 
-    def _vacancy_to_dict(self, vacancy: Vacancy) -> Dict[str, Any]:
+    @staticmethod
+    def _vacancy_to_dict(vacancy: Vacancy) -> Dict[str, Any]:
         """Преобразование объекта Vacancy в словарь"""
         salary_dict = None
         if vacancy.salary:

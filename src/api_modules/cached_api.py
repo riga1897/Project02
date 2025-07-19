@@ -85,9 +85,9 @@ class CachedAPI(BaseAPI, ABC):
             if memory_result != self._get_empty_response():
                 logger.debug(f"Данные получены из кэша в памяти для {api_prefix}")
                 return memory_result
-        except Exception:
+        except Exception as e:
             # Игнорируем ошибки кэша в памяти, переходим к файловому кэшу
-            pass
+            logging.warning(f"Ошибка кэша памяти: {str(e)}. Переключаемся на файловый кэш")
         
         # 2. Проверяем файловый кэш
         cached_response = self.cache.load_response(api_prefix, params)

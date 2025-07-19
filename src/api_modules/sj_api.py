@@ -181,7 +181,8 @@ class SuperJobAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+    @staticmethod
+    def _deduplicate_vacancies(vacancies: List[Dict]) -> List[Dict]:
         """
         Удаление дублирующихся вакансий SuperJob по названию и компании
 
@@ -227,7 +228,7 @@ class SuperJobAPI(CachedAPI):
         vacancies = self.get_vacancies(search_query, **kwargs)
         return self._deduplicate_vacancies(vacancies)
 
-    def clear_cache(self) -> None:
+    def clear_cache(self, api_prefix: str) -> None:
         """
         Очищает кэш API (используя общий механизм как в HH API)
 

@@ -463,7 +463,15 @@ class UserInterface:
         Args:
             vacancies: Список вакансий для отображения
         """
-        paginate_display(vacancies, self._display_vacancies, 10, "Вакансии")
+        def format_vacancy(vacancy, number=None):
+            return VacancyFormatter.format_vacancy_info(vacancy, number)
+
+        quick_paginate(
+            vacancies,
+            formatter=format_vacancy,
+            header="Вакансии",
+            items_per_page=10
+        )
 
     def _show_vacancies_for_deletion(self, vacancies: List[Vacancy], keyword: str) -> None:
         """

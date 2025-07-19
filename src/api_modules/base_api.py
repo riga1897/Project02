@@ -37,7 +37,7 @@ class BaseAPI(ABC):
         """
 
     @abstractmethod
-    def clear_cache(self):
+    def clear_cache(self, api_prefix: str):
         """
         Абстрактный метод очистки кэша
         
