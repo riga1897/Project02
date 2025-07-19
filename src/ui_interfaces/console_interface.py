@@ -74,8 +74,6 @@ class UserInterface:
                     self._clear_api_cache()
                 elif choice == "9":
                     self._setup_superjob_api()
-                elif choice == "10":
-                    self._check_cache_status()
                 elif choice == "0":
                     print("Спасибо за использование! До свидания!")
                     break
@@ -108,7 +106,6 @@ class UserInterface:
         print("7. Удалить сохраненные вакансии")
         print("8. Очистить кэш API")
         print("9. Настройка SuperJob API")
-        print("10. Проверить состояние кэша")
         print("0. Выход")
         print_menu_separator()
 
@@ -645,39 +642,5 @@ class UserInterface:
         print("• Нажмите 'Add Secret'")
         print("• Перезапустите приложение")
         print("\n" + "="*60)
-
-        input("\nНажмите Enter для продолжения...")
-
-    def _check_cache_status(self) -> None:
-        """Проверка состояния кэша для диагностики"""
-        print("\n" + "=" * 50)
-        print("СОСТОЯНИЕ КЭША")
-        print("=" * 50)
-
-        try:
-            # Проверяем кэш HH.ru
-            hh_status = self.hh_api.get_cache_status("hh")
-            print(f"\n🔍 HH.ru кэш:")
-            print(f"   Директория кэша: {hh_status.get('cache_dir', 'N/A')}")
-            print(f"   Директория существует: {hh_status.get('cache_dir_exists', False)}")
-            print(f"   Файлов в кэше: {hh_status.get('file_cache_count', 0)}")
-            if hh_status.get('cache_files'):
-                print(f"   Файлы: {', '.join(hh_status['cache_files'][:3])}{'...' if len(hh_status['cache_files']) > 3 else ''}")
-
-            # Проверяем кэш SuperJob
-            sj_status = self.sj_api.get_cache_status("sj")
-            print(f"\n🔍 SuperJob кэш:")
-            print(f"   Директория кэша: {sj_status.get('cache_dir', 'N/A')}")
-            print(f"   Директория существует: {sj_status.get('cache_dir_exists', False)}")
-            print(f"   Файлов в кэше: {sj_status.get('file_cache_count', 0)}")
-            if sj_status.get('cache_files'):
-                print(f"   Файлы: {', '.join(sj_status['cache_files'][:3])}{'...' if len(sj_status['cache_files']) > 3 else ''}")
-
-            # Показываем информацию о кэше в памяти
-            #if hh_status.get('memory_cache'):
-            #    print(f"\n💾 Кэш в памяти: {hh_status['memory_cache']}")
-
-        except Exception as e:
-            print(f"❌ Ошибка проверки кэша: {e}")
 
         input("\nНажмите Enter для продолжения...")
