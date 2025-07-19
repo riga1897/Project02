@@ -11,13 +11,15 @@
       "period": "month"
     },
     "description": "desc",
-    "requirements": null,
-    "responsibilities": null,
-    "employer": null,
-    "experience": null,
-    "employment": null,
-    "schedule": null,
-    "published_at": null,
+    "requirements": "req",
+    "responsibilities": "resp",
+    "employer": {
+      "name": "Test"
+    },
+    "experience": "1-3",
+    "employment": "full",
+    "schedule": "day",
+    "published_at": "2024-01-01T12:00:00",
     "skills": [],
     "detailed_description": "desc",
     "benefits": null,
