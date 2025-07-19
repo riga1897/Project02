@@ -28,7 +28,7 @@ def main() -> None:
     )
 
     print("=" * 60)
-    print("   ПОИСКОВИК ВАКАНСИЙ - HH.ru и SuperJob.ru")
+    print("   ПОИСКОВИК ВАКАНСИЙ")
     print("=" * 60)
 
     ui = UserInterface()

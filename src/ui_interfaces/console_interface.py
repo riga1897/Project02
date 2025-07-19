@@ -1,26 +1,26 @@
 import logging
 from typing import List, Optional
-from src.vacancies.models import Vacancy
-from src.storage.json_saver import JSONSaver
-from src.utils.ui_navigation import quick_paginate
-from src.utils.ui_helpers import (
-    confirm_action, 
-    get_user_input,
-    get_positive_integer,
-    parse_salary_range,
-    filter_vacancies_by_keyword,
-    display_vacancy_info
-)
-from src.utils.vacancy_formatter import VacancyFormatter
-from src.utils.vacancy_operations import VacancyOperations
-from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
-from src.ui_interfaces.source_selector import SourceSelector
-from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
-from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
+
 from src.api_modules.hh_api import HeadHunterAPI
 from src.api_modules.sj_api import SuperJobAPI
 from src.api_modules.unified_api import UnifiedAPI
 from src.config.ui_config import ui_pagination_config
+from src.storage.json_saver import JSONSaver
+from src.ui_interfaces.source_selector import SourceSelector
+from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
+from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
+from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
+from src.utils.ui_helpers import (
+    confirm_action,
+    get_user_input,
+    parse_salary_range,
+    filter_vacancies_by_keyword,
+    display_vacancy_info
+)
+from src.utils.ui_navigation import quick_paginate
+from src.utils.vacancy_formatter import VacancyFormatter
+from src.utils.vacancy_operations import VacancyOperations
+from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -87,7 +87,8 @@ class UserInterface:
                 logger.error(f"Ошибка в пользовательском интерфейсе: {e}")
                 print(f"Произошла ошибка: {e}")
 
-    def _show_menu(self) -> str:
+    @staticmethod
+    def _show_menu() -> str:
         """
         Отображение главного меню
 
@@ -197,7 +198,7 @@ class UserInterface:
 
             choice = input("Ваш выбор: ").strip()
 
-            filtered_vacancies = []
+            # filtered_vacancies = []
 
             if choice == "1":
                 try:
@@ -363,7 +364,8 @@ class UserInterface:
             logger.error(f"Ошибка при очистке кэша: {e}")
             print(f"Ошибка при очистке кэша: {e}")
 
-    def _get_period_choice(self) -> Optional[int]:
+    @staticmethod
+    def _get_period_choice() -> Optional[int]:
         """
         Выбор периода публикации вакансий
 
@@ -415,7 +417,8 @@ class UserInterface:
             print("\nВыбор периода отменен.")
             return None
 
-    def _setup_superjob_api(self) -> None:
+    @staticmethod
+    def _setup_superjob_api() -> None:
         """Настройка SuperJob API"""
         import os
 
@@ -445,7 +448,8 @@ class UserInterface:
 
         input("\nНажмите Enter для продолжения...")
 
-    def _display_vacancies(self, vacancies: List[Vacancy], start_number: int = 1) -> None:
+    @staticmethod
+    def _display_vacancies(vacancies: List[Vacancy], start_number: int = 1) -> None:
         """
         Отображение списка вакансий
 
@@ -456,7 +460,8 @@ class UserInterface:
         for i, vacancy in enumerate(vacancies, start_number):
             display_vacancy_info(vacancy, i)
 
-    def _display_vacancies_with_pagination(self, vacancies: List[Vacancy]) -> None:
+    @staticmethod
+    def _display_vacancies_with_pagination(vacancies: List[Vacancy]) -> None:
         """
         Отображение вакансий с постраничным просмотром
 
@@ -623,7 +628,8 @@ class UserInterface:
             else:
                 print("Неверный выбор. Попробуйте снова.")
 
-    def _configure_superjob_api(self) -> None:
+    @staticmethod
+    def _configure_superjob_api() -> None:
         """Настройка SuperJob API"""
         import os
 

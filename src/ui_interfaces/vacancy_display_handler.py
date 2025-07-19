@@ -1,17 +1,11 @@
-
-"""
-Обработчик операций отображения вакансий
-"""
-
 import logging
-from typing import List, Optional
-from src.vacancies.models import Vacancy
+
+from src.config.ui_config import ui_pagination_config
+from src.storage.json_saver import JSONSaver
 from src.utils.ui_helpers import get_positive_integer, filter_vacancies_by_keyword
+from src.utils.ui_navigation import quick_paginate
 from src.utils.vacancy_formatter import VacancyFormatter
 from src.utils.vacancy_operations import VacancyOperations
-from src.storage.json_saver import JSONSaver
-from src.utils.ui_navigation import quick_paginate
-from src.config.ui_config import ui_pagination_config
 
 logger = logging.getLogger(__name__)
 
