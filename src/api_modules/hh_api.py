@@ -6,6 +6,7 @@ from src.api_modules.cached_api import CachedAPI
 from src.api_modules.get_api import APIConnector
 from src.utils.paginator import Paginator
 from src.config.api_config import APIConfig
+from src.config.hh_api_config import HHAPIConfig
 
 logger = logging.getLogger(__name__)
 
