@@ -1,8 +1,3 @@
-
-"""
-Обработчик операций поиска вакансий
-"""
-
 import logging
 from typing import List, Optional
 from src.vacancies.models import Vacancy
@@ -158,7 +153,8 @@ class VacancySearchHandler:
         else:
             print("Вакансии уже существуют в базе данных")
     
-    def _get_period_choice(self) -> Optional[int]:
+    @staticmethod
+    def _get_period_choice() -> Optional[int]:
         """
         Выбор периода публикации вакансий
         

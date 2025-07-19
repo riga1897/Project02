@@ -1,4 +1,3 @@
-
 from typing import Set, Optional
 import logging
 
