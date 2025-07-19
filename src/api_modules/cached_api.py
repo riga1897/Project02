@@ -72,7 +72,7 @@ class CachedAPI(BaseAPI, ABC):
         Реализует стратегию кэширования в три уровня:
         1. Проверка кэша в памяти (самый быстрый)
         2. Проверка файлового кэша (средний по скорости)
-        3. Реальный запрос к API (самый медленный)
+        3. Реальный запрос к API с параллельным сохранением в память и на диск
 
         Args:
             url: URL для запроса
@@ -105,14 +105,26 @@ class CachedAPI(BaseAPI, ABC):
             data = cached_response.get('data', self._get_empty_response())
             return data
         
-        # 3. Делаем реальный запрос к API
+        # 3. Делаем реальный запрос к API с параллельным кэшированием
         try:
-            data = self._cached_api_request(url, params_hash, api_prefix)
+            # Делаем прямой запрос к API, минуя кэш в памяти
+            data = self.connector.connect(url, params)
+            logger.debug(f"Данные получены из API для {api_prefix}")
             
-            # Сохраняем в файловый кэш только валидные данные
+            # Параллельно сохраняем в оба кэша только валидные данные
             if data != self._get_empty_response():
+                # Сохраняем в файловый кэш
                 self.cache.save_response(api_prefix, params, data)
                 logger.debug(f"Данные сохранены в файловый кэш для {api_prefix}")
+                
+                # Принудительно обновляем кэш в памяти новыми данными
+                # Очищаем старый кэш для данных параметров если есть
+                if hasattr(self._cached_api_request, 'cache') and params_hash in getattr(self._cached_api_request, 'cache', {}):
+                    delattr(self._cached_api_request.cache, params_hash)
+                
+                # Сохраняем в кэш в памяти через вызов кэшированного метода
+                self._cached_api_request(url, params_hash, api_prefix)
+                logger.debug(f"Данные сохранены в кэш в памяти для {api_prefix}")
             
             return data
             
