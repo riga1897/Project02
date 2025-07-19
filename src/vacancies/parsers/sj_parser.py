@@ -1,4 +1,3 @@
-
 from typing import List, Dict, Any
 import logging
 from ..sj_models import SuperJobVacancy

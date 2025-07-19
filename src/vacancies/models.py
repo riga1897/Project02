@@ -4,7 +4,9 @@ from datetime import datetime
 import logging
 from .abstract import AbstractVacancy
 from src.utils.salary import Salary
+
 logging.basicConfig(level=logging.ERROR)
+
 class Vacancy(AbstractVacancy):
     """Класс для представления вакансии с полной структурой HH.ru"""
     __slots__ = (
@@ -50,15 +52,20 @@ class Vacancy(AbstractVacancy):
         self.detailed_description = detailed_description or description
         self.benefits = benefits
         self.source = source
-    def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Salary:
+
+    @staticmethod
+    def _validate_salary(salary_data: Optional[Dict[str, Any]]) -> Salary:
         """Приватный метод валидации данных о зарплате"""
         return Salary(salary_data) if salary_data else Salary()
+
     @staticmethod
     def _clean_html(text: str) -> str:
         """Очистка HTML-тегов из текста"""
         import re
         return re.sub(r'<[^>]+>', '', text)
-    def _parse_datetime(self, published_at_str: str) -> datetime:
+
+    @staticmethod
+    def _parse_datetime(published_at_str: str) -> datetime:
         """Парсинг строки с датой и временем в объект datetime"""
         if not published_at_str:
             return datetime.now()

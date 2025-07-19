@@ -1,18 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 
 
 class AbstractVacancy(ABC):
     """Абстрактный класс для представления вакансии"""
 
     @abstractmethod
-    def __init__(self, title: str, url: str, salary: Optional[str], description: str):
+    def __init__(self):
         """
         Инициализация вакансии
-        :param title: Название вакансии
-        :param url: Ссылка на вакансию
-        :param salary: Зарплата (может быть None)
-        :param description: Описание вакансии
         """
 
 
