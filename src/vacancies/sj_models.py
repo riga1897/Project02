@@ -49,7 +49,8 @@ class SuperJobVacancy(AbstractVacancy):
         self.benefits = benefits
         self.source = source
 
-    def _validate_salary(self, salary_data: Optional[Dict[str, Any]]) -> Optional[Salary]:
+    @staticmethod
+    def _validate_salary(salary_data: Optional[Dict[str, Any]]) -> Optional[Salary]:
         """Валидация и создание объекта зарплаты"""
         if not salary_data:
             return None
