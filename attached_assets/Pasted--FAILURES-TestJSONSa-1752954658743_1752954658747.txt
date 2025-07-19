@@ -1,0 +1,123 @@
+============================== FAILURES ===============================
+________________ TestJSONSaver.test_add_vacancy_update ________________
+
+self = <tests.test_json_saver.TestJSONSaver object at 0x7f85992a5190>
+mock_save = <MagicMock name='_save_to_file' id='140211775448080'>
+mock_load = <MagicMock name='load_vacancies' id='140211775448016'>
+json_saver = <src.storage.json_saver.JSONSaver object at 0x7f85991a8790>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f8599486d50>
+
+    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
+    @patch('src.storage.json_saver.JSONSaver._save_to_file')
+    def test_add_vacancy_update(self, mock_save, mock_load, json_saver, sample_vacancy):
+        existing = Mock()
+        existing.vacancy_id = "123"
+        existing.title = "Old"
+        existing.url = "old"
+        existing.salary = None
+        existing.description = "old"
+    
+        # Настраиваем getattr для updated_at
+        def getattr_side_effect(obj, attr, default=None):
+            if attr == 'updated_at':
+                return "old"
+            return getattr(obj, attr, default)
+    
+        with patch('builtins.getattr', side_effect=getattr_side_effect):
+            mock_load.return_value = [existing]
+>           messages = json_saver.add_vacancy(sample_vacancy)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_json_saver.py:131: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/storage/json_saver.py:75: in add_vacancy
+    existing_vacancies = self.load_vacancies()
+                         ^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+E   RecursionError: maximum recursion depth exceeded
+!!! Recursion detected (same locals & position)
+______________ TestJSONSaver.test_add_vacancy_no_changes ______________
+
+self = <tests.test_json_saver.TestJSONSaver object at 0x7f85992a5910>
+mock_load = <MagicMock name='load_vacancies' id='140211777411024'>
+json_saver = <src.storage.json_saver.JSONSaver object at 0x7f8599276a40>
+sample_vacancy = <src.vacancies.models.Vacancy object at 0x7f8599485d90>
+
+    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
+    def test_add_vacancy_no_changes(self, mock_load, json_saver, sample_vacancy):
+        existing = Mock()
+        existing.vacancy_id = "123"
+        existing.title = "Test"
+        existing.url = "http://test.com"
+        existing.salary = None
+        existing.description = "desc"
+    
+        # Настраиваем getattr для updated_at чтобы возвращал то же значение что и у sample_vacancy
+        def getattr_side_effect(obj, attr, default=None):
+            if attr == 'updated_at':
+                return "2024-01-01T12:00:00"
+            return getattr(obj, attr, default)
+    
+        with patch('builtins.getattr', side_effect=getattr_side_effect):
+            mock_load.return_value = [existing]
+>           messages = json_saver.add_vacancy(sample_vacancy)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_json_saver.py:153: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src/storage/json_saver.py:75: in add_vacancy
+    existing_vacancies = self.load_vacancies()
+                         ^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1123: in __call__
+    self._increment_mock_call(*args, **kwargs)
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:1132: in _increment_mock_call
+    self.call_count += 1
+    ^^^^^^^^^^^^^^^
+/nix/store/clx0mcir7qw8zk36zbr4jra789g3knf6-python3-3.11.10/lib/python3.11/unittest/mock.py:335: in _get
+    return getattr(self, _the_name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+E   RecursionError: maximum recursion depth exceeded
+!!! Recursion detected (same locals & position)
+======================= short test summary info =======================
+FAILED tests/test_json_saver.py::TestJSONSaver::test_add_vacancy_update - RecursionError: maximum recursion depth exceeded
+FAILED tests/test_json_saver.py::TestJSONSaver::test_add_vacancy_no_changes - RecursionError: maximum recursion depth exceeded
+===============
