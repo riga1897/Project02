@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "Python",
+      "page": 0,
+      "period": 1
+    }
+  },
+  "data": {
+    "items": [
+      {
+        "id": "122167586",
+        "premium": false,
+        "name": "QA Engineer / Тестировщик",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": "2-я улица Синичкина",
+          "building": "9Ас10",
+          "lat": 55.761188,
+          "lng": 37.718157,
+          "description": null,
+          "raw": "Москва, 2-я улица Синичкина, 9Ас10",
+          "metro": {
+            "station_name": "Авиамоторная",
+            "line_name": "Большая кольцевая линия",
+            "station_id": "97.826",
+            "line_id": "97",
+            "lat": 55.753056,
+            "lng": 37.718611
+          },
+          "metro_stations": [
+            {
+              "station_name": "Авиамоторная",
+              "line_name": "Большая кольцевая линия",
+              "station_id": "97.826",
+              "line_id": "97",
+              "lat": 55.753056,
+              "lng": 37.718611
+            },
+            {
+              "station_name": "Лефортово",
+              "line_name": "Большая кольцевая линия",
+              "station_id": "97.825",
+              "line_id": "97",
+              "lat": 55.764444,
+              "lng": 37.702778
+            }
+          ],
+          "id": "15861138"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-19T16:01:01+0300",
+        "created_at": "2025-07-19T16:01:01+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=122167586",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/122167586?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/122167586",
+        "relations": [],
+        "employer": {
+          "id": "2936895",
+          "name": "ВЕКАС",
+          "url": "https://api.hh.ru/employers/2936895",
+          "alternate_url": "https://hh.ru/employer/2936895",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1198172.png",
+            "90": "https://img.hhcdn.ru/employer-logo/6413137.png",
+            "240": "https://img.hhcdn.ru/employer-logo/6413138.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=2936895",
+          "accredited_it_employer": true,
+          "employer_rating": {
+            "total_rating": "4.9",
+            "reviews_count": 2
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Высшее техническое образование. Опыт работы тестировщиком ПО от 3 лет. Умение работать с разными базами данных, знание SQL. ",
+          "responsibility": "Тестирование программно-аппаратного комплекса продуктов маркировки («Честный знак»). Ручное тестирование фронт и бэк web-приложения + мобильного приложения+ТСД. "
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "124",
+            "name": "Тестировщик"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between3And6",
+          "name": "От 3 до 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 204,
+    "pages": 204,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&search_period=1&text=Python"
+  }
+}
