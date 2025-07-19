@@ -7,9 +7,20 @@ from src.config.api_config import APIConfig
 
 
 class APIConnector:
-    """Улучшенный обработчик API-запросов с прогресс-баром"""
+    """
+    Обработчик API-запросов с прогресс-баром
+    
+    Предоставляет функциональность для выполнения HTTP-запросов к API
+    с визуальным отображением прогресса, обработкой ошибок и повторными попытками.
+    """
 
     def __init__(self, config: Optional[APIConfig] = None):
+        """
+        Инициализация API-коннектора
+        
+        Args:
+            config: Конфигурация API (если None, используется конфигурация по умолчанию)
+        """
         self.config = config or APIConfig()
         self.headers = {
             'User-Agent': self.config.user_agent,
@@ -18,7 +29,13 @@ class APIConnector:
         self._progress = None
 
     def _init_progress(self, total: int, desc: str) -> None:
-        """Инициализация прогресс-бара с автоматическим отключением в тестах"""
+        """
+        Инициализация прогресс-бара с автоматическим отключением в тестах
+        
+        Args:
+            total: Общее количество операций
+            desc: Описание операции
+        """
         tqdm_params = {
             'total': total,
             'desc': desc,
@@ -30,12 +47,21 @@ class APIConnector:
         self._progress = tqdm(**tqdm_params)
 
     def _update_progress(self, n: int = 1) -> None:
-        """Обновление прогресс-бара"""
+        """
+        Обновление прогресс-бара
+        
+        Args:
+            n: Количество шагов для обновления
+        """
         if self._progress:
             self._progress.update(n)
 
     def _close_progress(self) -> None:
-        """Закрытие прогресс-бара"""
+        """
+        Закрытие прогресс-бара
+        
+        Безопасно закрывает и освобождает ресурсы прогресс-бара.
+        """
         if self._progress:
             self._progress.close()
             self._progress = None
@@ -44,12 +70,25 @@ class APIConnector:
             self,
             url: str,
             params: Dict,
-            delay: float = 0.5,
+            delay: float = 0.15,
             show_progress: bool = False,
             progress_desc: Optional[str] = None
     ) -> Dict:
         """
         Выполнение API-запроса с обработкой ошибок и прогрессом
+        
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+            delay: Задержка между запросами в секундах
+            show_progress: Показывать ли прогресс-бар
+            progress_desc: Описание для прогресс-бара
+            
+        Returns:
+            Dict: Ответ API в формате JSON
+            
+        Raises:
+            ConnectionError: При ошибках сети или API
         """
         try:
             if show_progress:
@@ -88,5 +127,7 @@ class APIConnector:
             raise ConnectionError(f"Connection error: {str(e)}")
         except ValueError as e:
             raise ConnectionError(f"JSON decode error: {str(e)}")
+        except Exception as e:
+            raise ConnectionError(f"Unexpected error: {str(e)}")
         finally:
             self._close_progress()

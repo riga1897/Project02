@@ -1,33 +1,46 @@
-from abc import ABC, abstractmethod
-from typing import Dict, List, Union
-import logging
 
-logger = logging.getLogger(__name__)
+from abc import ABC, abstractmethod
+from typing import Any, Optional
+from src.config.api_config import APIConfig
+from .get_api import APIConnector
 
 
 class BaseAPI(ABC):
-    """Abstract base class for job search APIs with enhanced error handling"""
+    """
+    Абстрактный базовый класс для всех API
+    
+    Определяет общий интерфейс и базовую функциональность
+    для всех реализаций API поиска вакансий.
+    """
+
+    def __init__(self, config: Optional[APIConfig] = None):
+        """
+        Инициализация базового API
+
+        Args:
+            config: Конфигурация API (если None, используется конфигурация по умолчанию)
+        """
+        self.config = config or APIConfig()
+        self.connector = APIConnector(self.config)
 
     @abstractmethod
-    def _connect_to_api(self, url: str, params: Dict) -> Union[Dict, str]:
+    def get_vacancies(self, search_query: str, **kwargs) -> Any:
         """
-        Connect to API with comprehensive error handling
-        Returns:
-            Dict: API response as dictionary
-            str: Error message if request fails
-        """
-        pass
-
-    @abstractmethod
-    def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
-        """Get validated vacancies by search query"""
-        pass
-
-    @staticmethod
-    def validate_response(response: Union[Dict, str]) -> bool:
-        """Validate API response structure"""
-        if isinstance(response, str):
-            logger.error(f"API returned error: {response}")
-            return False
-        return True
+        Абстрактный метод получения вакансий
         
+        Args:
+            search_query: Поисковый запрос
+            **kwargs: Дополнительные параметры поиска
+            
+        Returns:
+            Any: Список найденных вакансий
+        """
+
+    @abstractmethod
+    def clear_cache(self):
+        """
+        Абстрактный метод очистки кэша
+        
+        Должен быть реализован в наследующих классах
+        для очистки кэшированных данных API.
+        """
