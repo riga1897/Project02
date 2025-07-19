@@ -176,6 +176,19 @@ class Vacancy(AbstractVacancy):
             if not responsibilities:
                 responsibilities = data.get('work')
 
+            # Определяем источник на основе структуры данных
+            source = data.get('source', 'unknown')
+            if source == 'unknown':
+                # Если source не указан, пытаемся определить по URL или структуре данных
+                if 'alternate_url' in data or 'hh.ru' in url:
+                    source = 'hh.ru'
+                elif 'superjob.ru' in url or 'sj.ru' in url:
+                    source = 'superjob.ru'
+                elif 'profession' in data and 'candidat' in data:
+                    source = 'superjob.ru'  # SuperJob использует эти поля
+                elif 'name' in data and 'snippet' in data:
+                    source = 'hh.ru'  # HH использует эти поля
+
             return cls(
                 vacancy_id=vacancy_id,
                 title=title,
@@ -191,7 +204,7 @@ class Vacancy(AbstractVacancy):
                 published_at=data.get('published_at') or data.get('date_published'),
                 detailed_description=data.get('detailed_description'),
                 benefits=data.get('benefits'),
-                source=data.get('source', 'unknown')
+                source=source
             )
 
         except Exception as e:

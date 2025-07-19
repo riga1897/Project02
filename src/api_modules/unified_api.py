@@ -21,22 +21,22 @@ class UnifiedAPI:
     def _deduplicate_cross_platform(all_vacancies: List[Dict]) -> List[Dict]:
         """
         Межплатформенная дедупликация вакансий из разных источников
-        
+
         Args:
             all_vacancies: Список всех вакансий из разных источников
-            
+
         Returns:
             List[Dict]: Список вакансий без дублей между платформами
         """
         seen = set()
         unique_vacancies = []
-        
+
         for vacancy in all_vacancies:
             # Универсальная логика для дедупликации между источниками
             title = vacancy.get('name', vacancy.get('profession', '')).lower().strip()
             company = vacancy.get('employer', {}).get('name', 
                      vacancy.get('firm_name', '')).lower().strip()
-            
+
             # Нормализуем зарплату для межплатформенного сравнения
             salary_key = ''
             if 'salary' in vacancy and vacancy['salary']:
@@ -46,15 +46,15 @@ class UnifiedAPI:
                 salary_key = f"{salary_from}-{salary_to}"
             elif 'payment_from' in vacancy:
                 salary_key = f"{vacancy.get('payment_from', 0)}-{vacancy.get('payment_to', 0)}"
-            
+
             dedup_key = (title, company, salary_key)
-            
+
             if dedup_key not in seen:
                 seen.add(dedup_key)
                 unique_vacancies.append(vacancy)
             else:
                 logger.debug(f"Межплатформенный дубль отфильтрован: {title} в {company}")
-        
+
         logger.info(f"Межплатформенная дедупликация: {len(all_vacancies)} -> {len(unique_vacancies)} вакансий")
         return unique_vacancies
 
@@ -146,13 +146,13 @@ class UnifiedAPI:
             if 'period' in kwargs:
                 # HH использует 'period', SuperJob использует 'published'
                 sj_kwargs['published'] = kwargs['period']
-            
+
             sj_data = self.sj_api.get_vacancies_with_deduplication(query, **sj_kwargs)
-            
+
             # Парсим данные SuperJob в объекты SuperJobVacancy
             if sj_data:
                 sj_vacancies_raw = self.parser.parse_vacancies(sj_data)
-                
+
                 # Конвертируем SuperJobVacancy в унифицированный формат
                 sj_vacancies = []
                 for sj_vac in sj_vacancies_raw:
@@ -162,7 +162,7 @@ class UnifiedAPI:
                         sj_vacancies.append(vacancy)
                     except Exception as e:
                         logger.warning(f"Ошибка конвертации вакансии SuperJob: {e}")
-                
+
                 return sj_vacancies
             return []
         except Exception as e:
