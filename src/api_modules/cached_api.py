@@ -65,7 +65,7 @@ class CachedAPI(BaseAPI, ABC):
             logger.error(f"Ошибка API запроса: {e}")
             return self._get_empty_response()
 
-    def __connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
+    def _connect_to_api(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
         Подключение к API с многоуровневым кэшированием
 
@@ -103,8 +103,6 @@ class CachedAPI(BaseAPI, ABC):
         if cached_response is not None:
             logger.debug(f"Данные получены из файлового кэша для {api_prefix}")
             data = cached_response.get('data', self._get_empty_response())
-            # Также кэшируем в памяти для следующих запросов
-            self._cached_api_request(url, params_hash, api_prefix)
             return data
         
         # 3. Делаем реальный запрос к API
@@ -140,6 +138,33 @@ class CachedAPI(BaseAPI, ABC):
             logger.info(f"Кэш {api_prefix} очищен (файловый и в памяти)")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша {api_prefix}: {e}")
+
+    def get_cache_status(self, api_prefix: str) -> Dict:
+        """
+        Получение статуса кэша для диагностики
+
+        Args:
+            api_prefix: Префикс API (hh, sj)
+            
+        Returns:
+            Dict: Информация о состоянии кэша
+        """
+        try:
+            cache_files = list(self.cache_dir.glob(f"{api_prefix}_*.json"))
+            memory_info = {}
+            if hasattr(self._cached_api_request, 'cache_info'):
+                memory_info = self._cached_api_request.cache_info()
+            
+            return {
+                'cache_dir': str(self.cache_dir),
+                'cache_dir_exists': self.cache_dir.exists(),
+                'file_cache_count': len(cache_files),
+                'cache_files': [f.name for f in cache_files],
+                'memory_cache': memory_info
+            }
+        except Exception as e:
+            logger.error(f"Ошибка получения статуса кэша: {e}")
+            return {'error': str(e)}
 
     @abstractmethod
     def _get_empty_response(self) -> Dict:

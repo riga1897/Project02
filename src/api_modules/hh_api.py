@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class HeadHunterAPI(CachedAPI):
     """
     Расширенный клиент API HeadHunter с надежной обработкой ошибок и кэшированием
-    
+
     Предоставляет полный набор функций для работы с API hh.ru:
     - Поиск вакансий с пагинацией
     - Многоуровневое кэширование
@@ -29,7 +29,7 @@ class HeadHunterAPI(CachedAPI):
     def __init__(self, config: Optional[APIConfig] = None):
         """
         Инициализация API клиента HeadHunter
-        
+
         Args:
             config: Конфигурация API (если None, используется конфигурация по умолчанию)
         """
@@ -41,7 +41,7 @@ class HeadHunterAPI(CachedAPI):
     def _get_empty_response(self) -> Dict:
         """
         Получить пустую структуру ответа для HH API
-        
+
         Returns:
             Dict: Пустая структура ответа с полем 'items'
         """
@@ -50,10 +50,10 @@ class HeadHunterAPI(CachedAPI):
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
         Валидация структуры вакансии
-        
+
         Args:
             vacancy: Словарь с данными вакансии
-            
+
         Returns:
             bool: True если структура валидна, False иначе
         """
@@ -65,12 +65,12 @@ class HeadHunterAPI(CachedAPI):
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
         """
         Получение и валидация одной страницы вакансий
-        
+
         Args:
             search_query: Поисковый запрос
             page: Номер страницы (начиная с 0)
             **kwargs: Дополнительные параметры поиска
-            
+
         Returns:
             List[Dict]: Список валидных вакансий со страницы
         """
@@ -93,16 +93,16 @@ class HeadHunterAPI(CachedAPI):
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """
         Получение всех вакансий с пагинацией и валидацией
-        
+
         Выполняет полный цикл получения вакансий:
         1. Получает метаданные о количестве страниц
         2. Обрабатывает все страницы с помощью пагинатора
         3. Валидирует каждую вакансию
-        
+
         Args:
             search_query: Поисковый запрос
             **kwargs: Дополнительные параметры поиска
-            
+
         Returns:
             List[Dict]: Список всех найденных и валидных вакансий
         """
@@ -153,21 +153,21 @@ class HeadHunterAPI(CachedAPI):
     def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
         """
         Удаление дублирующихся вакансий HH по названию и компании
-        
+
         Args:
             vacancies: Список вакансий с HH.ru
-            
+
         Returns:
             List[Dict]: Список уникальных вакансий
         """
         seen = set()
         unique_vacancies = []
-        
+
         for vacancy in vacancies:
             # Создаем ключ для дедупликации HH вакансий
             title = vacancy.get('name', '').lower().strip()
             company = vacancy.get('employer', {}).get('name', '').lower().strip()
-            
+
             # Нормализуем зарплату для сравнения
             salary_key = ''
             if 'salary' in vacancy and vacancy['salary']:
@@ -175,26 +175,26 @@ class HeadHunterAPI(CachedAPI):
                 salary_from = salary.get('from', 0) or 0
                 salary_to = salary.get('to', 0) or 0
                 salary_key = f"{salary_from}-{salary_to}"
-            
+
             dedup_key = (title, company, salary_key)
-            
+
             if dedup_key not in seen:
                 seen.add(dedup_key)
                 unique_vacancies.append(vacancy)
             else:
                 logger.debug(f"Дублирующаяся HH вакансия отфильтрована: {title} в {company}")
-        
+
         logger.info(f"HH дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
         return unique_vacancies
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """
         Получение вакансий с HH.ru с дедупликацией
-        
+
         Args:
             search_query: Поисковый запрос
             **kwargs: Дополнительные параметры
-            
+
         Returns:
             List[Dict]: Список уникальных вакансий
         """
