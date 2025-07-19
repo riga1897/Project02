@@ -119,19 +119,13 @@ class TestJSONSaver:
         existing.url = "old"
         existing.salary = None
         existing.description = "old"
+        existing.updated_at = "old"
         
-        # Настраиваем getattr для updated_at
-        def getattr_side_effect(obj, attr, default=None):
-            if attr == 'updated_at':
-                return "old"
-            return getattr(obj, attr, default)
-        
-        with patch('builtins.getattr', side_effect=getattr_side_effect):
-            mock_load.return_value = [existing]
-            messages = json_saver.add_vacancy(sample_vacancy)
-            assert len(messages) == 1
-            assert "обновлена" in messages[0]
-            mock_save.assert_called_once()
+        mock_load.return_value = [existing]
+        messages = json_saver.add_vacancy(sample_vacancy)
+        assert len(messages) == 1
+        assert "обновлена" in messages[0]
+        mock_save.assert_called_once()
 
     @patch('src.storage.json_saver.JSONSaver.load_vacancies')
     def test_add_vacancy_no_changes(self, mock_load, json_saver, sample_vacancy):
@@ -141,17 +135,11 @@ class TestJSONSaver:
         existing.url = "http://test.com"
         existing.salary = None
         existing.description = "desc"
+        existing.updated_at = "2024-01-01T12:00:00"
         
-        # Настраиваем getattr для updated_at чтобы возвращал то же значение что и у sample_vacancy
-        def getattr_side_effect(obj, attr, default=None):
-            if attr == 'updated_at':
-                return "2024-01-01T12:00:00"
-            return getattr(obj, attr, default)
-        
-        with patch('builtins.getattr', side_effect=getattr_side_effect):
-            mock_load.return_value = [existing]
-            messages = json_saver.add_vacancy(sample_vacancy)
-            assert len(messages) == 0
+        mock_load.return_value = [existing]
+        messages = json_saver.add_vacancy(sample_vacancy)
+        assert len(messages) == 0
 
     # Удаление
     @patch('builtins.open', new_callable=mock_open)
