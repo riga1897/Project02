@@ -306,9 +306,6 @@ class JSONSaver:
             logger.critical(f"Ошибка записи в файл: {e}")
             raise
 
-        with open(self.filename, 'w', encoding='utf-8') as f:
-            json.dump(valid_data, f, ensure_ascii=False, indent=2)
-
     def get_file_size(self) -> int:
         """
         Получает размер файла в байтах
