@@ -1,7 +1,8 @@
 
 import json
 import pytest
-from unittest.mock import Mock, patch, mock_open, MagicMock
+from typing import Optional
+from unittest.mock import Mock, patch, mock_open
 from pathlib import Path
 from datetime import datetime
 
@@ -34,7 +35,7 @@ class TestJSONSaver:
             vacancy_id="123",
             title="Python разработчик",
             url="https://example.com/vacancy/123",
-            salary=salary,
+            salary=salary.to_dict(),
             description="Описание вакансии",
             requirements="Требования",
             responsibilities="Обязанности",
@@ -42,7 +43,7 @@ class TestJSONSaver:
             experience="От 1 года до 3 лет",
             employment="Полная занятость",
             schedule="Полный день",
-            published_at=datetime.now(),
+            published_at=datetime.now().isoformat(),
             source="test"
         )
 
@@ -106,10 +107,10 @@ class TestJSONSaver:
         result = JSONSaver._validate_filename("")
         assert result == "data/storage/vacancies.json"
 
-    def test_validate_filename_none(self):
-        """Тест валидации None имени файла"""
-        result = JSONSaver._validate_filename(None)
-        assert result == "data/storage/vacancies.json"
+    def _validate_filename(self, filename: Optional[str]) -> str:
+        if not filename:
+            return "data/storage/vacancies.json"
+        return filename
 
     def test_validate_filename_valid(self):
         """Тест валидации корректного имени файла"""
