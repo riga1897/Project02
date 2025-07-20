@@ -2,6 +2,7 @@ import logging
 from typing import List, Dict, Optional
 
 from src.api_modules.cached_api import CachedAPI
+from src.api_modules.base_api import BaseJobAPI
 from src.api_modules.get_api import APIConnector
 from src.config.api_config import APIConfig
 from src.utils.paginator import Paginator
@@ -9,7 +10,7 @@ from src.utils.paginator import Paginator
 logger = logging.getLogger(__name__)
 
 
-class HeadHunterAPI(CachedAPI):
+class HeadHunterAPI(CachedAPI, BaseJobAPI):
     """
     Расширенный клиент API HeadHunter с надежной обработкой ошибок и кэшированием
 
@@ -57,7 +58,8 @@ class HeadHunterAPI(CachedAPI):
         """
         return (
             isinstance(vacancy, dict) and 
-            all(field in vacancy for field in self.REQUIRED_VACANCY_FIELDS)
+            vacancy.get('name') and  # У HH это поле 'name'
+            vacancy.get('alternate_url')  # У HH это поле 'alternate_url'
         )
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
@@ -148,10 +150,9 @@ class HeadHunterAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    @staticmethod
-    def _deduplicate_vacancies(vacancies: List[Dict]) -> List[Dict]:
+    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
         """
-        Удаление дублирующихся вакансий HH по названию и компании
+        Удаление дублирующихся вакансий HH (используется базовая реализация)
 
         Args:
             vacancies: Список вакансий с HH.ru
@@ -159,32 +160,7 @@ class HeadHunterAPI(CachedAPI):
         Returns:
             List[Dict]: Список уникальных вакансий
         """
-        seen = set()
-        unique_vacancies = []
-
-        for vacancy in vacancies:
-            # Создаем ключ для HH вакансий
-            title = vacancy.get('name', '').lower().strip()
-            company = vacancy.get('employer', {}).get('name', '').lower().strip()
-
-            # Нормализуем зарплату для сравнения
-            salary_key = ''
-            if 'salary' in vacancy and vacancy['salary']:
-                salary = vacancy['salary']
-                salary_from = salary.get('from', 0) or 0
-                salary_to = salary.get('to', 0) or 0
-                salary_key = f"{salary_from}-{salary_to}"
-
-            dedup_key = (title, company, salary_key)
-
-            if dedup_key not in seen:
-                seen.add(dedup_key)
-                unique_vacancies.append(vacancy)
-            else:
-                logger.debug(f"Дублирующаяся HH вакансия отфильтрована: {title} в {company}")
-
-        logger.info(f"HH дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
-        return unique_vacancies
+        return super()._deduplicate_vacancies(vacancies, 'hh')
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """
