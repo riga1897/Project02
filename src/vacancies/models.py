@@ -4,13 +4,21 @@ from datetime import datetime
 import logging
 from .abstract import AbstractVacancy
 from src.utils.salary import Salary
+from typing import Union
 
 logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 class Vacancy(AbstractVacancy):
-    """Унифицированный класс для представления вакансии из любого источника"""
-    
+    """
+    Модуль моделей данных для работы с вакансиями.
+
+    Содержит основную модель Vacancy и вспомогательные классы для представления
+    структурированных данных о вакансиях из различных источников (HH.ru, SuperJob).
+    Обеспечивает унификацию данных и их валидацию.
+    """
+
     __slots__ = (
         'vacancy_id', 'title', 'url', 'salary', 'description', 
         'requirements', 'responsibilities', 'employer', 'experience',
@@ -37,6 +45,9 @@ class Vacancy(AbstractVacancy):
         vacancy_id: Optional[str] = None,
         source: str = "unknown"
     ):
+        self.raw_data = None
+        self.profession = None
+        self.area = None
         self.vacancy_id = vacancy_id or str(uuid.uuid4())
         self.title = title
         self.url = url
@@ -66,32 +77,51 @@ class Vacancy(AbstractVacancy):
         return re.sub(r'<[^>]+>', '', text)
 
     @staticmethod
-    def _parse_datetime(published_at_str: str) -> datetime:
-        """Универсальный парсинг строки с датой и временем"""
-        if not published_at_str:
-            return datetime.now()
+    def _parse_datetime(date_str: Union[str, int, None]) -> Optional[datetime]:
+        """
+        Универсальный парсер дат для разных форматов API
+
+        Args:
+            date_str: Строка с датой в различных форматах или timestamp
+
+        Returns:
+            datetime object или None при ошибке
+        """
+        if not date_str:
+            return None
 
         try:
-            # Попробуем разные форматы даты
-            formats = [
-                '%Y-%m-%dT%H:%M:%S%z',  # ISO с timezone
-                '%Y-%m-%dT%H:%M:%S',    # ISO без timezone
-                '%Y-%m-%d %H:%M:%S',    # Простой формат
-            ]
+            # Если это timestamp (для SuperJob)
+            if isinstance(date_str, (int, float)):
+                return datetime.fromtimestamp(date_str)
 
-            for fmt in formats:
+            # Если это строка
+            if isinstance(date_str, str):
+                # Сначала попробуем как timestamp
                 try:
-                    return datetime.strptime(published_at_str, fmt)
-                except ValueError:
-                    continue
+                    timestamp = float(date_str)
+                    return datetime.fromtimestamp(timestamp)
+                except (ValueError, TypeError):
+                    pass
 
-            # Если ни один формат не подошел
-            logging.warning(f"Не удалось распарсить дату '{published_at_str}', используем текущее время")
-            return datetime.now()
+                # Попробуем разные форматы строк
+                formats = [
+                    '%Y-%m-%dT%H:%M:%S%z',      # ISO with timezone
+                    '%Y-%m-%dT%H:%M:%S',        # ISO without timezone  
+                    '%Y-%m-%d %H:%M:%S',        # Standard format
+                    '%Y-%m-%d',                 # Date only
+                ]
+
+                for fmt in formats:
+                    try:
+                        return datetime.strptime(date_str, fmt)
+                    except ValueError:
+                        continue
 
         except Exception as e:
-            logging.error(f"Ошибка парсинга даты '{published_at_str}': {e}")
-            return datetime.now()
+            logger.error(f"Ошибка парсинга даты '{date_str}': {e}")
+
+        return None
 
     @classmethod
     def cast_to_object_list(cls, data):
@@ -122,9 +152,9 @@ class Vacancy(AbstractVacancy):
             )
 
             url = (
-                data.get('url') or 
-                data.get('alternate_url') or 
-                data.get('link') or 
+                data.get('alternate_url') or  # Веб-версия для HH
+                data.get('link') or           # Веб-версия для SuperJob
+                data.get('url') or            # Fallback на API-ссылку
                 ''
             )
 
@@ -132,7 +162,7 @@ class Vacancy(AbstractVacancy):
 
             # Обработка зарплаты (универсальная для всех источников)
             salary = data.get('salary')
-            
+
             # Обработка работодателя
             employer = data.get('employer')
             if not employer and data.get('firm_name'):
@@ -161,15 +191,25 @@ class Vacancy(AbstractVacancy):
                 ''
             )
 
+            # Если описание пустое, но есть requirements или responsibilities - объединяем их
+            if not description.strip():
+                desc_parts = []
+                if data.get('requirements'):
+                    desc_parts.append(data.get('requirements'))
+                if data.get('responsibilities'):
+                    desc_parts.append(data.get('responsibilities'))
+                if desc_parts:
+                    description = " ".join(desc_parts)
+
             requirements = None
             responsibilities = None
-            
+
             # Для HH (snippet)
             snippet = data.get('snippet', {})
             if isinstance(snippet, dict):
                 requirements = snippet.get('requirement')
                 responsibilities = snippet.get('responsibility')
-            
+
             # Для SuperJob (прямые поля)
             if not requirements:
                 requirements = data.get('candidat')

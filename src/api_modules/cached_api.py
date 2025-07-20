@@ -1,20 +1,29 @@
 
+"""
+Модуль для работы с кэшированными API запросами.
+
+Реализует многоуровневое кэширование для оптимизации работы с внешними API:
+- Кэш в памяти для быстрого доступа к недавним запросам
+- Файловый кэш для долгосрочного хранения данных
+- Автоматическое управление временем жизни кэша
+"""
+
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Dict, List
 
 from src.utils.cache import FileCache, simple_cache
-from .base_api import BaseAPI
+from .base_api import BaseJobAPI
 
 logger = logging.getLogger(__name__)
 
 
-class CachedAPI(BaseAPI, ABC):
+class CachedAPI(BaseJobAPI, ABC):
     """
     Абстрактный базовый класс для API с кэшированием
     
-    Расширяет BaseAPI функциональностью многоуровневого кэширования:
+    Расширяет BaseJobAPI функциональностью многоуровневого кэширования:
     - Кэш в памяти для быстрого доступа
     - Файловый кэш для долгосрочного хранения
     """
@@ -55,7 +64,7 @@ class CachedAPI(BaseAPI, ABC):
             Dict: Ответ API
         """
         try:
-            data = self.connector.connect(url, params)
+            data = self.connector._APIConnector__connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix} (кэш в памяти)")
             return data
         except Exception as e:
@@ -99,7 +108,7 @@ class CachedAPI(BaseAPI, ABC):
         # 3. Делаем реальный запрос к API с параллельным кэшированием
         try:
             # Делаем прямой запрос к API
-            data = self.connector.connect(url, params)
+            data = self.connector._APIConnector__connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix}")
             
             # Параллельно сохраняем в файловый кэш только валидные данные

@@ -1,3 +1,11 @@
+"""
+Модуль для выполнения HTTP-запросов к внешним API.
+
+Предоставляет низкоуровневый клиент для работы с API различных сервисов
+поиска вакансий. Включает обработку ошибок, повторные попытки запросов
+и визуализацию прогресса выполнения операций.
+"""
+
 import os
 import requests
 from typing import Dict, Optional
@@ -9,7 +17,7 @@ from src.config.api_config import APIConfig
 class APIConnector:
     """
     Обработчик API-запросов с прогресс-баром
-    
+
     Предоставляет функциональность для выполнения HTTP-запросов к API
     с визуальным отображением прогресса, обработкой ошибок и повторными попытками.
     """
@@ -17,7 +25,7 @@ class APIConnector:
     def __init__(self, config: Optional[APIConfig] = None):
         """
         Инициализация API-коннектора
-        
+
         Args:
             config: Конфигурация API (если None, используется конфигурация по умолчанию)
         """
@@ -31,7 +39,7 @@ class APIConnector:
     def _init_progress(self, total: int, desc: str) -> None:
         """
         Инициализация прогресс-бара с автоматическим отключением в тестах
-        
+
         Args:
             total: Общее количество операций
             desc: Описание операции
@@ -49,7 +57,7 @@ class APIConnector:
     def _update_progress(self, n: int = 1) -> None:
         """
         Обновление прогресс-бара
-        
+
         Args:
             n: Количество шагов для обновления
         """
@@ -59,14 +67,14 @@ class APIConnector:
     def _close_progress(self) -> None:
         """
         Закрытие прогресс-бара
-        
+
         Безопасно закрывает и освобождает ресурсы прогресс-бара.
         """
         if self._progress:
             self._progress.close()
             self._progress = None
 
-    def connect(
+    def __connect(
             self,
             url: str,
             params: Dict,
@@ -76,17 +84,17 @@ class APIConnector:
     ) -> Dict:
         """
         Выполнение API-запроса с обработкой ошибок и прогрессом
-        
+
         Args:
             url: URL для запроса
             params: Параметры запроса
             delay: Задержка между запросами в секундах
             show_progress: Показывать ли прогресс-бар
             progress_desc: Описание для прогресс-бара
-            
+
         Returns:
             Dict: Ответ API в формате JSON
-            
+
         Raises:
             ConnectionError: При ошибках сети или API
         """
@@ -108,7 +116,7 @@ class APIConnector:
             if response.status_code == 429:
                 retry_after = int(response.headers.get('Retry-After', 1))
                 sleep(retry_after)
-                return self.connect(url, params, delay, show_progress, progress_desc)
+                return self.__connect(url, params, delay, show_progress, progress_desc)
 
             response.raise_for_status()
             return response.json()
@@ -131,3 +139,16 @@ class APIConnector:
             raise ConnectionError(f"Unexpected error: {str(e)}")
         finally:
             self._close_progress()
+
+    def connect(self, url: str, params: Dict = None) -> Dict:
+        """
+        Выполнение HTTP-запроса
+
+        Args:
+            url: URL для запроса  
+            params: Параметры запроса
+
+        Returns:
+            Dict: Ответ API
+        """
+        return self._APIConnector__connect(url, params)

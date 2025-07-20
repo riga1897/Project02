@@ -42,6 +42,25 @@ class HHParser:
             try:
                 # Сначала создаем HH-специфичную модель
                 hh_vacancy = HHVacancy.from_dict(item)
+            # Обработка snippet (специфично для HH)
+                snippet = item.get('snippet', {})
+                requirements = None
+                responsibilities = None
+                if isinstance(snippet, dict):
+                    requirements = snippet.get('requirement')
+                    responsibilities = snippet.get('responsibility')
+
+                # Отладочная информация для определенных вакансий
+                    vacancy_id = str(item.get('id', ''))
+                    if vacancy_id in ['122732917', '122993500', '122509873', '122991966', '122865078']:
+                        print(f"DEBUG HH Parser ID {vacancy_id}:")
+                        print(f"  raw item keys = {list(item.keys())}")
+                        print(f"  snippet = {snippet}")
+                        print(f"  requirements = {requirements}")
+                        print(f"  responsibilities = {responsibilities}")
+                        # Проверим, что передается в HHVacancy
+                        print(f"  hh_vacancy.requirements = {hh_vacancy.requirements}")
+                        print(f"  hh_vacancy.responsibilities = {hh_vacancy.responsibilities}")
                 # Затем конвертируем в унифицированный формат
                 unified_vacancy = self.convert_to_unified_format(hh_vacancy)
                 vacancies.append(unified_vacancy)
@@ -52,14 +71,19 @@ class HHParser:
 
     def convert_to_unified_format(self, hh_vacancy: HHVacancy) -> Vacancy:
         """Конвертация HH вакансии в унифицированный формат"""
+        # Для HH: обязанности = responsibility, требования = requirement
         return Vacancy(
             vacancy_id=hh_vacancy.vacancy_id,
             title=hh_vacancy.title,
-            url=hh_vacancy.url,
+            url=(
+                hh_vacancy.raw_data.get('alternate_url') or  # Используем веб-версию в первую очередь
+                hh_vacancy.raw_data.get('url') or
+                ''
+            ),
             salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
             description=hh_vacancy.description,
-            requirements=hh_vacancy.requirements,
-            responsibilities=hh_vacancy.responsibilities,
+            requirements=hh_vacancy.requirements,  # requirement из snippet
+            responsibilities=hh_vacancy.responsibilities,  # responsibility из snippet
             employer=hh_vacancy.employer,
             experience=hh_vacancy.experience,
             employment=hh_vacancy.employment,

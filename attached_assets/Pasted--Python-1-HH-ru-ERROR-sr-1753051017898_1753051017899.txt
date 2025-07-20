@@ -1,0 +1,35 @@
+
+Ищем вакансии по запросу: 'Python' за последние 1 дней...
+Получение вакансий с HH.ru...
+ERROR:src.api_modules.cached_api:Ошибка многоуровневого кэширования: 'HeadHunterAPI' object has no attribute 'connector'
+Вакансии на HH.ru не найдены
+Получение вакансий с SuperJob...
+Fetching pages: 100%|█████| 1/1 [00:02<00:00,  2.40s/page, vacancies=33]
+ERROR:root:Ошибка парсинга даты '1753015348': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752991018': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753015594': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753015595': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753015595': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753020409': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753008057': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753008459': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753009372': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753007711': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753006720': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753007849': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753009315': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753004742': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753004572': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753004385': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753003807': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753017515': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753022812': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752990057': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752990981': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752991272': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752991679': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753013400': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753001105': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752999028': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1752999354': strptime() argument 1 must be str, not int
+ERROR:root:Ошибка парсинга даты '1753020240': strptime() argument 1 must be str, not int

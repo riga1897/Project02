@@ -1,7 +1,7 @@
 from typing import Dict, Any, Optional
 
 class Salary:
-    """Класс для обработки зарплатных данных HH.ru"""
+    """Класс для обработки зарплатных данных """
 
     __slots__ = ('_salary_from', '_salary_to', '_currency', 'gross', 'period', 'amount_from', 'amount_to')
 

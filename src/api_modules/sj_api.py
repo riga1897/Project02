@@ -1,17 +1,18 @@
 import logging
-from pathlib import Path
-from typing import Dict, List, Union, Optional
+from typing import Dict, List, Optional
+
+from src.config.api_config import APIConfig
+from src.config.sj_api_config import SJAPIConfig
+from src.utils.env_loader import EnvLoader
+from src.utils.paginator import Paginator
+from .base_api import BaseJobAPI
 from .cached_api import CachedAPI
 from .get_api import APIConnector
-from src.config.sj_api_config import SJAPIConfig
-from src.config.api_config import APIConfig
-from src.utils.paginator import Paginator
-from src.utils.env_loader import EnvLoader
 
 logger = logging.getLogger(__name__)
 
 
-class SuperJobAPI(CachedAPI):
+class SuperJobAPI(CachedAPI, BaseJobAPI):
     """
     API SuperJob для поиска вакансий с использованием общих механизмов
 
@@ -67,7 +68,7 @@ class SuperJobAPI(CachedAPI):
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
-        Валидация структуры вакансии (аналогично HH API)
+        Валидация структуры вакансии
 
         Args:
             vacancy: Словарь с данными вакансии
@@ -77,9 +78,29 @@ class SuperJobAPI(CachedAPI):
         """
         return (
             isinstance(vacancy, dict) and 
-            all(field in vacancy and vacancy[field] is not None and vacancy[field] != '' 
-                for field in self.REQUIRED_VACANCY_FIELDS)
+            vacancy.get('profession') and  # У SJ это поле 'profession'
+            vacancy.get('link')  # У SJ это поле 'link'
         )
+
+    def __connect(self, url: str, params: Dict = None) -> Dict:
+        """
+        Выполнение HTTP-запроса к API SuperJob
+
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+
+        Returns:
+            Dict: Ответ API или пустой ответ в случае ошибки
+        """
+        try:
+            # Делаем запрос к SuperJob API
+            data = self.connector.connect(url, params)
+            return data
+
+        except Exception as e:
+            logger.error(f"Ошибка при подключении к API: {e}")
+            return self._get_empty_response()
 
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
         """
@@ -181,10 +202,9 @@ class SuperJobAPI(CachedAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    @staticmethod
-    def _deduplicate_vacancies(vacancies: List[Dict]) -> List[Dict]:
+    def _deduplicate_vacancies(self, vacancies: List[Dict], source: str = None) -> List[Dict]:
         """
-        Удаление дублирующихся вакансий SuperJob по названию и компании
+        Удаление дублирующихся вакансий SJ (используется базовая реализация)
 
         Args:
             vacancies: Список вакансий с SuperJob
@@ -192,27 +212,7 @@ class SuperJobAPI(CachedAPI):
         Returns:
             List[Dict]: Список уникальных вакансий
         """
-        seen = set()
-        unique_vacancies = []
-
-        for vacancy in vacancies:
-            # Создаем ключ для дедупликации SJ вакансий
-            title = vacancy.get('profession', '').lower().strip()
-            company = vacancy.get('firm_name', '').lower().strip()
-
-            # Нормализуем зарплату для сравнения
-            salary_key = f"{vacancy.get('payment_from', 0)}-{vacancy.get('payment_to', 0)}"
-
-            dedup_key = (title, company, salary_key)
-
-            if dedup_key not in seen:
-                seen.add(dedup_key)
-                unique_vacancies.append(vacancy)
-            else:
-                logger.debug(f"Дублирующаяся SJ вакансия отфильтрована: {title} в {company}")
-
-        logger.info(f"SJ дедупликация: {len(vacancies)} -> {len(unique_vacancies)} вакансий")
-        return unique_vacancies
+        return super()._deduplicate_vacancies(vacancies, 'sj')
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """
