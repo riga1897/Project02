@@ -82,6 +82,26 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
             vacancy.get('link')  # У SJ это поле 'link'
         )
 
+    def __connect(self, url: str, params: Dict = None) -> Dict:
+        """
+        Выполнение HTTP-запроса к API SuperJob
+
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+
+        Returns:
+            Dict: Ответ API или пустой ответ в случае ошибки
+        """
+        try:
+            # Делаем запрос к SuperJob API
+            data = self.connector.connect(url, params)
+            return data
+
+        except Exception as e:
+            logger.error(f"Ошибка при подключении к API: {e}")
+            return self._get_empty_response()
+
     def get_vacancies_page(self, search_query: str, page: int = 0, **kwargs) -> List[Dict]:
         """
         Получение и валидация одной страницы вакансий (аналогично HH API)

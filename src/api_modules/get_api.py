@@ -131,3 +131,16 @@ class APIConnector:
             raise ConnectionError(f"Unexpected error: {str(e)}")
         finally:
             self._close_progress()
+
+    def connect(self, url: str, params: Dict = None) -> Dict:
+        """
+        Выполнение HTTP-запроса
+
+        Args:
+            url: URL для запроса  
+            params: Параметры запроса
+
+        Returns:
+            Dict: Ответ API
+        """
+        return self._APIConnector__connect(url, params)
