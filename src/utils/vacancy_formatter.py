@@ -12,12 +12,20 @@ class VacancyFormatter(BaseFormatter):
     @staticmethod
     def _extract_responsibilities(vacancy) -> Optional[str]:
         """Извлечение обязанностей (парсеры уже правильно маппят поля)"""
-        return getattr(vacancy, 'responsibilities', None)
+        responsibilities = getattr(vacancy, 'responsibilities', None)
+        # Отладочная информация
+        if hasattr(vacancy, 'vacancy_id') and vacancy.vacancy_id in ['122732917', '122993500']:
+            print(f"DEBUG ID {vacancy.vacancy_id}: responsibilities = {responsibilities}")
+        return responsibilities
 
     @staticmethod
     def _extract_requirements(vacancy) -> Optional[str]:
         """Извлечение требований (парсеры уже правильно маппят поля)"""
-        return getattr(vacancy, 'requirements', None)
+        requirements = getattr(vacancy, 'requirements', None)
+        # Отладочная информация
+        if hasattr(vacancy, 'vacancy_id') and vacancy.vacancy_id in ['122732917', '122993500']:
+            print(f"DEBUG ID {vacancy.vacancy_id}: requirements = {requirements}")
+        return requirements
 
     @staticmethod
     def _extract_conditions(vacancy) -> Optional[str]:
