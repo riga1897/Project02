@@ -52,11 +52,15 @@ class HHParser:
 
                 # Отладочная информация для определенных вакансий
                     vacancy_id = str(item.get('id', ''))
-                    if vacancy_id in ['122732917', '122993500']:
+                    if vacancy_id in ['122732917', '122993500', '122509873', '122991966', '122865078']:
                         print(f"DEBUG HH Parser ID {vacancy_id}:")
+                        print(f"  raw item keys = {list(item.keys())}")
                         print(f"  snippet = {snippet}")
                         print(f"  requirements = {requirements}")
                         print(f"  responsibilities = {responsibilities}")
+                        # Проверим, что передается в HHVacancy
+                        print(f"  hh_vacancy.requirements = {hh_vacancy.requirements}")
+                        print(f"  hh_vacancy.responsibilities = {hh_vacancy.responsibilities}")
                 # Затем конвертируем в унифицированный формат
                 unified_vacancy = self.convert_to_unified_format(hh_vacancy)
                 vacancies.append(unified_vacancy)
