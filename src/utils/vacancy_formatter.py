@@ -159,8 +159,11 @@ class VacancyFormatter(BaseFormatter):
         # Описание вакансии (объединенное поле)
         description_parts = []
 
-        # Основное описание
+        # Основное описание - сначала пробуем description, потом detailed_description
         main_description = getattr(vacancy, 'description', None)
+        if not main_description or not str(main_description).strip():
+            main_description = getattr(vacancy, 'detailed_description', None)
+            
         if main_description and str(main_description).strip() and str(main_description).strip() != "Не указано" and str(main_description).strip() != "":
             # Очищаем HTML-теги и ограничиваем длину
             import re
