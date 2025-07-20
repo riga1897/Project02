@@ -5,16 +5,16 @@ from pathlib import Path
 from typing import Dict, List
 
 from src.utils.cache import FileCache, simple_cache
-from .base_api import BaseAPI
+from .base_api import BaseJobAPI
 
 logger = logging.getLogger(__name__)
 
 
-class CachedAPI(BaseAPI, ABC):
+class CachedAPI(BaseJobAPI, ABC):
     """
     Абстрактный базовый класс для API с кэшированием
     
-    Расширяет BaseAPI функциональностью многоуровневого кэширования:
+    Расширяет BaseJobAPI функциональностью многоуровневого кэширования:
     - Кэш в памяти для быстрого доступа
     - Файловый кэш для долгосрочного хранения
     """
