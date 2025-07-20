@@ -34,7 +34,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         """
         super().__init__(self.DEFAULT_CACHE_DIR)  # Инициализируем кэш через родительский класс
         self._config = config or APIConfig()
-        self._connector = APIConnector(self._config)
+        self.connector = APIConnector(self._config)
         self._paginator = Paginator()
 
     def _get_empty_response(self) -> Dict:
