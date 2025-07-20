@@ -42,9 +42,9 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         if vacancy.description and keyword_lower in vacancy.description.lower():
             relevance_score += 3
 
-        # Проверяем в детальном описании
+        # Проверяем в детальном описании (для SuperJob часто основное описание)
         if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
-            relevance_score += 2
+            relevance_score += 4  # Повышаем приоритет для detailed_description
 
         # Проверяем в навыках
         if vacancy.skills:
@@ -118,8 +118,12 @@ def vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
     if vacancy.description and keyword_lower in vacancy.description.lower():
         return True
 
-    # Проверяем в детальном описании
+    # Проверяем в детальном описании (важно для SuperJob)
     if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
+        return True
+    
+    # Дополнительная проверка для SuperJob - проверяем все текстовые поля
+    if hasattr(vacancy, 'profession') and vacancy.profession and keyword_lower in vacancy.profession.lower():
         return True
 
     # Проверяем в навыках
