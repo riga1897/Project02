@@ -6,9 +6,9 @@
 для всех API источников вакансий (HH.ru, SuperJob и т.д.).
 """
 
-from abc import ABC, abstractmethod
-from typing import List, Dict, Any
 import logging
+from abc import ABC, abstractmethod
+from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
@@ -19,9 +19,7 @@ class BaseJobAPI(ABC):
     
     Определяет единый интерфейс для работы с различными источниками вакансий,
     включая методы для получения, валидации и дедупликации вакансий.
-    
-    Attributes:
-        logger: Логгер для отслеживания операций API
+
     """
     
     @abstractmethod
@@ -100,7 +98,7 @@ class BaseJobAPI(ABC):
             
             salary_key = '0-0'  # Для неизвестных источников
         
-        return (title, company, salary_key)
+        return title, company, salary_key
     
     def _deduplicate_vacancies(self, vacancies: List[Dict], source: str) -> List[Dict]:
         """

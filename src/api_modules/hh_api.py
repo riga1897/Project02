@@ -169,7 +169,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+    def _deduplicate_vacancies(self, vacancies: List[Dict], source: str = None) -> List[Dict]:
         """
         Удаление дублирующихся вакансий HH (используется базовая реализация)
 

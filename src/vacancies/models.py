@@ -45,6 +45,9 @@ class Vacancy(AbstractVacancy):
         vacancy_id: Optional[str] = None,
         source: str = "unknown"
     ):
+        self.raw_data = None
+        self.profession = None
+        self.area = None
         self.vacancy_id = vacancy_id or str(uuid.uuid4())
         self.title = title
         self.url = url

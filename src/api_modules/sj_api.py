@@ -1,13 +1,13 @@
 import logging
-from pathlib import Path
-from typing import Dict, List, Union, Optional
-from .cached_api import CachedAPI
-from .base_api import BaseJobAPI
-from .get_api import APIConnector
-from src.config.sj_api_config import SJAPIConfig
+from typing import Dict, List, Optional
+
 from src.config.api_config import APIConfig
-from src.utils.paginator import Paginator
+from src.config.sj_api_config import SJAPIConfig
 from src.utils.env_loader import EnvLoader
+from src.utils.paginator import Paginator
+from .base_api import BaseJobAPI
+from .cached_api import CachedAPI
+from .get_api import APIConnector
 
 logger = logging.getLogger(__name__)
 
@@ -202,7 +202,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
             logger.error(f"Failed to get vacancies: {e}")
             return []
 
-    def _deduplicate_vacancies(self, vacancies: List[Dict]) -> List[Dict]:
+    def _deduplicate_vacancies(self, vacancies: List[Dict], source: str = None) -> List[Dict]:
         """
         Удаление дублирующихся вакансий SJ (используется базовая реализация)
 

@@ -1,7 +1,8 @@
-from typing import Optional, List, Dict, Any
-from ..vacancies.models import Vacancy
-from .base_formatter import BaseFormatter
 import logging
+from typing import Optional, List
+
+from .base_formatter import BaseFormatter
+from ..vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +42,8 @@ class VacancyFormatter(BaseFormatter):
 
         return "; ".join(conditions_parts) if conditions_parts else None
 
-    @staticmethod
-    def format_vacancy_info(vacancy: Vacancy, number: Optional[int] = None) -> str:
+    #@staticmethod
+    def format_vacancy_info(self, vacancy: Vacancy, number: Optional[int] = None) -> str:
         """
         Форматирование информации о вакансии в строку
 
