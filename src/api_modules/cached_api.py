@@ -55,7 +55,7 @@ class CachedAPI(BaseJobAPI, ABC):
             Dict: Ответ API
         """
         try:
-            data = self._connector.connect(url, params)
+            data = self.connector.connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix} (кэш в памяти)")
             return data
         except Exception as e:
@@ -99,7 +99,7 @@ class CachedAPI(BaseJobAPI, ABC):
         # 3. Делаем реальный запрос к API с параллельным кэшированием
         try:
             # Делаем прямой запрос к API
-            data = self._connector.connect(url, params)
+            data = self.connector.connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix}")
             
             # Параллельно сохраняем в файловый кэш только валидные данные
