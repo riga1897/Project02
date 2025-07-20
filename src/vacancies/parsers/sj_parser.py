@@ -12,15 +12,15 @@ class SuperJobParser:
     def parse_vacancies(vacancies_data: List[Dict[str, Any]]) -> List[SuperJobVacancy]:
         """
         Парсинг списка вакансий SuperJob
-        
+
         Args:
             vacancies_data: Данные вакансий от API SuperJob
-            
+
         Returns:
             List[SuperJobVacancy]: Список объектов вакансий
         """
         parsed_vacancies = []
-        
+
         for vacancy_data in vacancies_data:
             try:
                 vacancy = SuperJobVacancy.from_dict(vacancy_data)
@@ -31,7 +31,7 @@ class SuperJobParser:
             except Exception as e:
                 logger.error(f"Неожиданная ошибка при парсинге вакансии SuperJob: {e}")
                 continue
-        
+
         logger.info(f"Успешно распарсено {len(parsed_vacancies)} вакансий SuperJob из {len(vacancies_data)}")
         return parsed_vacancies
 
@@ -39,10 +39,10 @@ class SuperJobParser:
     def convert_to_unified_format(sj_vacancy: SuperJobVacancy) -> Dict[str, Any]:
         """
         Конвертация SuperJob вакансии в унифицированный формат
-        
+
         Args:
             sj_vacancy: Объект вакансии SuperJob
-            
+
         Returns:
             Dict[str, Any]: Унифицированный словарь вакансии
         """
@@ -54,7 +54,7 @@ class SuperJobParser:
             if salary_dict and 'period' in salary_dict:
                 if salary_dict['period'] in ['месяц', 'month']:
                     salary_dict['period'] = 'месяц'
-        
+
         return {
             "id": sj_vacancy.vacancy_id,
             "name": sj_vacancy.title,

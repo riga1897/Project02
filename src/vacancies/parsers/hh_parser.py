@@ -75,7 +75,11 @@ class HHParser:
         return Vacancy(
             vacancy_id=hh_vacancy.vacancy_id,
             title=hh_vacancy.title,
-            url=hh_vacancy.url,
+            url=(
+                hh_vacancy.raw_data.get('alternate_url') or  # Используем веб-версию в первую очередь
+                hh_vacancy.raw_data.get('url') or
+                ''
+            ),
             salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
             description=hh_vacancy.description,
             requirements=hh_vacancy.requirements,  # requirement из snippet

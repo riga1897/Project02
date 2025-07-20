@@ -122,9 +122,9 @@ class Vacancy(AbstractVacancy):
             )
 
             url = (
-                data.get('url') or 
-                data.get('alternate_url') or 
-                data.get('link') or 
+                data.get('alternate_url') or  # Веб-версия для HH
+                data.get('link') or           # Веб-версия для SuperJob
+                data.get('url') or            # Fallback на API-ссылку
                 ''
             )
 
