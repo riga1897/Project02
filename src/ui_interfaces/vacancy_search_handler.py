@@ -114,7 +114,9 @@ class VacancySearchHandler:
         # Предпросмотр вакансий
         show_vacancies = confirm_action("Показать найденные вакансии?")
         if show_vacancies:
-            def format_vacancy(vacancy, number=None):
+            def format_vacancy(vacancy: Vacancy, number: Optional[int] = None) -> str:
+                if vacancy is None:
+                    raise ValueError("Received a vacancy object of None type.")
                 return VacancyFormatter.format_vacancy_info(vacancy, number)
 
             quick_paginate(
