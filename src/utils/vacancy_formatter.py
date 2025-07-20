@@ -161,36 +161,50 @@ class VacancyFormatter(BaseFormatter):
 
         # Основное описание
         main_description = getattr(vacancy, 'description', None)
-        if main_description and str(main_description).strip() and str(main_description) != "Не указано":
+        if main_description and str(main_description).strip() and str(main_description).strip() != "Не указано" and str(main_description).strip() != "":
             # Очищаем HTML-теги и ограничиваем длину
             import re
             clean_description = re.sub(r'<[^>]+>', '', str(main_description))
-            if len(clean_description) > 100:
-                clean_description = clean_description[:100] + "..."
-            description_parts.append(f"Описание: {clean_description}")
+            clean_description = clean_description.strip()
+            if clean_description:
+                if len(clean_description) > 150:
+                    clean_description = clean_description[:150] + "..."
+                description_parts.append(f"Описание: {clean_description}")
 
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
-        if responsibilities and str(responsibilities).strip() and str(responsibilities) != "Не указано":
-            description_parts.append(f"Обязанности: {responsibilities}")
+        if responsibilities and str(responsibilities).strip() and str(responsibilities).strip() != "Не указано" and str(responsibilities).strip() != "":
+            resp_text = str(responsibilities).strip()
+            if len(resp_text) > 150:
+                resp_text = resp_text[:150] + "..."
+            description_parts.append(f"Обязанности: {resp_text}")
 
         # Требования
         requirements = VacancyFormatter._extract_requirements(vacancy)
-        if requirements and str(requirements).strip() and str(requirements) != "Не указано":
-            description_parts.append(f"Требования: {requirements}")
+        if requirements and str(requirements).strip() and str(requirements).strip() != "Не указано" and str(requirements).strip() != "":
+            req_text = str(requirements).strip()
+            if len(req_text) > 150:
+                req_text = req_text[:150] + "..."
+            description_parts.append(f"Требования: {req_text}")
 
         # Условия
         conditions = VacancyFormatter._extract_conditions(vacancy)
-        if conditions:
-            description_parts.append(f"Условия: {conditions}")
+        if conditions and str(conditions).strip():
+            cond_text = str(conditions).strip()
+            if len(cond_text) > 100:
+                cond_text = cond_text[:100] + "..."
+            description_parts.append(f"Условия: {cond_text}")
 
-        # Если есть хотя бы одна из частей описания
+        # Если есть хотя бы одна из частей описания, показываем её
         if description_parts:
             combined_description = "; ".join(description_parts)
             # Ограничиваем общую длину описания
-            if len(combined_description) > 300:
-                combined_description = combined_description[:300] + "..."
+            if len(combined_description) > 400:
+                combined_description = combined_description[:400] + "..."
             lines.append(f"Описание вакансии: {combined_description}")
+        else:
+            # Если нет никакого описания, показываем заглушку для отладки
+            lines.append("Описание вакансии: Описание отсутствует")
 
         return lines
 
