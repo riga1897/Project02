@@ -220,68 +220,7 @@ class VacancyFormatter(BaseFormatter):
 
         return salary_str.strip() if salary_str else "Зарплата не указана"
 
-    @staticmethod
-    def format_vacancy_for_display(vacancy_data: Dict[str, Any]) -> str:
-        """Форматирование одной вакансии для отображения пользователю"""
-
-        # Получаем основные данные
-        vacancy_id = vacancy_data.get('id', 'Не указан')
-        title = vacancy_data.get('title', 'Без названия')
-
-        # Получаем информацию о компании
-        employer = vacancy_data.get('employer', {})
-        if isinstance(employer, dict):
-            company = employer.get('name', 'Компания не указана')
-        else:
-            company = 'Компания не указана'
-
-        # Форматируем зарплату
-        salary_data = vacancy_data.get('salary')
-        salary_str = VacancyFormatter._format_salary(salary_data)
-
-        # Получаем опыт работы
-        experience = vacancy_data.get('experience', 'Не указан')
-
-        # Получаем тип занятости
-        employment = vacancy_data.get('employment', 'Не указана')
-
-        # Получаем источник
-        source = vacancy_data.get('source', 'unknown')
-
-        # Получаем URL и конвертируем API-ссылки в веб-ссылки
-        url = vacancy_data.get('url', 'Не указана')
-        if isinstance(url, str) and url != 'Не указана':
-            # Преобразуем API-ссылки HH в веб-ссылки
-            if 'api.hh.ru/vacancies/' in url and '?host=hh.ru' in url:
-                # Извлекаем ID вакансии и создаем веб-ссылку
-                import re
-                match = re.search(r'/vacancies/(\d+)', url)
-                if match:
-                    vacancy_web_id = match.group(1)
-                    url = f"https://hh.ru/vacancy/{vacancy_web_id}"
-
-            # Преобразуем API-ссылки SuperJob в веб-ссылки (если потребуется)
-            elif 'api.superjob.ru' in url:
-                # SuperJob API обычно не требует преобразования, но на всякий случай
-                pass
-
-        # Формируем строку результата
-        result = [
-            f"ID: {vacancy_id}",
-            f"Название: {title}",
-            f"Компания: {company}",
-            f"Зарплата: {salary_str}",
-            f"Опыт: {experience}",
-            f"Занятость: {employment}",
-            f"Источник: {source}",
-            f"Ссылка: {url}"
-        ]
-
-        # Добавляем описание вакансии если есть
-        if 'requirements' in vacancy_data and vacancy_data['requirements']:
-            result.append(f"Описание вакансии: (Требования, Обязанности, Условия)")
-
-        return "\n".join(result)
+    
 
 # Глобальный экземпляр форматтера
 vacancy_formatter = VacancyFormatter()
