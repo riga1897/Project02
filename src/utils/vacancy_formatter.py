@@ -169,7 +169,7 @@ class VacancyFormatter(BaseFormatter):
             if clean_description:
                 if len(clean_description) > 150:
                     clean_description = clean_description[:150] + "..."
-                description_parts.append(f"Описание: {clean_description}")
+                description_parts.append(clean_description)
 
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
