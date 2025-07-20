@@ -1,0 +1,200 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "Python",
+      "page": 0,
+      "period": 1
+    }
+  },
+  "data": {
+    "items": [
+      {
+        "id": "123009042",
+        "premium": false,
+        "name": "Бэкенд-разработчик",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "2",
+          "name": "Санкт-Петербург",
+          "url": "https://api.hh.ru/areas/2"
+        },
+        "salary": {
+          "from": 80000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false
+        },
+        "salary_range": {
+          "from": 80000,
+          "to": null,
+          "currency": "RUR",
+          "gross": false,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": {
+            "id": "TWICE_PER_MONTH",
+            "name": "Два раза в месяц"
+          }
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Москва",
+          "street": null,
+          "building": null,
+          "lat": 55.75586,
+          "lng": 37.6177,
+          "description": null,
+          "raw": "Москва",
+          "metro": {
+            "station_name": "Библиотека им.Ленина",
+            "line_name": "Сокольническая",
+            "station_id": "1.4",
+            "line_id": "1",
+            "lat": 55.752123,
+            "lng": 37.610388
+          },
+          "metro_stations": [
+            {
+              "station_name": "Библиотека им.Ленина",
+              "line_name": "Сокольническая",
+              "station_id": "1.4",
+              "line_id": "1",
+              "lat": 55.752123,
+              "lng": 37.610388
+            },
+            {
+              "station_name": "Охотный ряд",
+              "line_name": "Сокольническая",
+              "station_id": "1.98",
+              "line_id": "1",
+              "lat": 55.757228,
+              "lng": 37.615078
+            },
+            {
+              "station_name": "Площадь Революции",
+              "line_name": "Арбатско-Покровская",
+              "station_id": "3.100",
+              "line_id": "3",
+              "lat": 55.756741,
+              "lng": 37.62236
+            },
+            {
+              "station_name": "Театральная",
+              "line_name": "Замоскворецкая",
+              "station_id": "2.99",
+              "line_id": "2",
+              "lat": 55.758808,
+              "lng": 37.61768
+            }
+          ],
+          "id": "18772642"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-20T10:53:13+0300",
+        "created_at": "2025-07-20T10:53:13+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=123009042",
+        "show_logo_in_search": null,
+        "show_contacts": true,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/123009042?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/123009042",
+        "relations": [],
+        "employer": {
+          "id": "12100461",
+          "name": "Формат",
+          "url": "https://api.hh.ru/employers/12100461",
+          "alternate_url": "https://hh.ru/employer/12100461",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1434524.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7357737.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7357738.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=12100461",
+          "accredited_it_employer": false,
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Базовые знания одного из языков программирования (<highlighttext>Python</highlighttext>/Java/PHP/Node.js). Желание развиваться в сфере backend-разработки. Аналитическое мышление и внимание...",
+          "responsibility": "Разработка серверной части веб-приложений. Написание чистого кода и его оптимизация. Работа с базами данных. Интеграция с внешними сервисами и..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "remote",
+          "name": "Удаленная работа"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "ON_SITE",
+            "name": "На месте работодателя"
+          },
+          {
+            "id": "REMOTE",
+            "name": "Удалённо"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_9",
+            "name": "9 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "96",
+            "name": "Программист, разработчик"
+          }
+        ],
+        "accept_incomplete_resumes": true,
+        "experience": {
+          "id": "noExperience",
+          "name": "Нет опыта"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 230,
+    "pages": 230,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&search_period=1&text=Python"
+  }
+}
