@@ -160,6 +160,16 @@ class Vacancy(AbstractVacancy):
                 data.get('vacancyRichText') or 
                 ''
             )
+            
+            # Если описание пустое, но есть requirements или responsibilities - объединяем их
+            if not description.strip():
+                desc_parts = []
+                if data.get('requirements'):
+                    desc_parts.append(data.get('requirements'))
+                if data.get('responsibilities'):
+                    desc_parts.append(data.get('responsibilities'))
+                if desc_parts:
+                    description = " ".join(desc_parts)
 
             requirements = None
             responsibilities = None

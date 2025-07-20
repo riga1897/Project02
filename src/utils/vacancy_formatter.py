@@ -147,7 +147,7 @@ class VacancyFormatter(BaseFormatter):
         url = vacancy.url
         if isinstance(url, str) and url != 'Не указана':
             # Преобразуем API-ссылки HH в веб-ссылки
-            if 'api.hh.ru/vacancies/' in url and '?host=hh.ru' in url:
+            if 'api.hh.ru/vacancies/' in url:
                 import re
                 match = re.search(r'/vacancies/(\d+)', url)
                 if match:
