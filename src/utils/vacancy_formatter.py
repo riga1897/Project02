@@ -159,6 +159,16 @@ class VacancyFormatter(BaseFormatter):
         # Описание вакансии (объединенное поле)
         description_parts = []
 
+        # Основное описание
+        main_description = getattr(vacancy, 'description', None)
+        if main_description and str(main_description).strip() and str(main_description) != "Не указано":
+            # Очищаем HTML-теги и ограничиваем длину
+            import re
+            clean_description = re.sub(r'<[^>]+>', '', str(main_description))
+            if len(clean_description) > 100:
+                clean_description = clean_description[:100] + "..."
+            description_parts.append(f"Описание: {clean_description}")
+
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
         if responsibilities and str(responsibilities).strip() and str(responsibilities) != "Не указано":
@@ -178,8 +188,8 @@ class VacancyFormatter(BaseFormatter):
         if description_parts:
             combined_description = "; ".join(description_parts)
             # Ограничиваем общую длину описания
-            if len(combined_description) > 200:
-                combined_description = combined_description[:200] + "..."
+            if len(combined_description) > 300:
+                combined_description = combined_description[:300] + "..."
             lines.append(f"Описание вакансии: {combined_description}")
 
         return lines
