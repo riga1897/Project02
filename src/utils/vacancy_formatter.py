@@ -146,22 +146,31 @@ class VacancyFormatter(BaseFormatter):
         # Ссылка
         lines.append(f"Ссылка: {vacancy.url}")
 
+        # Описание вакансии (объединенное поле)
+        description_parts = []
+        
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
         if responsibilities and str(responsibilities).strip() and str(responsibilities) != "Не указано":
-            responsibilities_short = responsibilities[:150] + "..." if len(responsibilities) > 150 else responsibilities
-            lines.append(f"Обязанности: \"{responsibilities_short}\"")
+            description_parts.append(f"Обязанности: {responsibilities}")
 
         # Требования
         requirements = VacancyFormatter._extract_requirements(vacancy)
         if requirements and str(requirements).strip() and str(requirements) != "Не указано":
-            requirements_short = requirements[:150] + "..." if len(requirements) > 150 else requirements
-            lines.append(f"Требования: {requirements_short}")
+            description_parts.append(f"Требования: {requirements}")
 
         # Условия
         conditions = VacancyFormatter._extract_conditions(vacancy)
         if conditions:
-            lines.append(f"Условия: {conditions}")
+            description_parts.append(f"Условия: {conditions}")
+        
+        # Если есть хотя бы одна из частей описания
+        if description_parts:
+            combined_description = "; ".join(description_parts)
+            # Ограничиваем общую длину описания
+            if len(combined_description) > 200:
+                combined_description = combined_description[:200] + "..."
+            lines.append(f"Описание вакансии: {combined_description}")
 
         return lines
     
