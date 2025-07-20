@@ -143,8 +143,18 @@ class VacancyFormatter(BaseFormatter):
         # Источник
         lines.append(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
 
-        # Ссылка
-        lines.append(f"Ссылка: {vacancy.url}")
+        # Ссылка с преобразованием API-ссылок в веб-ссылки
+        url = vacancy.url
+        if isinstance(url, str) and url != 'Не указана':
+            # Преобразуем API-ссылки HH в веб-ссылки
+            if 'api.hh.ru/vacancies/' in url and '?host=hh.ru' in url:
+                import re
+                match = re.search(r'/vacancies/(\d+)', url)
+                if match:
+                    vacancy_web_id = match.group(1)
+                    url = f"https://hh.ru/vacancy/{vacancy_web_id}"
+        
+        lines.append(f"Ссылка: {url}")
 
         # Описание вакансии (объединенное поле)
         description_parts = []
