@@ -90,7 +90,7 @@ class VacancyFormatter(BaseFormatter):
             return VacancyFormatter._format_salary_dict(salary_info)
 
         return str(salary_info)
-    
+
     @staticmethod
     def _build_vacancy_lines(vacancy: Vacancy, number: Optional[int] = None) -> List[str]:
         """
@@ -148,7 +148,7 @@ class VacancyFormatter(BaseFormatter):
 
         # Описание вакансии (объединенное поле)
         description_parts = []
-        
+
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
         if responsibilities and str(responsibilities).strip() and str(responsibilities) != "Не указано":
@@ -163,7 +163,7 @@ class VacancyFormatter(BaseFormatter):
         conditions = VacancyFormatter._extract_conditions(vacancy)
         if conditions:
             description_parts.append(f"Условия: {conditions}")
-        
+
         # Если есть хотя бы одна из частей описания
         if description_parts:
             combined_description = "; ".join(description_parts)
@@ -173,7 +173,7 @@ class VacancyFormatter(BaseFormatter):
             lines.append(f"Описание вакансии: {combined_description}")
 
         return lines
-    
+
     @staticmethod
     def format_company_info(employer_info) -> str:
         """
@@ -209,6 +209,45 @@ class VacancyFormatter(BaseFormatter):
             salary_str += currency
 
         return salary_str.strip() if salary_str else "Зарплата не указана"
+
+    @staticmethod
+    def format_vacancy(vacancy: Vacancy, index: int = None) -> str:
+        """Форматирует вакансию для отображения пользователю"""
+
+        # Формируем заголовок с номером
+        header = f"{index}.\n" if index is not None else ""
+
+        # Получаем название компании
+        company_name = "Не указана"
+        if vacancy.employer and isinstance(vacancy.employer, dict):
+            company_name = vacancy.employer.get('name', 'Не указана')
+
+        # Форматируем описание вакансии с требованиями, обязанностями и условиями
+        description_parts = []
+
+        if vacancy.requirements:
+            description_parts.append(f"Требования: {vacancy.requirements}")
+
+        if vacancy.responsibilities:
+            description_parts.append(f"Обязанности: {vacancy.responsibilities}")
+
+        if vacancy.benefits:
+            description_parts.append(f"Условия: {vacancy.benefits}")
+
+        # Если нет отдельных полей, используем общее описание
+        if not description_parts and vacancy.description:
+            description_parts.append(f"Описание: {vacancy.description}")
+
+        description = " | ".join(description_parts) if description_parts else "Описание не указано"
+
+        return f"""{header}ID: {vacancy.vacancy_id}
+Название: {vacancy.title}
+Зарплата: {vacancy.salary}
+Опыт: {vacancy.experience or "Не указан"}
+Занятость: {vacancy.employment or "Не указана"}
+Источник: {vacancy.source}
+Ссылка: {vacancy.url}
+Описание вакансии: {description}"""
 
 # Глобальный экземпляр форматтера
 vacancy_formatter = VacancyFormatter()
