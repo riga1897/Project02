@@ -63,8 +63,9 @@ class SuperJobParser:
             "alternate_url": sj_vacancy.url,
             "salary": salary_dict,
             "description": sj_vacancy.description,
-            "requirements": sj_vacancy.requirements,
-            "responsibilities": sj_vacancy.responsibilities,
+            # Для SJ: обязанности = vacancyRichText (description), требования = candidat (requirements)
+            "requirements": sj_vacancy.requirements,  # candidat
+            "responsibilities": sj_vacancy.description,  # vacancyRichText  
             "employer": sj_vacancy.employer,
             "experience": sj_vacancy.experience,
             "employment": sj_vacancy.employment,

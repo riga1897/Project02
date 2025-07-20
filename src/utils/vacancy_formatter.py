@@ -11,33 +11,13 @@ class VacancyFormatter(BaseFormatter):
 
     @staticmethod
     def _extract_responsibilities(vacancy) -> Optional[str]:
-        """Извлечение обязанностей с учетом источника"""
-        source = getattr(vacancy, 'source', '')
-
-        if source == 'hh.ru':
-            # Для HH обязанности в поле responsibilities
-            return getattr(vacancy, 'responsibilities', None)
-        elif source == 'superjob.ru':
-            # Для SJ обязанности в поле description (vacancyRichText)  
-            return getattr(vacancy, 'description', None)
-        else:
-            # Универсальная проверка
-            return getattr(vacancy, 'responsibilities', None) or getattr(vacancy, 'description', None)
+        """Извлечение обязанностей (парсеры уже правильно маппят поля)"""
+        return getattr(vacancy, 'responsibilities', None)
 
     @staticmethod
     def _extract_requirements(vacancy) -> Optional[str]:
-        """Извлечение требований с учетом источника"""
-        source = getattr(vacancy, 'source', '')
-
-        if source == 'hh.ru':
-            # Для HH требования в поле requirements
-            return getattr(vacancy, 'requirements', None)
-        elif source == 'superjob.ru':
-            # Для SJ требования в поле requirements (candidat)
-            return getattr(vacancy, 'requirements', None)
-        else:
-            # Универсальная проверка
-            return getattr(vacancy, 'requirements', None)
+        """Извлечение требований (парсеры уже правильно маппят поля)"""
+        return getattr(vacancy, 'requirements', None)
 
     @staticmethod
     def _extract_conditions(vacancy) -> Optional[str]:
@@ -130,12 +110,12 @@ class VacancyFormatter(BaseFormatter):
         if number:
             lines.append(f"{number}.")
 
-        # Добавляем название
+        # ID
+        lines.append(f"ID: {vacancy.vacancy_id}")
+
+        # Название
         title = vacancy.title or getattr(vacancy, 'name', None) or 'Не указано'
         lines.append(f"Название: {title}")
-
-        # Источник
-        lines.append(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
 
         # Компания
         company_name = 'Не указана'
@@ -145,9 +125,6 @@ class VacancyFormatter(BaseFormatter):
             else:
                 company_name = str(vacancy.employer)
         lines.append(f"Компания: {company_name}")
-
-        # ID
-        lines.append(f"ID: {vacancy.vacancy_id}")
 
         # Зарплата
         if vacancy.salary:
@@ -163,46 +140,28 @@ class VacancyFormatter(BaseFormatter):
         if vacancy.employment:
             lines.append(f"Занятость: {vacancy.employment}")
 
-        # График (moved to conditions)
+        # Источник
+        lines.append(f"Источник: {getattr(vacancy, 'source', 'Не указан')}")
 
-        # Навыки
-        if vacancy.skills:
-            skills_list = []
-            for skill in vacancy.skills[:5]:
-                if isinstance(skill, dict) and 'name' in skill:
-                    skills_list.append(skill['name'])
-                elif isinstance(skill, str):
-                    skills_list.append(skill)
+        # Ссылка
+        lines.append(f"Ссылка: {vacancy.url}")
 
-            if skills_list:
-                skills_str = ", ".join(skills_list)
-                if len(vacancy.skills) > 5:
-                    skills_str += f" и еще {len(vacancy.skills) - 5}"
-                lines.append(f"Навыки: {skills_str}")
+        # Обязанности
+        responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
+        if responsibilities and str(responsibilities).strip() and str(responsibilities) != "Не указано":
+            responsibilities_short = responsibilities[:150] + "..." if len(responsibilities) > 150 else responsibilities
+            lines.append(f"Обязанности: \"{responsibilities_short}\"")
 
         # Требования
         requirements = VacancyFormatter._extract_requirements(vacancy)
-        if requirements:
+        if requirements and str(requirements).strip() and str(requirements) != "Не указано":
             requirements_short = requirements[:150] + "..." if len(requirements) > 150 else requirements
             lines.append(f"Требования: {requirements_short}")
-            
-        # Обязанности
-        responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
-        if responsibilities:
-            responsibilities_short = responsibilities[:150] + "..." if len(responsibilities) > 150 else responsibilities
-            lines.append(f"Обязанности: {responsibilities_short}")
 
         # Условия
         conditions = VacancyFormatter._extract_conditions(vacancy)
         if conditions:
             lines.append(f"Условия: {conditions}")
-
-        # Оценка релевантности
-        if hasattr(vacancy, '_relevance_score'):
-            lines.append(f"Релевантность: {vacancy._relevance_score}")
-
-        # Ссылка
-        lines.append(f"Ссылка: {vacancy.url}")
 
         return lines
     

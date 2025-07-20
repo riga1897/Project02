@@ -52,14 +52,15 @@ class HHParser:
 
     def convert_to_unified_format(self, hh_vacancy: HHVacancy) -> Vacancy:
         """Конвертация HH вакансии в унифицированный формат"""
+        # Для HH: обязанности = responsibility, требования = requirement
         return Vacancy(
             vacancy_id=hh_vacancy.vacancy_id,
             title=hh_vacancy.title,
             url=hh_vacancy.url,
             salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
             description=hh_vacancy.description,
-            requirements=hh_vacancy.requirements,
-            responsibilities=hh_vacancy.responsibilities,
+            requirements=hh_vacancy.requirements,  # requirement из snippet
+            responsibilities=hh_vacancy.responsibilities,  # responsibility из snippet
             employer=hh_vacancy.employer,
             experience=hh_vacancy.experience,
             employment=hh_vacancy.employment,
