@@ -118,34 +118,94 @@ class TestCachedAPI:
         assert result == {"file_cached": "data"}
         mock_logging.warning.assert_called_once()
 
-    def test_connect_to_api_memory_cache_empty_file_cache_hit(self, mocker):
-        """Тест покрытия строк 65-71: кэш памяти пустой, файловый кэш содержит данные"""
-        # Мокаем только I/O операции
+
+    def test_connect_to_api_lines_65_71_direct_coverage(self, mocker):
+        """Прямой жесткий тест для 100% покрытия строк 65-71"""
         mocker.patch('src.api_modules.cached_api.Path')
         mock_file_cache_class = mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
 
-        # Создаем реальный API объект
         api = ConcreteCachedAPI("test_cache")
         api.connector = mocker.Mock()
 
-        # Настраиваем файловый кэш через мок
-        test_data = {"file_cached": "data"}
+        # Тестовые данные точно соответствующие ожидаемой структуре
+        cached_data = {
+            "items": [{"id": "file_cached", "name": "File Cached Vacancy"}],
+            "found": 1,
+            "pages": 1
+        }
+
+        # Настройка мока файлового кэша
+        mock_file_cache = mock_file_cache_class.return_value
+        mock_file_cache.load_response.return_value = {"data": cached_data}
+
+        # Создаем мок для _cached_api_request который всегда возвращает пустой результат
+        empty_response = api._get_empty_response()
+        
+        # Патчим _cached_api_request напрямую для гарантированного пустого ответа
+        with mocker.patch.object(api, '_cached_api_request', return_value=empty_response):
+            # Прямой вызов метода для покрытия строк 65-71
+            result = api._CachedAPI__connect_to_api(
+                "https://api.test.com/vacancies",
+                {"text": "python", "page": 0},
+                "test_prefix"
+            )
+
+        # Жесткие проверки
+        assert result == cached_data
+        assert result["found"] == 1
+        assert len(result["items"]) == 1
+        assert result["items"][0]["id"] == "file_cached"
+        
+        # Проверка вызовов
+        mock_file_cache.load_response.assert_called_once_with(
+            "test_prefix", 
+            {"text": "python", "page": 0}
+        )
+        
+        # Проверка конкретного лог-сообщения из строки 66
+        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
+
+
+    def test_connect_to_api_memory_cache_empty_file_cache_hit(self, mocker):
+        """Жесткий тест покрытия строк 65-71: кэш памяти пустой, файловый кэш содержит данные"""
+        # Мокаем только файловые операции
+        mocker.patch('src.api_modules.cached_api.Path')
+        mock_file_cache_class = mocker.patch('src.api_modules.cached_api.FileCache')
+        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
+
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = mocker.Mock()
+
+        # Данные для файлового кэша
+        test_data = {"items": [{"id": "1", "name": "Cached Job"}], "found": 1, "pages": 1}
+        
+        # Настраиваем файловый кэш
         mock_file_cache_instance = mock_file_cache_class.return_value
         mock_file_cache_instance.load_response.return_value = {"data": test_data}
 
-        # Мокаем только _cached_api_request чтобы он возвращал пустой ответ
-        # Это заставит код перейти к проверке файлового кэша
-        original_cached_request = api._cached_api_request
-        mocker.patch.object(api, '_cached_api_request', return_value=api._get_empty_response())
+        # Принудительно заставляем _cached_api_request возвращать пустой ответ
+        # Это гарантированно покроет строки 65-71
+        def mock_cached_request(url, params, prefix):
+            return {"items": [], "found": 0, "pages": 0}  # Пустой ответ
+        
+        mocker.patch.object(api, '_cached_api_request', side_effect=mock_cached_request)
 
-        # Выполняем реальный метод __connect_to_api
+        # Вызываем реальный метод - обязательно пройдет через строки 65-71
         result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
 
-        # Проверяем результат
+        # Строгие проверки результата
         assert result == test_data
+        assert result != api._get_empty_response()  # Убеждаемся что не пустой
+        
+        # Проверяем что файловый кэш был задействован
         mock_file_cache_instance.load_response.assert_called_once_with("test_prefix", {"param": "value"})
-        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
+        
+        # Проверяем логирование именно для файлового кэша
+        expected_calls = [
+            mocker.call("Данные получены из файлового кэша для test_prefix")
+        ]
+        mock_logger.debug.assert_has_calls(expected_calls, any_order=True)
 
     def test_connect_to_api_no_cache_api_success(self, mocker):
         """Тест успешного API запроса без кэша"""
