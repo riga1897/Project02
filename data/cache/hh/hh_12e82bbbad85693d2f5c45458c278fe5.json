@@ -1,0 +1,152 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "3",
+      "page": 0,
+      "period": 7
+    }
+  },
+  "data": {
+    "items": [
+      {
+        "id": "123042916",
+        "premium": false,
+        "name": "Директор службы безопасности",
+        "department": null,
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": {
+          "from": null,
+          "to": 500000,
+          "currency": "RUR",
+          "gross": true
+        },
+        "salary_range": {
+          "from": null,
+          "to": 500000,
+          "currency": "RUR",
+          "gross": true,
+          "mode": {
+            "id": "MONTH",
+            "name": "За месяц"
+          },
+          "frequency": null
+        },
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": {
+          "city": "Новомосковский административный округ",
+          "street": "Киевское шоссе, 22-й километр",
+          "building": "6с1",
+          "lat": 55.633785,
+          "lng": 37.431989,
+          "description": null,
+          "raw": "Новомосковский административный округ, Киевское шоссе, 22-й километр, 6с1",
+          "metro": null,
+          "metro_stations": [],
+          "id": "6947127"
+        },
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-21T11:08:53+0300",
+        "created_at": "2025-07-21T11:08:53+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=123042916",
+        "show_logo_in_search": null,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/123042916?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/123042916",
+        "relations": [],
+        "employer": {
+          "id": "22212",
+          "name": "Акульчев",
+          "url": "https://api.hh.ru/employers/22212",
+          "alternate_url": "https://hh.ru/employer/22212",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1432251.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7348653.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7348654.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=22212",
+          "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4",
+            "reviews_count": 48
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Высшее профессиональное образование. Опыт работы в аналогичной должности от <highlighttext>3</highlighttext> лет. Отличное знание законов, регламентирующих вопросы охранной деятельности, безопасности, защиты...",
+          "responsibility": "Возглавлять и вести контроль работы по комплексной защите компании. Проводить оценку состояния защищенности предприятия. Контролировать на предприятии системы противодействия внутренним..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "fullDay",
+          "name": "Полный день"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "120",
+            "name": "Специалист службы безопасности"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 48207,
+    "pages": 2000,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&search_period=7&text=3"
+  }
+}
