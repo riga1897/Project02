@@ -114,16 +114,22 @@ class TestSpecificCoverage:
         
         formatter = TestFormatter()
         
-        # Test JSON parsing error (line 145)
-        invalid_json = '{"broken": json without closing brace'
-        result = formatter._parse_json_safely(invalid_json)
-        assert result is None
+        # Test salary formatting with problematic data (line 174)
+        # Test with None salary dict
+        result = formatter._format_salary_dict(None)
+        assert result == "Не указана"
         
-        # Test salary formatting error (line 174) 
-        # Create a scenario that triggers the exception handling
-        problematic_salary = object()  # Non-dict, non-string object
-        result = formatter._format_salary_safely(problematic_salary)
-        # Should return string representation without crashing
+        # Test with empty salary dict
+        result = formatter._format_salary_dict({})
+        assert result == "Не указана"
+        
+        # Test _extract_salary_info with non-dict salary (line 145)
+        class MockVacancy:
+            salary = "string_salary"
+        
+        vacancy = MockVacancy()
+        result = formatter._extract_salary_info(vacancy)
+        assert result == "string_salary"
 
     def test_ui_components_empty_states(self, mocker):
         """Test UI components with empty states"""

@@ -235,7 +235,7 @@ class TestComprehensiveCoverage:
             ui._filter_saved_vacancies_by_salary()
             ui._delete_saved_vacancies()
             ui._show_saved_vacancies()
-            ui._search_saved_vacancies()
+            ui._search_saved_vacancies_by_keyword()
             ui._show_top_vacancies()
 
             # Test run method with KeyboardInterrupt

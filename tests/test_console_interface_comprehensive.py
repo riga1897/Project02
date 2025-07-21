@@ -97,8 +97,8 @@ class TestConsoleInterfaceComprehensive:
         ui._filter_saved_vacancies_by_salary()
         ui._delete_saved_vacancies()
         ui._show_saved_vacancies()
-        ui._search_saved_vacancies()
-        ui._show_top_vacancies()
+        ui._search_saved_vacancies_by_keyword()
+        ui._get_top_saved_vacancies_by_salary()
         
         # Test with different return values
         mocker.patch('src.utils.ui_helpers.confirm_action', return_value=True)
@@ -113,16 +113,21 @@ class TestConsoleInterfaceComprehensive:
         """Test menu navigation paths"""
         ui = ui_with_mocks
         
-        # Test different menu choices
+        # Test different menu choices by mocking the show_menu to return each choice
+        # and then exit with "0"
         choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
         
-        for choice in choices:
-            mocker.patch.object(ui, '_show_menu', return_value=choice)
+        for choice in choices[:-1]:  # Test all except "0" 
+            # Mock _show_menu to return the choice first, then "0" to exit
+            mocker.patch.object(ui, '_show_menu', side_effect=[choice, "0"])
             try:
-                # This will test different paths in handle_user_choice
-                ui._handle_user_choice(choice)
+                ui.run()
             except SystemExit:
                 pass  # Expected for choice "0"
+        
+        # Test choice "0" separately
+        mocker.patch.object(ui, '_show_menu', return_value="0")
+        ui.run()
 
     def test_error_scenarios(self, ui_with_mocks, mocker):
         """Test various error scenarios"""
@@ -132,13 +137,23 @@ class TestConsoleInterfaceComprehensive:
         ui.search_handler.search_vacancies.side_effect = Exception("Search error")
         ui.display_handler.show_all_saved_vacancies.side_effect = Exception("Display error")
         
-        # These should handle exceptions gracefully
-        try:
-            ui._handle_user_choice("1")
-        except:
-            pass
-            
-        try:
-            ui._handle_user_choice("2")
-        except:
-            pass
+        # Test error handling in different methods
+        ui._search_vacancies()
+        ui._show_saved_vacancies()
+        
+        # Test filter salary with invalid choice
+        ui.json_saver.get_vacancies.return_value = [Mock()]
+        mocker.patch('builtins.input', side_effect=['4', '1'])  # Invalid choice, then valid
+        ui._filter_saved_vacancies_by_salary()
+        
+        # Test delete with invalid choice  
+        mocker.patch('builtins.input', side_effect=['4', '0'])  # Invalid choice, then cancel
+        ui._delete_saved_vacancies()
+        
+        # Test advanced search with different query types
+        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='python,java,django')
+        ui._advanced_search_vacancies()
+        
+        # Test advanced search with AND/OR operators
+        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='python AND django')
+        ui._advanced_search_vacancies()
