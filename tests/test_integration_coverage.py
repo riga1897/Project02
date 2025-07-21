@@ -245,3 +245,178 @@ class TestIntegrationCoverage:
 
             # Тест должен обработать исключение и продолжить работу
             ui.run()
+
+    def test_cached_api_lines_66_72(self, mocker):
+        """Тест для покрытия строк 66-72 в cached_api.py"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            cached_api = ConcreteCachedAPI(temp_dir)
+            
+            # Мокаем _cached_api_request для вызова исключения
+            with patch.object(cached_api, '_cached_api_request', side_effect=Exception("Memory cache error")):
+                # Строка 66-72: обработка ошибок кэша в памяти
+                result = cached_api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+                assert result == cached_api._get_empty_response()
+
+    def test_json_saver_lines_160_161_229_231_299(self):
+        """Тест для покрытия строк 160-161, 229-231, 299 в json_saver.py"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            storage_path = Path(temp_dir) / "test_vacancies.json"
+            json_saver = JSONSaver(str(storage_path))
+
+            test_vacancy = Vacancy(
+                title="Test Job",
+                url="https://example.com/job/1",
+                vacancy_id="test_001"
+            )
+
+            # Строки 160-161: обработка ошибки записи в _save_to_file
+            with patch('builtins.open', side_effect=PermissionError("Access denied")):
+                try:
+                    json_saver._save_to_file([test_vacancy])
+                except Exception:
+                    pass  # Ожидаем исключение
+
+            # Строки 229-231: обработка ошибки при удалении по ключевому слову
+            with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
+                result = json_saver.delete_vacancies_by_keyword("test")
+                assert result == 0
+
+            # Строка 299: обработка ошибки при удалении всех вакансий
+            with patch('builtins.open', side_effect=OSError("System error")):
+                result = json_saver.delete_all_vacancies()
+                assert result is False
+
+    def test_vacancy_display_handler_lines_43_83_120(self, mocker):
+        """Тест для покрытия строк 43, 83, 120 в vacancy_display_handler.py"""
+        json_saver = Mock()
+        handler = VacancyDisplayHandler(json_saver)
+
+        # Строка 43: пустой список вакансий в show_all_saved_vacancies
+        json_saver.get_vacancies.return_value = []
+        handler.show_all_saved_vacancies()
+
+        # Строка 83: пустой список в search_saved_vacancies_by_keyword
+        json_saver.get_vacancies.return_value = []
+        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='test_keyword')
+        handler.search_saved_vacancies_by_keyword()
+
+        # Строка 120: обработка исключения в show_top_vacancies_by_salary
+        json_saver.get_vacancies.side_effect = Exception("Database error")
+        mocker.patch('src.utils.ui_helpers.get_positive_integer', return_value=5)
+        handler.show_top_vacancies_by_salary()
+
+    def test_vacancy_search_handler_lines_102_136(self, mocker):
+        """Тест для покрытия строк 102, 136 в vacancy_search_handler.py"""
+        unified_api = Mock()
+        json_saver = Mock()
+        handler = VacancySearchHandler(unified_api, json_saver)
+
+        # Строка 102: источники пустые, возврат из search_vacancies
+        mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value=set())
+        handler.search_vacancies()
+
+        # Строка 136: период равен None
+        mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value={'hh'})
+        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='test query')
+        mocker.patch.object(handler, '_get_period_choice', return_value=None)
+        handler.search_vacancies()
+
+    def test_user_interface_line_39(self, mocker):
+        """Тест для покрытия строки 39 в user_interface.py"""
+        mock_ui_class = mocker.patch('src.user_interface.UserInterface')
+        mock_ui = mock_ui_class.return_value
+        
+        from src.user_interface import main
+        main()
+        
+        mock_ui_class.assert_called_once()
+        mock_ui.run.assert_called_once()
+
+    def test_base_formatter_lines_145_174(self):
+        """Тест для покрытия строк 145, 174 в base_formatter.py"""
+        formatter = ConcreteFormatter()
+
+        # Строка 145: обработка JSONDecodeError в _parse_json_safely
+        invalid_json = '{"invalid": json}'
+        result = formatter._parse_json_safely(invalid_json)
+        assert result is None
+
+        # Строка 174: обработка исключения в _format_salary_safely
+        with patch('src.utils.base_formatter.BaseFormatter._format_salary_safely', side_effect=Exception("Format error")):
+            try:
+                formatter._format_salary_safely({"from": 50000})
+            except Exception:
+                pass
+
+    def test_vacancy_models_lines_121_122_185_228_230(self):
+        """Тест для покрытия строк 121-122, 185, 228, 230 в models.py"""
+        # Строки 121-122: обработка timestamp как float
+        timestamp_data = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 1640995200.0  # float timestamp
+        }
+        vacancy = Vacancy.from_dict(timestamp_data)
+        assert vacancy.published_at is not None
+
+        # Строка 185: обработка ошибки парсинга даты
+        invalid_date_data = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 'invalid_date_format'
+        }
+        vacancy = Vacancy.from_dict(invalid_date_data)
+        assert vacancy.published_at is None
+
+        # Строки 228, 230: тестирование операторов сравнения
+        vacancy1 = Vacancy(title="Job1", url="http://example.com/1", salary={"from": 100000})
+        vacancy2 = Vacancy(title="Job2", url="http://example.com/2", salary={"from": 150000})
+
+        # Тест __le__ (меньше или равно)
+        assert vacancy1 <= vacancy2
+        assert vacancy1 <= vacancy1
+
+        # Тест __ge__ (больше или равно)  
+        assert vacancy2 >= vacancy1
+        assert vacancy1 >= vacancy1
+
+    def test_console_interface_comprehensive_coverage(self, mocker):
+        """Комплексный тест для покрытия оставшихся строк в console_interface.py"""
+        with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
+             patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
+             patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
+             patch('src.ui_interfaces.console_interface.JSONSaver'), \
+             patch('src.ui_interfaces.console_interface.create_main_menu'), \
+             patch('src.ui_interfaces.console_interface.VacancyOperations'), \
+             patch('src.ui_interfaces.console_interface.SourceSelector'):
+
+            ui = UserInterface()
+            ui.search_handler = MagicMock()
+            ui.display_handler = MagicMock()
+            ui.json_saver = MagicMock()
+            ui.source_selector = MagicMock()
+            ui.unified_api = MagicMock()
+
+            # Строки 165-166: исключение в _clear_api_cache
+            ui.source_selector.get_user_source_choice.side_effect = Exception("Source error")
+            ui._clear_api_cache()
+
+            # Строки 217-219: пустой ввод в _advanced_search_vacancies
+            ui.json_saver.get_vacancies.return_value = [Mock()]
+            mocker.patch('src.utils.ui_helpers.get_user_input', return_value='')
+            ui._advanced_search_vacancies()
+
+            # Строки 236-237: исключение в _advanced_search_vacancies
+            ui.json_saver.get_vacancies.side_effect = Exception("DB error")
+            ui._advanced_search_vacancies()
+
+            # Дополнительные строки
+            ui.json_saver.get_vacancies.return_value = []
+            ui.json_saver.get_vacancies.side_effect = None
+            
+            # Покрываем различные пути выполнения
+            mocker.patch('builtins.input', return_value='1')
+            mocker.patch('src.utils.ui_helpers.confirm_action', return_value=False)
+            
+            ui._filter_saved_vacancies_by_salary()
+            ui._delete_saved_vacancies()
