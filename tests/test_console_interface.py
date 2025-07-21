@@ -60,8 +60,8 @@ def test_search_saved_vacancies_by_keyword(ui_instance):
 def test_advanced_search_vacancies(ui_instance):
     """Тест расширенного поиска"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
-        Vacancy(vacancy_id="2", title="Java Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -79,8 +79,8 @@ def test_advanced_search_vacancies(ui_instance):
 def test_filter_saved_vacancies_by_salary(ui_instance):
     """Тест фильтрации по зарплате"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
-        Vacancy(vacancy_id="2", title="Java Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -104,8 +104,8 @@ def test_filter_saved_vacancies_by_salary(ui_instance):
 def test_delete_saved_vacancies(ui_instance):
     """Тест удаления вакансий"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
-        Vacancy(vacancy_id="2", title="Java Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -151,8 +151,8 @@ def test_get_period_choice(ui_instance):
 def test_display_vacancies(ui_instance):
     """Тест отображения вакансий"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
-        Vacancy(vacancy_id="2", title="Java Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
     with patch('src.ui_interfaces.user_interface.display_vacancy_info') as mock_display:
@@ -162,8 +162,8 @@ def test_display_vacancies(ui_instance):
 def test_show_vacancies_for_deletion(ui_instance):
     """Тест отображения вакансий для удаления"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
-        Vacancy(vacancy_id="2", title="Java Developer", salary={"min": 100000, "max": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}, url="https://example.com/python-developer"),
+        Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
     ui_instance.json_saver.delete_vacancy_by_id.return_value = True
@@ -179,4 +179,3 @@ def test_show_vacancies_for_deletion(ui_instance):
     # Тест удаления диапазона
     with patch('builtins.input', side_effect=['1-2', 'y', 'q']):
         ui_instance._show_vacancies_for_deletion(test_vacancies, 'python')
-        
