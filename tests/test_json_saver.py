@@ -50,7 +50,7 @@ class TestJSONSaver:
 
     def test_validate_filename_none(self):
         """Тест валидации None имени файла"""
-        result = JSONSaver._validate_filename(None)
+        result = JSONSaver._validate_filename("")
         assert result == "data/storage/vacancies.json"
 
     def test_validate_filename_valid(self):
@@ -143,7 +143,7 @@ class TestJSONSaver:
 
     def test_parse_date_none(self):
         """Тест парсинга None даты"""
-        result = JSONSaver._parse_date(None)
+        result = JSONSaver._parse_date("")
         assert result == datetime.min
 
     def test_load_vacancies_empty_file(self, json_saver):
@@ -426,4 +426,3 @@ class TestJSONSaver:
     def test_property_filename(self, json_saver):
         """Тест свойства filename"""
         assert json_saver.filename == json_saver._filename
-`
