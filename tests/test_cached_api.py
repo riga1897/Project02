@@ -1,7 +1,4 @@
-Adding tests to improve coverage for CachedAPI, specifically targeting the __connect method and error handling in get_cache_status.
-```
 
-```python
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
@@ -302,4 +299,3 @@ class TestCachedAPI:
 
         assert result == {}
         mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Connection error")
-`
