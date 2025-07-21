@@ -27,15 +27,12 @@ class TestEnvLoader:
     def test_load_env_file_not_exists(self):
         """Тест когда .env файл не существует"""
         with patch('os.path.exists', return_value=False), \
-             patch('logging.getLogger') as mock_logger:
-            
-            mock_logger_instance = Mock()
-            mock_logger.return_value = mock_logger_instance
+             patch('src.utils.env_loader.logger') as mock_logger:
             
             EnvLoader.load_env_file()
             
             assert EnvLoader._loaded is True
-            mock_logger_instance.warning.assert_called_once()
+            mock_logger.warning.assert_called_once()
 
     def test_load_env_file_success_with_quotes(self):
         """Тест успешной загрузки файла с кавычками"""
@@ -51,10 +48,7 @@ KEY4=value4
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=env_content)), \
              patch('os.environ', {}) as mock_environ, \
-             patch('logging.getLogger') as mock_logger:
-            
-            mock_logger_instance = Mock()
-            mock_logger.return_value = mock_logger_instance
+             patch('src.utils.env_loader.logger') as mock_logger:
             
             EnvLoader.load_env_file()
             
@@ -63,7 +57,7 @@ KEY4=value4
             assert mock_environ['KEY3'] == 'value3'
             assert mock_environ['KEY4'] == 'value4'
             assert EnvLoader._loaded is True
-            mock_logger_instance.info.assert_called_once()
+            mock_logger.info.assert_called_once()
 
     def test_load_env_file_existing_env_vars_not_overwritten(self):
         """Тест что существующие переменные окружения не перезаписываются"""
@@ -88,30 +82,24 @@ ANOTHER_KEY=another_value
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', mock_open(read_data=env_content)), \
              patch('os.environ', {}) as mock_environ, \
-             patch('logging.getLogger') as mock_logger:
-            
-            mock_logger_instance = Mock()
-            mock_logger.return_value = mock_logger_instance
+             patch('src.utils.env_loader.logger') as mock_logger:
             
             EnvLoader.load_env_file()
             
             assert mock_environ['VALID_KEY'] == 'valid_value'
             assert mock_environ['ANOTHER_KEY'] == 'another_value'
-            mock_logger_instance.warning.assert_called_once()
+            mock_logger.warning.assert_called_once()
 
     def test_load_env_file_exception_handling(self):
         """Тест обработки исключений при загрузке файла"""
         with patch('os.path.exists', return_value=True), \
              patch('builtins.open', side_effect=IOError("File error")), \
-             patch('logging.getLogger') as mock_logger:
-            
-            mock_logger_instance = Mock()
-            mock_logger.return_value = mock_logger_instance
+             patch('src.utils.env_loader.logger') as mock_logger:
             
             EnvLoader.load_env_file()
             
             assert EnvLoader._loaded is True
-            mock_logger_instance.error.assert_called_once()
+            mock_logger.error.assert_called_once()
 
     def test_load_env_file_custom_path(self):
         """Тест загрузки файла с кастомным путем"""
@@ -173,7 +161,7 @@ KEY2=  value2
 
     def test_get_env_var_not_existing_with_default(self):
         """Тест получения несуществующей переменной с значением по умолчанию"""
-        with patch('os.getenv', return_value=None):
+        with patch('os.getenv', side_effect=lambda key, default=None: default):
             result = EnvLoader.get_env_var('NON_EXISTING_KEY', 'default_value')
             assert result == 'default_value'
 
@@ -192,15 +180,12 @@ KEY2=  value2
     def test_get_env_var_int_invalid_integer(self):
         """Тест получения переменной как целое число с невалидным значением"""
         with patch('os.getenv', return_value='not_a_number'), \
-             patch('logging.getLogger') as mock_logger:
-            
-            mock_logger_instance = Mock()
-            mock_logger.return_value = mock_logger_instance
+             patch('src.utils.env_loader.logger') as mock_logger:
             
             result = EnvLoader.get_env_var_int('TEST_KEY', 100)
             
             assert result == 100
-            mock_logger_instance.warning.assert_called_once()
+            mock_logger.warning.assert_called_once()
 
     def test_get_env_var_int_none_value(self):
         """Тест получения переменной как целое число когда переменная не существует"""
