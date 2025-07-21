@@ -342,3 +342,17 @@ class TestCachedAPI:
 
         assert result == {"no_params": "test"}
         api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    def test_connect_method_signature_coverage(self, mock_file_cache, mock_path):
+        """Тест для 100% покрытия метода __connect - проверка сигнатуры метода"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.connector._APIConnector__connect.return_value = {"signature": "test"}
+
+        # Вызываем метод с явным указанием params={} для покрытия строки с default параметром
+        result = api._CachedAPI__connect(url="test_url", params={})
+
+        assert result == {"signature": "test"}
+        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
