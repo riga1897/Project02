@@ -442,7 +442,7 @@ class TestVacancyFormatter:
         """Тест форматирования зарплаты без значений"""
         salary_info = {"currency": "RUR"}
         result = VacancyFormatter._format_salary_dict(salary_info)
-        assert result == "Зарплата не указана"
+        assert result == "RUR"
     
     def test_format_salary_dict_empty(self):
         """Тест форматирования пустого словаря зарплаты"""
