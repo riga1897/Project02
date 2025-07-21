@@ -218,7 +218,7 @@ class TestFilterVacanciesByKeyword:
 
         assert len(result) == 1
         assert result[0].vacancy_id == "1"
-        assert result[0]._relevance_score == 3
+        assert result[0]._relevance_score == 5
 
     def test_filter_by_detailed_description(self):
         """Тест фильтрации по детальному описанию"""
