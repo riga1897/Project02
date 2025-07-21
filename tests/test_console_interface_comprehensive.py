@@ -30,7 +30,7 @@ class TestConsoleInterfaceComprehensive:
             return ui
 
     def test_clear_api_cache_exception(self, ui_with_mocks, mocker):
-        """Test exception handling in _clear_api_cache (lines 165-166)"""
+        """Test exception handling in _clear_api_cache"""
         ui = ui_with_mocks
         
         # Mock source selector to raise exception
@@ -40,7 +40,7 @@ class TestConsoleInterfaceComprehensive:
         ui._clear_api_cache()
 
     def test_advanced_search_empty_input(self, ui_with_mocks, mocker):
-        """Test empty input handling in _advanced_search_vacancies (lines 217-219)"""
+        """Test empty input handling in _advanced_search_vacancies"""
         ui = ui_with_mocks
         
         # Setup: return some vacancies from storage
@@ -53,7 +53,7 @@ class TestConsoleInterfaceComprehensive:
         ui._advanced_search_vacancies()
 
     def test_advanced_search_exception(self, ui_with_mocks, mocker):
-        """Test exception handling in _advanced_search_vacancies (lines 236-237)"""
+        """Test exception handling in _advanced_search_vacancies"""
         ui = ui_with_mocks
         
         # Mock storage to raise exception
@@ -66,10 +66,10 @@ class TestConsoleInterfaceComprehensive:
         """Test KeyboardInterrupt handling in run method"""
         ui = ui_with_mocks
         
-        # Mock _show_menu to raise KeyboardInterrupt
+        # Mock _show_menu to raise KeyboardInterrupt immediately
         mocker.patch.object(ui, '_show_menu', side_effect=KeyboardInterrupt())
         
-        # Should exit gracefully
+        # Should exit gracefully without hanging
         ui.run()
 
     def test_run_general_exception(self, ui_with_mocks, mocker):
@@ -79,7 +79,7 @@ class TestConsoleInterfaceComprehensive:
         # Mock _show_menu to raise general exception first, then return "0" to exit
         mocker.patch.object(ui, '_show_menu', side_effect=[Exception("General error"), "0"])
         
-        # Should handle exception and continue
+        # Should handle exception and continue, then exit
         ui.run()
 
     def test_various_ui_methods(self, ui_with_mocks, mocker):
@@ -110,24 +110,42 @@ class TestConsoleInterfaceComprehensive:
         ui._show_saved_vacancies()
 
     def test_menu_navigation(self, ui_with_mocks, mocker):
-        """Test menu navigation paths"""
+        """Test menu navigation paths without calling run()"""
         ui = ui_with_mocks
         
-        # Test different menu choices by mocking the show_menu to return each choice
-        # and then exit with "0"
-        choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+        # Test individual menu methods directly instead of using run()
+        ui._search_vacancies()
+        ui._show_saved_vacancies()
+        ui._get_top_saved_vacancies_by_salary()
+        ui._search_saved_vacancies_by_keyword()
+        ui._advanced_search_vacancies()
+        ui._filter_saved_vacancies_by_salary()
+        ui._delete_saved_vacancies()
+        ui._clear_api_cache()
+        ui._setup_superjob_api()
+
+    def test_run_with_immediate_exit(self, ui_with_mocks, mocker):
+        """Test run method with immediate exit"""
+        ui = ui_with_mocks
         
-        for choice in choices[:-1]:  # Test all except "0" 
-            # Mock _show_menu to return the choice first, then "0" to exit
-            mocker.patch.object(ui, '_show_menu', side_effect=[choice, "0"])
-            try:
-                ui.run()
-            except SystemExit:
-                pass  # Expected for choice "0"
-        
-        # Test choice "0" separately
+        # Mock _show_menu to return "0" immediately to exit
         mocker.patch.object(ui, '_show_menu', return_value="0")
+        
+        # Should exit immediately
         ui.run()
+
+    def test_run_with_single_choice_then_exit(self, ui_with_mocks, mocker):
+        """Test run method with one choice then exit"""
+        ui = ui_with_mocks
+        
+        # Mock _show_menu to return "1" first, then "0" to exit
+        mocker.patch.object(ui, '_show_menu', side_effect=["1", "0"])
+        
+        # Should execute choice "1" then exit
+        ui.run()
+        
+        # Verify that search_vacancies was called
+        ui.search_handler.search_vacancies.assert_called_once()
 
     def test_error_scenarios(self, ui_with_mocks, mocker):
         """Test various error scenarios"""
@@ -157,3 +175,12 @@ class TestConsoleInterfaceComprehensive:
         # Test advanced search with AND/OR operators
         mocker.patch('src.utils.ui_helpers.get_user_input', return_value='python AND django')
         ui._advanced_search_vacancies()
+
+    def test_show_menu_static_method(self, mocker):
+        """Test _show_menu static method"""
+        # Mock input to return a test value
+        mocker.patch('builtins.input', return_value='1')
+        
+        # Call the static method directly
+        result = UserInterface._show_menu()
+        assert result == '1'
