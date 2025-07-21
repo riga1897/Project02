@@ -1,7 +1,7 @@
 from typing import List, Dict, Any
 import logging
 from ..models import Vacancy
-from ..hh_models import HHVacancy
+
 from src.utils.cache import FileCache
 
 logger = logging.getLogger(__name__)
@@ -41,7 +41,7 @@ class HHParser:
         for item in raw_data:
             try:
                 # Сначала создаем HH-специфичную модель
-                hh_vacancy = HHVacancy.from_dict(item)
+                hh_vacancy = Vacancy.from_dict(item)
             # Обработка snippet (специфично для HH)
                 snippet = item.get('snippet', {})
                 requirements = None
@@ -69,7 +69,7 @@ class HHParser:
                 continue
         return vacancies
 
-    def convert_to_unified_format(self, hh_vacancy: HHVacancy) -> Vacancy:
+    def convert_to_unified_format(self, hh_vacancy: Vacancy) -> Vacancy:
         """Конвертация HH вакансии в унифицированный формат"""
         # Для HH: обязанности = responsibility, требования = requirement
         return Vacancy(
