@@ -21,10 +21,7 @@ class VacancyOperations:
         Returns:
             List[Vacancy]: Список вакансий с указанной зарплатой
         """
-        return [
-            v for v in vacancies 
-            if v.salary and (v.salary.salary_from or v.salary.salary_to)
-        ]
+        return [v for v in vacancies if v.salary and (v.salary.salary_from or v.salary.salary_to)]
 
     @staticmethod
     def sort_vacancies_by_salary(vacancies: List[Vacancy], reverse: bool = True) -> List[Vacancy]:
@@ -38,11 +35,7 @@ class VacancyOperations:
         Returns:
             List[Vacancy]: Отсортированный список вакансий
         """
-        return sorted(
-            vacancies,
-            key=lambda x: x.salary.get_max_salary() if x.salary else 0,
-            reverse=reverse
-        )
+        return sorted(vacancies, key=lambda x: x.salary.get_max_salary() if x.salary else 0, reverse=reverse)
 
     @staticmethod
     def filter_vacancies_by_min_salary(vacancies: List[Vacancy], min_salary: int) -> List[Vacancy]:
@@ -57,12 +50,16 @@ class VacancyOperations:
             List[Vacancy]: Список отфильтрованных вакансий
         """
         return [
-            v for v in vacancies 
-            if v.salary and (
+            v
+            for v in vacancies
+            if v.salary
+            and (
                 # Если есть только нижняя граница - она должна быть >= min_salary
-                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from >= min_salary) or
+                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from >= min_salary)
+                or
                 # Если есть только верхняя граница - она должна быть >= min_salary
-                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to >= min_salary) or
+                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to >= min_salary)
+                or
                 # Если есть обе границы - нижняя граница должна быть >= min_salary
                 (v.salary.salary_from and v.salary.salary_to and v.salary.salary_from >= min_salary)
             )
@@ -81,15 +78,23 @@ class VacancyOperations:
             List[Vacancy]: Список отфильтрованных вакансий
         """
         return [
-            v for v in vacancies 
-            if v.salary and (
+            v
+            for v in vacancies
+            if v.salary
+            and (
                 # Если есть только нижняя граница - она должна быть <= max_salary
-                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from <= max_salary) or
+                (v.salary.salary_from and not v.salary.salary_to and v.salary.salary_from <= max_salary)
+                or
                 # Если есть только верхняя граница - она должна быть <= max_salary
-                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to <= max_salary) or
+                (not v.salary.salary_from and v.salary.salary_to and v.salary.salary_to <= max_salary)
+                or
                 # Если есть обе границы - ОБЕ границы должны быть <= max_salary
-                (v.salary.salary_from and v.salary.salary_to and 
-                 v.salary.salary_from <= max_salary and v.salary.salary_to <= max_salary)
+                (
+                    v.salary.salary_from
+                    and v.salary.salary_to
+                    and v.salary.salary_from <= max_salary
+                    and v.salary.salary_to <= max_salary
+                )
             )
         ]
 
@@ -107,12 +112,18 @@ class VacancyOperations:
             List[Vacancy]: Список отфильтрованных вакансий
         """
         return [
-            v for v in vacancies 
-            if v.salary and (
-                (v.salary.salary_from and min_salary <= v.salary.salary_from <= max_salary) or
-                (v.salary.salary_to and min_salary <= v.salary.salary_to <= max_salary) or
-                (v.salary.salary_from and v.salary.salary_to and 
-                 v.salary.salary_from <= max_salary and v.salary.salary_to >= min_salary)
+            v
+            for v in vacancies
+            if v.salary
+            and (
+                (v.salary.salary_from and min_salary <= v.salary.salary_from <= max_salary)
+                or (v.salary.salary_to and min_salary <= v.salary.salary_to <= max_salary)
+                or (
+                    v.salary.salary_from
+                    and v.salary.salary_to
+                    and v.salary.salary_from <= max_salary
+                    and v.salary.salary_to >= min_salary
+                )
             )
         ]
 
@@ -145,7 +156,7 @@ class VacancyOperations:
                 filtered_vacancies.append(vacancy)
 
         # Сортируем по количеству совпадений
-        filtered_vacancies.sort(key=lambda x: getattr(x, '_keyword_matches', 0), reverse=True)
+        filtered_vacancies.sort(key=lambda x: getattr(x, "_keyword_matches", 0), reverse=True)
 
         return filtered_vacancies
 
@@ -162,20 +173,20 @@ class VacancyOperations:
             List[Vacancy]: Список найденных вакансий
         """
         # Простая обработка AND/OR операторов
-        if ' AND ' in query.upper():
+        if " AND " in query.upper():
             # Разбираем более аккуратно, сохраняя регистр
             parts = query.split()
             keywords = []
             current_keyword = []
             for part in parts:
-                if part.upper() == 'AND':
+                if part.upper() == "AND":
                     if current_keyword:
-                        keywords.append(' '.join(current_keyword))
+                        keywords.append(" ".join(current_keyword))
                         current_keyword = []
                 else:
                     current_keyword.append(part)
             if current_keyword:
-                keywords.append(' '.join(current_keyword))
+                keywords.append(" ".join(current_keyword))
 
             # Для AND ищем вакансии, которые содержат ВСЕ ключевые слова
             result = []
@@ -190,37 +201,33 @@ class VacancyOperations:
                     result.append(vacancy)
             return result
 
-        elif ' OR ' in query.upper():
+        elif " OR " in query.upper():
             # Аналогично для OR
             parts = query.split()
             keywords = []
             current_keyword = []
             for part in parts:
-                if part.upper() == 'OR':
+                if part.upper() == "OR":
                     if current_keyword:
-                        keywords.append(' '.join(current_keyword))
+                        keywords.append(" ".join(current_keyword))
                         current_keyword = []
                 else:
                     current_keyword.append(part)
             if current_keyword:
-                keywords.append(' '.join(current_keyword))
+                keywords.append(" ".join(current_keyword))
 
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, [kw.strip() for kw in keywords])
-        elif ',' in query:
+        elif "," in query:
             # Поиск с запятой как разделителем (OR)
-            keywords = [kw.strip() for kw in query.split(',') if kw.strip()]
+            keywords = [kw.strip() for kw in query.split(",") if kw.strip()]
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
-        elif ' ' in query.strip() and not any(op in query.upper() for op in [' AND ', ' OR ']):
+        elif " " in query.strip() and not any(op in query.upper() for op in [" AND ", " OR "]):
             # Поиск с пробелами как разделителем (OR по умолчанию)
             keywords = [kw.strip() for kw in query.split() if kw.strip()]
             return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
         else:
             # Простой поиск по одному ключевому слову
             return filter_vacancies_by_keyword(vacancies, query)
-
-    
-
-    
 
     @staticmethod
     def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
@@ -238,11 +245,11 @@ class VacancyOperations:
 
         # Проверяем каждое поле
         fields_to_check = [
-            ('Название', vacancy.title),
-            ('Описание', vacancy.description),
-            ('Требования', vacancy.requirements),
-            ('Обязанности', vacancy.responsibilities),
-            ('Компания', vacancy.employer),
+            ("Название", vacancy.title),
+            ("Описание", vacancy.description),
+            ("Требования", vacancy.requirements),
+            ("Обязанности", vacancy.responsibilities),
+            ("Компания", vacancy.employer),
         ]
 
         for field_name, field_value in fields_to_check:
@@ -256,25 +263,24 @@ class VacancyOperations:
         """
         Отладочная функция для проверки извлечения ключевых слов
         """
-        print(f"\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
+        print("\n=== ОТЛАДКА КЛЮЧЕВЫХ СЛОВ ===")
         print(f"Вакансия: {vacancy.title}")
         print(f"URL: {vacancy.url}")
         # print(f"Автоматически извлеченные ключевые слова: {vacancy.keywords}")
 
         # Показываем текст, из которого извлекались ключевые слова
-        full_text = ' '.join([
-            vacancy.description or '',
-            vacancy.requirements or '',
-            vacancy.responsibilities or ''
-        ]).lower()
+        full_text = " ".join(
+            [vacancy.description or "", vacancy.requirements or "", vacancy.responsibilities or ""]
+        ).lower()
 
         print(f"Полный текст для анализа (первые 200 символов): {full_text[:200]}...")
 
         # Проверяем конкретные ключевые слова
-        test_keywords = ['excel', '1c', '1с', 'r']
+        test_keywords = ["excel", "1c", "1с", "r"]
         for keyword in test_keywords:
             import re
-            pattern = r'\b' + re.escape(keyword) + r'\b'
+
+            pattern = r"\b" + re.escape(keyword) + r"\b"
             matches = re.findall(pattern, full_text)
             if matches:
                 print(f"  ✓ Найдено '{keyword}': {matches}")

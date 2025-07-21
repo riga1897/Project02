@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from src.utils.source_manager import SourceManager, DataSource, source_manager
+from src.utils.source_manager import DataSource, SourceManager, source_manager
 
 
 class TestDataSource:
@@ -17,24 +17,18 @@ class TestSourceManager:
 
     def test_source_names_constant(self):
         """Тест константы с именами источников"""
-        expected = {
-            DataSource.HH: "HeadHunter (hh.ru)",
-            DataSource.SUPERJOB: "SuperJob (superjob.ru)"
-        }
+        expected = {DataSource.HH: "HeadHunter (hh.ru)", DataSource.SUPERJOB: "SuperJob (superjob.ru)"}
         assert SourceManager.SOURCE_NAMES == expected
 
     def test_source_urls_constant(self):
         """Тест константы с URL источников"""
-        expected = {
-            DataSource.HH: "https://hh.ru",
-            DataSource.SUPERJOB: "https://superjob.ru"
-        }
+        expected = {DataSource.HH: "https://hh.ru", DataSource.SUPERJOB: "https://superjob.ru"}
         assert SourceManager.SOURCE_URLS == expected
 
     def test_get_all_sources(self):
         """Тест получения всех источников"""
         sources = SourceManager.get_all_sources()
-        
+
         assert isinstance(sources, list)
         assert len(sources) == 2
         assert DataSource.HH in sources
@@ -43,13 +37,10 @@ class TestSourceManager:
     def test_get_source_names(self):
         """Тест получения словаря с именами источников"""
         names = SourceManager.get_source_names()
-        
-        expected = {
-            DataSource.HH: "HeadHunter (hh.ru)",
-            DataSource.SUPERJOB: "SuperJob (superjob.ru)"
-        }
+
+        expected = {DataSource.HH: "HeadHunter (hh.ru)", DataSource.SUPERJOB: "SuperJob (superjob.ru)"}
         assert names == expected
-        
+
         # Проверяем что возвращается копия
         names[DataSource.HH] = "Modified"
         assert SourceManager.SOURCE_NAMES[DataSource.HH] == "HeadHunter (hh.ru)"
@@ -58,7 +49,7 @@ class TestSourceManager:
         """Тест получения имени существующего источника"""
         name = SourceManager.get_source_name(DataSource.HH)
         assert name == "HeadHunter (hh.ru)"
-        
+
         name = SourceManager.get_source_name(DataSource.SUPERJOB)
         assert name == "SuperJob (superjob.ru)"
 
@@ -66,7 +57,7 @@ class TestSourceManager:
         """Тест получения имени несуществующего источника"""
         mock_source = Mock()
         mock_source.value = "unknown"
-        
+
         name = SourceManager.get_source_name(mock_source)
         assert name == "unknown"
 
@@ -74,14 +65,14 @@ class TestSourceManager:
         """Тест получения URL существующего источника"""
         url = SourceManager.get_source_url(DataSource.HH)
         assert url == "https://hh.ru"
-        
+
         url = SourceManager.get_source_url(DataSource.SUPERJOB)
         assert url == "https://superjob.ru"
 
     def test_get_source_url_non_existing(self):
         """Тест получения URL несуществующего источника"""
         mock_source = Mock()
-        
+
         url = SourceManager.get_source_url(mock_source)
         assert url == ""
 
@@ -148,6 +139,6 @@ class TestGlobalSourceManager:
         """Тест методов глобального экземпляра"""
         sources = source_manager.get_all_sources()
         assert len(sources) == 2
-        
+
         name = source_manager.get_source_name(DataSource.HH)
         assert name == "HeadHunter (hh.ru)"

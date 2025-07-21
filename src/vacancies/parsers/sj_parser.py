@@ -1,5 +1,6 @@
-from typing import List, Dict, Any
 import logging
+from typing import Any, Dict, List
+
 from ..models import Vacancy
 
 logger = logging.getLogger(__name__)
@@ -51,9 +52,9 @@ class SuperJobParser:
         if sj_vacancy.salary:
             salary_dict = sj_vacancy.salary.to_dict()
             # Исправляем период для SuperJob
-            if salary_dict and 'period' in salary_dict:
-                if salary_dict['period'] in ['месяц', 'month']:
-                    salary_dict['period'] = 'месяц'
+            if salary_dict and "period" in salary_dict:
+                if salary_dict["period"] in ["месяц", "month"]:
+                    salary_dict["period"] = "месяц"
 
         return {
             "id": sj_vacancy.vacancy_id,
@@ -65,7 +66,7 @@ class SuperJobParser:
             "description": sj_vacancy.description,
             # Для SJ: обязанности = vacancyRichText (description), требования = candidat (requirements)
             "requirements": sj_vacancy.requirements,  # candidat
-            "responsibilities": sj_vacancy.description,  # vacancyRichText  
+            "responsibilities": sj_vacancy.description,  # vacancyRichText
             "employer": sj_vacancy.employer,
             "experience": sj_vacancy.experience,
             "employment": sj_vacancy.employment,
@@ -75,5 +76,5 @@ class SuperJobParser:
             "keywords": [],
             "detailed_description": sj_vacancy.detailed_description,
             "benefits": sj_vacancy.benefits,
-            "source": sj_vacancy.source
+            "source": sj_vacancy.source,
         }

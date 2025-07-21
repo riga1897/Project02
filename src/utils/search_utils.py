@@ -1,5 +1,6 @@
-from typing import List
 import logging
+from typing import List
+
 from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
             relevance_score += 5
 
-        # Проверяем в обязанностях (средний приоритет)  
+        # Проверяем в обязанностях (средний приоритет)
         if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
             relevance_score += 5
 
@@ -49,8 +50,8 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         # Проверяем в навыках
         if vacancy.skills:
             for skill in vacancy.skills:
-                if isinstance(skill, dict) and 'name' in skill:
-                    if keyword_lower in skill['name'].lower():
+                if isinstance(skill, dict) and "name" in skill:
+                    if keyword_lower in skill["name"].lower():
                         relevance_score += 6
                 elif isinstance(skill, str) and keyword_lower in skill.lower():
                     relevance_score += 6
@@ -58,7 +59,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         # Дополнительные проверки для улучшения поиска.
         # Проверяем в информации о работодателе.
         if vacancy.employer and isinstance(vacancy.employer, dict):
-            employer_name = vacancy.employer.get('name', '')
+            employer_name = vacancy.employer.get("name", "")
             if employer_name and keyword_lower in employer_name.lower():
                 relevance_score += 4
 
@@ -84,7 +85,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
             filtered_vacancies.append(vacancy)
 
     # Сортируем по релевантности
-    filtered_vacancies.sort(key=lambda x: getattr(x, '_relevance_score', 0), reverse=True)
+    filtered_vacancies.sort(key=lambda x: getattr(x, "_relevance_score", 0), reverse=True)
 
     return filtered_vacancies
 
@@ -110,7 +111,7 @@ def vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
     if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
         return True
 
-    # Проверяем в обязанностях  
+    # Проверяем в обязанностях
     if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
         return True
 
@@ -121,16 +122,16 @@ def vacancy_contains_keyword(vacancy: Vacancy, keyword: str) -> bool:
     # Проверяем в детальном описании (важно для SuperJob)
     if vacancy.detailed_description and keyword_lower in vacancy.detailed_description.lower():
         return True
-    
+
     # Дополнительная проверка для SuperJob - проверяем все текстовые поля
-    if hasattr(vacancy, 'profession') and vacancy.profession and keyword_lower in vacancy.profession.lower():
+    if hasattr(vacancy, "profession") and vacancy.profession and keyword_lower in vacancy.profession.lower():
         return True
 
     # Проверяем в навыках
     if vacancy.skills:
         for skill in vacancy.skills:
-            if isinstance(skill, dict) and 'name' in skill:
-                if keyword_lower in skill['name'].lower():
+            if isinstance(skill, dict) and "name" in skill:
+                if keyword_lower in skill["name"].lower():
                     return True
 
     return False

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from src.vacancies.abstract import AbstractVacancy
 
 
@@ -13,7 +14,6 @@ class AbstractVacancyStorage(ABC):
         :param vacancy: Объект вакансии для добавления
         """
 
-
     @abstractmethod
     def get_vacancies(self, filters: Optional[Dict[str, Any]] = None) -> List[AbstractVacancy]:
         """
@@ -21,7 +21,6 @@ class AbstractVacancyStorage(ABC):
         :param filters: Словарь с критериями фильтрации
         :return: Список вакансий
         """
-
 
     @abstractmethod
     def delete_vacancy(self, vacancy: AbstractVacancy) -> None:

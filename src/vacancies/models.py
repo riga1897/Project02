@@ -1,10 +1,11 @@
-from typing import List, Dict, Any, Optional
+import logging
 import uuid
 from datetime import datetime
-import logging
-from .abstract import AbstractVacancy
+from typing import Any, Dict, List, Optional, Union
+
 from src.utils.salary import Salary
-from typing import Union
+
+from .abstract import AbstractVacancy
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
@@ -20,10 +21,22 @@ class Vacancy(AbstractVacancy):
     """
 
     __slots__ = (
-        'vacancy_id', 'title', 'url', 'salary', 'description', 
-        'requirements', 'responsibilities', 'employer', 'experience',
-        'employment', 'schedule', 'published_at', 'skills',
-        'detailed_description', 'benefits', 'source'
+        "vacancy_id",
+        "title",
+        "url",
+        "salary",
+        "description",
+        "requirements",
+        "responsibilities",
+        "employer",
+        "experience",
+        "employment",
+        "schedule",
+        "published_at",
+        "skills",
+        "detailed_description",
+        "benefits",
+        "source",
     )
 
     def __init__(
@@ -43,7 +56,7 @@ class Vacancy(AbstractVacancy):
         detailed_description: Optional[str] = None,
         benefits: Optional[str] = None,
         vacancy_id: Optional[str] = None,
-        source: str = "unknown"
+        source: str = "unknown",
     ):
         self._relevance_score = None
         self.raw_data = None
@@ -75,7 +88,8 @@ class Vacancy(AbstractVacancy):
     def _clean_html(text: str) -> str:
         """Очистка HTML-тегов из текста"""
         import re
-        return re.sub(r'<[^>]+>', '', text)
+
+        return re.sub(r"<[^>]+>", "", text)
 
     @staticmethod
     def _parse_datetime(date_str: Union[str, int, None]) -> Optional[datetime]:
@@ -107,10 +121,10 @@ class Vacancy(AbstractVacancy):
 
                 # Попробуем разные форматы строк
                 formats = [
-                    '%Y-%m-%dT%H:%M:%S%z',      # ISO with timezone
-                    '%Y-%m-%dT%H:%M:%S',        # ISO without timezone  
-                    '%Y-%m-%d %H:%M:%S',        # Standard format
-                    '%Y-%m-%d',                 # Date only
+                    "%Y-%m-%dT%H:%M:%S%z",  # ISO with timezone
+                    "%Y-%m-%dT%H:%M:%S",  # ISO without timezone
+                    "%Y-%m-%d %H:%M:%S",  # Standard format
+                    "%Y-%m-%d",  # Date only
                 ]
 
                 for fmt in formats:
@@ -138,67 +152,58 @@ class Vacancy(AbstractVacancy):
         return vacancies
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Vacancy':
+    def from_dict(cls, data: Dict[str, Any]) -> "Vacancy":
         """Создает унифицированный объект Vacancy из словаря"""
         try:
             if not isinstance(data, dict):
                 raise ValueError("Данные должны быть словарем")
 
             # Универсальная обработка полей из разных источников
-            title = (
-                data.get('title') or 
-                data.get('name') or 
-                data.get('profession') or 
-                'Без названия'
-            )
+            title = data.get("title") or data.get("name") or data.get("profession") or "Без названия"
 
             url = (
-                data.get('alternate_url') or  # Веб-версия для HH
-                data.get('link') or           # Веб-версия для SuperJob
-                data.get('url') or            # Fallback на API-ссылку
-                ''
+                data.get("alternate_url")  # Веб-версия для HH
+                or data.get("link")  # Веб-версия для SuperJob
+                or data.get("url")  # Fallback на API-ссылку
+                or ""
             )
 
-            vacancy_id = str(data.get('id', ''))
+            vacancy_id = str(data.get("id", ""))
 
             # Обработка зарплаты (универсальная для всех источников)
-            salary = data.get('salary')
+            salary = data.get("salary")
 
             # Обработка работодателя
-            employer = data.get('employer')
-            if not employer and data.get('firm_name'):
-                employer = {"name": data.get('firm_name')}
+            employer = data.get("employer")
+            if not employer and data.get("firm_name"):
+                employer = {"name": data.get("firm_name")}
 
             # Обработка опыта работы
             experience = None
-            experience_data = data.get('experience')
+            experience_data = data.get("experience")
             if isinstance(experience_data, dict):
-                experience = experience_data.get('name') or experience_data.get('title')
+                experience = experience_data.get("name") or experience_data.get("title")
             elif isinstance(experience_data, str):
                 experience = experience_data
 
             # Обработка типа занятости
             employment = None
-            employment_data = data.get('employment') or data.get('type_of_work')
+            employment_data = data.get("employment") or data.get("type_of_work")
             if isinstance(employment_data, dict):
-                employment = employment_data.get('name') or employment_data.get('title')
+                employment = employment_data.get("name") or employment_data.get("title")
             elif isinstance(employment_data, str):
                 employment = employment_data
 
             # Обработка описания и требований
-            description = (
-                data.get('description') or 
-                data.get('vacancyRichText') or 
-                ''
-            )
+            description = data.get("description") or data.get("vacancyRichText") or ""
 
             # Если описание пустое, но есть requirements или responsibilities - объединяем их
             if not description.strip():
                 desc_parts = []
-                if data.get('requirements'):
-                    desc_parts.append(data.get('requirements'))
-                if data.get('responsibilities'):
-                    desc_parts.append(data.get('responsibilities'))
+                if data.get("requirements"):
+                    desc_parts.append(data.get("requirements"))
+                if data.get("responsibilities"):
+                    desc_parts.append(data.get("responsibilities"))
                 if desc_parts:
                     description = " ".join(desc_parts)
 
@@ -206,29 +211,29 @@ class Vacancy(AbstractVacancy):
             responsibilities = None
 
             # Для HH (snippet)
-            snippet = data.get('snippet', {})
+            snippet = data.get("snippet", {})
             if isinstance(snippet, dict):
-                requirements = snippet.get('requirement')
-                responsibilities = snippet.get('responsibility')
+                requirements = snippet.get("requirement")
+                responsibilities = snippet.get("responsibility")
 
             # Для SuperJob (прямые поля)
             if not requirements:
-                requirements = data.get('candidat')
+                requirements = data.get("candidat")
             if not responsibilities:
-                responsibilities = data.get('work')
+                responsibilities = data.get("work")
 
             # Определяем источник на основе структуры данных
-            source = data.get('source', 'unknown')
-            if source == 'unknown':
+            source = data.get("source", "unknown")
+            if source == "unknown":
                 # Если source не указан, пытаемся определить по URL или структуре данных
-                if 'alternate_url' in data or 'hh.ru' in url:
-                    source = 'hh.ru'
-                elif 'superjob.ru' in url or 'sj.ru' in url:
-                    source = 'superjob.ru'
-                elif 'profession' in data and 'candidat' in data:
-                    source = 'superjob.ru'  # SuperJob использует эти поля
-                elif 'name' in data and 'snippet' in data:
-                    source = 'hh.ru'  # HH использует эти поля
+                if "alternate_url" in data or "hh.ru" in url:
+                    source = "hh.ru"
+                elif "superjob.ru" in url or "sj.ru" in url:
+                    source = "superjob.ru"
+                elif "profession" in data and "candidat" in data:
+                    source = "superjob.ru"  # SuperJob использует эти поля
+                elif "name" in data and "snippet" in data:
+                    source = "hh.ru"  # HH использует эти поля
 
             return cls(
                 vacancy_id=vacancy_id,
@@ -241,11 +246,11 @@ class Vacancy(AbstractVacancy):
                 employer=employer,
                 experience=experience,
                 employment=employment,
-                schedule=data.get('schedule', {}).get('name') if isinstance(data.get('schedule'), dict) else None,
-                published_at=data.get('published_at') or data.get('date_published'),
-                detailed_description=data.get('detailed_description'),
-                benefits=data.get('benefits'),
-                source=source
+                schedule=data.get("schedule", {}).get("name") if isinstance(data.get("schedule"), dict) else None,
+                published_at=data.get("published_at") or data.get("date_published"),
+                detailed_description=data.get("detailed_description"),
+                benefits=data.get("benefits"),
+                source=source,
             )
 
         except Exception as e:
@@ -255,22 +260,22 @@ class Vacancy(AbstractVacancy):
     def to_dict(self) -> Dict[str, Any]:
         """Преобразование в унифицированный словарь"""
         return {
-            'id': self.vacancy_id,
-            'title': self.title,
-            'url': self.url,
-            'salary': self.salary.to_dict() if self.salary else None,
-            'description': self.description,
-            'requirements': self.requirements,
-            'responsibilities': self.responsibilities,
-            'employer': self.employer,
-            'experience': self.experience,
-            'employment': self.employment,
-            'schedule': self.schedule,
-            'published_at': self.published_at.isoformat() if self.published_at else None,
-            'skills': self.skills,
-            'detailed_description': self.detailed_description,
-            'benefits': self.benefits,
-            'source': self.source
+            "id": self.vacancy_id,
+            "title": self.title,
+            "url": self.url,
+            "salary": self.salary.to_dict() if self.salary else None,
+            "description": self.description,
+            "requirements": self.requirements,
+            "responsibilities": self.responsibilities,
+            "employer": self.employer,
+            "experience": self.experience,
+            "employment": self.employment,
+            "schedule": self.schedule,
+            "published_at": self.published_at.isoformat() if self.published_at else None,
+            "skills": self.skills,
+            "detailed_description": self.detailed_description,
+            "benefits": self.benefits,
+            "source": self.source,
         }
 
     def __str__(self) -> str:
@@ -280,7 +285,7 @@ class Vacancy(AbstractVacancy):
             f"Компания: {self.employer.get('name') if self.employer else 'Не указана'}",
             f"Зарплата: {self.salary}",
             f"Требования: {self.requirements[:100] + '...' if self.requirements else 'Не указаны'}",
-            f"Ссылка: {self.url}"
+            f"Ссылка: {self.url}",
         ]
         return "\n".join(parts)
 

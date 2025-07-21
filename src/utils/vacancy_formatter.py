@@ -1,8 +1,8 @@
 import logging
-from typing import Optional, List
+from typing import List, Optional
 
-from .base_formatter import BaseFormatter
 from ..vacancies.models import Vacancy
+from .base_formatter import BaseFormatter
 
 logger = logging.getLogger(__name__)
 
@@ -13,12 +13,12 @@ class VacancyFormatter(BaseFormatter):
     @staticmethod
     def _extract_responsibilities(vacancy) -> Optional[str]:
         """Извлечение обязанностей (парсеры уже правильно маппят поля)"""
-        return getattr(vacancy, 'responsibilities', None)
+        return getattr(vacancy, "responsibilities", None)
 
     @staticmethod
     def _extract_requirements(vacancy) -> Optional[str]:
         """Извлечение требований (парсеры уже правильно маппят поля)"""
-        return getattr(vacancy, 'requirements', None)
+        return getattr(vacancy, "requirements", None)
 
     @staticmethod
     def _extract_conditions(vacancy) -> Optional[str]:
@@ -26,17 +26,17 @@ class VacancyFormatter(BaseFormatter):
         conditions_parts = []
 
         # График работы
-        schedule = getattr(vacancy, 'schedule', None)
+        schedule = getattr(vacancy, "schedule", None)
         if schedule:
             conditions_parts.append(f"График: {schedule}")
 
         # Можно добавить другие условия специфичные для разных источников
-        source = getattr(vacancy, 'source', '')
+        source = getattr(vacancy, "source", "")
 
-        if source == 'hh.ru':
+        if source == "hh.ru":
             # Специфичные для HH условия
             pass
-        elif source == 'superjob.ru':
+        elif source == "superjob.ru":
             # Специфичные для SJ условия
             pass
 
@@ -115,14 +115,14 @@ class VacancyFormatter(BaseFormatter):
         lines.append(f"ID: {vacancy.vacancy_id}")
 
         # Название
-        title = vacancy.title or getattr(vacancy, 'name', None) or 'Не указано'
+        title = vacancy.title or getattr(vacancy, "name", None) or "Не указано"
         lines.append(f"Название: {title}")
 
         # Компания
-        company_name = 'Не указана'
+        company_name = "Не указана"
         if vacancy.employer:
             if isinstance(vacancy.employer, dict):
-                company_name = vacancy.employer.get('name', 'Не указана')
+                company_name = vacancy.employer.get("name", "Не указана")
             else:
                 company_name = str(vacancy.employer)
         lines.append(f"Компания: {company_name}")
@@ -146,29 +146,36 @@ class VacancyFormatter(BaseFormatter):
 
         # Ссылка с преобразованием API-ссылок в веб-ссылки
         url = vacancy.url
-        if isinstance(url, str) and url != 'Не указана':
+        if isinstance(url, str) and url != "Не указана":
             # Преобразуем API-ссылки HH в веб-ссылки
-            if 'api.hh.ru/vacancies/' in url:
+            if "api.hh.ru/vacancies/" in url:
                 import re
-                match = re.search(r'/vacancies/(\d+)', url)
+
+                match = re.search(r"/vacancies/(\d+)", url)
                 if match:
                     vacancy_web_id = match.group(1)
                     url = f"https://hh.ru/vacancy/{vacancy_web_id}"
-        
+
         lines.append(f"Ссылка: {url}")
 
         # Описание вакансии (объединенное поле)
         description_parts = []
 
         # Основное описание - сначала пробуем description, потом detailed_description
-        main_description = getattr(vacancy, 'description', None)
+        main_description = getattr(vacancy, "description", None)
         if not main_description or not str(main_description).strip():
-            main_description = getattr(vacancy, 'detailed_description', None)
-            
-        if main_description and str(main_description).strip() and str(main_description).strip() != "Не указано" and str(main_description).strip() != "":
+            main_description = getattr(vacancy, "detailed_description", None)
+
+        if (
+            main_description
+            and str(main_description).strip()
+            and str(main_description).strip() != "Не указано"
+            and str(main_description).strip() != ""
+        ):
             # Очищаем HTML-теги и ограничиваем длину
             import re
-            clean_description = re.sub(r'<[^>]+>', '', str(main_description))
+
+            clean_description = re.sub(r"<[^>]+>", "", str(main_description))
             clean_description = clean_description.strip()
             if clean_description:
                 if len(clean_description) > 150:
@@ -177,7 +184,12 @@ class VacancyFormatter(BaseFormatter):
 
         # Обязанности
         responsibilities = VacancyFormatter._extract_responsibilities(vacancy)
-        if responsibilities and str(responsibilities).strip() and str(responsibilities).strip() != "Не указано" and str(responsibilities).strip() != "":
+        if (
+            responsibilities
+            and str(responsibilities).strip()
+            and str(responsibilities).strip() != "Не указано"
+            and str(responsibilities).strip() != ""
+        ):
             resp_text = str(responsibilities).strip()
             if len(resp_text) > 150:
                 resp_text = resp_text[:150] + "..."
@@ -185,7 +197,12 @@ class VacancyFormatter(BaseFormatter):
 
         # Требования
         requirements = VacancyFormatter._extract_requirements(vacancy)
-        if requirements and str(requirements).strip() and str(requirements).strip() != "Не указано" and str(requirements).strip() != "":
+        if (
+            requirements
+            and str(requirements).strip()
+            and str(requirements).strip() != "Не указано"
+            and str(requirements).strip() != ""
+        ):
             req_text = str(requirements).strip()
             if len(req_text) > 150:
                 req_text = req_text[:150] + "..."
@@ -225,7 +242,7 @@ class VacancyFormatter(BaseFormatter):
             return "Не указана"
 
         if isinstance(employer_info, dict):
-            return employer_info.get('name', 'Не указана')
+            return employer_info.get("name", "Не указана")
 
         return str(employer_info)
 
@@ -235,9 +252,9 @@ class VacancyFormatter(BaseFormatter):
         Форматирование информации о зарплате из словаря
         """
         salary_str = ""
-        from_value = salary_info.get('from')
-        to_value = salary_info.get('to')
-        currency = salary_info.get('currency')
+        from_value = salary_info.get("from")
+        to_value = salary_info.get("to")
+        currency = salary_info.get("currency")
 
         if from_value:
             salary_str += f"от {from_value} "
@@ -248,7 +265,6 @@ class VacancyFormatter(BaseFormatter):
 
         return salary_str.strip() if salary_str else "Зарплата не указана"
 
-    
 
 # Глобальный экземпляр форматтера
 vacancy_formatter = VacancyFormatter()

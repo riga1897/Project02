@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 from src.api_modules.base_api import BaseJobAPI
 from src.api_modules.cached_api import CachedAPI
@@ -23,7 +23,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
 
     BASE_URL = "https://api.hh.ru/vacancies"
     DEFAULT_CACHE_DIR = "data/cache/hh"
-    REQUIRED_VACANCY_FIELDS = {'name', 'alternate_url', 'salary'}
+    REQUIRED_VACANCY_FIELDS = {"name", "alternate_url", "salary"}
 
     def __init__(self, config: Optional[APIConfig] = None):
         """
@@ -44,7 +44,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         Returns:
             Dict: Пустая структура ответа с полем 'items'
         """
-        return {'items': []}
+        return {"items": []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
@@ -57,9 +57,9 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
             bool: True если структура валидна, False иначе
         """
         return (
-            isinstance(vacancy, dict) and 
-            bool(vacancy.get('name')) and  # У HH это поле 'name'
-            bool(vacancy.get('alternate_url'))  # У HH это поле 'alternate_url'
+            isinstance(vacancy, dict)
+            and bool(vacancy.get("name"))  # У HH это поле 'name'
+            and bool(vacancy.get("alternate_url"))  # У HH это поле 'alternate_url'
         )
 
     def __connect(self, url: str, params=None) -> Dict:
@@ -96,14 +96,10 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
             List[Dict]: Список валидных вакансий со страницы
         """
         try:
-            params = {
-                "text": search_query,
-                "page": page,
-                **self._config.hh_config.get_params(**kwargs)
-            }
+            params = {"text": search_query, "page": page, **self._config.hh_config.get_params(**kwargs)}
 
             data = self._CachedAPI__connect_to_api(self.BASE_URL, params, "hh")
-            items = data.get('items', [])
+            items = data.get("items", [])
 
             return [item for item in items if self._validate_vacancy(item)]
 
@@ -130,34 +126,20 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         try:
             # Initial request for metadata
             initial_data = self._CachedAPI__connect_to_api(
-                self.BASE_URL,
-                self._config.hh_config.get_params(
-                    text=search_query,
-                    page=0,
-                    per_page=1,
-                    **kwargs
-                ),
-                "hh"
+                self.BASE_URL, self._config.hh_config.get_params(text=search_query, page=0, per_page=1, **kwargs), "hh"
             )
 
-            if not initial_data.get('found', 0):
+            if not initial_data.get("found", 0):
                 logger.info("No vacancies found for query")
                 return []
 
-            total_pages = min(
-                initial_data.get('pages', 1),
-                self._config.get_pagination_params(**kwargs)["max_pages"]
-            )
+            total_pages = min(initial_data.get("pages", 1), self._config.get_pagination_params(**kwargs)["max_pages"])
 
-            logger.info(
-                f"Found {initial_data.get('found')} vacancies "
-                f"({total_pages} pages to process)"
-            )
+            logger.info(f"Found {initial_data.get('found')} vacancies " f"({total_pages} pages to process)")
 
             # Process all pages
             results = self._paginator.paginate(
-                fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs),
-                total_pages=total_pages
+                fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs), total_pages=total_pages
             )
 
             logger.info(f"Successfully processed {len(results)} vacancies")
@@ -181,7 +163,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         Returns:
             List[Dict]: Список уникальных вакансий
         """
-        return super()._deduplicate_vacancies(vacancies, 'hh')
+        return super()._deduplicate_vacancies(vacancies, "hh")
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """

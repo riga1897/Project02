@@ -1,12 +1,13 @@
 import logging
 from typing import List, Optional
-from src.vacancies.models import Vacancy
-from src.utils.ui_helpers import get_user_input, confirm_action
-from src.utils.vacancy_formatter import VacancyFormatter
-from src.ui_interfaces.source_selector import SourceSelector
+
 from src.api_modules.unified_api import UnifiedAPI
 from src.storage.json_saver import JSONSaver
+from src.ui_interfaces.source_selector import SourceSelector
+from src.utils.ui_helpers import confirm_action, get_user_input
 from src.utils.ui_navigation import quick_paginate
+from src.utils.vacancy_formatter import VacancyFormatter
+from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -130,6 +131,7 @@ class VacancySearchHandler:
         # Предпросмотр вакансий
         show_vacancies = confirm_action("Показать найденные вакансии?")
         if show_vacancies:
+
             def format_vacancy(vacancy: Vacancy, number: Optional[int] = None) -> str:
                 if vacancy is None:
                     raise ValueError("Received a vacancy object of None type.")
@@ -139,16 +141,16 @@ class VacancySearchHandler:
                 vacancies,
                 formatter=format_vacancy,
                 header=f"Найденные вакансии по запросу '{query}' из всех источников",
-                items_per_page=5
+                items_per_page=5,
             )
 
         # Предлагаем сохранить только новые вакансии
-        if duplicate_info['new_vacancies']:
+        if duplicate_info["new_vacancies"]:
             if confirm_action(f"Сохранить {len(duplicate_info['new_vacancies'])} новых вакансий?"):
-                self._save_vacancies(duplicate_info['new_vacancies'])
+                self._save_vacancies(duplicate_info["new_vacancies"])
             else:
                 print("Новые вакансии не сохранены")
-        elif duplicate_info['total_count'] > 0:
+        elif duplicate_info["total_count"] > 0:
             print("Нет новых вакансий для сохранения.")
 
     def _save_vacancies(self, vacancies: List[Vacancy]) -> None:
@@ -179,7 +181,7 @@ class VacancySearchHandler:
             dict: Словарь с информацией о дубликатах и новых вакансиях.
         """
         from tqdm import tqdm
-        
+
         existing_vacancies = []
         new_vacancies = []
         total_count = len(vacancies)
@@ -194,11 +196,11 @@ class VacancySearchHandler:
                 pbar.update(1)
 
         return {
-            'existing_count': len(existing_vacancies),
-            'new_count': len(new_vacancies),
-            'existing_vacancies': existing_vacancies,
-            'new_vacancies': new_vacancies,
-            'total_count': total_count
+            "existing_count": len(existing_vacancies),
+            "new_count": len(new_vacancies),
+            "existing_vacancies": existing_vacancies,
+            "new_vacancies": new_vacancies,
+            "total_count": total_count,
         }
 
     @staticmethod
@@ -209,9 +211,9 @@ class VacancySearchHandler:
         Args:
             duplicate_info: Словарь с информацией о дубликатах.
         """
-        total_count = duplicate_info['total_count']
-        existing_count = duplicate_info['existing_count']
-        new_count = duplicate_info['new_count']
+        total_count = duplicate_info["total_count"]
+        existing_count = duplicate_info["existing_count"]
+        new_count = duplicate_info["new_count"]
 
         if total_count == 0:
             print("Не найдено ни одной вакансии.")
@@ -245,14 +247,7 @@ class VacancySearchHandler:
 
             choice = input("Ваш выбор (по умолчанию 15 дней): ").strip()
 
-            period_map = {
-                "1": 1,
-                "2": 3,
-                "3": 7,
-                "4": 15,
-                "5": 30,
-                "": 15
-            }
+            period_map = {"1": 1, "2": 3, "3": 7, "4": 15, "5": 30, "": 15}
 
             if choice == "0":
                 print("Выбор периода отменен.")

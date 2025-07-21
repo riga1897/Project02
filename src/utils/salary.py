@@ -1,9 +1,10 @@
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 
 class Salary:
-    """Класс для обработки зарплатных данных """
+    """Класс для обработки зарплатных данных"""
 
-    __slots__ = ('_salary_from', '_salary_to', '_currency', 'gross', 'period', 'amount_from', 'amount_to')
+    __slots__ = ("_salary_from", "_salary_to", "_currency", "gross", "period", "amount_from", "amount_to")
 
     def __init__(self, salary_data: Optional[Dict[str, Any]] = None):
         if salary_data is None:
@@ -12,11 +13,11 @@ class Salary:
         self.amount_from = 0
         self.amount_to = 0
         self.gross = False
-        self.period = 'month'
+        self.period = "month"
 
-        self._salary_from = self._validate_salary_value(salary_data.get('from'))
-        self._salary_to = self._validate_salary_value(salary_data.get('to'))
-        self._currency = self._validate_currency(salary_data.get('currency', 'RUR'))
+        self._salary_from = self._validate_salary_value(salary_data.get("from"))
+        self._salary_to = self._validate_salary_value(salary_data.get("to"))
+        self._currency = self._validate_currency(salary_data.get("currency", "RUR"))
 
         if salary_data:
             self._validate_and_set(salary_data)
@@ -26,16 +27,16 @@ class Salary:
         if not isinstance(data, dict):
             return
 
-        self.amount_from = data.get('from') or 0
-        self.amount_to = data.get('to') or 0
-        self.gross = data.get('gross', False)
+        self.amount_from = data.get("from") or 0
+        self.amount_to = data.get("to") or 0
+        self.gross = data.get("gross", False)
 
-        if 'salary_range' in data and isinstance(data['salary_range'], dict):
-            salary_range = data['salary_range']
-            self.amount_from = salary_range.get('from') or self.amount_from
-            self.amount_to = salary_range.get('to') or self.amount_to
-            if salary_range.get('mode') and isinstance(salary_range['mode'], dict):
-                mode_id = salary_range['mode'].get('id', '').lower()
+        if "salary_range" in data and isinstance(data["salary_range"], dict):
+            salary_range = data["salary_range"]
+            self.amount_from = salary_range.get("from") or self.amount_from
+            self.amount_to = salary_range.get("to") or self.amount_to
+            if salary_range.get("mode") and isinstance(salary_range["mode"], dict):
+                mode_id = salary_range["mode"].get("id", "").lower()
                 if mode_id:
                     self.period = mode_id
 
@@ -54,7 +55,7 @@ class Salary:
     def _validate_currency(value: Any) -> str:
         """Валидация валюты"""
         if not value or not isinstance(value, str):
-            return 'RUR'
+            return "RUR"
         return value.upper().strip()
 
     @property
@@ -76,15 +77,14 @@ class Salary:
             return (self.amount_from + self.amount_to) // 2
         return self.amount_from or self.amount_to or 0
 
-
     def to_dict(self) -> Dict[str, Any]:
         """Преобразование в словарь"""
         return {
-            'from': self.amount_from,
-            'to': self.amount_to,
-            'currency': self.currency,
-            'gross': self.gross,
-            'period': self.period
+            "from": self.amount_from,
+            "to": self.amount_to,
+            "currency": self.currency,
+            "gross": self.gross,
+            "period": self.period,
         }
 
     def get_max_salary(self) -> Optional[int]:
@@ -95,11 +95,7 @@ class Salary:
             return self.amount_from
         return None
 
-    CURRENCY_SYMBOLS = {
-        'RUR': 'руб.',
-        'USD': '$',
-        'EUR': '€'
-    }
+    CURRENCY_SYMBOLS = {"RUR": "руб.", "USD": "$", "EUR": "€"}
 
     def __str__(self) -> str:
         """Строковое представление зарплаты"""
@@ -115,10 +111,10 @@ class Salary:
         currency = self.CURRENCY_SYMBOLS.get(self.currency, self.currency)
 
         # Добавляем период если указан
-        period_str = ''
+        period_str = ""
         if self.period:
             # Исправляем формат периода для SuperJob
-            if self.period in ['месяц', 'month']:
+            if self.period in ["месяц", "month"]:
                 period_str = "в месяц"
             else:
                 period_str = f"в {self.period}"

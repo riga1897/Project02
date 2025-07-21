@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 @dataclass
 class SJAPIConfig:
     """Конфигурация специфичных параметров SuperJob API"""
+
     count: int = 500  # Максимальное количество элементов на странице (до 500 по API)
     published: int = 15  # Период публикации в днях (по умолчанию 15 дней)
     custom_params: Dict[str, Any] = None

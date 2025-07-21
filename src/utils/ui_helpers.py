@@ -1,6 +1,8 @@
 import logging
 from typing import List, Optional
 
+from src.utils.vacancy_formatter import vacancy_formatter
+from src.utils.vacancy_operations import VacancyOperations
 from src.vacancies.models import Vacancy
 
 logger = logging.getLogger(__name__)
@@ -92,9 +94,9 @@ def confirm_action(prompt: str) -> bool:
     """
     while True:
         answer = input(f"{prompt} (y/n): ").strip().lower()
-        if answer in ['y', 'yes', 'д', 'да']:
+        if answer in ["y", "yes", "д", "да"]:
             return True
-        elif answer in ['n', 'no', 'н', 'нет']:
+        elif answer in ["n", "no", "н", "нет"]:
             return False
         else:
             print("Введите 'y' для да или 'n' для нет.")
@@ -125,13 +127,11 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         if vacancy.title and keyword_lower in vacancy.title.lower():
             relevance_score += 10
 
-        
-
         # Проверяем в требованиях (средний приоритет)
         if vacancy.requirements and keyword_lower in vacancy.requirements.lower():
             relevance_score += 5
 
-        # Проверяем в обязанностях (средний приоритет)  
+        # Проверяем в обязанностях (средний приоритет)
         if vacancy.responsibilities and keyword_lower in vacancy.responsibilities.lower():
             relevance_score += 5
 
@@ -146,8 +146,8 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         # Проверяем в навыках
         if vacancy.skills:
             for skill in vacancy.skills:
-                if isinstance(skill, dict) and 'name' in skill:
-                    if keyword_lower in skill['name'].lower():
+                if isinstance(skill, dict) and "name" in skill:
+                    if keyword_lower in skill["name"].lower():
                         relevance_score += 6
                 elif isinstance(skill, str) and keyword_lower in skill.lower():
                     relevance_score += 6
@@ -155,7 +155,7 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
         # Дополнительные проверки для улучшения поиска
         # Проверяем в информации о работодателе
         if vacancy.employer and isinstance(vacancy.employer, dict):
-            employer_name = vacancy.employer.get('name', '')
+            employer_name = vacancy.employer.get("name", "")
             if employer_name and keyword_lower in employer_name.lower():
                 relevance_score += 4
 
@@ -181,47 +181,47 @@ def filter_vacancies_by_keyword(vacancies: List[Vacancy], keyword: str) -> List[
             filtered_vacancies.append(vacancy)
 
     # Сортируем по релевантности
-    filtered_vacancies.sort(key=lambda x: getattr(x, '_relevance_score', 0), reverse=True)
+    filtered_vacancies.sort(key=lambda x: getattr(x, "_relevance_score", 0), reverse=True)
 
     return filtered_vacancies
 
 
 # Эти функции перенесены в src/utils/vacancy_operations.py
-# Импортируем их оттуда для обратной совместимости
-from src.utils.vacancy_operations import VacancyOperations
+
 
 def filter_vacancies_by_min_salary(vacancies: List[Vacancy], min_salary: int) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_min_salary"""
     return VacancyOperations.filter_vacancies_by_min_salary(vacancies, min_salary)
 
+
 def filter_vacancies_by_max_salary(vacancies: List[Vacancy], max_salary: int) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_max_salary"""
     return VacancyOperations.filter_vacancies_by_max_salary(vacancies, max_salary)
+
 
 def filter_vacancies_by_salary_range(vacancies: List[Vacancy], min_salary: int, max_salary: int) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_salary_range"""
     return VacancyOperations.filter_vacancies_by_salary_range(vacancies, min_salary, max_salary)
 
+
 def get_vacancies_with_salary(vacancies: List[Vacancy]) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.get_vacancies_with_salary"""
     return VacancyOperations.get_vacancies_with_salary(vacancies)
+
 
 def sort_vacancies_by_salary(vacancies: List[Vacancy], reverse: bool = True) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.sort_vacancies_by_salary"""
     return VacancyOperations.sort_vacancies_by_salary(vacancies, reverse)
 
+
 def filter_vacancies_by_multiple_keywords(vacancies: List[Vacancy], keywords: List[str]) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.filter_vacancies_by_multiple_keywords"""
     return VacancyOperations.filter_vacancies_by_multiple_keywords(vacancies, keywords)
 
+
 def search_vacancies_advanced(vacancies: List[Vacancy], query: str) -> List[Vacancy]:
     """Устаревшая функция - используйте VacancyOperations.search_vacancies_advanced"""
     return VacancyOperations.search_vacancies_advanced(vacancies, query)
-
-
-
-
-
 
 
 def debug_vacancy_search(vacancy: Vacancy, keyword: str) -> None:
@@ -288,13 +288,10 @@ def debug_search_vacancies(vacancies: List[Vacancy], keyword: str) -> None:
         debug_vacancy_search(vacancy, keyword)
 
 
-# Импорт унифицированного форматтера
-from src.utils.vacancy_formatter import vacancy_formatter
-
-def display_vacancy_info(vacancy: 'Vacancy', number: int = None) -> None:
+def display_vacancy_info(vacancy: "Vacancy", number: int = None) -> None:
     """
     Отображение информации о вакансии
-    
+
     Args:
         vacancy: Объект вакансии
         number: Порядковый номер (опционально)

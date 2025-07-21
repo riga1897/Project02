@@ -9,14 +9,9 @@ from src.storage.json_saver import JSONSaver
 from src.ui_interfaces.source_selector import SourceSelector
 from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
 from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
-from src.utils.menu_manager import create_main_menu, print_section_header, print_menu_separator
-from src.utils.ui_helpers import (
-    confirm_action,
-    get_user_input,
-    parse_salary_range,
-    filter_vacancies_by_keyword,
-    display_vacancy_info
-)
+from src.utils.menu_manager import create_main_menu, print_menu_separator, print_section_header
+from src.utils.ui_helpers import (confirm_action, display_vacancy_info, filter_vacancies_by_keyword, get_user_input,
+                                  parse_salary_range)
 from src.utils.ui_navigation import quick_paginate
 from src.utils.vacancy_formatter import VacancyFormatter
 from src.utils.vacancy_operations import VacancyOperations
@@ -151,9 +146,9 @@ class UserInterface:
                 return
 
             # Определяем тип поиска
-            if ',' in query and ' AND ' not in query.upper() and ' OR ' not in query.upper():
+            if "," in query and " AND " not in query.upper() and " OR " not in query.upper():
                 # Поиск по нескольким ключевым словам через запятую
-                keywords = [kw.strip() for kw in query.split(',')]
+                keywords = [kw.strip() for kw in query.split(",")]
                 filtered_vacancies = self.vacancy_ops.filter_vacancies_by_multiple_keywords(vacancies, keywords)
                 print(f"\nПоиск по ключевым словам: {', '.join(keywords)}")
             else:
@@ -168,14 +163,14 @@ class UserInterface:
             print(f"Найдено {len(filtered_vacancies)} вакансий:")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy, number=None):
+            def format_vacancy(vacancy, number=None) -> str:
                 return VacancyFormatter.format_vacancy_info(vacancy, number)
 
             quick_paginate(
                 filtered_vacancies,
                 formatter=format_vacancy,
                 header="Результаты расширенного поиска",
-                items_per_page=ui_pagination_config.get_items_per_page('search')
+                items_per_page=ui_pagination_config.get_items_per_page("search"),
             )
 
         except Exception as e:
@@ -223,7 +218,9 @@ class UserInterface:
                 parsed_range = parse_salary_range(salary_range)
                 if parsed_range:
                     min_salary, max_salary = parsed_range
-                    filtered_vacancies = self.vacancy_ops.filter_vacancies_by_salary_range(vacancies, min_salary, max_salary)
+                    filtered_vacancies = self.vacancy_ops.filter_vacancies_by_salary_range(
+                        vacancies, min_salary, max_salary
+                    )
                     print(f"\nВакансии с зарплатой в диапазоне {min_salary} - {max_salary} руб.:")
                 else:
                     return
@@ -242,14 +239,14 @@ class UserInterface:
             print(f"Найдено {len(sorted_vacancies)} вакансий:")
 
             # Постраничный просмотр
-            def format_vacancy(vacancy, number=None):
+            def format_vacancy(vacancy, number=None) -> str:
                 return VacancyFormatter.format_vacancy_info(vacancy, number)
 
             quick_paginate(
                 sorted_vacancies,
                 formatter=format_vacancy,
                 header="Вакансии по зарплате",
-                items_per_page=ui_pagination_config.get_items_per_page('search')
+                items_per_page=ui_pagination_config.get_items_per_page("search"),
             )
 
         except Exception as e:
@@ -309,7 +306,7 @@ class UserInterface:
                             break
 
                     if vacancy_to_delete:
-                        print(f"\nВакансия для удаления:")
+                        print("\nВакансия для удаления:")
                         print(f"ID: {vacancy_to_delete.vacancy_id}")
                         print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
                         if vacancy_to_delete.employer:
@@ -352,10 +349,7 @@ class UserInterface:
             self.source_selector.display_sources_info(sources)
             if confirm_action("Вы уверены, что хотите очистить кэш выбранных источников?"):
                 # Конвертируем sources (set) в нужный формат для clear_cache
-                cache_sources = {
-                    'hh': 'hh' in sources,
-                    'sj': 'sj' in sources
-                }
+                cache_sources = {"hh": "hh" in sources, "sj": "sj" in sources}
                 self.unified_api.clear_cache(cache_sources)
                 print("Кэш выбранных источников успешно очищен.")
             else:
@@ -384,14 +378,7 @@ class UserInterface:
 
             choice = input("Ваш выбор (по умолчанию 15 дней): ").strip()
 
-            period_map = {
-                "1": 1,
-                "2": 3,
-                "3": 7,
-                "4": 15,
-                "5": 30,
-                "": 15  # По умолчанию
-            }
+            period_map = {"1": 1, "2": 3, "3": 7, "4": 15, "5": 30, "": 15}  # По умолчанию
 
             if choice == "0":
                 print("Выбор периода отменен.")
@@ -422,12 +409,12 @@ class UserInterface:
         """Настройка SuperJob API"""
         import os
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("НАСТРОЙКА SUPERJOB API")
-        print("="*60)
+        print("=" * 60)
 
-        current_key = os.getenv('SUPERJOB_API_KEY')
-        if current_key and current_key != 'v3.r.137440105.example.test_tool':
+        current_key = os.getenv("SUPERJOB_API_KEY")
+        if current_key and current_key != "v3.r.137440105.example.test_tool":
             print("✅ SuperJob API ключ уже настроен")
         else:
             print("❌ SuperJob API ключ не настроен или используется тестовый")
@@ -444,7 +431,7 @@ class UserInterface:
         print("• Введите Value: ваш настоящий API ключ")
         print("• Нажмите 'Add Secret'")
         print("• Перезапустите приложение")
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
 
         input("\nНажмите Enter для продолжения...")
 
@@ -468,15 +455,11 @@ class UserInterface:
         Args:
             vacancies: Список вакансий для отображения
         """
-        def format_vacancy(vacancy, number=None):
+
+        def format_vacancy(vacancy, number=None) -> str:
             return VacancyFormatter.format_vacancy_info(vacancy, number)
 
-        quick_paginate(
-            vacancies,
-            formatter=format_vacancy,
-            header="Вакансии",
-            items_per_page=10
-        )
+        quick_paginate(vacancies, formatter=format_vacancy, header="Вакансии", items_per_page=10)
 
     def _show_vacancies_for_deletion(self, vacancies: List[Vacancy], keyword: str) -> None:
         """
@@ -528,10 +511,10 @@ class UserInterface:
 
             choice = input("Ваш выбор: ").strip().lower()
 
-            if choice == 'q':
+            if choice == "q":
                 print("Удаление отменено.")
                 break
-            elif choice == 'a':
+            elif choice == "a":
                 if confirm_action(f"Удалить ВСЕ {len(vacancies)} вакансий с ключевым словом '{keyword}'?"):
                     deleted_count = self.json_saver.delete_vacancies_by_keyword(keyword)
                     if deleted_count > 0:
@@ -539,14 +522,14 @@ class UserInterface:
                     else:
                         print("Не удалось удалить вакансии.")
                 break
-            elif choice == 'n' and current_page < total_pages:
+            elif choice == "n" and current_page < total_pages:
                 current_page += 1
-            elif choice == 'p' and current_page > 1:
+            elif choice == "p" and current_page > 1:
                 current_page -= 1
-            elif '-' in choice and choice not in ['n', 'p']:
+            elif "-" in choice and choice not in ["n", "p"]:
                 # Обработка диапазона (например: 8-9)
                 try:
-                    start_str, end_str = choice.split('-', 1)
+                    start_str, end_str = choice.split("-", 1)
                     start_num = int(start_str.strip())
                     end_num = int(end_str.strip())
 
@@ -596,7 +579,7 @@ class UserInterface:
                 vacancy_num = int(choice)
                 if 1 <= vacancy_num <= len(vacancies):
                     vacancy_to_delete = vacancies[vacancy_num - 1]
-                    print(f"\nВакансия для удаления:")
+                    print("\nВакансия для удаления:")
                     print(f"ID: {vacancy_to_delete.vacancy_id}")
                     print(f"Название: {vacancy_to_delete.title or 'Не указано'}")
                     if vacancy_to_delete.employer:
@@ -633,12 +616,12 @@ class UserInterface:
         """Настройка SuperJob API"""
         import os
 
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print("НАСТРОЙКА SUPERJOB API")
-        print("="*60)
+        print("=" * 60)
 
-        current_key = os.getenv('SUPERJOB_API_KEY')
-        if current_key and current_key != 'v3.r.137440105.example.test_tool':
+        current_key = os.getenv("SUPERJOB_API_KEY")
+        if current_key and current_key != "v3.r.137440105.example.test_tool":
             print("✅ SuperJob API ключ уже настроен")
         else:
             print("❌ SuperJob API ключ не настроен или используется тестовый")
@@ -655,6 +638,6 @@ class UserInterface:
         print("• Введите Value: ваш настоящий API ключ")
         print("• Нажмите 'Add Secret'")
         print("• Перезапустите приложение")
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
 
         input("\nНажмите Enter для продолжения...")

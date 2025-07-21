@@ -1,10 +1,11 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Any, Dict
 
 
 @dataclass
 class HHAPIConfig:
     """Конфигурация специфичных параметров HH API"""
+
     area: int = 113  # Россия по умолчанию
     per_page: int = 50  # Количество элементов на странице
     only_with_salary: bool = False
@@ -21,7 +22,7 @@ class HHAPIConfig:
             "area": kwargs.get("area", self.area),
             "per_page": kwargs.get("per_page", self.per_page),
             "only_with_salary": kwargs.get("only_with_salary", self.only_with_salary),
-            "period": kwargs.get("period", self.period)
+            "period": kwargs.get("period", self.period),
         }
         if self.custom_params:
             params.update(self.custom_params)

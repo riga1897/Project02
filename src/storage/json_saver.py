@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import List, Union, Dict, Any
+from typing import Any, Dict, List, Union
 
 from src.vacancies.models import Vacancy
 
@@ -12,15 +12,15 @@ logger = logging.getLogger(__name__)
 class JSONSaver:
     """
     Класс для работы с JSON хранилищем вакансий.
-    
+
     Обеспечивает сохранение, загрузку, обновление и удаление вакансий
     в JSON формате с валидацией данных и обработкой ошибок.
-    
+
     Attributes:
         _filename: Путь к файлу для хранения данных вакансий
     """
 
-    __slots__ = ('_filename',)
+    __slots__ = ("_filename",)
 
     def __init__(self, filename: str = "data/storage/vacancies.json"):
         self._filename = self._validate_filename(filename)
@@ -55,18 +55,21 @@ class JSONSaver:
         """Создает резервную копию поврежденного файла"""
         try:
             from datetime import datetime
-            
+
             file_path = Path(self.filename)
             if file_path.exists():
-                backup_name = f"{file_path.stem}_corrupted_{datetime.now().strftime('%Y%m%d_%H%M%S')}{file_path.suffix}"
+                backup_name = (
+                    f"{file_path.stem}_corrupted_{datetime.now().strftime('%Y%m%d_%H%M%S')}{file_path.suffix}"
+                )
                 backup_path = file_path.parent / backup_name
-                
+
                 import shutil
+
                 shutil.copy2(file_path, backup_path)
                 logger.info(f"Создана резервная копия поврежденного файла: {backup_path}")
-                
+
                 # Создаем новый пустой файл
-                with open(self.filename, 'w', encoding='utf-8') as f:
+                with open(self.filename, "w", encoding="utf-8") as f:
                     json.dump([], f, ensure_ascii=False, indent=2)
                 logger.info(f"Создан новый пустой файл: {self.filename}")
         except Exception as e:
@@ -92,7 +95,7 @@ class JSONSaver:
                 changed_fields = []
 
                 # Проверяем каждое поле на изменения
-                for field in ['title', 'url', 'salary', 'description', 'updated_at']:
+                for field in ["title", "url", "salary", "description", "updated_at"]:
                     old_val = getattr(existing_vac, field, None)
                     new_val = getattr(new_vac, field, None)
 
@@ -133,18 +136,20 @@ class JSONSaver:
     def load_vacancies(self) -> List[Vacancy]:
         """Загружает вакансии с улучшенной обработкой ошибок"""
         try:
-            with open(self.filename, 'r', encoding='utf-8') as f:
+            with open(self.filename, "r", encoding="utf-8") as f:
                 content = f.read().strip()
-                
+
                 # Если файл пустой, возвращаем пустой список
                 if not content:
                     logger.info("Файл пустой, возвращаем пустой список")
                     return []
-                
+
                 data = json.loads(content)
 
                 if not isinstance(data, list):
-                    logger.warning(f"Ожидался список, получен {type(data)}. Создаем резервную копию и возвращаем пустой список")
+                    logger.warning(
+                        f"Ожидался список, получен {type(data)}. Создаем резервную копию и возвращаем пустой список"
+                    )
                     self._backup_corrupted_file()
                     return []
 
@@ -189,7 +194,7 @@ class JSONSaver:
             bool: True если операция успешна, False иначе
         """
         try:
-            with open(self.filename, 'w', encoding='utf-8') as f:
+            with open(self.filename, "w", encoding="utf-8") as f:
                 json.dump([], f, ensure_ascii=False, indent=2)
             logger.info("Все вакансии удалены")
             return True
@@ -214,8 +219,7 @@ class JSONSaver:
             # Фильтруем вакансии, исключая нужную.
             # Проверяем vacancy_id и id для совместимости.
             filtered_vacancies = [
-                v for v in vacancies 
-                if v.vacancy_id != vacancy_id and getattr(v, 'id', None) != vacancy_id
+                v for v in vacancies if v.vacancy_id != vacancy_id and getattr(v, "id", None) != vacancy_id
             ]
 
             if len(filtered_vacancies) == initial_count:
@@ -294,8 +298,8 @@ class JSONSaver:
                 vac_dict = vac.to_dict()
                 # Дополнительная проверка структуры.
                 # Проверяем наличие ID (может быть как 'id', так и 'vacancy_id').
-                has_id = 'id' in vac_dict or 'vacancy_id' in vac_dict
-                if not (has_id and 'title' in vac_dict and 'url' in vac_dict):
+                has_id = "id" in vac_dict or "vacancy_id" in vac_dict
+                if not (has_id and "title" in vac_dict and "url" in vac_dict):
                     raise ValueError("Отсутствуют обязательные поля")
 
                 valid_data.append(vac_dict)
@@ -307,7 +311,7 @@ class JSONSaver:
             logger.warning(f"Пропущено {error_count} невалидных вакансий")
 
         try:
-            with open(self.filename, 'w', encoding='utf-8') as f:
+            with open(self.filename, "w", encoding="utf-8") as f:
                 json.dump(valid_data, f, ensure_ascii=False, indent=2)
             logger.info(f"Успешно сохранено {len(valid_data)} вакансий")
         except Exception as e:
@@ -317,10 +321,10 @@ class JSONSaver:
     def is_vacancy_exists(self, vacancy: Vacancy) -> bool:
         """
         Проверяет, существует ли вакансия в базе данных
-        
+
         Args:
             vacancy: Объект вакансии для проверки
-            
+
         Returns:
             bool: True если вакансия существует, False иначе
         """
@@ -335,7 +339,7 @@ class JSONSaver:
     def get_file_size(self) -> int:
         """
         Получает размер файла в байтах
-        
+
         Returns:
             int: Размер файла в байтах, 0 если файл не существует
         """
@@ -354,23 +358,23 @@ class JSONSaver:
         salary_dict = None
         if vacancy.salary:
             salary_dict = {
-                'from': vacancy.salary.salary_from,
-                'to': vacancy.salary.salary_to,
-                'currency': vacancy.salary.currency
+                "from": vacancy.salary.salary_from,
+                "to": vacancy.salary.salary_to,
+                "currency": vacancy.salary.currency,
             }
 
         return {
-            'title': vacancy.title,
-            'url': vacancy.url,
-            'salary': salary_dict,
-            'description': vacancy.description,
-            'requirements': vacancy.requirements,
-            'responsibilities': vacancy.responsibilities,
-            'experience': vacancy.experience,
-            'employment': vacancy.employment,
-            'schedule': vacancy.schedule,
-            'employer': vacancy.employer,
-            'area': vacancy.area,
-            'vacancy_id': vacancy.vacancy_id,
-            'published_at': vacancy.published_at
+            "title": vacancy.title,
+            "url": vacancy.url,
+            "salary": salary_dict,
+            "description": vacancy.description,
+            "requirements": vacancy.requirements,
+            "responsibilities": vacancy.responsibilities,
+            "experience": vacancy.experience,
+            "employment": vacancy.employment,
+            "schedule": vacancy.schedule,
+            "employer": vacancy.employer,
+            "area": vacancy.area,
+            "vacancy_id": vacancy.vacancy_id,
+            "published_at": vacancy.published_at,
         }

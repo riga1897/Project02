@@ -31,7 +31,7 @@ class TestJSONSaver:
             title="Python Developer",
             url="https://example.com/job/123",
             salary=salary_data,  # Передаем словарь, а не объект Salary
-            description="Test description"
+            description="Test description",
         )
 
     def test_init_default_filename(self):
@@ -66,7 +66,7 @@ class TestJSONSaver:
         result = JSONSaver._validate_filename(filename)
         assert result == "test.json"
 
-    @patch('pathlib.Path.mkdir')
+    @patch("pathlib.Path.mkdir")
     def test_ensure_data_directory(self, mock_mkdir):
         """Тест создания директории данных"""
         JSONSaver._ensure_data_directory()
@@ -76,8 +76,8 @@ class TestJSONSaver:
         """Тест создания файла если он не существует"""
         assert Path(json_saver.filename).exists()
 
-    @patch('src.storage.json_saver.logger')
-    @patch('shutil.copy2')
+    @patch("src.storage.json_saver.logger")
+    @patch("shutil.copy2")
     def test_backup_corrupted_file_success(self, mock_copy, mock_logger, json_saver):
         """Тест успешного создания резервной копии"""
         Path(json_saver.filename).write_text("corrupted data")
@@ -86,12 +86,12 @@ class TestJSONSaver:
         mock_logger.info.assert_called()
 
         # Проверяем, что создан новый пустой файл
-        with open(json_saver.filename, 'r') as f:
+        with open(json_saver.filename, "r") as f:
             data = json.load(f)
         assert data == []
 
-    @patch('src.storage.json_saver.logger')
-    @patch('shutil.copy2', side_effect=Exception("Copy error"))
+    @patch("src.storage.json_saver.logger")
+    @patch("shutil.copy2", side_effect=Exception("Copy error"))
     def test_backup_corrupted_file_error(self, mock_copy, mock_logger, json_saver):
         """Тест ошибки при создании резервной копии"""
         Path(json_saver.filename).write_text("corrupted data")
@@ -109,7 +109,7 @@ class TestJSONSaver:
         """Тест добавления списка вакансий"""
         vacancies = [
             Vacancy(vacancy_id="1", title="Job 1", url="http://test1.com"),
-            Vacancy(vacancy_id="2", title="Job 2", url="http://test2.com")
+            Vacancy(vacancy_id="2", title="Job 2", url="http://test2.com"),
         ]
         messages = json_saver.add_vacancy(vacancies)
         assert len(messages) == 2
@@ -123,7 +123,7 @@ class TestJSONSaver:
             vacancy_id=sample_vacancy.vacancy_id,
             title="Updated Python Developer",
             url=sample_vacancy.url,
-            description="Updated description"
+            description="Updated description",
         )
         messages = json_saver.add_vacancy(updated_vacancy)
         assert len(messages) == 1
@@ -159,7 +159,7 @@ class TestJSONSaver:
         vacancies = json_saver.load_vacancies()
         assert vacancies == []
 
-    @patch('src.storage.json_saver.logger')
+    @patch("src.storage.json_saver.logger")
     def test_load_vacancies_invalid_json(self, mock_logger, json_saver):
         """Тест загрузки некорректного JSON"""
         Path(json_saver.filename).write_text("invalid json")
@@ -167,7 +167,7 @@ class TestJSONSaver:
         assert vacancies == []
         mock_logger.error.assert_called()
 
-    @patch('src.storage.json_saver.logger')
+    @patch("src.storage.json_saver.logger")
     def test_load_vacancies_not_list(self, mock_logger, json_saver):
         """Тест загрузки JSON не являющегося списком"""
         Path(json_saver.filename).write_text('{"key": "value"}')
@@ -175,13 +175,13 @@ class TestJSONSaver:
         assert vacancies == []
         mock_logger.warning.assert_called()
 
-    @patch('src.storage.json_saver.logger')
+    @patch("src.storage.json_saver.logger")
     def test_load_vacancies_invalid_item(self, mock_logger, json_saver):
         """Тест загрузки с некорректными элементами"""
         data = [
             {"vacancy_id": "1", "title": "Valid Job", "url": "http://test.com"},
             "invalid item",
-            {"vacancy_id": "2", "title": "Another Job", "url": "http://test2.com"}
+            {"vacancy_id": "2", "title": "Another Job", "url": "http://test2.com"},
         ]
         Path(json_saver.filename).write_text(json.dumps(data))
         vacancies = json_saver.load_vacancies()
@@ -196,8 +196,8 @@ class TestJSONSaver:
         # Проверяем что результат пустой или содержит только валидные вакансии
         assert len(vacancies) >= 0
 
-    @patch('builtins.open', side_effect=PermissionError("Permission denied"))
-    @patch('src.storage.json_saver.logger')
+    @patch("builtins.open", side_effect=PermissionError("Permission denied"))
+    @patch("src.storage.json_saver.logger")
     def test_load_vacancies_permission_error(self, mock_logger, mock_open, json_saver):
         """Тест ошибки доступа при загрузке"""
         vacancies = json_saver.load_vacancies()
@@ -220,8 +220,8 @@ class TestJSONSaver:
         vacancies = json_saver.load_vacancies()
         assert len(vacancies) == 0
 
-    @patch('builtins.open', side_effect=PermissionError("Permission denied"))
-    @patch('src.storage.json_saver.logger')
+    @patch("builtins.open", side_effect=PermissionError("Permission denied"))
+    @patch("src.storage.json_saver.logger")
     def test_delete_all_vacancies_error(self, mock_logger, mock_open, json_saver):
         """Тест ошибки при удалении всех вакансий"""
         result = json_saver.delete_all_vacancies()
@@ -244,24 +244,20 @@ class TestJSONSaver:
 
     def test_delete_vacancy_by_id_with_legacy_id(self, json_saver):
         """Тест удаления вакансии с legacy ID полем"""
-        vacancy_data = {
-            "id": "legacy123",
-            "title": "Test Job",
-            "url": "http://test.com"
-        }
+        vacancy_data = {"id": "legacy123", "title": "Test Job", "url": "http://test.com"}
         Path(json_saver.filename).write_text(json.dumps([vacancy_data]))
         result = json_saver.delete_vacancy_by_id("legacy123")
         assert result is True
 
-    @patch('src.storage.json_saver.logger')
-    @patch('builtins.open', side_effect=Exception("File error"))
+    @patch("src.storage.json_saver.logger")
+    @patch("builtins.open", side_effect=Exception("File error"))
     def test_delete_vacancy_by_id_error(self, mock_open, mock_logger, json_saver):
         """Тест ошибки при удалении вакансии по ID"""
         result = json_saver.delete_vacancy_by_id("123")
         assert result is False
         mock_logger.error.assert_called()
 
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch("src.utils.ui_helpers.filter_vacancies_by_keyword")
     def test_delete_vacancies_by_keyword_success(self, mock_filter, json_saver, sample_vacancy):
         """Тест успешного удаления вакансий по ключевому слову"""
         json_saver.add_vacancy(sample_vacancy)
@@ -269,7 +265,7 @@ class TestJSONSaver:
         count = json_saver.delete_vacancies_by_keyword("python")
         assert count == 1
 
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch("src.utils.ui_helpers.filter_vacancies_by_keyword")
     def test_delete_vacancies_by_keyword_no_matches(self, mock_filter, json_saver, sample_vacancy):
         """Тест удаления по ключевому слову без совпадений"""
         json_saver.add_vacancy(sample_vacancy)
@@ -277,8 +273,8 @@ class TestJSONSaver:
         count = json_saver.delete_vacancies_by_keyword("java")
         assert count == 0
 
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error"))
-    @patch('src.storage.json_saver.logger')
+    @patch("src.utils.ui_helpers.filter_vacancies_by_keyword", side_effect=Exception("Filter error"))
+    @patch("src.storage.json_saver.logger")
     def test_delete_vacancies_by_keyword_error(self, mock_logger, mock_filter, json_saver):
         """Тест ошибки при удалении по ключевому слову"""
         count = json_saver.delete_vacancies_by_keyword("test")
@@ -313,9 +309,11 @@ class TestJSONSaver:
 
     def test_ensure_json_serializable_object(self, json_saver):
         """Тест сериализации произвольного объекта"""
+
         class TestObject:
             def __str__(self):
                 return "test object"
+
         obj = TestObject()
         result = json_saver._ensure_json_serializable(obj)
         assert result == "test object"
@@ -330,10 +328,10 @@ class TestJSONSaver:
         except Exception:
             # Ожидаем, что метод может выбрасывать исключение при критических ошибках
             pass
-        
+
         # Проверяем что файл содержит пустой список (невалидные данные пропущены)
         try:
-            with open(json_saver.filename, 'r', encoding='utf-8') as f:
+            with open(json_saver.filename, "r", encoding="utf-8") as f:
                 content = f.read().strip()
                 if not content:
                     data = []
@@ -344,7 +342,7 @@ class TestJSONSaver:
             # Если файл пустой или не создался - это тоже валидный результат
             assert True
 
-    @patch('src.storage.json_saver.logger')
+    @patch("src.storage.json_saver.logger")
     def test_save_to_file_missing_required_fields(self, mock_logger, json_saver):
         """Тест сохранения вакансии без обязательных полей"""
         # Создаем мок вакансии без обязательных полей
@@ -356,8 +354,8 @@ class TestJSONSaver:
         mock_logger.error.assert_called()
         mock_logger.warning.assert_called_with("Пропущено 1 невалидных вакансий")
 
-    @patch('builtins.open', side_effect=PermissionError("Permission denied"))
-    @patch('src.storage.json_saver.logger')
+    @patch("builtins.open", side_effect=PermissionError("Permission denied"))
+    @patch("src.storage.json_saver.logger")
     def test_save_to_file_write_error(self, mock_logger, mock_open, json_saver, sample_vacancy):
         """Тест ошибки записи в файл"""
         with pytest.raises(PermissionError):
@@ -376,8 +374,8 @@ class TestJSONSaver:
         result = json_saver.is_vacancy_exists(sample_vacancy)
         assert result is False
 
-    @patch('src.storage.json_saver.logger')
-    @patch('src.storage.json_saver.JSONSaver.load_vacancies')
+    @patch("src.storage.json_saver.logger")
+    @patch("src.storage.json_saver.JSONSaver.load_vacancies")
     def test_is_vacancy_exists_error(self, mock_load, mock_logger, json_saver, sample_vacancy):
         """Тест ошибки при проверке существования вакансии"""
         mock_load.side_effect = Exception("Load error")
@@ -399,10 +397,10 @@ class TestJSONSaver:
         size = json_saver.get_file_size()
         assert size == 0
 
-    @patch('src.storage.json_saver.logger')
+    @patch("src.storage.json_saver.logger")
     def test_get_file_size_error(self, mock_logger, json_saver):
         """Тест ошибки при получении размера файла"""
-        with patch('pathlib.Path.stat', side_effect=PermissionError("Access denied")):
+        with patch("pathlib.Path.stat", side_effect=PermissionError("Access denied")):
             size = json_saver.get_file_size()
             assert size == 0
             mock_logger.error.assert_called()
@@ -411,30 +409,26 @@ class TestJSONSaver:
         """Тест преобразования вакансии с зарплатой в словарь"""
         result = JSONSaver._vacancy_to_dict(sample_vacancy)
 
-        assert result['title'] == sample_vacancy.title
-        assert result['url'] == sample_vacancy.url
-        assert result['vacancy_id'] == sample_vacancy.vacancy_id
-        assert result['salary']['from'] == sample_vacancy.salary.salary_from
-        assert result['salary']['to'] == sample_vacancy.salary.salary_to
-        assert result['salary']['currency'] == sample_vacancy.salary.currency
+        assert result["title"] == sample_vacancy.title
+        assert result["url"] == sample_vacancy.url
+        assert result["vacancy_id"] == sample_vacancy.vacancy_id
+        assert result["salary"]["from"] == sample_vacancy.salary.salary_from
+        assert result["salary"]["to"] == sample_vacancy.salary.salary_to
+        assert result["salary"]["currency"] == sample_vacancy.salary.currency
 
     def test_vacancy_to_dict_without_salary(self):
         """Тест преобразования вакансии без зарплаты в словарь"""
-        vacancy = Vacancy(
-            vacancy_id="123",
-            title="Test Job",
-            url="http://test.com"
-        )
+        vacancy = Vacancy(vacancy_id="123", title="Test Job", url="http://test.com")
 
         result = JSONSaver._vacancy_to_dict(vacancy)
 
-        assert result['title'] == vacancy.title
-        assert result['url'] == vacancy.url
-        assert result['vacancy_id'] == vacancy.vacancy_id
+        assert result["title"] == vacancy.title
+        assert result["url"] == vacancy.url
+        assert result["vacancy_id"] == vacancy.vacancy_id
         # Salary создается по умолчанию с None значениями
-        assert result['salary']['from'] is None
-        assert result['salary']['to'] is None
-        assert result['salary']['currency'] == 'RUR'
+        assert result["salary"]["from"] is None
+        assert result["salary"]["to"] is None
+        assert result["salary"]["currency"] == "RUR"
 
     def test_property_filename(self, json_saver):
         """Тест свойства filename"""
@@ -442,41 +436,37 @@ class TestJSONSaver:
 
     def test_backup_corrupted_file_lines_160_161(self, json_saver, mocker):
         """Тест для покрытия строк 160-161 в _backup_corrupted_file"""
-        mocker.patch('pathlib.Path.exists', return_value=False)
-        mock_logger = mocker.patch('src.storage.json_saver.logger')
-        
+        mocker.patch("pathlib.Path.exists", return_value=False)
+        mock_logger = mocker.patch("src.storage.json_saver.logger")
+
         # Файл не существует - должны покрыться строки с проверкой
         json_saver._backup_corrupted_file()
-        
+
         # Проверяем что логирование не вызывалось для несуществующего файла
         mock_logger.info.assert_not_called()
 
     def test_save_to_file_lines_229_231(self, json_saver, sample_vacancy, mocker):
         """Тест для покрытия строк 229-231"""
-        mock_logger = mocker.patch('src.storage.json_saver.logger')
-        
+        mock_logger = mocker.patch("src.storage.json_saver.logger")
+
         # Создаем мок вакансии с невалидными данными
         invalid_vacancy = mocker.Mock()
         invalid_vacancy.to_dict.return_value = {"invalid": "data"}  # Нет обязательных полей
-        
+
         json_saver._save_to_file([invalid_vacancy])
-        
+
         # Проверяем логирование ошибки валидации (строка 229)
         mock_logger.error.assert_called()
-        # Проверяем предупреждение о пропущенных вакансиях (строка 231)  
+        # Проверяем предупреждение о пропущенных вакансиях (строка 231)
         mock_logger.warning.assert_called_with("Пропущено 1 невалидных вакансий")
 
     def test_vacancy_to_dict_line_299(self):
         """Тест для покрытия строки 299 в _vacancy_to_dict"""
-        vacancy = Vacancy(
-            vacancy_id="123",
-            title="Test Job", 
-            url="http://test.com"
-        )
+        vacancy = Vacancy(vacancy_id="123", title="Test Job", url="http://test.com")
         # Принудительно устанавливаем salary в None
         vacancy.salary = None
-        
+
         result = JSONSaver._vacancy_to_dict(vacancy)
-        
+
         # Проверяем что salary_dict устанавливается в None (строка 299)
-        assert result['salary'] is None
+        assert result["salary"] is None

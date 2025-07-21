@@ -1,8 +1,9 @@
-from typing import List, Dict, Any
 import logging
-from ..models import Vacancy
+from typing import Any, Dict, List
 
 from src.utils.cache import FileCache
+
+from ..models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -48,16 +49,16 @@ class HHParser:
                 hh_vacancy = Vacancy.from_dict(item)
                 # Устанавливаем raw_data для доступа к исходным данным
                 hh_vacancy.raw_data = item
-            # Обработка snippet (специфично для HH)
-                snippet = item.get('snippet', {})
+                # Обработка snippet (специфично для HH)
+                snippet = item.get("snippet", {})
 
                 if isinstance(snippet, dict):
-                    requirements = snippet.get('requirement')
-                    responsibilities = snippet.get('responsibility')
+                    requirements = snippet.get("requirement")
+                    responsibilities = snippet.get("responsibility")
 
-                # Отладочная информация для определенных вакансий
-                    vacancy_id = str(item.get('id', ''))
-                    if vacancy_id in ['122732917', '122993500', '122509873', '122991966', '122865078']:
+                    # Отладочная информация для определенных вакансий
+                    vacancy_id = str(item.get("id", ""))
+                    if vacancy_id in ["122732917", "122993500", "122509873", "122991966", "122865078"]:
                         print(f"DEBUG HH Parser ID {vacancy_id}:")
                         print(f"  raw item keys = {list(item.keys())}")
                         print(f"  snippet = {snippet}")
@@ -82,9 +83,9 @@ class HHParser:
             vacancy_id=hh_vacancy.vacancy_id,
             title=hh_vacancy.title,
             url=(
-                (hh_vacancy.raw_data.get('alternate_url') if hh_vacancy.raw_data else '') or
-                (hh_vacancy.raw_data.get('url') if hh_vacancy.raw_data else '') or
-                ''
+                (hh_vacancy.raw_data.get("alternate_url") if hh_vacancy.raw_data else "")
+                or (hh_vacancy.raw_data.get("url") if hh_vacancy.raw_data else "")
+                or ""
             ),
             salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
             description=hh_vacancy.description,
@@ -98,5 +99,5 @@ class HHParser:
             skills=hh_vacancy.skills,
             detailed_description=hh_vacancy.detailed_description,
             benefits=hh_vacancy.benefits,
-            source=hh_vacancy.source
+            source=hh_vacancy.source,
         )

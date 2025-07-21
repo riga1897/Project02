@@ -7,10 +7,12 @@
 """
 
 import os
-import requests
-from typing import Dict, Optional
 from time import sleep
+from typing import Dict, Optional
+
+import requests
 from tqdm import tqdm
+
 from src.config.api_config import APIConfig
 
 
@@ -30,10 +32,7 @@ class APIConnector:
             config: Конфигурация API (если None, используется конфигурация по умолчанию)
         """
         self.config = config or APIConfig()
-        self.headers = {
-            'User-Agent': self.config.user_agent,
-            'Accept': 'application/json'
-        }
+        self.headers = {"User-Agent": self.config.user_agent, "Accept": "application/json"}
         self._progress = None
 
     def _init_progress(self, total: int, desc: str) -> None:
@@ -45,12 +44,12 @@ class APIConnector:
             desc: Описание операции
         """
         tqdm_params = {
-            'total': total,
-            'desc': desc,
-            'unit': "req",
-            'bar_format': "{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]",
-            'dynamic_ncols': True,
-            'disable': os.getenv('DISABLE_TQDM') == '1'  # Автоматическое отключение
+            "total": total,
+            "desc": desc,
+            "unit": "req",
+            "bar_format": "{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}]",
+            "dynamic_ncols": True,
+            "disable": os.getenv("DISABLE_TQDM") == "1",  # Автоматическое отключение
         }
         self._progress = tqdm(**tqdm_params)
 
@@ -75,12 +74,12 @@ class APIConnector:
             self._progress = None
 
     def __connect(
-            self,
-            url: str,
-            params: Dict,
-            delay: float = 0.15,
-            show_progress: bool = False,
-            progress_desc: Optional[str] = None
+        self,
+        url: str,
+        params: Dict,
+        delay: float = 0.15,
+        show_progress: bool = False,
+        progress_desc: Optional[str] = None,
     ) -> Dict:
         """
         Выполнение API-запроса с обработкой ошибок и прогрессом
@@ -108,13 +107,13 @@ class APIConnector:
                 url,
                 params={k: v for k, v in params.items() if v is not None},
                 headers=self.headers,
-                timeout=self.config.timeout
+                timeout=self.config.timeout,
             )
 
             self._update_progress()
 
             if response.status_code == 429:
-                retry_after = int(response.headers.get('Retry-After', 1))
+                retry_after = int(response.headers.get("Retry-After", 1))
                 sleep(retry_after)
                 return self.__connect(url, params, delay, show_progress, progress_desc)
 
@@ -145,7 +144,7 @@ class APIConnector:
         Выполнение HTTP-запроса
 
         Args:
-            url: URL для запроса  
+            url: URL для запроса
             params: Параметры запроса
 
         Returns:

@@ -1,10 +1,11 @@
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 
 from src.config.api_config import APIConfig
 from src.config.sj_api_config import SJAPIConfig
 from src.utils.env_loader import EnvLoader
 from src.utils.paginator import Paginator
+
 from .base_api import BaseJobAPI
 from .cached_api import CachedAPI
 from .get_api import APIConnector
@@ -25,7 +26,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
 
     BASE_URL = "https://api.superjob.ru/2.0/vacancies"
     DEFAULT_CACHE_DIR = "data/cache/sj"
-    REQUIRED_VACANCY_FIELDS = {'profession', 'link'}
+    REQUIRED_VACANCY_FIELDS = {"profession", "link"}
 
     def __init__(self, config: Optional[SJAPIConfig] = None):
         """
@@ -42,18 +43,19 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         self.connector = APIConnector(api_config)
 
         # Настраиваем специфичные для SJ заголовки
-        api_key = EnvLoader.get_env_var('SUPERJOB_API_KEY', 'v3.r.137440105.example.test_tool')
-        self.connector.headers.update({
-            "X-Api-App-Id": api_key,
-            "User-Agent": "VacancySearchApp/1.0"
-        })
+        api_key = EnvLoader.get_env_var("SUPERJOB_API_KEY", "v3.r.137440105.example.test_tool")
+        self.connector.headers.update({"X-Api-App-Id": api_key, "User-Agent": "VacancySearchApp/1.0"})
 
         # Инициализируем общие компоненты как в HH API
         self.paginator = Paginator()
 
         # Логируем, какой ключ используется
-        if api_key == 'v3.r.137440105.example.test_tool':
-            logger.warning("Используется тестовый API ключ SuperJob. Для полной функциональности добавьте реальный ключ в переменную окружения SUPERJOB_API_KEY")
+        if api_key == "v3.r.137440105.example.test_tool":
+            logger.warning(
+                "Используется тестовый API ключ SuperJob. \
+                Для полной функциональности добавьте реальный ключ \
+                в переменную окружения SUPERJOB_API_KEY"
+            )
         else:
             logger.info("Используется пользовательский API ключ SuperJob")
 
@@ -64,7 +66,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         Returns:
             Dict: Пустая структура ответа с полем 'objects'
         """
-        return {'objects': []}
+        return {"objects": []}
 
     def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
@@ -77,9 +79,9 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
             bool: True если структура валидна, False иначе
         """
         return (
-            isinstance(vacancy, dict) and 
-            bool(vacancy.get('profession')) and  # У SJ это поле 'profession'
-            bool(vacancy.get('link'))  # У SJ это поле 'link'
+            isinstance(vacancy, dict)
+            and bool(vacancy.get("profession"))  # У SJ это поле 'profession'
+            and bool(vacancy.get("link"))  # У SJ это поле 'link'
         )
 
     def __connect(self, url: str, params: Dict = None) -> Dict:
@@ -115,14 +117,10 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
             List[Dict]: Список валидных вакансий со страницы
         """
         try:
-            params = self.config.get_params(
-                keyword=search_query,
-                page=page,
-                **kwargs
-            )
+            params = self.config.get_params(keyword=search_query, page=page, **kwargs)
 
             data = self._CachedAPI__connect_to_api(self.BASE_URL, params, "sj")
-            items = data.get('objects', [])
+            items = data.get("objects", [])
 
             # Добавляем источник и валидируем как в HH API
             validated_items = []
@@ -158,37 +156,26 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
             # Initial request for metadata (как в HH API)
             initial_data = self._CachedAPI__connect_to_api(
                 self.BASE_URL,
-                self.config.get_params(
-                    keyword=search_query,
-                    count=1,  # Минимальные данные сначала
-                    **kwargs
-                ),
-                "sj"
+                self.config.get_params(keyword=search_query, count=1, **kwargs),  # Минимальные данные сначала
+                "sj",
             )
 
-            if not initial_data.get('total', 0):
+            if not initial_data.get("total", 0):
                 logger.info("No vacancies found for query")
                 return []
 
-            total_found = initial_data.get('total', 0)
+            total_found = initial_data.get("total", 0)
 
             # Используем общую логику пагинации как в HH API
-            per_page = kwargs.get('count', 100)
-            max_pages = kwargs.get('max_pages', 20)
-            total_pages = min(
-                max_pages,
-                (total_found + per_page - 1) // per_page if total_found > 0 else 1
-            )
+            per_page = kwargs.get("count", 100)
+            max_pages = kwargs.get("max_pages", 20)
+            total_pages = min(max_pages, (total_found + per_page - 1) // per_page if total_found > 0 else 1)
 
-            logger.info(
-                f"Found {total_found} vacancies "
-                f"({total_pages} pages to process)"
-            )
+            logger.info(f"Found {total_found} vacancies " f"({total_pages} pages to process)")
 
             # Process all pages using unified paginator (как в HH API)
             results = self.paginator.paginate(
-                fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs),
-                total_pages=total_pages
+                fetch_func=lambda p: self.get_vacancies_page(search_query, p, **kwargs), total_pages=total_pages
             )
 
             logger.info(f"Successfully processed {len(results)} vacancies")
@@ -212,7 +199,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         Returns:
             List[Dict]: Список уникальных вакансий
         """
-        return super()._deduplicate_vacancies(vacancies, 'sj')
+        return super()._deduplicate_vacancies(vacancies, "sj")
 
     def get_vacancies_with_deduplication(self, search_query: str, **kwargs) -> List[Dict]:
         """

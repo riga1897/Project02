@@ -1,5 +1,5 @@
-from typing import Set, Optional
 import logging
+from typing import Optional, Set
 
 logger = logging.getLogger(__name__)
 
@@ -7,41 +7,38 @@ logger = logging.getLogger(__name__)
 class SourceSelector:
     """Класс для выбора источников вакансий"""
 
-    AVAILABLE_SOURCES = {
-        'hh': 'HH.ru',
-        'sj': 'SuperJob.ru'
-    }
+    AVAILABLE_SOURCES = {"hh": "HH.ru", "sj": "SuperJob.ru"}
 
     @classmethod
     def get_user_source_choice(cls) -> Optional[Set[str]]:
         """
         Получение выбора пользователя по источникам
-        
+
         Returns:
             Set[str]: Множество выбранных источников или None при отмене
         """
-        print("\n" + "="*50)
+        print("\n" + "=" * 50)
         print("ВЫБОР ИСТОЧНИКОВ ВАКАНСИЙ")
-        print("="*50)
+        print("=" * 50)
         print("Выберите источники для поиска вакансий:")
         print("1. HH.ru")
         print("2. SuperJob.ru")
         print("3. Оба источника")
         print("0. Отмена")
-        print("="*50)
+        print("=" * 50)
 
         while True:
             choice = input("Ваш выбор: ").strip()
 
             if choice == "1":
                 print("Выбран источник: HH.ru")
-                return {'hh'}
+                return {"hh"}
             elif choice == "2":
                 print("Выбран источник: SuperJob.ru")
-                return {'sj'}
+                return {"sj"}
             elif choice == "3":
                 print("Выбраны оба источника: HH.ru и SuperJob.ru")
-                return {'hh', 'sj'}
+                return {"hh", "sj"}
             elif choice == "0":
                 print("Выбор источников отменен.")
                 return None
@@ -52,10 +49,10 @@ class SourceSelector:
     def get_source_display_name(cls, source_key: str) -> str:
         """
         Получение отображаемого имени источника
-        
+
         Args:
             source_key: Ключ источника
-            
+
         Returns:
             str: Отображаемое имя источника
         """
@@ -65,7 +62,7 @@ class SourceSelector:
     def display_sources_info(cls, sources: Set[str]) -> None:
         """
         Отображение информации о выбранных источниках
-        
+
         Args:
             sources: Множество выбранных источников
         """

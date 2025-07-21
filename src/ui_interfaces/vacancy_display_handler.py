@@ -2,7 +2,7 @@ import logging
 
 from src.config.ui_config import ui_pagination_config
 from src.storage.json_saver import JSONSaver
-from src.utils.ui_helpers import get_positive_integer, filter_vacancies_by_keyword
+from src.utils.ui_helpers import filter_vacancies_by_keyword, get_positive_integer
 from src.utils.ui_navigation import quick_paginate
 from src.utils.vacancy_formatter import VacancyFormatter
 from src.utils.vacancy_operations import VacancyOperations
@@ -13,21 +13,21 @@ logger = logging.getLogger(__name__)
 class VacancyDisplayHandler:
     """
     Обработчик операций отображения сохраненных вакансий
-    
+
     Отвечает за логику отображения, фильтрации и сортировки
     сохраненных вакансий.
     """
-    
+
     def __init__(self, json_saver: JSONSaver):
         """
         Инициализация обработчика отображения
-        
+
         Args:
             json_saver: Сервис работы с сохраненными данными
         """
         self.json_saver = json_saver
         self.vacancy_ops = VacancyOperations()
-    
+
     def show_all_saved_vacancies(self) -> None:
         """Отображение всех сохраненных вакансий с постраничным просмотром"""
         try:
@@ -46,13 +46,13 @@ class VacancyDisplayHandler:
                 vacancies,
                 formatter=format_vacancy,
                 header="Сохраненные вакансии",
-                items_per_page=ui_pagination_config.get_items_per_page('saved')
+                items_per_page=ui_pagination_config.get_items_per_page("saved"),
             )
 
         except Exception as e:
             logger.error(f"Ошибка при отображении сохраненных вакансий: {e}")
             print(f"Ошибка при загрузке вакансий: {e}")
-    
+
     def show_top_vacancies_by_salary(self) -> None:
         """Получение топ N сохраненных вакансий по зарплате"""
         n = get_positive_integer("\nВведите количество вакансий для отображения: ")
@@ -86,17 +86,17 @@ class VacancyDisplayHandler:
                 top_vacancies,
                 formatter=format_vacancy,
                 header=f"Топ {len(top_vacancies)} вакансий по зарплате",
-                items_per_page=ui_pagination_config.get_items_per_page('top')
+                items_per_page=ui_pagination_config.get_items_per_page("top"),
             )
 
         except Exception as e:
             logger.error(f"Ошибка при получении топ сохраненных вакансий: {e}")
             print(f"Ошибка при поиске: {e}")
-    
+
     def search_saved_vacancies_by_keyword(self) -> None:
         """Поиск в сохраненных вакансиях с ключевым словом"""
         from src.utils.ui_helpers import get_user_input
-        
+
         keyword = get_user_input("\nВведите ключевое слово для поиска в описании: ")
         if not keyword:
             return
@@ -123,7 +123,7 @@ class VacancyDisplayHandler:
                 filtered_vacancies,
                 formatter=format_vacancy,
                 header=f"Вакансии с ключевым словом '{keyword}'",
-                items_per_page=ui_pagination_config.get_items_per_page('search')
+                items_per_page=ui_pagination_config.get_items_per_page("search"),
             )
 
         except Exception as e:

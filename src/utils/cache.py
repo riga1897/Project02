@@ -3,7 +3,7 @@ import json
 import time
 from functools import wraps
 from pathlib import Path
-from typing import Any, Dict, Optional, Callable, Tuple
+from typing import Any, Callable, Dict, Optional, Tuple
 
 from .env_loader import EnvLoader
 
@@ -23,7 +23,7 @@ def simple_cache(ttl: Optional[int] = None, max_size: int = 1000) -> Callable:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             # Получаем TTL из переменных окружения или используем переданное значение
-            actual_ttl = ttl if ttl is not None else EnvLoader.get_env_var_int('CACHE_TTL', 3600)
+            actual_ttl = ttl if ttl is not None else EnvLoader.get_env_var_int("CACHE_TTL", 3600)
             current_time = time.time()
 
             cache_key = (args, frozenset(kwargs.items()))
@@ -61,9 +61,9 @@ def simple_cache(ttl: Optional[int] = None, max_size: int = 1000) -> Callable:
         def cache_info() -> Dict[str, Any]:
             """Информация о состоянии кэша"""
             return {
-                'size': len(cache),
-                'max_size': max_size,
-                'ttl': ttl if ttl is not None else EnvLoader.get_env_var_int('CACHE_TTL', 3600)
+                "size": len(cache),
+                "max_size": max_size,
+                "ttl": ttl if ttl is not None else EnvLoader.get_env_var_int("CACHE_TTL", 3600),
             }
 
         wrapper.clear_cache = clear_cache
@@ -100,11 +100,8 @@ class FileCache:
         filename = f"{source}_{params_hash}.json"
         filepath = self.cache_dir / filename
 
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump({
-                "meta": {"params": params},
-                "data": data
-            }, f, ensure_ascii=False, indent=2)
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump({"meta": {"params": params}, "data": data}, f, ensure_ascii=False, indent=2)
 
         return filepath
 
@@ -118,7 +115,7 @@ class FileCache:
             if not filepath.exists():
                 return None
 
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 return json.load(f)
         except (json.JSONDecodeError, OSError, Exception):
             return None

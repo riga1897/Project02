@@ -1,7 +1,9 @@
-import pytest
-from unittest.mock import Mock, mock_open, patch, MagicMock
 import json
 from pathlib import Path
+from unittest.mock import MagicMock, Mock, mock_open, patch
+
+import pytest
+
 from src.utils.file_handlers import JSONFileHandler, json_handler
 
 
@@ -12,7 +14,7 @@ class TestJSONFileHandler:
         """Тест чтения несуществующего файла"""
         handler = JSONFileHandler()
 
-        with patch('pathlib.Path.exists', return_value=False):
+        with patch("pathlib.Path.exists", return_value=False):
             result = handler.read_json(Path("test.json"))
 
         assert result == []
@@ -21,8 +23,7 @@ class TestJSONFileHandler:
         """Тест чтения пустого файла"""
         handler = JSONFileHandler()
 
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.stat') as mock_stat:
+        with patch("pathlib.Path.exists", return_value=True), patch("pathlib.Path.stat") as mock_stat:
             mock_stat.return_value.st_size = 0
             result = handler.read_json(Path("test.json"))
 
@@ -33,43 +34,49 @@ class TestJSONFileHandler:
         handler = JSONFileHandler()
         test_data = [{"id": 1, "name": "test"}]
 
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.stat') as mock_stat, \
-             patch('pathlib.Path.open', mock_open(read_data=json.dumps(test_data))):
+        with (
+            patch("pathlib.Path.exists", return_value=True),
+            patch("pathlib.Path.stat") as mock_stat,
+            patch("pathlib.Path.open", mock_open(read_data=json.dumps(test_data))),
+        ):
             mock_stat.return_value.st_size = 100
             result = handler.read_json(Path("test.json"))
 
         assert result == test_data
 
-    @patch('src.utils.file_handlers.logger')
+    @patch("src.utils.file_handlers.logger")
     def test_read_json_invalid_json(self, mock_logger):
         """Тест чтения некорректного JSON"""
         handler = JSONFileHandler()
 
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.stat') as mock_stat, \
-             patch('pathlib.Path.open', mock_open(read_data="invalid json")):
+        with (
+            patch("pathlib.Path.exists", return_value=True),
+            patch("pathlib.Path.stat") as mock_stat,
+            patch("pathlib.Path.open", mock_open(read_data="invalid json")),
+        ):
             mock_stat.return_value.st_size = 100
             result = handler.read_json(Path("test.json"))
 
         assert result == []
         mock_logger.warning.assert_called_once()
 
-    @patch('src.utils.file_handlers.logger')
+    @patch("src.utils.file_handlers.logger")
     def test_read_json_exception(self, mock_logger):
         """Тест обработки исключений при чтении"""
         handler = JSONFileHandler()
 
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.stat') as mock_stat, \
-             patch('pathlib.Path.open', side_effect=OSError("File error")):
+        with (
+            patch("pathlib.Path.exists", return_value=True),
+            patch("pathlib.Path.stat") as mock_stat,
+            patch("pathlib.Path.open", side_effect=OSError("File error")),
+        ):
             mock_stat.return_value.st_size = 100
             result = handler.read_json(Path("test.json"))
 
         assert result == []
         mock_logger.error.assert_called_once()
 
-    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    @patch("src.utils.file_handlers.JSONFileHandler.read_json")
     def test_write_json_success(self, mock_read_json):
         """Тест успешной записи JSON"""
         handler = JSONFileHandler()
@@ -78,9 +85,11 @@ class TestJSONFileHandler:
         # Мокируем clear_cache как атрибут метода
         mock_read_json.clear_cache = Mock()
 
-        with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_with_suffix, \
-             patch('builtins.open', mock_open()) as mock_file:
+        with (
+            patch("pathlib.Path.parent") as mock_parent,
+            patch("pathlib.Path.with_suffix") as mock_with_suffix,
+            patch("builtins.open", mock_open()) as mock_file,
+        ):
 
             mock_temp_path = Mock()
             mock_with_suffix.return_value = mock_temp_path
@@ -96,7 +105,7 @@ class TestJSONFileHandler:
             mock_temp_path.replace.assert_called_once()
             mock_read_json.clear_cache.assert_called_once()
 
-    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    @patch("src.utils.file_handlers.JSONFileHandler.read_json")
     def test_write_json_with_temp_file_cleanup(self, mock_read_json):
         """Тест записи с очисткой временного файла в finally"""
         handler = JSONFileHandler()
@@ -104,9 +113,11 @@ class TestJSONFileHandler:
 
         mock_read_json.clear_cache = Mock()
 
-        with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_with_suffix, \
-             patch('builtins.open', mock_open()) as mock_file:
+        with (
+            patch("pathlib.Path.parent") as mock_parent,
+            patch("pathlib.Path.with_suffix") as mock_with_suffix,
+            patch("builtins.open", mock_open()) as mock_file,
+        ):
 
             mock_temp_path = Mock()
             mock_with_suffix.return_value = mock_temp_path
@@ -122,8 +133,8 @@ class TestJSONFileHandler:
             # Проверяем, что unlink вызван в finally
             mock_temp_path.unlink.assert_called()
 
-    @patch('src.utils.file_handlers.logger')
-    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    @patch("src.utils.file_handlers.logger")
+    @patch("src.utils.file_handlers.JSONFileHandler.read_json")
     def test_write_json_exception_with_temp_cleanup(self, mock_read_json, mock_logger):
         """Тест обработки исключений при записи"""
         handler = JSONFileHandler()
@@ -131,8 +142,7 @@ class TestJSONFileHandler:
 
         mock_read_json.clear_cache = Mock()
 
-        with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_with_suffix:
+        with patch("pathlib.Path.parent") as mock_parent, patch("pathlib.Path.with_suffix") as mock_with_suffix:
 
             mock_temp_path = Mock()
             mock_with_suffix.return_value = mock_temp_path
@@ -151,8 +161,8 @@ class TestJSONFileHandler:
             # unlink должен быть вызван дважды: в except и в finally
             assert mock_temp_path.unlink.call_count == 2
 
-    @patch('src.utils.file_handlers.logger')
-    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    @patch("src.utils.file_handlers.logger")
+    @patch("src.utils.file_handlers.JSONFileHandler.read_json")
     def test_write_json_exception_without_temp_file(self, mock_read_json, mock_logger):
         """Тест обработки исключений без временного файла"""
         handler = JSONFileHandler()
@@ -160,8 +170,7 @@ class TestJSONFileHandler:
 
         mock_read_json.clear_cache = Mock()
 
-        with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_with_suffix:
+        with patch("pathlib.Path.parent") as mock_parent, patch("pathlib.Path.with_suffix") as mock_with_suffix:
 
             mock_temp_path = Mock()
             mock_with_suffix.return_value = mock_temp_path
@@ -184,9 +193,11 @@ class TestJSONFileHandler:
         handler = JSONFileHandler()
         test_data = [{"id": 1, "name": "test"}]
 
-        with patch('pathlib.Path.exists', return_value=True), \
-             patch('pathlib.Path.stat') as mock_stat, \
-             patch('pathlib.Path.open', mock_open(read_data=json.dumps(test_data))) as mock_file:
+        with (
+            patch("pathlib.Path.exists", return_value=True),
+            patch("pathlib.Path.stat") as mock_stat,
+            patch("pathlib.Path.open", mock_open(read_data=json.dumps(test_data))) as mock_file,
+        ):
             mock_stat.return_value.st_size = 100
 
             # Первый вызов - должен читать файл
