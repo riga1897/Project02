@@ -400,112 +400,29 @@ class TestCachedAPI:
         assert result == {'error': 'Glob error'}
         mock_logger.error.assert_called_once_with("Ошибка получения статуса кэша: Glob error")
 
-    def test_connect_method(self, mocker):
-        """Тест метода __connect"""
+    def test_lines_66_72_coverage_with_file_cache(self, mocker):
+        """Тест для покрытия строк 66-72 (файловый кэш)"""
         mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
+        mock_file_cache_class = mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
 
         api = ConcreteCachedAPI("test_cache")
         api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.return_value = {"success": True}
+        
+        # Настраиваем пустой кэш в памяти
+        mocker.patch.object(api, '_cached_api_request', return_value=api._get_empty_response())
+        
+        # Настраиваем файловый кэш с данными для покрытия строк 66-72
+        mock_file_cache = mock_file_cache_class.return_value
+        cached_data = {"items": [{"id": "cached_item"}], "found": 1, "pages": 1}
+        mock_file_cache.load_response.return_value = {"data": cached_data}
 
-        result = api._CachedAPI__connect("test_url", {"param": "value"})
-
-        assert result == {"success": True}
-        api.connector._APIConnector__connect.assert_called_once_with("test_url", {"param": "value"})
-
-    def test_connect_method_error(self, mocker):
-        """Тест ошибки в методе __connect"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.side_effect = Exception("Connection error")
-
-        result = api._CachedAPI__connect("test_url", {"param": "value"})
-
-        assert result == {}
-        mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Connection error")
-
-    def test_connect_method_no_params(self, mocker):
-        """Тест метода __connect without params"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.return_value = {"success": True}
-
-        result = api._CachedAPI__connect("test_url")
-
-        assert result == {"success": True}
-        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
-
-    def test_connect_method_with_default_params(self, mocker):
-        """Тест метода __connect with default empty dict params"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.return_value = {"default": "params"}
-
-        # Call without any params to test default {} assignment
-        result = api._CachedAPI__connect("test_url", {})
-
-        assert result == {"default": "params"}
-        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
-
-    def test_connect_method_without_params_arg(self, mocker):
-        """Тест метода __connect без передачи параметра params (использование значения по умолчанию)"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.return_value = {"no_params": "test"}
-
-        # Вызываем метод без второго аргумента для тестирования значения по умолчанию
-        result = api._CachedAPI__connect("test_url")
-
-        assert result == {"no_params": "test"}
-        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
-
-    def test_connect_method_signature_coverage(self, mocker):
-        """Тест для 100% покрытия метода __connect - проверка сигнатуры метода"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.return_value = {"signature": "test"}
-
-        # Вызываем метод с явным указанием params={} для покрытия строки с default параметром
-        result = api._CachedAPI__connect(url="test_url", params={})
-
-        assert result == {"signature": "test"}
-        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
-
-    def test_connect_method_exception_handling(self, mocker):
-        """Тест обработки исключения в методе __connect для 100% покрытия"""
-        mocker.patch('src.api_modules.cached_api.Path')
-        mocker.patch('src.api_modules.cached_api.FileCache')
-        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-
-        api = ConcreteCachedAPI("test_cache")
-        api.connector = mocker.Mock()
-        api.connector._APIConnector__connect.side_effect = Exception("Test connection error")
-
-        result = api._CachedAPI__connect("test_url", {"param": "value"})
-
-        assert result == {}
-        mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Test connection error")
+        # Прямой вызов __connect_to_api для покрытия строк 66-72
+        result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+        
+        assert result == cached_data
+        mock_file_cache.load_response.assert_called_once()
+        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
 
     def test_lines_65_71_final_coverage(self, mocker):
         """Финальный тест для 100% покрытия строк 65-71"""

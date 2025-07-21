@@ -23,12 +23,23 @@ class TestVacancySearchHandlerCoverage:
 
     def test_line_136_coverage(self, handler, mocker):
         """Тест для покрытия строки 136"""
-        # Настраиваем моки для прохода через весь метод
+        # Мокаем все источники ввода пользователя
         mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value={'hh'})
         mocker.patch.object(handler.source_selector, 'display_sources_info')
-        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='test')
         mocker.patch.object(handler, '_get_period_choice', return_value=15)
         mocker.patch.object(handler, '_fetch_vacancies_from_sources', return_value=[])
         
-        # Пустой список вакансий должен покрыть строку 136
+        # Мокаем get_user_input для возврата непустого запроса
+        mock_get_input = mocker.patch('src.utils.ui_helpers.get_user_input', return_value='python')
+        
+        # Мокаем print для вывода сообщения о пустом результате (строка 136)
+        mock_print = mocker.patch('builtins.print')
+        
+        # Вызов должен дойти до строки 136 с пустым списком вакансий
         handler.search_vacancies()
+        
+        # Проверяем что был вызван ввод запроса
+        mock_get_input.assert_called_with("\nВведите поисковый запрос: ")
+        
+        # Проверяем что было выведено сообщение о том, что вакансии не найдены (строка 136)
+        mock_print.assert_any_call("По вашему запросу 'python' вакансии не найдены.")
