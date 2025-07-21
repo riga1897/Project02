@@ -15,16 +15,20 @@ class TestVacancySearchHandlerCoverage:
 
     def test_line_102_coverage(self, handler, mocker):
         """Тест для покрытия строки 102"""
-        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='')
+        # Патчим источники чтобы возвращал пустое множество
+        mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value=set())
         
-        # Пустой запрос должен покрыть строку 102
+        # Пустое множество источников должно покрыть строку 102 (return)
         handler.search_vacancies()
 
     def test_line_136_coverage(self, handler, mocker):
         """Тест для покрытия строки 136"""
-        handler.unified_api.search_vacancies.return_value = []
+        # Настраиваем моки для прохода через весь метод
+        mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value={'hh'})
+        mocker.patch.object(handler.source_selector, 'display_sources_info')
         mocker.patch('src.utils.ui_helpers.get_user_input', return_value='test')
-        mocker.patch('src.ui_interfaces.source_selector.SourceSelector.get_user_source_choice', return_value={'hh'})
+        mocker.patch.object(handler, '_get_period_choice', return_value=15)
+        mocker.patch.object(handler, '_fetch_vacancies_from_sources', return_value=[])
         
-        # Поиск без результатов должен покрыть строку 136
+        # Пустой список вакансий должен покрыть строку 136
         handler.search_vacancies()

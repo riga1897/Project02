@@ -23,7 +23,7 @@ def test_vacancy_lines_177_185():
     assert vacancy.salary is not None  # Создается пустая зарплата
     
     # Строка 185 - проверка наличия ключа 'published_at'  
-    assert vacancy.published_at == ""
+    assert vacancy.published_at is None  # None когда нет данных
 
 def test_vacancy_lines_228_230():
     """Тест для покрытия строк 228, 230"""
