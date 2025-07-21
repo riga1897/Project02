@@ -108,7 +108,7 @@ class TestUINavigation:
         formatter.assert_has_calls(expected_calls)
 
     @patch('builtins.print')
-    @patch('builtins.input', side_effect=['invalid', 'q'])
+    @patch('builtins.input', side_effect=['invalid', '', 'q'])
     def test_paginate_display_invalid_input(self, mock_input, mock_print):
         """Тест обработки некорректного ввода"""
         nav = UINavigation(items_per_page=2)
@@ -139,7 +139,7 @@ class TestUINavigation:
         custom_action.assert_called_once()
 
     @patch('builtins.print')
-    @patch('builtins.input', side_effect=['custom', 'q'])
+    @patch('builtins.input', side_effect=['custom', '', 'q'])
     @patch('src.utils.ui_navigation.logger')
     def test_paginate_display_custom_actions_exception(self, mock_logger, mock_input, mock_print):
         """Тест обработки исключений в кастомных действиях"""
