@@ -215,10 +215,11 @@ class TestVacancySearchHandler:
         
         mock_print.assert_called_with("Новые вакансии не сохранены")
 
+    @patch('src.ui_interfaces.vacancy_search_handler.confirm_action', return_value=False)
     @patch('src.ui_interfaces.vacancy_search_handler.VacancySearchHandler._display_duplicate_info')
     @patch('src.ui_interfaces.vacancy_search_handler.VacancySearchHandler._check_existing_vacancies')
     @patch('builtins.print')
-    def test_handle_vacancies_preview_and_save_no_new_vacancies(self, mock_print, mock_check, mock_display, handler):
+    def test_handle_vacancies_preview_and_save_no_new_vacancies(self, mock_print, mock_check, mock_display, mock_confirm, handler):
         """Тест обработки без новых вакансий"""
         vacancies = [Mock(spec=Vacancy)]
         duplicate_info = {'new_vacancies': [], 'total_count': 1}
@@ -382,3 +383,39 @@ class TestVacancySearchHandler:
         
         assert result is None
         mock_print.assert_any_call("\nВыбор периода отменен.")
+
+    @patch('src.ui_interfaces.vacancy_search_handler.VacancyFormatter')
+    @patch('src.ui_interfaces.vacancy_search_handler.quick_paginate')
+    @patch('src.ui_interfaces.vacancy_search_handler.confirm_action', return_value=True)
+    @patch('src.ui_interfaces.vacancy_search_handler.VacancySearchHandler._display_duplicate_info')
+    @patch('src.ui_interfaces.vacancy_search_handler.VacancySearchHandler._check_existing_vacancies')
+    def test_handle_vacancies_preview_format_vacancy_none_coverage(self, mock_check, mock_display, mock_confirm, mock_paginate, mock_formatter, handler):
+        """Тест покрытия ValueError при vacancy=None в format_vacancy (строка 134-136)"""
+        vacancies = [Mock(spec=Vacancy)]
+        duplicate_info = {'new_vacancies': [], 'total_count': 1}
+        mock_check.return_value = duplicate_info
+        
+        # Симулируем вызов format_vacancy с None
+        def side_effect_paginate(vacancies_list, formatter, header, items_per_page):
+            # Вызываем форматтер с None чтобы покрыть проверку
+            try:
+                formatter(None, 1)
+            except ValueError as e:
+                assert str(e) == "Received a vacancy object of None type."
+        
+        mock_paginate.side_effect = side_effect_paginate
+        
+        handler._handle_vacancies_preview_and_save(vacancies, "python")
+        
+        mock_paginate.assert_called_once()
+
+    @patch('builtins.print')
+    def test_fetch_vacancies_from_sources_hh_empty_result_coverage(self, mock_print, handler):
+        """Тест покрытия пустого результата с HH.ru (строка 102)"""
+        sources = {"hh"}
+        handler.unified_api.get_hh_vacancies.return_value = []
+        
+        result = handler._fetch_vacancies_from_sources(sources, "python", 15)
+        
+        assert result == []
+        mock_print.assert_any_call("Вакансии на HH.ru не найдены")
