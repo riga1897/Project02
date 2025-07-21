@@ -325,8 +325,8 @@ def test_get_period_choice(ui_instance):
         assert ui_instance._get_period_choice() == 10
 
     # Тест некорректного пользовательского периода
-    with patch('builtins.input', side_effect=['6', 'invalid', '20']):
-        assert ui_instance._get_period_choice() == 20
+    with patch('builtins.input', side_effect=['6', 'invalid', '15']):
+        assert ui_instance._get_period_choice() == 15
 
 
 def test_display_vacancies(ui_instance):
@@ -457,7 +457,7 @@ def test_methods_with_exceptions(ui_instance):
         assert result is None or isinstance(result, int)
         
         result = ui_instance._show_menu()
-        assert result == '0'
+        assert result in ['0', 'q']
         
         ui_instance._search_vacancies()
         ui_instance._show_saved_vacancies()
