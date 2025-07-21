@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from src.config.api_config import APIConfig
 from src.config.sj_api_config import SJAPIConfig
@@ -66,7 +66,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         """
         return {'objects': []}
 
-    def _validate_vacancy(self, vacancy: Dict) -> bool:
+    def _validate_vacancy(self, vacancy: Dict) -> Any:
         """
         Валидация структуры вакансии
 
