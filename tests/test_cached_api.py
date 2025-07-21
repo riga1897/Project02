@@ -125,24 +125,19 @@ class TestCachedAPI:
         # Настраиваем файловый кэш для возврата данных
         api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
 
-        # Создаем реальный декоратор _cached_api_request, который будет возвращать пустой ответ
-        # Это важно для покрытия строк 65-71
-        from src.utils.cache import simple_cache
-        
-        @simple_cache(ttl=300)
-        def mock_cached_request(url, params, prefix):
+        # Мокаем _cached_api_request чтобы он всегда возвращал пустой ответ
+        # Важно: используем side_effect для имитации поведения при разных вызовах
+        def mock_cached_side_effect(url, params, prefix):
             return {"items": [], "found": 0, "pages": 0}
-        
-        # Заменяем метод на реальный декорированный метод
-        api._cached_api_request = mock_cached_request
-        
-        result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+            
+        with patch.object(api, '_cached_api_request', side_effect=mock_cached_side_effect):
+            result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
 
-        # Проверяем, что вызывался load_response с правильными параметрами
+        # Проверяем, что вызывался load_response с правильными параметрами (строки 65-71)
         api.cache.load_response.assert_called_once_with("test_prefix", {"param": "value"})
         assert result == {"file_cached": "data"}
         
-        # Проверяем логирование
+        # Проверяем логирование (строка 67)
         mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
 
     @patch('src.api_modules.cached_api.Path')
