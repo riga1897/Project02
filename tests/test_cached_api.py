@@ -143,13 +143,14 @@ class TestCachedAPI:
         empty_response = api._get_empty_response()
         
         # Патчим _cached_api_request напрямую для гарантированного пустого ответа
-        with mocker.patch.object(api, '_cached_api_request', return_value=empty_response):
-            # Прямой вызов метода для покрытия строк 65-71
-            result = api._CachedAPI__connect_to_api(
-                "https://api.test.com/vacancies",
-                {"text": "python", "page": 0},
-                "test_prefix"
-            )
+        mocker.patch.object(api, '_cached_api_request', return_value=empty_response)
+        
+        # Прямой вызов метода для покрытия строк 65-71
+        result = api._CachedAPI__connect_to_api(
+            "https://api.test.com/vacancies",
+            {"text": "python", "page": 0},
+            "test_prefix"
+        )
 
         # Жесткие проверки
         assert result == cached_data
