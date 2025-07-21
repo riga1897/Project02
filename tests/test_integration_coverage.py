@@ -236,7 +236,7 @@ class TestComprehensiveCoverage:
             ui._delete_saved_vacancies()
             ui._show_saved_vacancies()
             ui._search_saved_vacancies_by_keyword()
-            ui._show_top_vacancies()
+            ui._get_top_saved_vacancies_by_salary()
 
             # Test run method with KeyboardInterrupt
             mocker.patch.object(ui, '_show_menu', side_effect=KeyboardInterrupt())
