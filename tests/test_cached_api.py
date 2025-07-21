@@ -1,4 +1,3 @@
-
 import pytest
 from pathlib import Path
 from typing import Dict, List
@@ -30,8 +29,8 @@ class TestCachedAPI:
         """Тест инициализации CachedAPI"""
         mock_path = mocker.patch('src.api_modules.cached_api.Path')
         mock_file_cache = mocker.patch('src.api_modules.cached_api.FileCache')
-        
-        mock_path_instance = Mock()
+
+        mock_path_instance = mocker.Mock()
         mock_path.return_value = mock_path_instance
 
         api = ConcreteCachedAPI("test_cache")
@@ -44,23 +43,23 @@ class TestCachedAPI:
         """Тест инициализации кэша"""
         mock_path = mocker.patch('src.api_modules.cached_api.Path')
         mock_file_cache = mocker.patch('src.api_modules.cached_api.FileCache')
-        
-        mock_path_instance = Mock()
+
+        mock_path_instance = mocker.Mock()
         mock_path.return_value = mock_path_instance
 
         api = ConcreteCachedAPI("test_cache")
 
         mock_path_instance.mkdir.assert_called_once_with(parents=True, exist_ok=True)
-        assert isinstance(api.cache, Mock)
+        assert isinstance(api.cache, mocker.Mock)
 
     def test_cached_api_request_success(self, mocker):
         """Тест успешного кэшированного API запроса"""
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"test": "data"}
 
         # Патчим _cached_api_request напрямую
@@ -75,9 +74,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.side_effect = Exception("API Error")
 
         # Патчим _cached_api_request напрямую
@@ -92,9 +91,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
 
         # Мокаем метод _cached_api_request для имитации попадания в кэш
         mocker.patch.object(api, '_cached_api_request', return_value={"cached": "data"})
@@ -108,9 +107,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
         mock_logging = mocker.patch('src.api_modules.cached_api.logging')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
 
         # Мокаем метод _cached_api_request для имитации ошибки кэша памяти
@@ -125,20 +124,20 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
-        
+        api.connector = mocker.Mock()
+
         # Настраиваем файловый кэш для возврата данных
         test_data = {"file_cached": "data"}
         api.cache.load_response.return_value = {"data": test_data}
-        
+
         # Мокаем _cached_api_request для возврата пустого ответа
         mocker.patch.object(api, '_cached_api_request', return_value=api._get_empty_response())
-        
+
         # Выполняем метод - покрывает строки 65-71
         result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
-        
+
         assert result == test_data
         api.cache.load_response.assert_called_once_with("test_prefix", {"param": "value"})
         mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
@@ -148,9 +147,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"api": "data"}
         api.cache.load_response.return_value = None
 
@@ -166,9 +165,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"items": [], "found": 0, "pages": 0}
         api.cache.load_response.return_value = None
 
@@ -185,9 +184,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.side_effect = Exception("API Error")
         api.cache.load_response.return_value = None
 
@@ -203,12 +202,12 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
 
         # Мокаем clear_cache метод
-        mock_clear_cache = Mock()
-        mocker.patch.object(api, '_cached_api_request', Mock(clear_cache=mock_clear_cache))
+        mock_clear_cache = mocker.Mock()
+        mocker.patch.object(api, '_cached_api_request', mocker.Mock(clear_cache=mock_clear_cache))
         api.clear_cache("test_prefix")
 
         api.cache.clear.assert_called_once_with("test_prefix")
@@ -220,7 +219,7 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
 
         api.clear_cache("test_prefix")
@@ -233,7 +232,7 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
         api.cache.clear.side_effect = Exception("Clear error")
 
@@ -246,20 +245,20 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
 
         # Мокаем Path.glob
-        mock_file1 = Mock()
+        mock_file1 = mocker.Mock()
         mock_file1.name = "test_prefix_1.json"
-        mock_file2 = Mock()
+        mock_file2 = mocker.Mock()
         mock_file2.name = "test_prefix_2.json"
         api.cache_dir.glob.return_value = [mock_file1, mock_file2]
         api.cache_dir.exists.return_value = True
 
         # Мокаем cache_info
-        mock_cache_info = Mock(return_value={"hits": 5, "misses": 2})
-        mocker.patch.object(api, '_cached_api_request', Mock(cache_info=mock_cache_info))
+        mock_cache_info = mocker.Mock(return_value={"hits": 5, "misses": 2})
+        mocker.patch.object(api, '_cached_api_request', mocker.Mock(cache_info=mock_cache_info))
         result = api.get_cache_status("test_prefix")
 
         expected = {
@@ -276,7 +275,7 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
 
         api.cache_dir.glob.return_value = []
@@ -300,7 +299,7 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
         api.cache_dir.glob.side_effect = Exception("Glob error")
 
@@ -314,9 +313,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"success": True}
 
         result = api._CachedAPI__connect("test_url", {"param": "value"})
@@ -329,9 +328,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.side_effect = Exception("Connection error")
 
         result = api._CachedAPI__connect("test_url", {"param": "value"})
@@ -344,9 +343,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"success": True}
 
         result = api._CachedAPI__connect("test_url")
@@ -359,9 +358,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"default": "params"}
 
         # Call without any params to test default {} assignment
@@ -375,9 +374,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"no_params": "test"}
 
         # Вызываем метод без второго аргумента для тестирования значения по умолчанию
@@ -390,9 +389,9 @@ class TestCachedAPI:
         """Тест для 100% покрытия метода __connect - проверка сигнатуры метода"""
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.return_value = {"signature": "test"}
 
         # Вызываем метод с явным указанием params={} для покрытия строки с default параметром
@@ -406,9 +405,9 @@ class TestCachedAPI:
         mocker.patch('src.api_modules.cached_api.Path')
         mocker.patch('src.api_modules.cached_api.FileCache')
         mock_logger = mocker.patch('src.api_modules.cached_api.logger')
-        
+
         api = ConcreteCachedAPI("test_cache")
-        api.connector = Mock()
+        api.connector = mocker.Mock()
         api.connector._APIConnector__connect.side_effect = Exception("Test connection error")
 
         result = api._CachedAPI__connect("test_url", {"param": "value"})
