@@ -417,6 +417,222 @@ def test_show_vacancies_for_deletion_invalid_input(ui_instance):
         ui_instance._show_vacancies_for_deletion(test_vacancies, 'python')
 
 
+# Тесты main run loop
+def test_run_main_loop_keyboard_interrupt(ui_instance):
+    """Тест прерывания основного цикла"""
+    with patch.object(ui_instance, '_show_menu', side_effect=KeyboardInterrupt):
+        ui_instance.run()
+
+
+def test_run_main_loop_exception_handling(ui_instance):
+    """Тест обработки исключений в основном цикле"""
+    with patch.object(ui_instance, '_show_menu', side_effect=[Exception("Test error"), "0"]):
+        ui_instance.run()
+
+
+def test_run_main_loop_all_menu_choices(ui_instance):
+    """Тест всех пунктов меню"""
+    choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "invalid", "0"]
+    with patch.object(ui_instance, '_show_menu', side_effect=choices):
+        ui_instance.run()
+
+
+# Тесты расширенного поиска - дополнительные случаи
+def test_advanced_search_vacancies_operators(ui_instance):
+    """Тест расширенного поиска с операторами"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Python Developer", description="Python Flask"),
+        Vacancy(vacancy_id="2", title="Java Developer", description="Java Spring"),
+    ]
+
+    ui_instance.json_saver.get_vacancies.return_value = test_vacancies
+    ui_instance.vacancy_ops.search_vacancies_advanced.return_value = [test_vacancies[0]]
+
+    # Тест с оператором OR
+    with patch('src.ui_interfaces.console_interface.get_user_input', return_value='python OR java'):
+        ui_instance._advanced_search_vacancies()
+
+    ui_instance.vacancy_ops.search_vacancies_advanced.assert_called()
+
+
+def test_advanced_search_vacancies_exception(ui_instance):
+    """Тест обработки исключений в расширенном поиске"""
+    ui_instance.json_saver.get_vacancies.side_effect = Exception("Database error")
+
+    ui_instance._advanced_search_vacancies()
+
+
+# Тесты фильтрации по зарплате - дополнительные случаи
+def test_filter_saved_vacancies_by_salary_sort_option(ui_instance):
+    """Тест сортировки в фильтрации по зарплате"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}),
+    ]
+
+    ui_instance.json_saver.get_vacancies.return_value = test_vacancies
+    ui_instance.vacancy_ops.filter_vacancies_by_min_salary.return_value = test_vacancies
+    ui_instance.vacancy_ops.sort_vacancies_by_salary.return_value = test_vacancies
+
+    with patch('builtins.input', side_effect=['1', '100000', 'q']):
+        ui_instance._filter_saved_vacancies_by_salary()
+
+    ui_instance.vacancy_ops.sort_vacancies_by_salary.assert_called()
+
+
+def test_filter_saved_vacancies_exception(ui_instance):
+    """Тест обработки исключений в фильтрации"""
+    ui_instance.json_saver.get_vacancies.side_effect = Exception("Database error")
+
+    ui_instance._filter_saved_vacancies_by_salary()
+
+
+# Тесты удаления вакансий - дополнительные случаи
+def test_delete_saved_vacancies_by_keyword_advanced(ui_instance):
+    """Тест удаления по ключевому слову с расширенным функционалом"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Python Developer"),
+        Vacancy(vacancy_id="2", title="Java Developer"),
+    ]
+
+    ui_instance.json_saver.get_vacancies.return_value = test_vacancies
+
+    with patch('src.ui_interfaces.console_interface.get_user_input', return_value='python'):
+        with patch('src.ui_interfaces.console_interface.filter_vacancies_by_keyword', return_value=[test_vacancies[0]]):
+            with patch.object(ui_instance, '_show_vacancies_for_deletion') as mock_show:
+                with patch('builtins.input', side_effect=['2', 'q']):
+                    ui_instance._delete_saved_vacancies()
+                mock_show.assert_called_once()
+
+
+def test_delete_saved_vacancies_exception(ui_instance):
+    """Тест обработки исключений в удалении"""
+    ui_instance.json_saver.get_vacancies.side_effect = Exception("Database error")
+
+    ui_instance._delete_saved_vacancies()
+
+
+# Тесты показа вакансий для удаления - дополнительные случаи
+def test_show_vacancies_for_deletion_all_delete(ui_instance):
+    """Тест удаления всех вакансий через 'a'"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Python Developer"),
+    ]
+
+    ui_instance.json_saver.delete_vacancies_by_keyword.return_value = 1
+
+    with patch('src.ui_interfaces.console_interface.confirm_action', return_value=True):
+        with patch('builtins.input', side_effect=['a', 'q']):
+            ui_instance._show_vacancies_for_deletion(test_vacancies, 'python')
+
+    ui_instance.json_saver.delete_vacancies_by_keyword.assert_called_once_with('python')
+
+
+def test_show_vacancies_for_deletion_pagination(ui_instance):
+    """Тест пагинации в удалении вакансий"""
+    # Создаем 15 вакансий для тестирования пагинации
+    test_vacancies = []
+    for i in range(15):
+        test_vacancies.append(Vacancy(vacancy_id=str(i), title=f"Developer {i}"))
+
+    with patch('builtins.input', side_effect=['n', 'p', 'q']):
+        ui_instance._show_vacancies_for_deletion(test_vacancies, 'test')
+
+
+def test_show_vacancies_for_deletion_range_delete_with_swap(ui_instance):
+    """Тест удаления диапазона с перестановкой номеров"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Dev 1"),
+        Vacancy(vacancy_id="2", title="Dev 2"),
+        Vacancy(vacancy_id="3", title="Dev 3"),
+    ]
+
+    ui_instance.json_saver.delete_vacancy_by_id.return_value = True
+
+    with patch('src.ui_interfaces.console_interface.confirm_action', return_value=True):
+        with patch('builtins.input', side_effect=['3-1', 'q']):  # Обратный порядок
+            ui_instance._show_vacancies_for_deletion(test_vacancies, 'test')
+
+
+def test_show_vacancies_for_deletion_failed_delete(ui_instance):
+    """Тест неудачного удаления"""
+    test_vacancies = [Vacancy(vacancy_id="1", title="Developer")]
+
+    ui_instance.json_saver.delete_vacancy_by_id.return_value = False
+
+    with patch('src.ui_interfaces.console_interface.confirm_action', return_value=True):
+        with patch('builtins.input', side_effect=['1', 'q']):
+            ui_instance._show_vacancies_for_deletion(test_vacancies, 'test')
+
+
+def test_show_vacancies_for_deletion_all_delete_failed(ui_instance):
+    """Тест неудачного удаления всех вакансий"""
+    test_vacancies = [Vacancy(vacancy_id="1", title="Developer")]
+
+    ui_instance.json_saver.delete_vacancies_by_keyword.return_value = 0
+
+    with patch('src.ui_interfaces.console_interface.confirm_action', return_value=True):
+        with patch('builtins.input', side_effect=['a', 'q']):
+            ui_instance._show_vacancies_for_deletion(test_vacancies, 'test')
+
+
+# Тесты периода выбора - дополнительные случаи
+def test_get_period_choice_keyboard_interrupt(ui_instance):
+    """Тест прерывания выбора периода"""
+    with patch('builtins.input', side_effect=KeyboardInterrupt):
+        result = ui_instance._get_period_choice()
+        assert result is None
+
+
+def test_get_period_choice_custom_invalid_range(ui_instance):
+    """Тест некорректного пользовательского периода вне диапазона"""
+    with patch('builtins.input', side_effect=['6', '500']):
+        result = ui_instance._get_period_choice()
+        assert result == 15
+
+
+# Тесты настройки SuperJob API
+def test_setup_superjob_api_with_real_key(ui_instance):
+    """Тест настройки SuperJob API с реальным ключом"""
+    with patch('os.getenv', return_value='real_api_key_value'):
+        with patch('builtins.input', return_value=''):
+            ui_instance._setup_superjob_api()
+
+
+# Тесты очистки кэша API - дополнительные случаи
+def test_clear_api_cache_no_sources(ui_instance):
+    """Тест очистки кэша без выбора источников"""
+    ui_instance.source_selector.get_user_source_choice.return_value = set()
+
+    ui_instance._clear_api_cache()
+
+    ui_instance.unified_api.clear_cache.assert_not_called()
+
+
+def test_clear_api_cache_exception(ui_instance):
+    """Тест обработки исключений при очистке кэша"""
+    ui_instance.source_selector.get_user_source_choice.side_effect = Exception("Error")
+
+    ui_instance._clear_api_cache()
+
+
+# Тесты отображения вакансий с дополнительным номером
+def test_display_vacancies_with_start_number(ui_instance):
+    """Тест отображения вакансий с начальным номером"""
+    test_vacancies = [
+        Vacancy(vacancy_id="1", title="Python Developer"),
+        Vacancy(vacancy_id="2", title="Java Developer"),
+    ]
+
+    with patch('src.ui_interfaces.console_interface.display_vacancy_info') as mock_display:
+        ui_instance._display_vacancies(test_vacancies, 5)
+
+        # Проверяем, что функция вызвана с правильными номерами
+        calls = mock_display.call_args_list
+        assert len(calls) == 2
+        assert calls[0][0][1] == 5  # Первая вакансия с номером 5
+        assert calls[1][0][1] == 6  # Вторая вакансия с номером 6
+
+
 # Тесты обработки ошибок
 def test_methods_with_exceptions(ui_instance):
     """Тест методов с имитацией исключений"""
@@ -425,40 +641,41 @@ def test_methods_with_exceptions(ui_instance):
     # Мокируем дополнительные методы, которые могут вызвать циклы
     ui_instance.source_selector.get_user_source_choice.return_value = set()
     ui_instance.unified_api.clear_cache.return_value = None
-    
+
     with patch('builtins.input', side_effect=['0', 'q', 'n', '0', 'q'] * 10):
         # Проверяем, что методы не падают при исключениях
         try:
             ui_instance._filter_saved_vacancies_by_salary()
         except Exception:
             pass
-        
+
         try:
             ui_instance._delete_saved_vacancies()
         except Exception:
             pass
-            
+
         try:
             ui_instance._advanced_search_vacancies()
         except Exception:
             pass
-            
+
         try:
             ui_instance._clear_api_cache()
         except Exception:
             pass
-            
+
         ui_instance._show_vacancies_for_deletion([], 'test')
         ui_instance._display_vacancies([])
         ui_instance._display_vacancies_with_pagination([])
         ui_instance._configure_superjob_api()
-        
+
         result = ui_instance._get_period_choice()
         assert result is None or isinstance(result, int)
-        
+
         result = ui_instance._show_menu()
         assert result in ['0', 'q']
-        
+
         ui_instance._search_vacancies()
         ui_instance._show_saved_vacancies()
         ui_instance._get_top_saved_vacancies_by_salary()
+        ui_instance._search_saved_vacancies_by_keyword()
