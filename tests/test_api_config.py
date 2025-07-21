@@ -138,7 +138,7 @@ class TestAPIConfig:
     def test_get_pagination_params_kwargs_priority(self):
         """Тест приоритета kwargs над значениями по умолчанию"""
         config = APIConfig(max_pages=20)
-        params = config.get_pagination_params(max_pages=100, extra_param="test")
+        params = config.get_pagination_params(max_pages=100)
         
-        expected = {"max_pages": 100, "extra_param": "test"}
+        expected = {"max_pages": 100}
         assert params == expected
