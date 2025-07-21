@@ -198,7 +198,7 @@ class TestHHParser:
         
         assert result.vacancy_id == '456'
         assert result.url == 'https://api.hh.ru/vacancies/456'
-        assert result.salary is None
+        assert result.salary.amount_from == 0 and result.salary.amount_to == 0
         assert result.published_at is None
 
     def test_convert_to_unified_format_no_urls(self, parser):
