@@ -441,8 +441,8 @@ def test_run_main_loop_all_menu_choices(ui_instance):
 def test_advanced_search_vacancies_operators(ui_instance):
     """Тест расширенного поиска с операторами"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", description="Python Flask"),
-        Vacancy(vacancy_id="2", title="Java Developer", description="Java Spring"),
+        Vacancy(vacancy_id="1", title="Python Developer", url="https://example.com/1", description="Python Flask"),
+        Vacancy(vacancy_id="2", title="Java Developer", url="https://example.com/2", description="Java Spring"),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -466,7 +466,7 @@ def test_advanced_search_vacancies_exception(ui_instance):
 def test_filter_saved_vacancies_by_salary_sort_option(ui_instance):
     """Тест сортировки в фильтрации по зарплате"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer", salary={"from": 100000, "to": 150000}),
+        Vacancy(vacancy_id="1", title="Python Developer", url="https://example.com/1", salary={"from": 100000, "to": 150000}),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -490,8 +490,8 @@ def test_filter_saved_vacancies_exception(ui_instance):
 def test_delete_saved_vacancies_by_keyword_advanced(ui_instance):
     """Тест удаления по ключевому слову с расширенным функционалом"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer"),
-        Vacancy(vacancy_id="2", title="Java Developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", url="https://example.com/1"),
+        Vacancy(vacancy_id="2", title="Java Developer", url="https://example.com/2"),
     ]
 
     ui_instance.json_saver.get_vacancies.return_value = test_vacancies
@@ -515,7 +515,7 @@ def test_delete_saved_vacancies_exception(ui_instance):
 def test_show_vacancies_for_deletion_all_delete(ui_instance):
     """Тест удаления всех вакансий через 'a'"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", url="https://example.com/1"),
     ]
 
     ui_instance.json_saver.delete_vacancies_by_keyword.return_value = 1
@@ -532,7 +532,7 @@ def test_show_vacancies_for_deletion_pagination(ui_instance):
     # Создаем 15 вакансий для тестирования пагинации
     test_vacancies = []
     for i in range(15):
-        test_vacancies.append(Vacancy(vacancy_id=str(i), title=f"Developer {i}"))
+        test_vacancies.append(Vacancy(vacancy_id=str(i), title=f"Developer {i}", url=f"https://example.com/{i}"))
 
     with patch('builtins.input', side_effect=['n', 'p', 'q']):
         ui_instance._show_vacancies_for_deletion(test_vacancies, 'test')
@@ -541,9 +541,9 @@ def test_show_vacancies_for_deletion_pagination(ui_instance):
 def test_show_vacancies_for_deletion_range_delete_with_swap(ui_instance):
     """Тест удаления диапазона с перестановкой номеров"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Dev 1"),
-        Vacancy(vacancy_id="2", title="Dev 2"),
-        Vacancy(vacancy_id="3", title="Dev 3"),
+        Vacancy(vacancy_id="1", title="Dev 1", url="https://example.com/1"),
+        Vacancy(vacancy_id="2", title="Dev 2", url="https://example.com/2"),
+        Vacancy(vacancy_id="3", title="Dev 3", url="https://example.com/3"),
     ]
 
     ui_instance.json_saver.delete_vacancy_by_id.return_value = True
@@ -555,7 +555,7 @@ def test_show_vacancies_for_deletion_range_delete_with_swap(ui_instance):
 
 def test_show_vacancies_for_deletion_failed_delete(ui_instance):
     """Тест неудачного удаления"""
-    test_vacancies = [Vacancy(vacancy_id="1", title="Developer")]
+    test_vacancies = [Vacancy(vacancy_id="1", title="Developer", url="https://example.com/1")]
 
     ui_instance.json_saver.delete_vacancy_by_id.return_value = False
 
@@ -566,7 +566,7 @@ def test_show_vacancies_for_deletion_failed_delete(ui_instance):
 
 def test_show_vacancies_for_deletion_all_delete_failed(ui_instance):
     """Тест неудачного удаления всех вакансий"""
-    test_vacancies = [Vacancy(vacancy_id="1", title="Developer")]
+    test_vacancies = [Vacancy(vacancy_id="1", title="Developer", url="https://example.com/1")]
 
     ui_instance.json_saver.delete_vacancies_by_keyword.return_value = 0
 
@@ -619,8 +619,8 @@ def test_clear_api_cache_exception(ui_instance):
 def test_display_vacancies_with_start_number(ui_instance):
     """Тест отображения вакансий с начальным номером"""
     test_vacancies = [
-        Vacancy(vacancy_id="1", title="Python Developer"),
-        Vacancy(vacancy_id="2", title="Java Developer"),
+        Vacancy(vacancy_id="1", title="Python Developer", url="https://example.com/1"),
+        Vacancy(vacancy_id="2", title="Java Developer", url="https://example.com/2"),
     ]
 
     with patch('src.ui_interfaces.console_interface.display_vacancy_info') as mock_display:
