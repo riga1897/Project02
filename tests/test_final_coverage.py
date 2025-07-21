@@ -39,21 +39,24 @@ class TestFinalCoverage:
 
     def test_cached_api_lines_66_72(self):
         """Test exception handling in cached_api.py lines 66-72"""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            api = ConcreteCachedAPI(temp_dir)
-            api.connector = Mock()
+        api = ConcreteCachedAPI()
+        api.connector = Mock()
 
-            # Mock _cached_api_request to raise exception
-            with patch.object(api, '_cached_api_request', side_effect=Exception("Cache error")):
-                result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test")
-                assert result == api._get_empty_response()
+        # Mock _cached_api_request to raise exception
+        with patch.object(api, '_cached_api_request', side_effect=Exception("Cache error")):
+            result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test")
+            assert result == api._get_empty_response()
 
     def test_json_saver_lines_229_231(self):
         """Test lines 229-231 in json_saver.py - filter error handling"""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            storage_path = Path(temp_dir) / "test.json"
-            json_saver = JSONSaver(str(storage_path))
-
+        # Mock JSONSaver to avoid file operations
+        with patch('src.storage.json_saver.Path') as mock_path:
+            mock_path.return_value.exists.return_value = True
+            json_saver = JSONSaver("test.json")
+            
+            # Mock get_vacancies to return test data
+            json_saver.get_vacancies = Mock(return_value=[Mock()])
+            
             # Test filter error in delete_vacancies_by_keyword
             with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
                 result = json_saver.delete_vacancies_by_keyword("test")
@@ -61,10 +64,10 @@ class TestFinalCoverage:
 
     def test_json_saver_line_299(self):
         """Test line 299 in json_saver.py - file error in delete_all_vacancies"""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            storage_path = Path(temp_dir) / "test.json"
-            json_saver = JSONSaver(str(storage_path))
-
+        with patch('src.storage.json_saver.Path') as mock_path:
+            mock_path.return_value.exists.return_value = True
+            json_saver = JSONSaver("test.json")
+            
             # Test file error in delete_all_vacancies
             with patch('builtins.open', side_effect=OSError("System error")):
                 result = json_saver.delete_all_vacancies()
@@ -72,14 +75,13 @@ class TestFinalCoverage:
 
     def test_json_saver_lines_160_161(self):
         """Test lines 160-161 in json_saver.py - backup when file doesn't exist"""
-        with tempfile.TemporaryDirectory() as temp_dir:
-            storage_path = Path(temp_dir) / "nonexistent.json"
-            json_saver = JSONSaver(str(storage_path))
-
-            # Ensure file doesn't exist
-            if storage_path.exists():
-                storage_path.unlink()
-
+        with patch('src.storage.json_saver.Path') as mock_path:
+            mock_path_instance = Mock()
+            mock_path.return_value = mock_path_instance
+            mock_path_instance.exists.return_value = False  # File doesn't exist
+            
+            json_saver = JSONSaver("nonexistent.json")
+            
             # Call backup when file doesn't exist
             json_saver._backup_corrupted_file()
 
@@ -228,36 +230,35 @@ class TestFinalCoverage:
         result = formatter.format_schedule(None)
         assert result == "Не указан"
 
-    def test_vacancy_models_lines_121_122_185_228_230(self):
+    def test_vacancy_models_edge_cases(self):
         """Test remaining lines in vacancy models"""
-        # Lines 121-122: edge case in calculate_average_salary
+        # Edge case in calculate_average_salary
         vacancy = Vacancy(title="Test", url="http://test.com", vacancy_id="1")
         vacancy.salary = None
         result = vacancy.calculate_average_salary()
         assert result is None
 
-        # Line 185: edge case in __eq__
+        # Edge case in __eq__
         vacancy1 = Vacancy(title="Test", url="http://test.com", vacancy_id="1")
         result = vacancy1.__eq__("not_a_vacancy")
         assert result is False
 
-        # Lines 228, 230: edge cases in from_dict
-        # Line 228: missing required fields
+        # Edge cases in from_dict
+        # Missing required fields
         try:
             Vacancy.from_dict({})
         except (KeyError, TypeError):
             pass  # Expected
 
-        # Line 230: invalid data type
+        # Invalid data type
         try:
             Vacancy.from_dict("not_a_dict")
         except (TypeError, AttributeError):
             pass  # Expected
 
-    @patch('builtins.input', return_value='q')
-    def test_comprehensive_edge_cases(self, mock_input):
+    def test_complete_edge_cases(self):
         """Additional edge cases for complete coverage"""
-        # Test console interface with all possible error scenarios
+        # Test all possible scenarios without hanging operations
         with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
              patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
              patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
@@ -272,7 +273,7 @@ class TestFinalCoverage:
             ui.vacancy_ops = MagicMock()
             ui.unified_api = MagicMock()
 
-            # Test all possible input scenarios for complete coverage
+            # Test all possible input scenarios with timeouts
             test_inputs = [
                 'invalid',  # Invalid filter choice
                 '0',        # Cancel operations
@@ -282,15 +283,14 @@ class TestFinalCoverage:
             ]
 
             for input_val in test_inputs:
-                mock_input.return_value = input_val
+                with patch('builtins.input', return_value=input_val):
+                    # Test various methods with these inputs
+                    ui.json_saver.get_vacancies.return_value = []
+                    ui._filter_saved_vacancies_by_salary()
+                    ui._delete_saved_vacancies()
+                    ui._show_vacancies_for_deletion([], 'test')
 
-                # Test various methods with these inputs
-                ui.json_saver.get_vacancies.return_value = []
-                ui._filter_saved_vacancies_by_salary()
-                ui._delete_saved_vacancies()
-                ui._show_vacancies_for_deletion([], 'test')
-
-                if input_val in ['8']:
-                    mock_input.return_value = '1000'  # Set large period value
-                    result = ui._get_period_choice()
-                    assert result == 15  # Default fallback
+                    if input_val in ['8']:
+                        with patch('builtins.input', return_value='1000'):  # Set large period value
+                            result = ui._get_period_choice()
+                            assert result == 15  # Default fallback
