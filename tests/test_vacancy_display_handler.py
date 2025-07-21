@@ -88,6 +88,9 @@ class TestVacancyDisplayHandler:
         """Тест топ вакансий когда нет вакансий с зарплатой"""
         vacancies = [Mock(spec=Vacancy)]
         handler.json_saver.get_vacancies.return_value = vacancies
+        
+        # Мокаем VacancyOperations чтобы избежать вызовов input()
+        handler.vacancy_ops = Mock()
         handler.vacancy_ops.get_vacancies_with_salary.return_value = []
         
         handler.show_top_vacancies_by_salary()
