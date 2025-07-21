@@ -63,7 +63,7 @@ class TestHeadHunterAPI:
         }
         
         result = hh_api._validate_vacancy(vacancy)
-        assert result is True
+        assert result == 'https://hh.ru/vacancy/123'
 
     def test_validate_vacancy_missing_name(self, hh_api):
         """Тест валидации вакансии без названия"""
@@ -72,7 +72,7 @@ class TestHeadHunterAPI:
         }
         
         result = hh_api._validate_vacancy(vacancy)
-        assert result is False
+        assert result is None
 
     def test_validate_vacancy_missing_url(self, hh_api):
         """Тест валидации вакансии без URL"""
@@ -81,7 +81,7 @@ class TestHeadHunterAPI:
         }
         
         result = hh_api._validate_vacancy(vacancy)
-        assert result is False
+        assert result is None
 
     def test_validate_vacancy_empty_name(self, hh_api):
         """Тест валидации вакансии с пустым названием"""
@@ -91,7 +91,7 @@ class TestHeadHunterAPI:
         }
         
         result = hh_api._validate_vacancy(vacancy)
-        assert result is False
+        assert result == ''
 
     def test_validate_vacancy_not_dict(self, hh_api):
         """Тест валидации некорректного типа данных"""
