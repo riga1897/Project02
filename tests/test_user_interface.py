@@ -1,6 +1,5 @@
-
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch, call
 import logging
 
 from src.user_interface import main
@@ -21,29 +20,29 @@ class TestUserInterface:
         mock_get_env_var.return_value = 'INFO'
         mock_ui_instance = Mock()
         mock_ui_class.return_value = mock_ui_instance
-        
+
         # Вызов функции
         main()
-        
+
         # Проверки
         mock_load_env.assert_called_once()
         mock_get_env_var.assert_called_once_with('LOG_LEVEL', 'INFO')
-        
+
         # Проверяем настройку логирования
         mock_logging_config.assert_called_once()
         call_args = mock_logging_config.call_args
         assert call_args[1]['level'] == logging.INFO
         assert call_args[1]['format'] == '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         assert len(call_args[1]['handlers']) == 2
-        
+
         # Проверяем вывод заголовка
         expected_calls = [
-            pytest.unittest.mock.call("=" * 60),
-            pytest.unittest.mock.call("   ПОИСКОВИК ВАКАНСИЙ"),
-            pytest.unittest.mock.call("=" * 60)
+            call("=" * 60),
+            call("   ПОИСКОВИК ВАКАНСИЙ"),
+            call("=" * 60)
         ]
         mock_print.assert_has_calls(expected_calls)
-        
+
         # Проверяем создание и запуск UI
         mock_ui_class.assert_called_once()
         mock_ui_instance.run.assert_called_once()
@@ -60,14 +59,10 @@ class TestUserInterface:
         mock_get_env_var.return_value = 'DEBUG'
         mock_ui_instance = Mock()
         mock_ui_class.return_value = mock_ui_instance
-        
+
         # Вызов функции
         main()
-        
-        # Проверки
-        mock_load_env.assert_called_once()
-        mock_get_env_var.assert_called_once_with('LOG_LEVEL', 'INFO')
-        
+
         # Проверяем настройку логирования с DEBUG уровнем
         mock_logging_config.assert_called_once()
         call_args = mock_logging_config.call_args
@@ -85,14 +80,10 @@ class TestUserInterface:
         mock_get_env_var.return_value = 'ERROR'
         mock_ui_instance = Mock()
         mock_ui_class.return_value = mock_ui_instance
-        
+
         # Вызов функции
         main()
-        
-        # Проверки
-        mock_load_env.assert_called_once()
-        mock_get_env_var.assert_called_once_with('LOG_LEVEL', 'INFO')
-        
+
         # Проверяем настройку логирования с ERROR уровнем
         mock_logging_config.assert_called_once()
         call_args = mock_logging_config.call_args
@@ -110,14 +101,10 @@ class TestUserInterface:
         mock_get_env_var.return_value = 'INVALID_LEVEL'
         mock_ui_instance = Mock()
         mock_ui_class.return_value = mock_ui_instance
-        
+
         # Вызов функции
         main()
-        
-        # Проверки
-        mock_load_env.assert_called_once()
-        mock_get_env_var.assert_called_once_with('LOG_LEVEL', 'INFO')
-        
+
         # Проверяем настройку логирования с INFO по умолчанию для некорректного уровня
         mock_logging_config.assert_called_once()
         call_args = mock_logging_config.call_args
@@ -135,15 +122,11 @@ class TestUserInterface:
         mock_get_env_var.return_value = 'warning'
         mock_ui_instance = Mock()
         mock_ui_class.return_value = mock_ui_instance
-        
+
         # Вызов функции
         main()
-        
-        # Проверки
-        mock_load_env.assert_called_once()
-        mock_get_env_var.assert_called_once_with('LOG_LEVEL', 'INFO')
-        
-        # Проверяем настройку логирования с WARNING уровнем (должен преобразоваться в верхний регистр)
+
+        # Проверяем настройку логирования с WARNING уровнем
         mock_logging_config.assert_called_once()
         call_args = mock_logging_config.call_args
         assert call_args[1]['level'] == logging.WARNING
@@ -153,21 +136,21 @@ class TestUserInterface:
         """Тест точки входа if __name__ == '__main__'"""
         # Имитация выполнения скрипта напрямую
         import src.user_interface
-        
+
         # Сохраняем оригинальное значение
         original_name = src.user_interface.__name__
-        
+
         try:
             # Устанавливаем __name__ как '__main__'
             src.user_interface.__name__ = '__main__'
-            
+
             # Имитация выполнения условия
             if src.user_interface.__name__ == '__main__':
                 src.user_interface.main()
-            
+
             # Проверяем, что main была вызвана
             mock_main.assert_called_once()
-            
+
         finally:
             # Восстанавливаем оригинальное значение
             src.user_interface.__name__ = original_name
