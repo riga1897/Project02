@@ -51,6 +51,7 @@ def test_show_saved_vacancies(ui_instance):
 
 def test_get_top_saved_vacancies_by_salary(ui_instance):
     """Тест получения топ N вакансий по зарплате"""
+    ui_instance._show_saved_vacancies()
     ui_instance._get_top_saved_vacancies_by_salary()
     ui_instance.display_handler.show_top_vacancies_by_salary.assert_called_once()
 
