@@ -42,6 +42,8 @@ class HHParser:
             try:
                 # Сначала создаем HH-специфичную модель
                 hh_vacancy = Vacancy.from_dict(item)
+                # Устанавливаем raw_data для доступа к исходным данным
+                hh_vacancy.raw_data = item
             # Обработка snippet (специфично для HH)
                 snippet = item.get('snippet', {})
                 requirements = None
@@ -76,8 +78,8 @@ class HHParser:
             vacancy_id=hh_vacancy.vacancy_id,
             title=hh_vacancy.title,
             url=(
-                hh_vacancy.raw_data.get('alternate_url') or  # Используем веб-версию в первую очередь
-                hh_vacancy.raw_data.get('url') or
+                (hh_vacancy.raw_data.get('alternate_url') if hh_vacancy.raw_data else '') or
+                (hh_vacancy.raw_data.get('url') if hh_vacancy.raw_data else '') or
                 ''
             ),
             salary=hh_vacancy.salary.to_dict() if hh_vacancy.salary else None,
