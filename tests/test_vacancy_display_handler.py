@@ -65,14 +65,14 @@ class TestVacancyDisplayHandler:
         mock_logger.error.assert_called_once()
         mock_print.assert_called_once_with(f"Ошибка при загрузке вакансий: {error_msg}")
 
-    @patch('src.utils.ui_helpers.get_positive_integer', return_value=None)
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=None)
     def test_show_top_vacancies_by_salary_invalid_input(self, mock_input, handler):
         """Тест топ вакансий с некорректным вводом"""
         handler.show_top_vacancies_by_salary()
         
         mock_input.assert_called_once_with("\nВведите количество вакансий для отображения: ")
 
-    @patch('src.utils.ui_helpers.get_positive_integer', return_value=5)
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5)
     @patch('builtins.print')
     def test_show_top_vacancies_by_salary_no_vacancies(self, mock_print, mock_input, handler):
         """Тест топ вакансий когда нет сохраненных вакансий"""
@@ -82,7 +82,7 @@ class TestVacancyDisplayHandler:
         
         mock_print.assert_called_once_with("Нет сохраненных вакансий.")
 
-    @patch('src.utils.ui_helpers.get_positive_integer', return_value=3)
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=3)
     @patch('builtins.print')
     def test_show_top_vacancies_by_salary_no_salary_vacancies(self, mock_print, mock_input, handler):
         """Тест топ вакансий когда нет вакансий с зарплатой"""
@@ -95,7 +95,7 @@ class TestVacancyDisplayHandler:
         mock_print.assert_called_once_with("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
 
     @patch('src.ui_interfaces.vacancy_display_handler.quick_paginate')
-    @patch('src.utils.ui_helpers.get_positive_integer', return_value=2)
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=2)
     @patch('builtins.print')
     def test_show_top_vacancies_by_salary_success(self, mock_print, mock_input, mock_paginate, handler):
         """Тест успешного отображения топ вакансий"""
@@ -114,7 +114,7 @@ class TestVacancyDisplayHandler:
         mock_print.assert_called_once_with("\nТоп 2 сохраненных вакансий по зарплате:")
         mock_paginate.assert_called_once()
 
-    @patch('src.utils.ui_helpers.get_positive_integer', return_value=5)
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5)
     @patch('src.ui_interfaces.vacancy_display_handler.logger')
     @patch('builtins.print')
     def test_show_top_vacancies_by_salary_exception(self, mock_print, mock_logger, mock_input, handler):
@@ -144,7 +144,7 @@ class TestVacancyDisplayHandler:
         
         mock_print.assert_called_once_with("Нет сохраненных вакансий.")
 
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch('src.ui_interfaces.vacancy_display_handler.filter_vacancies_by_keyword')
     @patch('src.utils.ui_helpers.get_user_input', return_value="python")
     @patch('builtins.print')
     def test_search_saved_vacancies_by_keyword_no_matches(self, mock_print, mock_input, mock_filter, handler):
@@ -159,7 +159,7 @@ class TestVacancyDisplayHandler:
         mock_print.assert_called_once_with("Среди сохраненных вакансий не найдено ни одной с ключевым словом 'python'.")
 
     @patch('src.ui_interfaces.vacancy_display_handler.quick_paginate')
-    @patch('src.utils.ui_helpers.filter_vacancies_by_keyword')
+    @patch('src.ui_interfaces.vacancy_display_handler.filter_vacancies_by_keyword')
     @patch('src.utils.ui_helpers.get_user_input', return_value="java")
     @patch('builtins.print')
     def test_search_saved_vacancies_by_keyword_success(self, mock_print, mock_input, mock_filter, mock_paginate, handler):

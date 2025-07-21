@@ -1,4 +1,3 @@
-
 import pytest
 from unittest.mock import Mock, patch, call
 from src.utils.ui_helpers import (
@@ -175,7 +174,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по ID вакансии"""
         vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "123")
         assert len(result) == 1
         assert result[0].vacancy_id == "123"
@@ -185,7 +184,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по заголовку"""
         vacancy = Vacancy(vacancy_id="1", title="Python Developer", url="http://test.com")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 10
@@ -194,7 +193,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по требованиям"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", requirements="Python required")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 5
@@ -203,25 +202,29 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по обязанностям"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", responsibilities="Develop Python apps")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 5
 
     def test_filter_by_description(self):
         """Тест фильтрации по описанию"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", description="Python development")
-        vacancies = [vacancy]
-        
+        vacancies = [
+            Vacancy(vacancy_id="1", title="Python Developer", url="http://test1.com", description="Python development"),
+            Vacancy(vacancy_id="2", title="Java Developer", url="http://test2.com", description="Java programming")
+        ]
+
         result = filter_vacancies_by_keyword(vacancies, "python")
+
         assert len(result) == 1
+        assert result[0].vacancy_id == "1"
         assert result[0]._relevance_score == 3
 
     def test_filter_by_detailed_description(self):
         """Тест фильтрации по детальному описанию"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", detailed_description="Python backend")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 2
@@ -230,7 +233,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по навыкам в формате словаря"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", skills=[{"name": "Python"}])
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 6
@@ -239,7 +242,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по навыкам в строковом формате"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", skills=["Python"])
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 6
@@ -248,7 +251,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по работодателю"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", employer={"name": "Python Corp"})
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 4
@@ -257,7 +260,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по типу занятости"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", employment="Python developer")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 3
@@ -266,7 +269,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по графику"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", schedule="Python shifts")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 3
@@ -275,7 +278,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по опыту"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", experience="Python experience")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 3
@@ -284,7 +287,7 @@ class TestFilterVacanciesByKeyword:
         """Тест фильтрации по льготам"""
         vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", benefits="Python training")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 1
         assert result[0]._relevance_score == 2
@@ -293,7 +296,7 @@ class TestFilterVacanciesByKeyword:
         """Тест когда нет совпадений"""
         vacancy = Vacancy(vacancy_id="1", title="Java Dev", url="http://test.com")
         vacancies = [vacancy]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 0
 
@@ -302,7 +305,7 @@ class TestFilterVacanciesByKeyword:
         vacancy1 = Vacancy(vacancy_id="1", title="Dev", url="http://test1.com", description="Python")  # score 3
         vacancy2 = Vacancy(vacancy_id="2", title="Python Dev", url="http://test2.com")  # score 10
         vacancies = [vacancy1, vacancy2]
-        
+
         result = filter_vacancies_by_keyword(vacancies, "python")
         assert len(result) == 2
         assert result[0].vacancy_id == "2"  # Больший score должен быть первым
@@ -329,13 +332,13 @@ class TestDebugVacancySearch:
             schedule="9-6",
             benefits="Health insurance"
         )
-        
+
         debug_vacancy_search(vacancy, "python")
-        
+
         # Проверяем что вызывался print
         assert mock_print.called
         print_calls = [call[0][0] for call in mock_print.call_args_list]
-        
+
         # Проверяем основные элементы в выводе
         assert any("Python Developer" in call for call in print_calls)
         assert any("123" in call for call in print_calls)
@@ -345,9 +348,9 @@ class TestDebugVacancySearch:
     def test_debug_vacancy_search_no_matches(self, mock_print):
         """Тест отладки без совпадений"""
         vacancy = Vacancy(vacancy_id="123", title="Java Developer", url="http://test.com")
-        
+
         debug_vacancy_search(vacancy, "python")
-        
+
         print_calls = [call[0][0] for call in mock_print.call_args_list]
         assert any("НИГДЕ" in call for call in print_calls)
 
@@ -363,14 +366,14 @@ class TestDebugSearchVacancies:
             Vacancy(vacancy_id="1", title="Python Dev", url="http://test1.com"),
             Vacancy(vacancy_id="2", title="Java Dev", url="http://test2.com")
         ]
-        
+
         debug_search_vacancies(vacancies, "python")
-        
+
         # Проверяем что выводится общая информация
         print_calls = [call[0][0] for call in mock_print.call_args_list]
         assert any("Всего вакансий: 2" in call for call in print_calls)
         assert any("python" in call for call in print_calls)
-        
+
         # Проверяем что вызывается debug для каждой вакансии (максимум 5)
         assert mock_debug_vacancy.call_count == 2
 
@@ -382,18 +385,18 @@ class TestDisplayVacancyInfo:
     def test_display_vacancy_info(self, mock_display):
         """Тест отображения информации о вакансии"""
         vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
-        
+
         display_vacancy_info(vacancy, 1)
-        
+
         mock_display.assert_called_once_with(vacancy, 1)
 
     @patch('src.utils.ui_helpers.vacancy_formatter.display_vacancy_info')
     def test_display_vacancy_info_no_number(self, mock_display):
         """Тест отображения без номера"""
         vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
-        
+
         display_vacancy_info(vacancy)
-        
+
         mock_display.assert_called_once_with(vacancy, None)
 
 
@@ -405,9 +408,9 @@ class TestDeprecatedFunctions:
         """Тест устаревшей функции фильтрации по минимальной зарплате"""
         vacancies = [Mock()]
         min_salary = 100000
-        
+
         filter_vacancies_by_min_salary(vacancies, min_salary)
-        
+
         mock_filter.assert_called_once_with(vacancies, min_salary)
 
     @patch('src.utils.ui_helpers.VacancyOperations.filter_vacancies_by_max_salary')
@@ -415,9 +418,9 @@ class TestDeprecatedFunctions:
         """Тест устаревшей функции фильтрации по максимальной зарплате"""
         vacancies = [Mock()]
         max_salary = 200000
-        
+
         filter_vacancies_by_max_salary(vacancies, max_salary)
-        
+
         mock_filter.assert_called_once_with(vacancies, max_salary)
 
     @patch('src.utils.ui_helpers.VacancyOperations.filter_vacancies_by_salary_range')
@@ -426,27 +429,27 @@ class TestDeprecatedFunctions:
         vacancies = [Mock()]
         min_salary = 100000
         max_salary = 200000
-        
+
         filter_vacancies_by_salary_range(vacancies, min_salary, max_salary)
-        
+
         mock_filter.assert_called_once_with(vacancies, min_salary, max_salary)
 
     @patch('src.utils.ui_helpers.VacancyOperations.get_vacancies_with_salary')
     def test_get_vacancies_with_salary(self, mock_get):
         """Тест устаревшей функции получения вакансий с зарплатой"""
         vacancies = [Mock()]
-        
+
         get_vacancies_with_salary(vacancies)
-        
+
         mock_get.assert_called_once_with(vacancies)
 
     @patch('src.utils.ui_helpers.VacancyOperations.sort_vacancies_by_salary')
     def test_sort_vacancies_by_salary(self, mock_sort):
         """Тест устаревшей функции сортировки по зарплате"""
         vacancies = [Mock()]
-        
+
         sort_vacancies_by_salary(vacancies, reverse=False)
-        
+
         mock_sort.assert_called_once_with(vacancies, False)
 
     @patch('src.utils.ui_helpers.VacancyOperations.filter_vacancies_by_multiple_keywords')
@@ -454,9 +457,9 @@ class TestDeprecatedFunctions:
         """Тест устаревшей функции фильтрации по множественным ключевым словам"""
         vacancies = [Mock()]
         keywords = ["python", "django"]
-        
+
         filter_vacancies_by_multiple_keywords(vacancies, keywords)
-        
+
         mock_filter.assert_called_once_with(vacancies, keywords)
 
     @patch('src.utils.ui_helpers.VacancyOperations.search_vacancies_advanced')
@@ -464,7 +467,7 @@ class TestDeprecatedFunctions:
         """Тест устаревшей функции расширенного поиска"""
         vacancies = [Mock()]
         query = "python developer"
-        
+
         search_vacancies_advanced(vacancies, query)
-        
+
         mock_search.assert_called_once_with(vacancies, query)
