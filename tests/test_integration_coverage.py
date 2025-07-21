@@ -15,11 +15,20 @@ from src.vacancies.models import Vacancy
 
 class ConcreteCachedAPI(CachedAPI):
     """Concrete implementation of CachedAPI for testing."""
-    def __init__(self, api):
-        super().__init__(api)
+    def __init__(self, cache_dir="test_cache"):
+        super().__init__(cache_dir)
 
-    def get_vacancies(self, keyword, pages=1):
-        return super().get_vacancies(keyword, pages)
+    def _get_empty_response(self):
+        return {"items": [], "found": 0, "pages": 0}
+
+    def _validate_vacancy(self, vacancy):
+        return "name" in vacancy or "title" in vacancy
+
+    def get_vacancies_page(self, search_query, page=0, **kwargs):
+        return [{"name": "Test Vacancy", "page": page}]
+
+    def get_vacancies(self, search_query, **kwargs):
+        return [{"name": "Test Vacancy"}]
 
 
 class ConcreteFormatter(BaseFormatter):
@@ -27,14 +36,25 @@ class ConcreteFormatter(BaseFormatter):
     def format_vacancy_info(self, vacancy):
         return f"{vacancy.title} - {vacancy.employer}"
 
-    def format_salary(self, salary_data):
-        return super().format_salary(salary_data)
+    def _parse_json_safely(self, json_str):
+        """Safely parse JSON string"""
+        try:
+            import json
+            return json.loads(json_str)
+        except (json.JSONDecodeError, ValueError):
+            return None
 
-    def format_experience(self, experience):
-        return super().format_experience(experience)
-
-    def format_description(self, description):
-        return super().format_description(description)
+    def _format_salary_safely(self, salary_data):
+        """Safely format salary data"""
+        try:
+            if isinstance(salary_data, dict):
+                from_salary = salary_data.get('from')
+                currency = salary_data.get('currency', 'RUR')
+                if from_salary:
+                    return f"от {from_salary} {currency}"
+            return str(salary_data)
+        except Exception:
+            return str(salary_data)
 
 
 class TestIntegrationCoverage:
@@ -105,18 +125,17 @@ class TestIntegrationCoverage:
 
     def test_cached_api_integration_cache_operations(self, mocker):
         """Интеграционный тест операций кэширования"""
-        # Создаем мок API
-        mock_api = Mock()
-        mock_api.get_vacancies.return_value = [{"id": "1", "name": "Test"}]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            cached_api = ConcreteCachedAPI(temp_dir)
+            cached_api.connector = Mock()
+            cached_api.connector._APIConnector__connect.return_value = {"items": [{"name": "Test"}], "found": 1}
 
-        cached_api = ConcreteCachedAPI(mock_api)
-
-        # Строки 66-72 - обработка ошибок кэширования
-        with patch('src.utils.cache.FileCache.get', side_effect=Exception("Cache error")):
-            with patch('src.utils.cache.FileCache.set', side_effect=Exception("Cache write error")):
-                # Тестируем получение данных при ошибке кэша
-                result = cached_api.get_vacancies("python", pages=1)
-                assert result is not None
+            # Строки 66-72 - обработка ошибок кэширования  
+            with patch.object(cached_api, '_cached_api_request', side_effect=Exception("Cache error")):
+                with patch.object(cached_api.cache, 'save_response', side_effect=Exception("Cache write error")):
+                    # Тестируем получение данных при ошибке кэша
+                    result = cached_api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+                    assert result is not None
 
     def test_vacancy_display_handler_edge_cases(self, mocker):
         """Интеграционный тест граничных случаев VacancyDisplayHandler"""
