@@ -1,5 +1,5 @@
 import logging
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 
 from src.config.api_config import APIConfig
 from src.config.sj_api_config import SJAPIConfig
@@ -78,8 +78,8 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         """
         return (
             isinstance(vacancy, dict) and 
-            vacancy.get('profession') and  # У SJ это поле 'profession'
-            vacancy.get('link')  # У SJ это поле 'link'
+            bool(vacancy.get('profession')) and  # У SJ это поле 'profession'
+            bool(vacancy.get('link'))  # У SJ это поле 'link'
         )
 
     def __connect(self, url: str, params: Dict = None) -> Dict:

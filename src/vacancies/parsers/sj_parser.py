@@ -1,6 +1,6 @@
 from typing import List, Dict, Any
 import logging
-from ..sj_models import SuperJobVacancy
+from ..models import Vacancy
 
 logger = logging.getLogger(__name__)
 
@@ -9,7 +9,7 @@ class SuperJobParser:
     """Парсер для обработки данных вакансий SuperJob"""
 
     @staticmethod
-    def parse_vacancies(vacancies_data: List[Dict[str, Any]]) -> List[SuperJobVacancy]:
+    def parse_vacancies(vacancies_data: List[Dict[str, Any]]) -> List[Vacancy]:
         """
         Парсинг списка вакансий SuperJob
 
@@ -23,7 +23,7 @@ class SuperJobParser:
 
         for vacancy_data in vacancies_data:
             try:
-                vacancy = SuperJobVacancy.from_dict(vacancy_data)
+                vacancy = Vacancy.from_dict(vacancy_data)
                 parsed_vacancies.append(vacancy)
             except ValueError as e:
                 logger.warning(f"Пропуск вакансии SuperJob из-за ошибки валидации: {e}")
@@ -36,7 +36,7 @@ class SuperJobParser:
         return parsed_vacancies
 
     @staticmethod
-    def convert_to_unified_format(sj_vacancy: SuperJobVacancy) -> Dict[str, Any]:
+    def convert_to_unified_format(sj_vacancy: Vacancy) -> Dict[str, Any]:
         """
         Конвертация SuperJob вакансии в унифицированный формат
 

@@ -314,8 +314,23 @@ class JSONSaver:
             logger.critical(f"Ошибка записи в файл: {e}")
             raise
 
-        with open(self.filename, 'w', encoding='utf-8') as f:
-            json.dump(valid_data, f, ensure_ascii=False, indent=2)
+    def is_vacancy_exists(self, vacancy: Vacancy) -> bool:
+        """
+        Проверяет, существует ли вакансия в базе данных
+        
+        Args:
+            vacancy: Объект вакансии для проверки
+            
+        Returns:
+            bool: True если вакансия существует, False иначе
+        """
+        try:
+            existing_vacancies = self.load_vacancies()
+            existing_ids = {v.vacancy_id for v in existing_vacancies}
+            return vacancy.vacancy_id in existing_ids
+        except Exception as e:
+            logger.error(f"Ошибка проверки существования вакансии: {e}")
+            return False
 
     def get_file_size(self) -> int:
         """

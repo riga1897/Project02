@@ -34,7 +34,7 @@ class BaseJobAPI(ABC):
         Returns:
             List[Dict]: Список найденных вакансий в формате словарей
         """
-        pass
+
     
     @abstractmethod
     def _validate_vacancy(self, vacancy: Dict) -> bool:
@@ -50,7 +50,7 @@ class BaseJobAPI(ABC):
         Returns:
             bool: True если структура валидна, False иначе
         """
-        pass
+
     
     @staticmethod
     def _create_dedup_key(vacancy: Dict, source: str) -> tuple:

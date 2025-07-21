@@ -12,122 +12,72 @@
   "data": {
     "items": [
       {
-        "id": "123009042",
+        "id": "123060551",
         "premium": false,
-        "name": "Бэкенд-разработчик",
+        "name": "Middle/Middle+ QA",
         "department": null,
         "has_test": false,
         "response_letter_required": false,
         "area": {
-          "id": "2",
-          "name": "Санкт-Петербург",
-          "url": "https://api.hh.ru/areas/2"
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
         },
-        "salary": {
-          "from": 80000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false
-        },
-        "salary_range": {
-          "from": 80000,
-          "to": null,
-          "currency": "RUR",
-          "gross": false,
-          "mode": {
-            "id": "MONTH",
-            "name": "За месяц"
-          },
-          "frequency": {
-            "id": "TWICE_PER_MONTH",
-            "name": "Два раза в месяц"
-          }
-        },
+        "salary": null,
+        "salary_range": null,
         "type": {
           "id": "open",
           "name": "Открытая"
         },
         "address": {
           "city": "Москва",
-          "street": null,
-          "building": null,
-          "lat": 55.75586,
-          "lng": 37.6177,
+          "street": "Поклонная улица",
+          "building": "3к3",
+          "lat": 55.736463,
+          "lng": 37.53261,
           "description": null,
-          "raw": "Москва",
-          "metro": {
-            "station_name": "Библиотека им.Ленина",
-            "line_name": "Сокольническая",
-            "station_id": "1.4",
-            "line_id": "1",
-            "lat": 55.752123,
-            "lng": 37.610388
-          },
-          "metro_stations": [
-            {
-              "station_name": "Библиотека им.Ленина",
-              "line_name": "Сокольническая",
-              "station_id": "1.4",
-              "line_id": "1",
-              "lat": 55.752123,
-              "lng": 37.610388
-            },
-            {
-              "station_name": "Охотный ряд",
-              "line_name": "Сокольническая",
-              "station_id": "1.98",
-              "line_id": "1",
-              "lat": 55.757228,
-              "lng": 37.615078
-            },
-            {
-              "station_name": "Площадь Революции",
-              "line_name": "Арбатско-Покровская",
-              "station_id": "3.100",
-              "line_id": "3",
-              "lat": 55.756741,
-              "lng": 37.62236
-            },
-            {
-              "station_name": "Театральная",
-              "line_name": "Замоскворецкая",
-              "station_id": "2.99",
-              "line_id": "2",
-              "lat": 55.758808,
-              "lng": 37.61768
-            }
-          ],
-          "id": "18772642"
+          "raw": "Москва, Поклонная улица, 3к3",
+          "metro": null,
+          "metro_stations": [],
+          "id": "2197323"
         },
         "response_url": null,
         "sort_point_distance": null,
-        "published_at": "2025-07-20T10:53:13+0300",
-        "created_at": "2025-07-20T10:53:13+0300",
+        "published_at": "2025-07-21T14:34:04+0300",
+        "created_at": "2025-07-21T14:34:04+0300",
         "archived": false,
-        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=123009042",
-        "show_logo_in_search": null,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=123060551",
+        "branding": {
+          "type": "MAKEUP",
+          "tariff": null
+        },
+        "show_logo_in_search": true,
         "show_contacts": true,
         "insider_interview": null,
-        "url": "https://api.hh.ru/vacancies/123009042?host=hh.ru",
-        "alternate_url": "https://hh.ru/vacancy/123009042",
+        "url": "https://api.hh.ru/vacancies/123060551?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/123060551",
         "relations": [],
         "employer": {
-          "id": "12100461",
-          "name": "Формат",
-          "url": "https://api.hh.ru/employers/12100461",
-          "alternate_url": "https://hh.ru/employer/12100461",
+          "id": "1320790",
+          "name": "АБК",
+          "url": "https://api.hh.ru/employers/1320790",
+          "alternate_url": "https://hh.ru/employer/1320790",
           "logo_urls": {
-            "original": "https://img.hhcdn.ru/employer-logo-original/1434524.png",
-            "90": "https://img.hhcdn.ru/employer-logo/7357737.png",
-            "240": "https://img.hhcdn.ru/employer-logo/7357738.png"
+            "original": "https://img.hhcdn.ru/employer-logo-original/1182411.jpg",
+            "90": "https://img.hhcdn.ru/employer-logo/6350070.jpeg",
+            "240": "https://img.hhcdn.ru/employer-logo/6350071.jpeg"
           },
-          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=12100461",
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=1320790",
           "accredited_it_employer": false,
+          "employer_rating": {
+            "total_rating": "4.1",
+            "reviews_count": 49
+          },
           "trusted": true
         },
         "snippet": {
-          "requirement": "Базовые знания одного из языков программирования (<highlighttext>Python</highlighttext>/Java/PHP/Node.js). Желание развиваться в сфере backend-разработки. Аналитическое мышление и внимание...",
-          "responsibility": "Разработка серверной части веб-приложений. Написание чистого кода и его оптимизация. Работа с базами данных. Интеграция с внешними сервисами и..."
+          "requirement": "Опыт работы в области тестирования ПО от 1-2 года. Уверенное знание <highlighttext>Python</highlighttext> (pytest). Опыт организации процессов тестирования. ",
+          "responsibility": "Выстраивать новые, оптимизировать существующие процессы тестирования в команде. Собирать требования. Обсуждать с командой разработки продуктовые требования и запросы на доработки..."
         },
         "contacts": null,
         "schedule": {
@@ -141,18 +91,14 @@
         "fly_in_fly_out_duration": [],
         "work_format": [
           {
-            "id": "ON_SITE",
-            "name": "На месте работодателя"
-          },
-          {
             "id": "REMOTE",
             "name": "Удалённо"
           }
         ],
         "working_hours": [
           {
-            "id": "HOURS_9",
-            "name": "9 часов"
+            "id": "HOURS_8",
+            "name": "8 часов"
           }
         ],
         "work_schedule_by_days": [
@@ -164,14 +110,14 @@
         "night_shifts": false,
         "professional_roles": [
           {
-            "id": "96",
-            "name": "Программист, разработчик"
+            "id": "124",
+            "name": "Тестировщик"
           }
         ],
-        "accept_incomplete_resumes": true,
+        "accept_incomplete_resumes": false,
         "experience": {
-          "id": "noExperience",
-          "name": "Нет опыта"
+          "id": "between1And3",
+          "name": "От 1 года до 3 лет"
         },
         "employment": {
           "id": "full",
@@ -187,8 +133,8 @@
         "adv_context": null
       }
     ],
-    "found": 230,
-    "pages": 230,
+    "found": 538,
+    "pages": 538,
     "page": 0,
     "per_page": 1,
     "clusters": null,

@@ -1,4 +1,3 @@
-
 """
 Модуль для работы с кэшированными API запросами.
 
@@ -22,7 +21,7 @@ logger = logging.getLogger(__name__)
 class CachedAPI(BaseJobAPI, ABC):
     """
     Абстрактный базовый класс для API с кэшированием
-    
+
     Расширяет BaseJobAPI функциональностью многоуровневого кэширования:
     - Кэш в памяти для быстрого доступа
     - Файловый кэш для долгосрочного хранения
@@ -42,24 +41,24 @@ class CachedAPI(BaseJobAPI, ABC):
     def _init_cache(self) -> None:
         """
         Инициализация кэша
-        
+
         Создает директорию для кэша и инициализирует файловый кэш.
         """
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         self.cache = FileCache(str(self.cache_dir))
 
-    
+
 
     @simple_cache(ttl=300)  # Кэш в памяти на 5 минут
     def _cached_api_request(self, url: str, params: Dict, api_prefix: str) -> Dict:
         """
         Кэшированный API запрос в памяти
-        
+
         Args:
             url: URL для запроса
             params: Параметры запроса
             api_prefix: Префикс для логирования
-            
+
         Returns:
             Dict: Ответ API
         """
@@ -97,28 +96,28 @@ class CachedAPI(BaseJobAPI, ABC):
         except Exception as e:
             # Игнорируем ошибки кэша в памяти, переходим к файловому кэшу
             logging.warning(f"Ошибка кэша памяти: {str(e)}. Переключаемся на файловый кэш")
-        
+
         # 2. Проверяем файловый кэш
         cached_response = self.cache.load_response(api_prefix, params)
         if cached_response is not None:
             logger.debug(f"Данные получены из файлового кэша для {api_prefix}")
             data = cached_response.get('data', self._get_empty_response())
             return data
-        
+
         # 3. Делаем реальный запрос к API с параллельным кэшированием
         try:
             # Делаем прямой запрос к API
             data = self.connector._APIConnector__connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix}")
-            
+
             # Параллельно сохраняем в файловый кэш только валидные данные
             if data and data != self._get_empty_response():
                 # Сохраняем в файловый кэш в data/cache/
                 self.cache.save_response(api_prefix, params, data)
                 logger.debug(f"Данные сохранены в файловый кэш data/cache/ для {api_prefix}")
-            
+
             return data
-            
+
         except Exception as e:
             logger.error(f"Ошибка многоуровневого кэширования: {e}")
             return self._get_empty_response()
@@ -133,11 +132,11 @@ class CachedAPI(BaseJobAPI, ABC):
         try:
             # Очищаем файловый кэш
             self.cache.clear(api_prefix)
-            
+
             # Очищаем кэш в памяти
             if hasattr(self._cached_api_request, 'clear_cache'):
                 self._cached_api_request.clear_cache()
-                
+
             logger.info(f"Кэш {api_prefix} очищен (файловый и в памяти)")
         except Exception as e:
             logger.error(f"Ошибка очистки кэша {api_prefix}: {e}")
@@ -148,7 +147,7 @@ class CachedAPI(BaseJobAPI, ABC):
 
         Args:
             api_prefix: Префикс API (hh, sj)
-            
+
         Returns:
             Dict: Информация о состоянии кэша
         """
@@ -157,7 +156,7 @@ class CachedAPI(BaseJobAPI, ABC):
             memory_info = {}
             if hasattr(self._cached_api_request, 'cache_info'):
                 memory_info = self._cached_api_request.cache_info()
-            
+
             return {
                 'cache_dir': str(self.cache_dir),
                 'cache_dir_exists': self.cache_dir.exists(),
@@ -168,6 +167,25 @@ class CachedAPI(BaseJobAPI, ABC):
         except Exception as e:
             logger.error(f"Ошибка получения статуса кэша: {e}")
             return {'error': str(e)}
+
+    def __connect(self, url: str, params: Dict = {}) -> Dict:
+        """
+        Выполнение HTTP-запроса к API HeadHunter
+
+        Args:
+            url: URL для запроса
+            params: Параметры запроса
+
+        Returns:
+            Dict: Ответ API
+        """
+        try:
+            # Делаем запрос к HH API через connector
+            data = self.connector._APIConnector__connect(url, params)
+            return data
+        except Exception as e:
+            logger.error(f"Ошибка при подключении к API: {e}")
+            return {}
 
     @abstractmethod
     def _get_empty_response(self) -> Dict:
@@ -184,4 +202,3 @@ class CachedAPI(BaseJobAPI, ABC):
     @abstractmethod
     def get_vacancies(self, search_query: str, **kwargs) -> List[Dict]:
         """Получить все вакансии с пагинацией"""
-
