@@ -9,6 +9,7 @@ from src.ui_interfaces.console_interface import UserInterface
 from src.storage.json_saver import JSONSaver
 from src.api_modules.cached_api import CachedAPI
 from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
+from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
 from src.utils.base_formatter import BaseFormatter
 from src.vacancies.models import Vacancy
 
@@ -302,8 +303,9 @@ class TestIntegrationCoverage:
 
         # Строка 120: обработка исключения в show_top_vacancies_by_salary
         json_saver.get_vacancies.side_effect = Exception("Database error")
-        mocker.patch('src.utils.ui_helpers.get_positive_integer', return_value=5)
-        handler.show_top_vacancies_by_salary()
+        # Мокаем get_positive_integer чтобы он вернул значение до вызова метода
+        with mocker.patch('src.utils.ui_helpers.get_positive_integer', return_value=5):
+            handler.show_top_vacancies_by_salary()
 
     def test_vacancy_search_handler_lines_102_136(self, mocker):
         """Тест для покрытия строк 102, 136 в vacancy_search_handler.py"""
@@ -342,7 +344,8 @@ class TestIntegrationCoverage:
         assert result is None
 
         # Строка 174: обработка исключения в _format_salary_safely
-        with patch('src.utils.base_formatter.BaseFormatter._format_salary_safely', side_effect=Exception("Format error")):
+        # Патчим метод конкретного экземпляра
+        with patch.object(formatter, '_format_salary_safely', side_effect=Exception("Format error")):
             try:
                 formatter._format_salary_safely({"from": 50000})
             except Exception:
