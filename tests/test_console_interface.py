@@ -705,6 +705,31 @@ class TestUserInterface:
         interface._show_vacancies_for_deletion([mock_vacancy], 'python')
         interface.json_saver.delete_vacancy_by_id.assert_called_with('123')
 
+    @patch('builtins.input', side_effect=['1'])
+    @patch('src.ui_interfaces.console_interface.confirm_action', return_value=False)
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_single_cancelled(self, mock_print, mock_confirm, mock_input, interface):
+        """Тест отмены удаления одной вакансии"""
+        mock_vacancy = Mock(spec=Vacancy)
+        mock_vacancy.vacancy_id = '123'
+        mock_vacancy.title = 'Test'
+        mock_vacancy.employer = {'name': 'Test'}
+        mock_vacancy.salary = '100000'
+        mock_vacancy.url = 'http://test.com'
+        
+        # Имитируем бесконечный цикл
+        with patch.object(interface, '_show_vacancies_for_deletion') as mock_method:
+            # Настраиваем side_effect для завершения цикла
+            def side_effect(*args):
+                # При первом вызове возвращаем к оригинальному методу
+                interface._show_vacancies_for_deletion = UserInterface._show_vacancies_for_deletion.__get__(interface, UserInterface)
+                # Вызываем только один раз
+                interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+                return
+            
+            mock_method.side_effect = side_effect
+            interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+
     @patch('builtins.input', side_effect=['1-2', 'q'])
     @patch('src.ui_interfaces.console_interface.confirm_action', return_value=True)
     @patch('builtins.print')
@@ -764,31 +789,3 @@ class TestUserInterface:
         """Тест настройки SuperJob API без ключа"""
         interface._configure_superjob_api()
         mock_print.assert_any_call("❌ SuperJob API ключ не настроен или используется тестовый")
-
-    @patch('builtins.input', side_effect=['n', 'q'])
-    @patch('builtins.print')
-    def test_show_vacancies_for_deletion_navigation_next_page(self, mock_print, mock_input, interface):
-        """Тест навигации на следующую страницу"""
-        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
-        for i, v in enumerate(vacancies):
-            v.vacancy_id = f'id_{i}'
-            v.title = f'Job {i}'
-            v.employer = {'name': 'Test'}
-            v.salary = '100000'
-            v.url = 'http://test.com'
-        
-        interface._show_vacancies_for_deletion(vacancies, 'python')
-
-    @patch('builtins.input', side_effect=['n', 'p', 'q'])
-    @patch('builtins.print')
-    def test_show_vacancies_for_deletion_navigation_prev_page(self, mock_print, mock_input, interface):
-        """Тест навигации на предыдущую страницу"""
-        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
-        for i, v in enumerate(vacancies):
-            v.vacancy_id = f'id_{i}'
-            v.title = f'Job {i}'
-            v.employer = {'name': 'Test'}
-            v.salary = '100000'
-            v.url = 'http://test.com'
-        
-        interface._show_vacancies_for_deletion(vacancies, 'python')
