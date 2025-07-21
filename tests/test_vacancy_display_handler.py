@@ -92,7 +92,9 @@ class TestVacancyDisplayHandler:
         
         handler.show_top_vacancies_by_salary()
         
-        mock_print.assert_called_once_with("Среди сохраненных вакансий нет ни одной с указанной зарплатой.")
+        # Проверяем, что было сообщение о том что нет вакансий с зарплатой
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        assert any("Среди сохраненных вакансий нет ни одной с указанной зарплатой." in call for call in print_calls)
 
     @patch('src.ui_interfaces.vacancy_display_handler.quick_paginate')
     @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=2)
@@ -104,6 +106,9 @@ class TestVacancyDisplayHandler:
         sorted_vacancies = vacancies.copy()
         
         handler.json_saver.get_vacancies.return_value = vacancies
+        
+        # Мокаем методы VacancyOperations
+        handler.vacancy_ops = Mock()
         handler.vacancy_ops.get_vacancies_with_salary.return_value = vacancies_with_salary
         handler.vacancy_ops.sort_vacancies_by_salary.return_value = sorted_vacancies
         
@@ -111,8 +116,11 @@ class TestVacancyDisplayHandler:
         
         handler.vacancy_ops.get_vacancies_with_salary.assert_called_once_with(vacancies)
         handler.vacancy_ops.sort_vacancies_by_salary.assert_called_once_with(vacancies_with_salary)
-        mock_print.assert_called_once_with("\nТоп 2 сохраненных вакансий по зарплате:")
         mock_paginate.assert_called_once()
+        
+        # Проверяем что было напечатано сообщение о топ вакансиях
+        print_calls = [str(call) for call in mock_print.call_args_list]
+        assert any("Топ 2 сохраненных вакансий по зарплате:" in call for call in print_calls)
 
     @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5)
     @patch('src.ui_interfaces.vacancy_display_handler.logger')

@@ -210,7 +210,7 @@ class TestFilterVacanciesByKeyword:
     def test_filter_by_description(self):
         """Тест фильтрации по описанию"""
         vacancies = [
-            Vacancy(vacancy_id="1", title="Python Developer", url="http://test1.com", description="Python development"),
+            Vacancy(vacancy_id="1", title="Developer", url="http://test1.com", description="Python development"),
             Vacancy(vacancy_id="2", title="Java Developer", url="http://test2.com", description="Java programming")
         ]
 
