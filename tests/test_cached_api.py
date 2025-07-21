@@ -125,12 +125,9 @@ class TestCachedAPI:
         # Настраиваем файловый кэш для возврата данных
         api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
 
-        # Мокаем _cached_api_request чтобы он всегда возвращал пустой ответ
-        # Важно: используем side_effect для имитации поведения при разных вызовах
-        def mock_cached_side_effect(url, params, prefix):
-            return {"items": [], "found": 0, "pages": 0}
-            
-        with patch.object(api, '_cached_api_request', side_effect=mock_cached_side_effect):
+        # Ключевое изменение: мокаем _cached_api_request так, чтобы он возвращал 
+        # именно _get_empty_response(), что заставит код перейти к строкам 65-71
+        with patch.object(api, '_cached_api_request', return_value=api._get_empty_response()):
             result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
 
         # Проверяем, что вызывался load_response с правильными параметрами (строки 65-71)
