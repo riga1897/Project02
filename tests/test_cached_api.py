@@ -1,4 +1,3 @@
-
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from pathlib import Path
@@ -279,11 +278,11 @@ class TestCachedAPI:
         """Тест метода __connect"""
         api = ConcreteCachedAPI("test_cache")
         api.connector = Mock()
-        api.connector._APIConnector__connect.return_value = {"test": "data"}
+        api.connector._APIConnector__connect.return_value = {"success": True}
 
         result = api._CachedAPI__connect("test_url", {"param": "value"})
 
-        assert result == {"test": "data"}
+        assert result == {"success": True}
         api.connector._APIConnector__connect.assert_called_once_with("test_url", {"param": "value"})
 
     @patch('src.api_modules.cached_api.Path')
@@ -299,3 +298,17 @@ class TestCachedAPI:
 
         assert result == {}
         mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Connection error")
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
+    def test_connect_method_no_params(self, mock_logger, mock_file_cache, mock_path):
+        """Тест метода __connect without params"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.connector._APIConnector__connect.return_value = {"success": True}
+
+        result = api._CachedAPI__connect("test_url")
+
+        assert result == {"success": True}
+        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
