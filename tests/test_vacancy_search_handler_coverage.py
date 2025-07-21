@@ -29,8 +29,8 @@ class TestVacancySearchHandlerCoverage:
         mocker.patch.object(handler, '_get_period_choice', return_value=15)
         mocker.patch.object(handler, '_fetch_vacancies_from_sources', return_value=[])
         
-        # Мокаем get_user_input для возврата непустого запроса
-        mock_get_input = mocker.patch('src.utils.ui_helpers.get_user_input', return_value='python')
+        # Мокаем get_user_input в модуле vacancy_search_handler для возврата непустого запроса
+        mock_get_input = mocker.patch('src.ui_interfaces.vacancy_search_handler.get_user_input', return_value='python')
         
         # Мокаем print для вывода сообщения о пустом результате (строка 136)
         mock_print = mocker.patch('builtins.print')
@@ -41,5 +41,5 @@ class TestVacancySearchHandlerCoverage:
         # Проверяем что был вызван ввод запроса
         mock_get_input.assert_called_with("\nВведите поисковый запрос: ")
         
-        # Проверяем что было выведено сообщение о том, что вакансии не найдены (строка 136)
-        mock_print.assert_any_call("По вашему запросу 'python' вакансии не найдены.")
+        # Проверяем что было выведено сообщение о том, что вакансии не найдены
+        mock_print.assert_any_call("Вакансии не найдены ни на одном из источников.")
