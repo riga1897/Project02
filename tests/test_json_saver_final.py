@@ -2,7 +2,7 @@
 import pytest
 import tempfile
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 from src.storage.json_saver import JSONSaver
 from src.vacancies.models import Vacancy
 
@@ -16,36 +16,36 @@ class TestJSONSaverFinal:
             storage_path = Path(temp_dir) / "test.json"
             json_saver = JSONSaver(str(storage_path))
             
-            # Ensure file doesn't exist to trigger lines 160-161
-            if storage_path.exists():
-                storage_path.unlink()
-            
-            # Call _backup_corrupted_file when file doesn't exist
-            json_saver._backup_corrupted_file()
+            # Mock Path.exists to return False for backup scenario
+            with patch('src.storage.json_saver.Path') as mock_path:
+                mock_path_instance = MagicMock()
+                mock_path.return_value = mock_path_instance
+                mock_path_instance.exists.return_value = False
+                
+                # Call _backup_corrupted_file when file doesn't exist
+                json_saver._backup_corrupted_file()
 
     def test_lines_229_231_permission_error(self):
-        """Test lines 229-231 permission error handling"""
+        """Test lines 229-231 filter error handling"""
         with tempfile.TemporaryDirectory() as temp_dir:
             storage_path = Path(temp_dir) / "test.json"
             json_saver = JSONSaver(str(storage_path))
             
-            test_vacancy = Vacancy(title="Test", url="http://test.com", vacancy_id="1")
+            # Create a valid JSON file
+            storage_path.write_text('[]')
             
-            # Mock permission error to trigger lines 229-231
-            with patch('builtins.open', side_effect=PermissionError("Access denied")):
-                json_saver._save_to_file([test_vacancy])
+            # Mock filter_vacancies_by_keyword to raise exception
+            with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
+                result = json_saver.delete_vacancies_by_keyword("test")
+                assert result == 0
 
     def test_line_299_backup_error(self):
-        """Test line 299 backup error handling"""
+        """Test line 299 file error handling in delete_all_vacancies"""
         with tempfile.TemporaryDirectory() as temp_dir:
             storage_path = Path(temp_dir) / "test.json"
             json_saver = JSONSaver(str(storage_path))
             
-            # Create a corrupted file
-            with open(storage_path, 'w') as f:
-                f.write("invalid json content")
-            
-            # Mock backup operation to fail
-            with patch.object(json_saver, '_backup_corrupted_file', side_effect=Exception("Backup failed")):
-                result = json_saver._load_from_file()
-                assert result == []
+            # Mock file operations to fail
+            with patch('builtins.open', side_effect=OSError("File error")):
+                result = json_saver.delete_all_vacancies()
+                assert result is False

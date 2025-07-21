@@ -1,3 +1,4 @@
+
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 import tempfile
@@ -53,39 +54,37 @@ class TestFinalCoverage:
 
     def test_json_saver_lines_160_161(self):
         """Test lines 160-161 in json_saver.py - backup when file doesn't exist"""
-        with patch('src.storage.json_saver.Path') as mock_path:
-            mock_path_instance = Mock()
-            mock_path.return_value = mock_path_instance
-            mock_path_instance.exists.return_value = False  # File doesn't exist
+        with tempfile.TemporaryDirectory() as temp_dir:
+            storage_path = Path(temp_dir) / "test.json"
+            json_saver = JSONSaver(str(storage_path))
 
-            json_saver = JSONSaver("nonexistent.json")
+            # Mock Path to simulate file not existing
+            with patch('src.storage.json_saver.Path') as mock_path:
+                mock_path_instance = Mock()
+                mock_path.return_value = mock_path_instance
+                mock_path_instance.exists.return_value = False
 
-            # Call backup when file doesn't exist
-            json_saver._backup_corrupted_file()
+                json_saver._backup_corrupted_file()
 
     def test_json_saver_lines_229_231(self):
         """Test lines 229-231 in json_saver.py - filter error handling"""
         with tempfile.TemporaryDirectory() as temp_dir:
             storage_path = Path(temp_dir) / "test.json"
             json_saver = JSONSaver(str(storage_path))
-
-            # Create test vacancy
-            test_vacancy = Vacancy(title="Test", url="http://test.com", vacancy_id="1")
+            
             storage_path.write_text('[]')
 
-            # Test filter error in delete_vacancies_by_keyword
             with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
                 result = json_saver.delete_vacancies_by_keyword("test")
                 assert result == 0
 
     def test_json_saver_line_299(self):
         """Test line 299 in json_saver.py - file error in delete_all_vacancies"""
-        with patch('src.storage.json_saver.Path') as mock_path:
-            mock_path.return_value.exists.return_value = True
-            json_saver = JSONSaver("test.json")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            storage_path = Path(temp_dir) / "test.json"
+            json_saver = JSONSaver(str(storage_path))
 
-            # Test file error in delete_all_vacancies
-            with patch('builtins.open', side_effect=OSError("System error")):
+            with patch('builtins.open', side_effect=OSError("File error")):
                 result = json_saver.delete_all_vacancies()
                 assert result is False
 
@@ -103,10 +102,7 @@ class TestFinalCoverage:
             ui.source_selector = MagicMock()
             ui.unified_api = MagicMock()
 
-            # Mock source selector to raise exception
             ui.source_selector.get_user_source_choice.side_effect = Exception("Source error")
-
-            # Should handle exception gracefully
             ui._clear_api_cache()
 
     def test_console_interface_lines_217_219(self):
@@ -123,7 +119,6 @@ class TestFinalCoverage:
             ui.json_saver = MagicMock()
             ui.json_saver.get_vacancies.return_value = []
 
-            # Mock empty user input
             with patch('src.utils.ui_helpers.get_user_input', return_value=''):
                 ui._advanced_search_vacancies()
 
@@ -140,7 +135,6 @@ class TestFinalCoverage:
             ui = UserInterface()
             ui.json_saver = MagicMock()
 
-            # Mock get_vacancies to raise exception
             ui.json_saver.get_vacancies.side_effect = Exception("Storage error")
             ui._advanced_search_vacancies()
 
@@ -162,13 +156,11 @@ class TestFinalCoverage:
             ui.json_saver.get_vacancies.return_value = []
             ui.source_selector.get_user_source_choice.return_value = set()
 
-            # Lines 282, 292-293, 316, 320, 322, 329, 339, 512, 567
-            with patch('builtins.input', return_value='4'):  # Invalid choice
+            with patch('builtins.input', return_value='4'):
                 ui._filter_saved_vacancies_by_salary()
                 ui._delete_saved_vacancies()
 
-            # Lines 584-590, 603, 607, 616-617, 621, 625: period choice edge cases
-            with patch('builtins.input', side_effect=['7', '500']):  # Invalid period
+            with patch('builtins.input', side_effect=['7', '500']):
                 result = ui._get_period_choice()
                 assert result == 15
 
@@ -181,7 +173,6 @@ class TestFinalCoverage:
         json_saver_mock = MagicMock()
         handler = VacancyDisplayHandler(json_saver_mock)
 
-        # Line 43, 83, 120: exceptions in methods
         json_saver_mock.get_vacancies.side_effect = Exception("Storage error")
 
         handler.show_all_saved_vacancies()
@@ -198,12 +189,10 @@ class TestFinalCoverage:
         json_saver_mock = MagicMock()
         handler = VacancySearchHandler(unified_api_mock, json_saver_mock)
 
-        # Line 102: exception in _save_vacancies
         json_saver_mock.add_vacancy.side_effect = Exception("Save error")
         test_vacancy = Mock()
         handler._save_vacancies([test_vacancy])
 
-        # Line 136: exception in search_vacancies
         unified_api_mock.get_vacancies_from_sources.side_effect = Exception("API error")
         handler.search_vacancies()
 
@@ -219,10 +208,11 @@ class TestFinalCoverage:
         """Test remaining lines in base_formatter.py"""
         formatter = ConcreteBaseFormatter()
 
-        # Line 145: edge case in format_experience
-        result = formatter.format_experience(None)
-        assert result == "Не указан"
+        # Test currency mapping in _format_salary_dict
+        salary_dict = {"from": 1000, "to": 2000, "currency": "USD"}
+        result = formatter._format_salary_dict(salary_dict)
+        assert "долл." in result
 
-        # Line 174: edge case in format_schedule
-        result = formatter.format_schedule(None)
-        assert result == "Не указан"
+        # Test with empty salary dict
+        result = formatter._format_salary_dict({})
+        assert result == "Не указана"

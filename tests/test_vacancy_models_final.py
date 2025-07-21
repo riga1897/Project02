@@ -1,5 +1,6 @@
 
 import pytest
+from unittest.mock import patch
 from src.vacancies.models import Vacancy, Salary
 
 
@@ -9,9 +10,9 @@ class TestVacancyModelsFinal:
     def test_salary_line_121_122(self):
         """Test Salary lines 121-122 - empty salary handling"""
         # Test case where both from and to are None (lines 121-122)
-        salary = Salary(from_amount=None, to_amount=None, currency=None)
+        salary = Salary(salary_data={"from": None, "to": None, "currency": None})
         result = str(salary)
-        assert "Не указана" in result
+        assert "Зарплата не указана" in result
 
     def test_vacancy_line_185(self):
         """Test Vacancy line 185 - comparison with non-Vacancy object"""
@@ -41,10 +42,10 @@ class TestVacancyModelsFinal:
             "title": "Test", 
             "url": "http://test.com",
             "vacancy_id": "1",
-            "published_at": None  # This will cause an exception
+            "published_at": "2023-01-01T10:00:00"
         }
         
         with patch('src.vacancies.models.datetime') as mock_datetime:
-            mock_datetime.fromisoformat.side_effect = Exception("Parse error")
+            mock_datetime.strptime.side_effect = Exception("Parse error")
             vacancy = Vacancy.from_dict(invalid_data)
             assert vacancy.published_at is None
