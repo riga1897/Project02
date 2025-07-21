@@ -1,0 +1,15 @@
+modules = ["python-3.11"]
+
+[nix]
+
+[workflows]
+runButton = "Run"
+
+[[workflows.workflow]]
+name = "Run"
+author = 45171279
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pytest --cov=src --cov-report=term-missing"
