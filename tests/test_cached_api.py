@@ -254,7 +254,7 @@ class TestCachedAPI:
             'cache_dir_exists': True,
             'file_cache_count': 0,
             'cache_files': [],
-            'memory_cache': {'max_size': 1000, 'size': 0, 'ttl': None}
+            'memory_cache': {'max_size': 1000, 'size': 0, 'ttl': 300}
         }
         assert result == expected
 
