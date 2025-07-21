@@ -180,10 +180,9 @@ class TestVacancy:
         
         assert result is None
 
-    def test_parse_datetime_with_exception(self):
-        """Тест обработки исключения при парсинге"""
-        with patch('datetime.datetime.strptime', side_effect=Exception("Test error")):
-            result = Vacancy._parse_datetime("2023-01-01T10:00:00")
+    def test_parse_datetime_with_empty_timestamp_string(self):
+        """Тест парсинга пустой строки timestamp"""
+        result = Vacancy._parse_datetime("")
         
         assert result is None
 
