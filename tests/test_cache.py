@@ -106,7 +106,7 @@ class TestSimpleCache:
             return x * 2
 
         # Проверяем cache_info
-        info = test_func.cache_info(10)
+        info = test_func.cache_info()
         assert info['ttl'] == 10
 
     @patch('src.utils.cache.EnvLoader.get_env_var_int')
