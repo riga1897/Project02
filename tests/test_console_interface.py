@@ -6,13 +6,13 @@ from src.vacancies.models import Vacancy
 @pytest.fixture
 def ui_instance():
     """Фикстура для создания экземпляра UserInterface с замоканными зависимостями"""
-    with patch('src.ui_interfaces.user_interface.HeadHunterAPI'), \
-         patch('src.ui_interfaces.user_interface.SuperJobAPI'), \
-         patch('src.ui_interfaces.user_interface.UnifiedAPI'), \
-         patch('src.ui_interfaces.user_interface.JSONSaver'), \
-         patch('src.ui_interfaces.user_interface.create_main_menu'), \
-         patch('src.ui_interfaces.user_interface.VacancyOperations'), \
-         patch('src.ui_interfaces.user_interface.SourceSelector'):
+    with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
+         patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
+         patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
+         patch('src.ui_interfaces.console_interface.JSONSaver'), \
+         patch('src.ui_interfaces.console_interface.create_main_menu'), \
+         patch('src.ui_interfaces.console_interface.VacancyOperations'), \
+         patch('src.ui_interfaces.console_interface.SourceSelector'):
         ui = UserInterface()
         # Мокируем обработчики
         ui.search_handler = MagicMock()
@@ -155,7 +155,7 @@ def test_display_vacancies(ui_instance):
         Vacancy(vacancy_id="2", title="Java Developer", salary={"from": 120000, "to": 160000}, url="https://example.com/python-developer"),
     ]
 
-    with patch('src.ui_interfaces.user_interface.display_vacancy_info') as mock_display:
+    with patch('src.ui_interfaces.console_interface.display_vacancy_info') as mock_display:
         ui_instance._display_vacancies(test_vacancies)
         assert mock_display.call_count == 2
 
