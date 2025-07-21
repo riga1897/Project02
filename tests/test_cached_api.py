@@ -118,16 +118,25 @@ class TestCachedAPI:
     @patch('src.api_modules.cached_api.FileCache')
     @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_memory_cache_empty_file_cache_hit(self, mock_logger, mock_file_cache, mock_path):
-        """Тест когда кэш памяти возвращает пустой ответ, но файловый кэш содержит данные"""
+        """Тест когда кэш памяти возвращает пустой ответ, но файловый кэш содержит данные - покрывает строки 65-71"""
         api = ConcreteCachedAPI("test_cache")
         api.connector = Mock()
         
         # Настраиваем файловый кэш для возврата данных
         api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
 
-        # Мокаем метод _cached_api_request для возврата пустого ответа (равного _get_empty_response)
-        with patch.object(api, '_cached_api_request', return_value={"items": [], "found": 0, "pages": 0}):
-            result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+        # Создаем реальный декоратор _cached_api_request, который будет возвращать пустой ответ
+        # Это важно для покрытия строк 65-71
+        from src.utils.cache import simple_cache
+        
+        @simple_cache(ttl=300)
+        def mock_cached_request(url, params, prefix):
+            return {"items": [], "found": 0, "pages": 0}
+        
+        # Заменяем метод на реальный декорированный метод
+        api._cached_api_request = mock_cached_request
+        
+        result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
 
         # Проверяем, что вызывался load_response с правильными параметрами
         api.cache.load_response.assert_called_once_with("test_prefix", {"param": "value"})
