@@ -399,6 +399,7 @@ class TestIntegrationCoverage:
             ui.json_saver = MagicMock()
             ui.source_selector = MagicMock()
             ui.unified_api = MagicMock()
+            ui.vacancy_ops = MagicMock()
 
             # Строки 165-166: исключение в _clear_api_cache
             ui.source_selector.get_user_source_choice.side_effect = Exception("Source error")
@@ -406,6 +407,7 @@ class TestIntegrationCoverage:
 
             # Строки 217-219: пустой ввод в _advanced_search_vacancies
             ui.json_saver.get_vacancies.return_value = [Mock()]
+            ui.json_saver.get_vacancies.side_effect = None
             mocker.patch('src.utils.ui_helpers.get_user_input', return_value='')
             ui._advanced_search_vacancies()
 
@@ -413,13 +415,106 @@ class TestIntegrationCoverage:
             ui.json_saver.get_vacancies.side_effect = Exception("DB error")
             ui._advanced_search_vacancies()
 
-            # Дополнительные строки
-            ui.json_saver.get_vacancies.return_value = []
+            # Строка 282: неверный выбор в _filter_saved_vacancies_by_salary
+            ui.json_saver.get_vacancies.return_value = [Mock()]
             ui.json_saver.get_vacancies.side_effect = None
-            
-            # Покрываем различные пути выполнения
+            mocker.patch('builtins.input', return_value='invalid_choice')
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строки 292-293: ValueError в filter_saved_vacancies_by_salary choice 1
+            mocker.patch('builtins.input', side_effect=['1', 'invalid_number'])
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строка 316: ValueError в filter_saved_vacancies_by_salary choice 2
+            mocker.patch('builtins.input', side_effect=['2', 'invalid_number'])
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строка 320: parsed_range is None в choice 3
+            mocker.patch('builtins.input', side_effect=['3', 'invalid_range'])
+            mocker.patch('src.utils.ui_helpers.parse_salary_range', return_value=None)
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строка 322: неверный выбор в filter_saved_vacancies_by_salary
+            mocker.patch('builtins.input', return_value='invalid')
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строка 329: пустой список filtered_vacancies
+            ui.vacancy_ops.filter_vacancies_by_min_salary.return_value = []
+            mocker.patch('builtins.input', side_effect=['1', '50000'])
+            ui._filter_saved_vacancies_by_salary()
+
+            # Строки 335-339: различные ветки в _delete_saved_vacancies
+            ui.json_saver.get_vacancies.return_value = []
+            ui._delete_saved_vacancies()
+
+            # Строка 433: выбор 0 в _delete_saved_vacancies
+            ui.json_saver.get_vacancies.return_value = [Mock()]
+            mocker.patch('builtins.input', return_value='0')
+            ui._delete_saved_vacancies()
+
+            # Строка 472: некорректный выбор в _delete_saved_vacancies
+            mocker.patch('builtins.input', return_value='invalid')
+            ui._delete_saved_vacancies()
+
+            # Строка 508: period = None в _get_period_choice
+            mocker.patch('builtins.input', return_value='0')
+            result = ui._get_period_choice()
+            assert result is None
+
+            # Строка 512: choice = "6" в _get_period_choice
+            mocker.patch('builtins.input', side_effect=['6', '30'])
+            result = ui._get_period_choice()
+            assert result == 30
+
+            # Строка 567: некорректный период > 365
+            mocker.patch('builtins.input', side_effect=['6', '500'])
+            result = ui._get_period_choice()
+            assert result == 15
+
+            # Строки 584-590: различные ветки при удалении вакансий
+            test_vacancy = Mock()
+            test_vacancy.vacancy_id = "test_id"
+            test_vacancy.title = "Test Title"
+            test_vacancy.employer = {"name": "Test Company"}
+            test_vacancy.salary = {"from": 50000}
+            test_vacancy.experience = "1-3 года"
+            test_vacancy.url = "https://test.com"
+
+            ui.json_saver.get_vacancies.return_value = [test_vacancy]
+            ui.json_saver.delete_vacancy_by_id.return_value = True
+            mocker.patch('builtins.input', side_effect=['3', 'test_id'])
+            mocker.patch('src.utils.ui_helpers.confirm_action', return_value=True)
+            ui._delete_saved_vacancies()
+
+            # Строка 603: vacancy_to_delete is None
+            ui.json_saver.get_vacancies.return_value = [test_vacancy]
+            mocker.patch('builtins.input', side_effect=['3', 'nonexistent_id'])
+            ui._delete_saved_vacancies()
+
+            # Строка 607: confirm_action = False
+            mocker.patch('builtins.input', side_effect=['3', 'test_id'])
+            mocker.patch('src.utils.ui_helpers.confirm_action', return_value=False)
+            ui._delete_saved_vacancies()
+
+            # Строки 616-617: delete_vacancy_by_id = False
+            ui.json_saver.delete_vacancy_by_id.return_value = False
+            mocker.patch('builtins.input', side_effect=['3', 'test_id'])
+            mocker.patch('src.utils.ui_helpers.confirm_action', return_value=True)
+            ui._delete_saved_vacancies()
+
+            # Строка 621: confirm_action = False для удаления всех
+            ui.json_saver.get_vacancies.return_value = [test_vacancy]
             mocker.patch('builtins.input', return_value='1')
             mocker.patch('src.utils.ui_helpers.confirm_action', return_value=False)
-            
-            ui._filter_saved_vacancies_by_salary()
             ui._delete_saved_vacancies()
+
+            # Строка 625: delete_all_vacancies = False
+            ui.json_saver.delete_all_vacancies.return_value = False
+            mocker.patch('builtins.input', return_value='1')
+            mocker.patch('src.utils.ui_helpers.confirm_action', return_value=True)
+            ui._delete_saved_vacancies()
+
+            # Строка 644: sources пустой в _clear_api_cache
+            ui.source_selector.get_user_source_choice.return_value = set()
+            ui.source_selector.get_user_source_choice.side_effect = None
+            ui._clear_api_cache()
