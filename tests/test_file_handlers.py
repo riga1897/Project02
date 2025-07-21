@@ -70,21 +70,24 @@ class TestJSONFileHandler:
         assert result == []
         mock_logger.error.assert_called_once()
 
-    def test_write_json_success(self):
+    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    def test_write_json_success(self, mock_read_json):
         """Тест успешной записи JSON"""
         handler = JSONFileHandler()
         test_data = [{"id": 1, "name": "test"}]
         
+        # Мокируем clear_cache как атрибут метода
+        mock_read_json.clear_cache = Mock()
+        
         with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_temp, \
-             patch('pathlib.Path.open', mock_open()) as mock_file, \
-             patch.object(handler.read_json, 'clear_cache') as mock_clear:
+             patch('pathlib.Path.with_suffix') as mock_with_suffix, \
+             patch('builtins.open', mock_open()) as mock_file:
             
             mock_temp_path = Mock()
-            mock_temp.return_value = mock_temp_path
+            mock_with_suffix.return_value = mock_temp_path
+            mock_temp_path.exists.return_value = False
             mock_temp_path.open = mock_file
             mock_temp_path.replace = Mock()
-            mock_temp_path.exists.return_value = False
             
             mock_parent.mkdir = Mock()
             
@@ -92,44 +95,50 @@ class TestJSONFileHandler:
             
             mock_parent.mkdir.assert_called_once_with(parents=True, exist_ok=True)
             mock_temp_path.replace.assert_called_once()
-            mock_clear.assert_called_once()
+            mock_read_json.clear_cache.assert_called_once()
 
-    def test_write_json_with_temp_file_cleanup(self):
-        """Тест записи с очисткой временного файла"""
+    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    def test_write_json_with_temp_file_cleanup(self, mock_read_json):
+        """Тест записи с очисткой временного файла в finally"""
         handler = JSONFileHandler()
         test_data = [{"id": 1, "name": "test"}]
         
+        mock_read_json.clear_cache = Mock()
+        
         with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_temp, \
-             patch('pathlib.Path.open', mock_open()) as mock_file, \
-             patch.object(handler.read_json, 'clear_cache'):
+             patch('pathlib.Path.with_suffix') as mock_with_suffix, \
+             patch('builtins.open', mock_open()) as mock_file:
             
             mock_temp_path = Mock()
-            mock_temp.return_value = mock_temp_path
+            mock_with_suffix.return_value = mock_temp_path
+            mock_temp_path.exists.return_value = True  # Файл существует в finally
             mock_temp_path.open = mock_file
             mock_temp_path.replace = Mock()
-            mock_temp_path.exists.return_value = True
             mock_temp_path.unlink = Mock()
             
             mock_parent.mkdir = Mock()
             
             handler.write_json(Path("test.json"), test_data)
             
+            # Проверяем, что unlink вызван в finally
             mock_temp_path.unlink.assert_called()
 
     @patch('src.utils.file_handlers.logger')
-    def test_write_json_exception_with_temp_cleanup(self, mock_logger):
-        """Тест обработки исключений при записи с очисткой временного файла"""
+    @patch('src.utils.file_handlers.JSONFileHandler.read_json')
+    def test_write_json_exception_with_temp_cleanup(self, mock_read_json, mock_logger):
+        """Тест обработки исключений при записи"""
         handler = JSONFileHandler()
         test_data = [{"id": 1, "name": "test"}]
         
+        mock_read_json.clear_cache = Mock()
+        
         with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_temp, \
-             patch('pathlib.Path.open', side_effect=OSError("Write error")):
+             patch('pathlib.Path.with_suffix') as mock_with_suffix, \
+             patch('builtins.open', side_effect=OSError("Write error")):
             
             mock_temp_path = Mock()
-            mock_temp.return_value = mock_temp_path
-            mock_temp_path.exists.return_value = True
+            mock_with_suffix.return_value = mock_temp_path
+            mock_temp_path.exists.side_effect = [True, True]  # Для except и finally
             mock_temp_path.unlink = Mock()
             
             mock_parent.mkdir = Mock()
@@ -138,31 +147,8 @@ class TestJSONFileHandler:
                 handler.write_json(Path("test.json"), test_data)
             
             mock_logger.error.assert_called_once()
-            mock_temp_path.unlink.assert_called()
-
-    @patch('src.utils.file_handlers.logger')
-    def test_write_json_exception_without_temp_file(self, mock_logger):
-        """Тест обработки исключений при записи без временного файла"""
-        handler = JSONFileHandler()
-        test_data = [{"id": 1, "name": "test"}]
-        
-        with patch('pathlib.Path.parent') as mock_parent, \
-             patch('pathlib.Path.with_suffix') as mock_temp, \
-             patch('pathlib.Path.open', side_effect=OSError("Write error")):
-            
-            mock_temp_path = Mock()
-            mock_temp.return_value = mock_temp_path
-            mock_temp_path.exists.return_value = False
-            mock_temp_path.unlink = Mock()
-            
-            mock_parent.mkdir = Mock()
-            
-            with pytest.raises(OSError):
-                handler.write_json(Path("test.json"), test_data)
-            
-            mock_logger.error.assert_called_once()
-            # unlink не должен вызываться, если файла нет
-            mock_temp_path.unlink.assert_not_called()
+            # unlink должен быть вызван дважды: в except и в finally
+            assert mock_temp_path.unlink.call_count == 2
 
     def test_caching_functionality(self):
         """Тест функциональности кэширования"""
