@@ -246,16 +246,17 @@ class TestCachedAPI:
         
         api.cache_dir.glob.return_value = []
         api.cache_dir.exists.return_value = True
-        # Не устанавливаем cache_info
+        # Не устанавливаем cache_info - используется cache_info по умолчанию
         
         result = api.get_cache_status("test_prefix")
         
+        # cache_info по умолчанию возвращает базовую информацию о кэше
         expected = {
             'cache_dir': str(api.cache_dir),
             'cache_dir_exists': True,
             'file_cache_count': 0,
             'cache_files': [],
-            'memory_cache': {}
+            'memory_cache': {'max_size': 1000, 'size': 0, 'ttl': None}
         }
         assert result == expected
 
