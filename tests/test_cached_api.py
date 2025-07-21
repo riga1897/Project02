@@ -506,3 +506,27 @@ class TestCachedAPI:
 
         assert result == {}
         mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Test connection error")
+
+    def test_lines_65_71_final_coverage(self, mocker):
+        """Финальный тест для 100% покрытия строк 65-71"""
+        mocker.patch('src.api_modules.cached_api.Path')
+        mock_file_cache_class = mocker.patch('src.api_modules.cached_api.FileCache')
+        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
+
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = mocker.Mock()
+        
+        # Настраиваем пустой кэш в памяти
+        mocker.patch.object(api, '_cached_api_request', return_value=api._get_empty_response())
+        
+        # Настраиваем файловый кэш с данными
+        mock_file_cache = mock_file_cache_class.return_value
+        cached_data = {"items": [{"id": "cached"}], "found": 1, "pages": 1}
+        mock_file_cache.load_response.return_value = {"data": cached_data}
+
+        # Вызов должен пройти через строки 65-71
+        result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+        
+        assert result == cached_data
+        mock_file_cache.load_response.assert_called_once()
+        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
