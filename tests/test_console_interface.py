@@ -689,11 +689,11 @@ class TestUserInterface:
         interface._show_vacancies_for_deletion([mock_vacancy], 'python')
         mock_print.assert_any_call("Удалено 1 вакансий.")
 
-    @patch('builtins.input', return_value='a')
+    @patch('builtins.input', side_effect=['1', 'q'])
     @patch('src.ui_interfaces.console_interface.confirm_action', return_value=True)
     @patch('builtins.print')
-    def test_show_vacancies_for_deletion_all_failed(self, mock_print, mock_confirm, mock_input, interface):
-        """Тест неуспешного удаления всех вакансий из списка"""
+    def test_show_vacancies_for_deletion_single_success(self, mock_print, mock_confirm, mock_input, interface):
+        """Тест успешного удаления одной вакансии по номеру"""
         mock_vacancy = Mock(spec=Vacancy)
         mock_vacancy.vacancy_id = '123'
         mock_vacancy.title = 'Test'
@@ -701,15 +701,36 @@ class TestUserInterface:
         mock_vacancy.salary = '100000'
         mock_vacancy.url = 'http://test.com'
         
-        interface.json_saver.delete_vacancies_by_keyword.return_value = 0
+        interface.json_saver.delete_vacancy_by_id.return_value = True
         interface._show_vacancies_for_deletion([mock_vacancy], 'python')
-        mock_print.assert_any_call("Не удалось удалить вакансии.")
+        interface.json_saver.delete_vacancy_by_id.assert_called_with('123')
 
-    @patch('builtins.input', return_value='a')
-    @patch('src.ui_interfaces.console_interface.confirm_action', return_value=False)
+    @patch('builtins.input', side_effect=['1-2', 'q'])
+    @patch('src.ui_interfaces.console_interface.confirm_action', return_value=True)
     @patch('builtins.print')
-    def test_show_vacancies_for_deletion_all_cancelled(self, mock_print, mock_confirm, mock_input, interface):
-        """Тест отмены удаления всех вакансий из списка"""
+    def test_show_vacancies_for_deletion_range_success(self, mock_print, mock_confirm, mock_input, interface):
+        """Тест успешного удаления диапазона вакансий"""
+        mock_vacancy1 = Mock(spec=Vacancy)
+        mock_vacancy1.vacancy_id = '123'
+        mock_vacancy1.title = 'Test1'
+        mock_vacancy1.employer = {'name': 'Test'}
+        mock_vacancy1.salary = '100000'
+        mock_vacancy1.url = 'http://test.com'
+        
+        mock_vacancy2 = Mock(spec=Vacancy)
+        mock_vacancy2.vacancy_id = '124'
+        mock_vacancy2.title = 'Test2'
+        mock_vacancy2.employer = {'name': 'Test'}
+        mock_vacancy2.salary = '100000'
+        mock_vacancy2.url = 'http://test.com'
+        
+        interface.json_saver.delete_vacancy_by_id.return_value = True
+        interface._show_vacancies_for_deletion([mock_vacancy1, mock_vacancy2], 'python')
+
+    @patch('builtins.input', side_effect=['invalid', 'q'])
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_invalid_choice(self, mock_print, mock_input, interface):
+        """Тест неверного выбора в меню удаления"""
         mock_vacancy = Mock(spec=Vacancy)
         mock_vacancy.vacancy_id = '123'
         mock_vacancy.title = 'Test'
@@ -718,6 +739,7 @@ class TestUserInterface:
         mock_vacancy.url = 'http://test.com'
         
         interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+        mock_print.assert_any_call("Неверный выбор. Попробуйте снова.")
 
     @patch('os.getenv', return_value='real_key')
     @patch('builtins.input')
@@ -742,3 +764,31 @@ class TestUserInterface:
         """Тест настройки SuperJob API без ключа"""
         interface._configure_superjob_api()
         mock_print.assert_any_call("❌ SuperJob API ключ не настроен или используется тестовый")
+
+    @patch('builtins.input', side_effect=['n', 'q'])
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_navigation_next_page(self, mock_print, mock_input, interface):
+        """Тест навигации на следующую страницу"""
+        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
+        for i, v in enumerate(vacancies):
+            v.vacancy_id = f'id_{i}'
+            v.title = f'Job {i}'
+            v.employer = {'name': 'Test'}
+            v.salary = '100000'
+            v.url = 'http://test.com'
+        
+        interface._show_vacancies_for_deletion(vacancies, 'python')
+
+    @patch('builtins.input', side_effect=['n', 'p', 'q'])
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_navigation_prev_page(self, mock_print, mock_input, interface):
+        """Тест навигации на предыдущую страницу"""
+        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
+        for i, v in enumerate(vacancies):
+            v.vacancy_id = f'id_{i}'
+            v.title = f'Job {i}'
+            v.employer = {'name': 'Test'}
+            v.salary = '100000'
+            v.url = 'http://test.com'
+        
+        interface._show_vacancies_for_deletion(vacancies, 'python')
