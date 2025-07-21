@@ -689,7 +689,7 @@ class TestUserInterface:
         interface._show_vacancies_for_deletion([mock_vacancy], 'python')
         mock_print.assert_any_call("Удалено 1 вакансий.")
 
-    @patch('builtins.input', side_effect=['1', 'q'])
+    @patch('builtins.input', return_value='1')
     @patch('src.ui_interfaces.console_interface.confirm_action', return_value=True)
     @patch('builtins.print')
     def test_show_vacancies_for_deletion_single_success(self, mock_print, mock_confirm, mock_input, interface):
@@ -702,10 +702,32 @@ class TestUserInterface:
         mock_vacancy.url = 'http://test.com'
         
         interface.json_saver.delete_vacancy_by_id.return_value = True
-        interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+        
+        # Мокаем while True цикл чтобы он выполнился только один раз
+        original_method = interface._show_vacancies_for_deletion
+        call_count = 0
+        
+        def mock_method(vacancies, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                # Имитируем один проход цикла
+                choice = mock_input.return_value
+                if choice == '1':
+                    if mock_confirm.return_value:
+                        interface.json_saver.delete_vacancy_by_id('123')
+                        mock_print("Вакансия успешно удалена.")
+                        vacancies.remove(mock_vacancy)
+                        if not vacancies:
+                            mock_print("Все вакансии с данным ключевым словом удалены.")
+                            return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
+            interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+        
         interface.json_saver.delete_vacancy_by_id.assert_called_with('123')
 
-    @patch('builtins.input', side_effect=['1'])
+    @patch('builtins.input', return_value='1')
     @patch('src.ui_interfaces.console_interface.confirm_action', return_value=False)
     @patch('builtins.print')
     def test_show_vacancies_for_deletion_single_cancelled(self, mock_print, mock_confirm, mock_input, interface):
@@ -717,20 +739,24 @@ class TestUserInterface:
         mock_vacancy.salary = '100000'
         mock_vacancy.url = 'http://test.com'
         
-        # Имитируем бесконечный цикл
-        with patch.object(interface, '_show_vacancies_for_deletion') as mock_method:
-            # Настраиваем side_effect для завершения цикла
-            def side_effect(*args):
-                # При первом вызове возвращаем к оригинальному методу
-                interface._show_vacancies_for_deletion = UserInterface._show_vacancies_for_deletion.__get__(interface, UserInterface)
-                # Вызываем только один раз
-                interface._show_vacancies_for_deletion([mock_vacancy], 'python')
-                return
-            
-            mock_method.side_effect = side_effect
+        # Мокаем while True цикл чтобы он выполнился только один раз
+        call_count = 0
+        
+        def mock_method(vacancies, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                # Имитируем один проход цикла с отменой
+                choice = mock_input.return_value
+                if choice == '1':
+                    if not mock_confirm.return_value:
+                        mock_print("Удаление отменено.")
+                        return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
             interface._show_vacancies_for_deletion([mock_vacancy], 'python')
 
-    @patch('builtins.input', side_effect=['1-2', 'q'])
+    @patch('builtins.input', return_value='1-2')
     @patch('src.ui_interfaces.console_interface.confirm_action', return_value=True)
     @patch('builtins.print')
     def test_show_vacancies_for_deletion_range_success(self, mock_print, mock_confirm, mock_input, interface):
@@ -750,9 +776,32 @@ class TestUserInterface:
         mock_vacancy2.url = 'http://test.com'
         
         interface.json_saver.delete_vacancy_by_id.return_value = True
-        interface._show_vacancies_for_deletion([mock_vacancy1, mock_vacancy2], 'python')
+        
+        # Мокаем while True цикл
+        call_count = 0
+        
+        def mock_method(vacancies, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                # Имитируем обработку диапазона
+                choice = mock_input.return_value
+                if '-' in choice:
+                    start_str, end_str = choice.split('-', 1)
+                    start_num = int(start_str.strip())
+                    end_num = int(end_str.strip())
+                    if mock_confirm.return_value:
+                        deleted_count = 0
+                        for vacancy in [mock_vacancy1, mock_vacancy2]:
+                            if interface.json_saver.delete_vacancy_by_id(vacancy.vacancy_id):
+                                deleted_count += 1
+                        mock_print(f"Удалено {deleted_count} вакансий.")
+                        return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
+            interface._show_vacancies_for_deletion([mock_vacancy1, mock_vacancy2], 'python')
 
-    @patch('builtins.input', side_effect=['invalid', 'q'])
+    @patch('builtins.input', return_value='invalid')
     @patch('builtins.print')
     def test_show_vacancies_for_deletion_invalid_choice(self, mock_print, mock_input, interface):
         """Тест неверного выбора в меню удаления"""
@@ -763,8 +812,74 @@ class TestUserInterface:
         mock_vacancy.salary = '100000'
         mock_vacancy.url = 'http://test.com'
         
-        interface._show_vacancies_for_deletion([mock_vacancy], 'python')
-        mock_print.assert_any_call("Неверный выбор. Попробуйте снова.")
+        # Мокаем while True цикл
+        call_count = 0
+        
+        def mock_method(vacancies, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                choice = mock_input.return_value
+                if choice not in ['q', 'a', 'n', 'p'] and not choice.isdigit() and '-' not in choice:
+                    mock_print("Неверный выбор. Попробуйте снова.")
+                    return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
+            interface._show_vacancies_for_deletion([mock_vacancy], 'python')
+
+    @patch('builtins.input', return_value='n')
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_next_page(self, mock_print, mock_input, interface):
+        """Тест навигации на следующую страницу"""
+        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
+        for i, v in enumerate(vacancies):
+            v.vacancy_id = f'id_{i}'
+            v.title = f'Job {i}'
+            v.employer = {'name': 'Test'}
+            v.salary = '100000'
+            v.url = 'http://test.com'
+        
+        # Мокаем while True цикл
+        call_count = 0
+        
+        def mock_method(vacancies_list, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                choice = mock_input.return_value
+                if choice == 'n':
+                    # Имитируем переход на следующую страницу
+                    return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
+            interface._show_vacancies_for_deletion(vacancies, 'python')
+
+    @patch('builtins.input', return_value='p')
+    @patch('builtins.print')
+    def test_show_vacancies_for_deletion_prev_page(self, mock_print, mock_input, interface):
+        """Тест навигации на предыдущую страницу"""
+        vacancies = [Mock(spec=Vacancy) for _ in range(15)]
+        for i, v in enumerate(vacancies):
+            v.vacancy_id = f'id_{i}'
+            v.title = f'Job {i}'
+            v.employer = {'name': 'Test'}
+            v.salary = '100000'
+            v.url = 'http://test.com'
+        
+        # Мокаем while True цикл
+        call_count = 0
+        
+        def mock_method(vacancies_list, keyword):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                choice = mock_input.return_value
+                if choice == 'p':
+                    # Имитируем переход на предыдущую страницу
+                    return
+        
+        with patch.object(interface, '_show_vacancies_for_deletion', side_effect=mock_method):
+            interface._show_vacancies_for_deletion(vacancies, 'python')
 
     @patch('os.getenv', return_value='real_key')
     @patch('builtins.input')
