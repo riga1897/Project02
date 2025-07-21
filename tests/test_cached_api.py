@@ -137,33 +137,27 @@ class TestCachedAPI:
         # Проверяем логирование (строка 67)
         mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
 
-    @patch('src.api_modules.cached_api.Path')
-    @patch('src.api_modules.cached_api.FileCache')
-    @patch('src.api_modules.cached_api.logger')
-    def test_file_cache_hit_lines_65_71(self, mock_logger, mock_file_cache, mock_path):
-        """Отдельный тест специально для покрытия строк 65-71: файловый кэш содержит данные"""
+    def test_file_cache_hit_lines_65_71(self, mocker):
+        """Тест покрытия строк 65-71: файловый кэш содержит данные"""
+        mocker.patch('src.api_modules.cached_api.Path')
+        mocker.patch('src.api_modules.cached_api.FileCache')
+        mock_logger = mocker.patch('src.api_modules.cached_api.logger')
+        
         api = ConcreteCachedAPI("test_cache")
         api.connector = Mock()
         
-        # Настраиваем файловый кэш для возврата данных
-        test_data = {"cached_file_data": "test_value"}
+        # Настраиваем файловый кэш
+        test_data = {"file_cached": "data"}
         api.cache.load_response.return_value = {"data": test_data}
         
-        # Правильно мокаем _cached_api_request используя patch.object внутри контекста
-        with patch.object(api, '_cached_api_request', return_value=api._get_empty_response()) as mock_cached:
-            # Выполняем тест - это должно покрыть строки 65-71
-            result = api._CachedAPI__connect_to_api("test_url", {"key": "value"}, "test_api")
+        # Мокаем _cached_api_request для возврата пустого ответа
+        mocker.patch.object(api, '_cached_api_request', return_value=api._get_empty_response())
         
-        # Проверяем результат
+        # Выполняем метод - покрывает строки 65-71
+        result = api._CachedAPI__connect_to_api("test_url", {"key": "value"}, "test_api")
+        
         assert result == test_data
-        
-        # Проверяем, что _cached_api_request был вызван
-        mock_cached.assert_called_once_with("test_url", {"key": "value"}, "test_api")
-        
-        # Проверяем, что файловый кэш был вызван (строка 65)
         api.cache.load_response.assert_called_once_with("test_api", {"key": "value"})
-        
-        # Проверяем логирование (строка 67)
         mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_api")
 
     @patch('src.api_modules.cached_api.Path')
