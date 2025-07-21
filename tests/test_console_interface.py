@@ -119,7 +119,7 @@ def test_advanced_search_vacancies_no_results(ui_instance):
 
 def test_advanced_search_vacancies_empty_query(ui_instance):
     """Тест расширенного поиска с пустым запросом"""
-    with patch('builtins.input', return_value=''):
+    with patch('src.ui_interfaces.console_interface.get_user_input', return_value=''):
         ui_instance._advanced_search_vacancies()
 
 
