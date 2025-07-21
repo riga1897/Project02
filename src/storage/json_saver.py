@@ -314,9 +314,6 @@ class JSONSaver:
             logger.critical(f"Ошибка записи в файл: {e}")
             raise
 
-        with open(self.filename, 'w', encoding='utf-8') as f:
-            json.dump(valid_data, f, ensure_ascii=False, indent=2)
-
     def is_vacancy_exists(self, vacancy: Vacancy) -> bool:
         """
         Проверяет, существует ли вакансия в базе данных
