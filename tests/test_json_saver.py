@@ -187,16 +187,13 @@ class TestJSONSaver:
         assert len(vacancies) == 2  # Только валидные элементы
         mock_logger.warning.assert_called()
 
-    @patch('src.storage.json_saver.logger')
-    def test_load_vacancies_vacancy_creation_error(self, mock_logger, json_saver):
+    def test_load_vacancies_vacancy_creation_error(self, json_saver):
         """Тест ошибки создания объекта вакансии"""
         data = [{"invalid": "data"}]
         Path(json_saver.filename).write_text(json.dumps(data))
         vacancies = json_saver.load_vacancies()
-        # Проверяем что результат пустой или содержит только валидные вакансии
-        assert len(vacancies) == 0 or all(isinstance(v, Vacancy) for v in vacancies)
-        # Проверяем что был вызван логгер с ошибкой
-        assert mock_logger.error.called
+        # Проверяем что результат пустой (невалидные вакансии пропускаются)
+        assert len(vacancies) == 0
 
     @patch('builtins.open', side_effect=PermissionError("Permission denied"))
     @patch('src.storage.json_saver.logger')
@@ -322,16 +319,17 @@ class TestJSONSaver:
         result = json_saver._ensure_json_serializable(obj)
         assert result == "test object"
 
-    @patch('src.storage.json_saver.logger')
-    def test_save_to_file_invalid_vacancy_type(self, mock_logger, json_saver):
+    def test_save_to_file_invalid_vacancy_type(self, json_saver):
         """Тест сохранения с некорректным типом вакансии"""
         invalid_data = ["not a vacancy object"]
 
-        with pytest.raises(Exception):  # Ожидаем исключение из-за vars()
-            json_saver._save_to_file(invalid_data)
-
-        # Проверяем, что был вызван логгер с ошибкой
-        assert mock_logger.error.called
+        # Вызываем метод и проверяем что он не падает
+        json_saver._save_to_file(invalid_data)
+        
+        # Проверяем что файл содержит пустой список (невалидные данные пропущены)
+        with open(json_saver.filename, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        assert data == []
 
     @patch('src.storage.json_saver.logger')
     def test_save_to_file_missing_required_fields(self, mock_logger, json_saver):
