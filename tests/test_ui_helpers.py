@@ -1,5 +1,5 @@
-import pytest
-from unittest.mock import Mock, patch, call
+from unittest.mock import Mock, patch
+
 from src.utils.ui_helpers import (
     get_user_input,
     get_positive_integer,
@@ -18,7 +18,6 @@ from src.utils.ui_helpers import (
     search_vacancies_advanced
 )
 from src.vacancies.models import Vacancy
-from src.utils.salary import Salary
 
 
 class TestGetUserInput:

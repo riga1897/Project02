@@ -1,6 +1,3 @@
-
-import pytest
-from unittest.mock import Mock
 from src.user_interface import main
 
 

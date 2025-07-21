@@ -58,7 +58,7 @@ def simple_cache(ttl: Optional[int] = None, max_size: int = 1000) -> Callable:
             cache.clear()
             access_times.clear()
 
-        def cache_info(actual_ttl=None) -> Dict[str, Any]:
+        def cache_info() -> Dict[str, Any]:
             """Информация о состоянии кэша"""
             return {
                 'size': len(cache),

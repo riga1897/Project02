@@ -1,6 +1,3 @@
-
-import pytest
-from unittest.mock import Mock, patch
 from src.utils.salary import Salary
 
 

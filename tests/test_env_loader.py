@@ -1,15 +1,13 @@
+from unittest.mock import mock_open, patch
 
-import pytest
-from unittest.mock import Mock, mock_open, patch
-import os
-import logging
 from src.utils.env_loader import EnvLoader
 
 
 class TestEnvLoader:
     """Тест загрузчика переменных окружения"""
 
-    def setup_method(self):
+    @staticmethod
+    def setup_method():
         """Сброс состояния перед каждым тестом"""
         EnvLoader._loaded = False
 

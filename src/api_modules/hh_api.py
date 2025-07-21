@@ -1,8 +1,8 @@
 import logging
-from typing import Any, List, Dict, Optional
+from typing import List, Dict, Optional
 
-from src.api_modules.cached_api import CachedAPI
 from src.api_modules.base_api import BaseJobAPI
+from src.api_modules.cached_api import CachedAPI
 from src.api_modules.get_api import APIConnector
 from src.config.api_config import APIConfig
 from src.utils.paginator import Paginator
@@ -62,7 +62,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
             bool(vacancy.get('alternate_url'))  # У HH это поле 'alternate_url'
         )
 
-    def __connect(self, url: str, params: Dict = {}) -> Dict:
+    def __connect(self, url: str, params=None) -> Dict:
         """
         Выполнение HTTP-запроса к API HeadHunter
 
@@ -73,6 +73,8 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         Returns:
             Dict: Ответ API
         """
+        if params is None:
+            params = {}
         try:
             # Делаем запрос к HH API
             data = self.__connect(url, params)

@@ -201,7 +201,8 @@ class VacancySearchHandler:
             'total_count': total_count
         }
 
-    def _display_duplicate_info(self, duplicate_info: dict) -> None:
+    @staticmethod
+    def _display_duplicate_info(duplicate_info: dict) -> None:
         """
         Выводит информацию о найденных дубликатах вакансий.
 

@@ -1,5 +1,7 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import MagicMock, patch, mock_open
+
 from src.ui_interfaces.console_interface import UserInterface
 from src.vacancies.models import Vacancy
 
@@ -646,23 +648,23 @@ def test_methods_with_exceptions(ui_instance):
         # Проверяем, что методы не падают при исключениях
         try:
             ui_instance._filter_saved_vacancies_by_salary()
-        except Exception:
-            pass
+        except Exception as e:
+            err = e
 
         try:
             ui_instance._delete_saved_vacancies()
-        except Exception:
-            pass
+        except Exception as e:
+            err = e
 
         try:
             ui_instance._advanced_search_vacancies()
-        except Exception:
-            pass
+        except Exception as e:
+            err = e
 
         try:
             ui_instance._clear_api_cache()
-        except Exception:
-            pass
+        except Exception as e:
+            err = e
 
         ui_instance._show_vacancies_for_deletion([], 'test')
         ui_instance._display_vacancies([])

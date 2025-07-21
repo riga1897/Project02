@@ -1,9 +1,10 @@
-import pytest
-from unittest.mock import Mock, patch, mock_open, MagicMock
 import json
-import shutil
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+import pytest
+
 from src.storage.json_saver import JSONSaver
 from src.vacancies.models import Vacancy
 

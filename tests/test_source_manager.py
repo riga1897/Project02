@@ -1,6 +1,5 @@
+from unittest.mock import Mock
 
-import pytest
-from unittest.mock import Mock, patch
 from src.utils.source_manager import SourceManager, DataSource, source_manager
 
 

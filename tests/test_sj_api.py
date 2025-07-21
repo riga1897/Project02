@@ -1,7 +1,7 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from typing import Dict, List
 
 from src.api_modules.sj_api import SuperJobAPI
 from src.config.sj_api_config import SJAPIConfig

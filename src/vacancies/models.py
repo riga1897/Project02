@@ -45,6 +45,7 @@ class Vacancy(AbstractVacancy):
         vacancy_id: Optional[str] = None,
         source: str = "unknown"
     ):
+        self._relevance_score = None
         self.raw_data = None
         self.profession = None
         self.area = None

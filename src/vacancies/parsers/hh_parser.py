@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 class HHParser:
     """Парсер вакансий с HeadHunter API"""
 
+    requirements = None
+    responsibilities = None
+
     def __init__(self, cache_dir: str = "data/cache/hh"):
         self.cache = FileCache(cache_dir)
         self.base_url = "https://api.hh.ru/vacancies"
@@ -38,6 +41,7 @@ class HHParser:
     def _parse_items(self, raw_data: List[Dict[str, Any]]) -> List[Vacancy]:
         """Преобразование сырых данных HH в объекты Vacancy"""
         vacancies = []
+
         for item in raw_data:
             try:
                 # Сначала создаем HH-специфичную модель
@@ -46,8 +50,7 @@ class HHParser:
                 hh_vacancy.raw_data = item
             # Обработка snippet (специфично для HH)
                 snippet = item.get('snippet', {})
-                requirements = None
-                responsibilities = None
+
                 if isinstance(snippet, dict):
                     requirements = snippet.get('requirement')
                     responsibilities = snippet.get('responsibility')
@@ -71,7 +74,8 @@ class HHParser:
                 continue
         return vacancies
 
-    def convert_to_unified_format(self, hh_vacancy: Vacancy) -> Vacancy:
+    @staticmethod
+    def convert_to_unified_format(hh_vacancy: Vacancy) -> Vacancy:
         """Конвертация HH вакансии в унифицированный формат"""
         # Для HH: обязанности = responsibility, требования = requirement
         return Vacancy(

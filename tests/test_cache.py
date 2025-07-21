@@ -1,11 +1,6 @@
-
-import pytest
-from unittest.mock import Mock, patch, mock_open, MagicMock
-import json
-import time
 import hashlib
-from pathlib import Path
-from typing import Dict, Any
+import json
+from unittest.mock import Mock, patch, mock_open
 
 from src.utils.cache import simple_cache, FileCache
 

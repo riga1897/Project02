@@ -1,6 +1,3 @@
-
-import pytest
-from unittest.mock import Mock
 from src.config.ui_config import UIPaginationConfig, UIConfig, ui_pagination_config, ui_config
 
 

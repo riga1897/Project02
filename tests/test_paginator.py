@@ -1,6 +1,8 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from src.utils.paginator import Paginator
 
 

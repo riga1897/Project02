@@ -1,8 +1,6 @@
-import pytest
-from pathlib import Path
 from typing import Dict, List
-from src.api_modules.cached_api import CachedAPI
 
+from src.api_modules.cached_api import CachedAPI
 
 
 class ConcreteCachedAPI(CachedAPI):

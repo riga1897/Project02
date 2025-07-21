@@ -1,6 +1,5 @@
-
-import pytest
 from unittest.mock import Mock, patch
+
 from src.utils.menu_manager import MenuManager, create_main_menu, print_menu_separator, print_section_header
 
 

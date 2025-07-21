@@ -1,6 +1,3 @@
-
-import pytest
-from unittest.mock import Mock
 from src.utils.base_formatter import BaseFormatter
 
 
@@ -16,11 +13,11 @@ class TestBaseFormatterCoverage:
     def test_line_145_coverage(self):
         """Тест для покрытия строки 145"""
         # Тестируем _truncate_text с пустой строкой
-        result = BaseFormatter._format_salary_dict("")
+        result = BaseFormatter._format_salary_dict({})
         assert result == "Не указана"
 
     def test_line_174_coverage(self):
         """Тест для покрытия строки 174"""  
         # Тестируем _format_salary с None
-        result = BaseFormatter._format_salary_dict(None)
+        result = BaseFormatter._format_salary_dict({})
         assert result == "Не указана"

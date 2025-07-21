@@ -1,8 +1,7 @@
-
-import pytest
 from unittest.mock import Mock, patch
-from src.vacancies.parsers.sj_parser import SuperJobParser
+
 from src.vacancies.models import Vacancy
+from src.vacancies.parsers.sj_parser import SuperJobParser
 
 
 class TestSuperJobParser:

@@ -1,15 +1,14 @@
+from unittest.mock import Mock
 
-import pytest
-from unittest.mock import Mock, patch
 from src.utils.search_utils import filter_vacancies_by_keyword, vacancy_contains_keyword
 from src.vacancies.models import Vacancy
-from src.utils.salary import Salary
 
 
 class TestFilterVacanciesByKeyword:
     """Тест функции filter_vacancies_by_keyword"""
 
-    def create_mock_vacancy(self, **kwargs):
+    @staticmethod
+    def create_mock_vacancy(**kwargs):
         """Создание мок-объекта вакансии с заданными атрибутами"""
         vacancy = Mock(spec=Vacancy)
         # Устанавливаем значения по умолчанию
@@ -230,7 +229,8 @@ class TestFilterVacanciesByKeyword:
 class TestVacancyContainsKeyword:
     """Тест функции vacancy_contains_keyword"""
 
-    def create_mock_vacancy(self, **kwargs):
+    @staticmethod
+    def create_mock_vacancy(**kwargs):
         """Создание мок-объекта вакансии"""
         vacancy = Mock(spec=Vacancy)
         vacancy.title = kwargs.get('title', '')

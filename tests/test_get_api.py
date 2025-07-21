@@ -1,8 +1,9 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
 import requests
-from time import sleep
+
 from src.api_modules.get_api import APIConnector
 from src.config.api_config import APIConfig
 

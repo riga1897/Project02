@@ -4,8 +4,8 @@
 Проверяет функциональность базового класса BaseJobAPI
 """
 
-import pytest
-from unittest.mock import Mock, patch
+from unittest.mock import patch
+
 from src.api_modules.base_api import BaseJobAPI
 
 

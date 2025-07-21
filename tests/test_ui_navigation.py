@@ -1,8 +1,6 @@
-
-import pytest
 from unittest.mock import Mock, patch, call
+
 from src.utils.ui_navigation import UINavigation, ui_navigation, quick_paginate
-import math
 
 
 class TestUINavigation:

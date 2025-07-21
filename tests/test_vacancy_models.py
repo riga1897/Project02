@@ -1,10 +1,11 @@
+from datetime import datetime
+from unittest.mock import Mock, patch
 
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from datetime import datetime
-import uuid
-from src.vacancies.models import Vacancy
+
 from src.utils.salary import Salary
+from src.vacancies.models import Vacancy
+
 
 def test_vacancy_lines_121_122():
     """Тест для покрытия строк 121-122"""

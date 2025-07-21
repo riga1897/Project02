@@ -1,13 +1,12 @@
-import pytest
-from unittest.mock import Mock, patch, MagicMock
 import tempfile
 import json
-import os
 from pathlib import Path
+from typing import Optional
+from unittest.mock import Mock, patch, MagicMock
 
-from src.ui_interfaces.console_interface import UserInterface
-from src.storage.json_saver import JSONSaver
 from src.api_modules.cached_api import CachedAPI
+from src.storage.json_saver import JSONSaver
+from src.ui_interfaces.console_interface import UserInterface
 from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
 from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
 from src.utils.base_formatter import BaseFormatter
@@ -34,13 +33,14 @@ class ConcreteCachedAPI(CachedAPI):
 
 class ConcreteFormatter(BaseFormatter):
     """Concrete implementation of BaseFormatter for testing."""
-    def format_vacancy_info(self, vacancy):
+    def format_vacancy_info(self, vacancy, number: Optional[int] = None):
         return f"{vacancy.title} - {vacancy.employer}"
 
-    def _parse_json_safely(self, json_str):
+    @staticmethod
+    def _parse_json_safely(json_str):
         """Safely parse JSON string"""
         try:
-            import json
+
             return json.loads(json_str)
         except (json.JSONDecodeError, ValueError):
             return None
@@ -111,8 +111,8 @@ class TestIntegrationCoverage:
             with patch('builtins.open', side_effect=PermissionError("Access denied")):
                 try:
                     json_saver.add_vacancy([test_vacancy])
-                except Exception:
-                    pass  # Ожидаем исключение при ошибке записи
+                except Exception as e:
+                    err = e  # Ожидаем исключение при ошибке записи
 
             # Строки 229-231 - обработка ошибки при удалении по ключевому слову
             with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):

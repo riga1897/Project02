@@ -1,6 +1,6 @@
 
 import pytest
-from unittest.mock import Mock
+
 from src.ui_interfaces.vacancy_search_handler import VacancySearchHandler
 
 

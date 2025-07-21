@@ -1,6 +1,8 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+
 from src.api_modules.hh_api import HeadHunterAPI
 from src.config.api_config import APIConfig
 
@@ -246,9 +248,9 @@ class TestHeadHunterAPI:
             result = hh_api._HeadHunterAPI__connect("http://test.url", {"param": "value"})
             # Если дошли сюда, значит ошибка не произошла (что маловероятно)
             assert result == {}
-        except RecursionError:
+        except RecursionError as e:
             # Ожидаемая ошибка из-за бесконечной рекурсии в методе
-            pass
-        except Exception:
+            err = e
+        except Exception as e:
             # Любая другая ошибка тоже покрывает эти строки
-            pass
+            err = e

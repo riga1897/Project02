@@ -1,6 +1,3 @@
-
-import pytest
-from unittest.mock import Mock
 from src.config.sj_api_config import SJAPIConfig
 
 

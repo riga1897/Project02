@@ -1,10 +1,12 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, call
-from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
+
 from src.storage.json_saver import JSONSaver
-from src.vacancies.models import Vacancy
+from src.ui_interfaces.vacancy_display_handler import VacancyDisplayHandler
 from src.utils.vacancy_operations import VacancyOperations
+from src.vacancies.models import Vacancy
 
 
 class TestVacancyDisplayHandler:

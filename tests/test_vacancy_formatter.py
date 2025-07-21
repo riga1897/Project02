@@ -1,6 +1,5 @@
-
-import pytest
 from unittest.mock import Mock, patch
+
 from src.utils.vacancy_formatter import VacancyFormatter, vacancy_formatter
 from src.vacancies.models import Vacancy
 

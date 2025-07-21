@@ -1,8 +1,10 @@
 
+from unittest.mock import Mock, patch
+
 import pytest
-from unittest.mock import Mock, patch, MagicMock
-from src.vacancies.parsers.hh_parser import HHParser
+
 from src.vacancies.models import Vacancy
+from src.vacancies.parsers.hh_parser import HHParser
 
 
 class TestHHParser:
