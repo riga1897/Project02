@@ -312,3 +312,18 @@ class TestCachedAPI:
 
         assert result == {"success": True}
         api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
+    def test_connect_method_with_default_params(self, mock_logger, mock_file_cache, mock_path):
+        """Тест метода __connect with default empty dict params"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.connector._APIConnector__connect.return_value = {"default": "params"}
+
+        # Call without any params to test default {} assignment
+        result = api._CachedAPI__connect("test_url", {})
+
+        assert result == {"default": "params"}
+        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
