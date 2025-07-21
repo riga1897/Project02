@@ -158,15 +158,19 @@ class VacancySearchHandler:
         Args:
             vacancies: Список вакансий для сохранения
         """
-        update_messages = self.json_saver.add_vacancy(vacancies)
-        if update_messages:
-            print(f"Обработано {len(vacancies)} вакансий:")
-            for message in update_messages[:5]:
-                print(f"  • {message}")
-            if len(update_messages) > 5:
-                print(f"  ... и еще {len(update_messages) - 5} операций")
-        else:
-            print("Вакансии уже существуют в базе данных")
+        try:
+            update_messages = self.json_saver.add_vacancy(vacancies)
+            if update_messages:
+                print(f"Обработано {len(vacancies)} вакансий:")
+                for message in update_messages[:5]:
+                    print(f"  • {message}")
+                if len(update_messages) > 5:
+                    print(f"  ... и еще {len(update_messages) - 5} операций")
+            else:
+                print("Вакансии уже существуют в базе данных")
+        except Exception as e:
+            logger.error(f"Ошибка при сохранении вакансий: {e}")
+            print(f"Произошла ошибка при сохранении: {e}")
 
     def _check_existing_vacancies(self, vacancies: List[Vacancy]) -> dict:
         """

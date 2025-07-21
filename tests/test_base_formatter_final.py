@@ -9,6 +9,12 @@ class ConcreteBaseFormatter(BaseFormatter):
     
     def format_vacancy_info(self, vacancy, number=None):
         return "Test formatted vacancy"
+    
+    def format_experience(self, experience):
+        """Format experience information"""
+        if not experience:
+            return "Не указан"
+        return str(experience)
 
 
 class TestBaseFormatterFinal:

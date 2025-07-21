@@ -25,7 +25,7 @@ class TestVacancyDisplayHandlerFinal:
         # Mock get_vacancies to raise exception
         json_saver_mock.get_vacancies.side_effect = Exception("Storage error")
 
-        with patch('src.utils.ui_helpers.get_positive_integer', return_value=5):
+        with patch('builtins.input', return_value='5'):
             handler.show_top_vacancies_by_salary()
 
     def test_search_saved_vacancies_by_keyword_line_120(self):
