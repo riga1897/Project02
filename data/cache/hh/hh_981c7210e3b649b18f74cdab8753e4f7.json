@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "params": {
+      "area": 1,
+      "per_page": 1,
+      "only_with_salary": false,
+      "text": "3",
+      "page": 0,
+      "period": 1
+    }
+  },
+  "data": {
+    "items": [
+      {
+        "id": "123065681",
+        "premium": false,
+        "name": "Frontend-разработчик (React)",
+        "department": {
+          "id": "197135-197135-siso",
+          "name": "\"Сибинтек-Софт\""
+        },
+        "has_test": false,
+        "response_letter_required": false,
+        "area": {
+          "id": "1",
+          "name": "Москва",
+          "url": "https://api.hh.ru/areas/1"
+        },
+        "salary": null,
+        "salary_range": null,
+        "type": {
+          "id": "open",
+          "name": "Открытая"
+        },
+        "address": null,
+        "response_url": null,
+        "sort_point_distance": null,
+        "published_at": "2025-07-21T15:53:28+0300",
+        "created_at": "2025-07-21T15:53:28+0300",
+        "archived": false,
+        "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=123065681",
+        "branding": {
+          "type": "MAKEUP",
+          "tariff": null
+        },
+        "show_logo_in_search": true,
+        "show_contacts": false,
+        "insider_interview": null,
+        "url": "https://api.hh.ru/vacancies/123065681?host=hh.ru",
+        "alternate_url": "https://hh.ru/vacancy/123065681",
+        "relations": [],
+        "employer": {
+          "id": "197135",
+          "name": "ИК СИБИНТЕК",
+          "url": "https://api.hh.ru/employers/197135",
+          "alternate_url": "https://hh.ru/employer/197135",
+          "logo_urls": {
+            "original": "https://img.hhcdn.ru/employer-logo-original/1403777.png",
+            "90": "https://img.hhcdn.ru/employer-logo/7234776.png",
+            "240": "https://img.hhcdn.ru/employer-logo/7234777.png"
+          },
+          "vacancies_url": "https://api.hh.ru/vacancies?employer_id=197135",
+          "accredited_it_employer": true,
+          "employer_rating": {
+            "total_rating": "3.5",
+            "reviews_count": 1618
+          },
+          "trusted": true
+        },
+        "snippet": {
+          "requirement": "Хорошее знание HTML5/CSS<highlighttext>3</highlighttext>. Отличное знание React (опыт коммерческой разработки), знание Angular как дополнительный плюс. Опыт работы с...",
+          "responsibility": "Проектирование, разработка и поддержка веб-приложений на ReactJS в соответствии с бизнес-требованиями. Развитие и улучшение существующего кода, соблюдение стандартов..."
+        },
+        "contacts": null,
+        "schedule": {
+          "id": "remote",
+          "name": "Удаленная работа"
+        },
+        "working_days": [],
+        "working_time_intervals": [],
+        "working_time_modes": [],
+        "accept_temporary": false,
+        "fly_in_fly_out_duration": [],
+        "work_format": [
+          {
+            "id": "REMOTE",
+            "name": "Удалённо"
+          },
+          {
+            "id": "HYBRID",
+            "name": "Гибрид"
+          }
+        ],
+        "working_hours": [
+          {
+            "id": "HOURS_8",
+            "name": "8 часов"
+          }
+        ],
+        "work_schedule_by_days": [
+          {
+            "id": "FIVE_ON_TWO_OFF",
+            "name": "5/2"
+          }
+        ],
+        "night_shifts": false,
+        "professional_roles": [
+          {
+            "id": "96",
+            "name": "Программист, разработчик"
+          }
+        ],
+        "accept_incomplete_resumes": false,
+        "experience": {
+          "id": "moreThan6",
+          "name": "Более 6 лет"
+        },
+        "employment": {
+          "id": "full",
+          "name": "Полная занятость"
+        },
+        "employment_form": {
+          "id": "FULL",
+          "name": "Полная"
+        },
+        "internship": false,
+        "adv_response_url": null,
+        "is_adv_vacancy": false,
+        "adv_context": null
+      }
+    ],
+    "found": 14899,
+    "pages": 2000,
+    "page": 0,
+    "per_page": 1,
+    "clusters": null,
+    "arguments": null,
+    "fixes": null,
+    "suggests": null,
+    "alternate_url": "https://hh.ru/search/vacancy?area=1&enable_snippets=true&items_on_page=1&search_period=1&text=3"
+  }
+}
