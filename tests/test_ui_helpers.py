@@ -173,7 +173,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_vacancy_id(self):
         """Тест фильтрации по ID вакансии"""
-        vacancy = Vacancy(vacancy_id="123", title="Test")
+        vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "123")
@@ -183,7 +183,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_title(self):
         """Тест фильтрации по заголовку"""
-        vacancy = Vacancy(vacancy_id="1", title="Python Developer")
+        vacancy = Vacancy(vacancy_id="1", title="Python Developer", url="http://test.com")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -192,7 +192,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_requirements(self):
         """Тест фильтрации по требованиям"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", requirements="Python required")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", requirements="Python required")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -201,7 +201,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_responsibilities(self):
         """Тест фильтрации по обязанностям"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", responsibilities="Develop Python apps")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", responsibilities="Develop Python apps")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -210,7 +210,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_description(self):
         """Тест фильтрации по описанию"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", description="Python development")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", description="Python development")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -219,7 +219,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_detailed_description(self):
         """Тест фильтрации по детальному описанию"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", detailed_description="Python backend")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", detailed_description="Python backend")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -228,7 +228,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_skills_dict(self):
         """Тест фильтрации по навыкам в формате словаря"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", skills=[{"name": "Python"}])
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", skills=[{"name": "Python"}])
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -237,7 +237,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_skills_string(self):
         """Тест фильтрации по навыкам в строковом формате"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", skills=["Python"])
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", skills=["Python"])
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -246,7 +246,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_employer(self):
         """Тест фильтрации по работодателю"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", employer={"name": "Python Corp"})
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", employer={"name": "Python Corp"})
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -255,7 +255,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_employment(self):
         """Тест фильтрации по типу занятости"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", employment="Python developer")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", employment="Python developer")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -264,7 +264,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_schedule(self):
         """Тест фильтрации по графику"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", schedule="Python shifts")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", schedule="Python shifts")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -273,7 +273,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_experience(self):
         """Тест фильтрации по опыту"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", experience="Python experience")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", experience="Python experience")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -282,7 +282,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_by_benefits(self):
         """Тест фильтрации по льготам"""
-        vacancy = Vacancy(vacancy_id="1", title="Dev", benefits="Python training")
+        vacancy = Vacancy(vacancy_id="1", title="Dev", url="http://test.com", benefits="Python training")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -291,7 +291,7 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_no_matches(self):
         """Тест когда нет совпадений"""
-        vacancy = Vacancy(vacancy_id="1", title="Java Dev")
+        vacancy = Vacancy(vacancy_id="1", title="Java Dev", url="http://test.com")
         vacancies = [vacancy]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -299,8 +299,8 @@ class TestFilterVacanciesByKeyword:
 
     def test_filter_sort_by_relevance(self):
         """Тест сортировки по релевантности"""
-        vacancy1 = Vacancy(vacancy_id="1", title="Dev", description="Python")  # score 3
-        vacancy2 = Vacancy(vacancy_id="2", title="Python Dev")  # score 10
+        vacancy1 = Vacancy(vacancy_id="1", title="Dev", url="http://test1.com", description="Python")  # score 3
+        vacancy2 = Vacancy(vacancy_id="2", title="Python Dev", url="http://test2.com")  # score 10
         vacancies = [vacancy1, vacancy2]
         
         result = filter_vacancies_by_keyword(vacancies, "python")
@@ -318,6 +318,7 @@ class TestDebugVacancySearch:
         vacancy = Vacancy(
             vacancy_id="123",
             title="Python Developer",
+            url="http://test.com",
             description="Develop Python applications",
             requirements="Python skills required",
             responsibilities="Code in Python",
@@ -343,7 +344,7 @@ class TestDebugVacancySearch:
     @patch('builtins.print')
     def test_debug_vacancy_search_no_matches(self, mock_print):
         """Тест отладки без совпадений"""
-        vacancy = Vacancy(vacancy_id="123", title="Java Developer")
+        vacancy = Vacancy(vacancy_id="123", title="Java Developer", url="http://test.com")
         
         debug_vacancy_search(vacancy, "python")
         
@@ -359,8 +360,8 @@ class TestDebugSearchVacancies:
     def test_debug_search_vacancies(self, mock_debug_vacancy, mock_print):
         """Тест отладки поиска по всем вакансиям"""
         vacancies = [
-            Vacancy(vacancy_id="1", title="Python Dev"),
-            Vacancy(vacancy_id="2", title="Java Dev")
+            Vacancy(vacancy_id="1", title="Python Dev", url="http://test1.com"),
+            Vacancy(vacancy_id="2", title="Java Dev", url="http://test2.com")
         ]
         
         debug_search_vacancies(vacancies, "python")
@@ -380,7 +381,7 @@ class TestDisplayVacancyInfo:
     @patch('src.utils.ui_helpers.vacancy_formatter.display_vacancy_info')
     def test_display_vacancy_info(self, mock_display):
         """Тест отображения информации о вакансии"""
-        vacancy = Vacancy(vacancy_id="123", title="Test")
+        vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
         
         display_vacancy_info(vacancy, 1)
         
@@ -389,7 +390,7 @@ class TestDisplayVacancyInfo:
     @patch('src.utils.ui_helpers.vacancy_formatter.display_vacancy_info')
     def test_display_vacancy_info_no_number(self, mock_display):
         """Тест отображения без номера"""
-        vacancy = Vacancy(vacancy_id="123", title="Test")
+        vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
         
         display_vacancy_info(vacancy)
         
