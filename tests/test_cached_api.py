@@ -149,14 +149,16 @@ class TestCachedAPI:
         test_data = {"cached_file_data": "test_value"}
         api.cache.load_response.return_value = {"data": test_data}
         
-        # Мокаем _cached_api_request чтобы он возвращал пустой ответ (что приведет к проверке файлового кэша)
-        api._cached_api_request = Mock(return_value={"items": [], "found": 0, "pages": 0})
-        
-        # Выполняем тест - это должно покрыть строки 65-71
-        result = api._CachedAPI__connect_to_api("test_url", {"key": "value"}, "test_api")
+        # Правильно мокаем _cached_api_request используя patch.object внутри контекста
+        with patch.object(api, '_cached_api_request', return_value=api._get_empty_response()) as mock_cached:
+            # Выполняем тест - это должно покрыть строки 65-71
+            result = api._CachedAPI__connect_to_api("test_url", {"key": "value"}, "test_api")
         
         # Проверяем результат
         assert result == test_data
+        
+        # Проверяем, что _cached_api_request был вызван
+        mock_cached.assert_called_once_with("test_url", {"key": "value"}, "test_api")
         
         # Проверяем, что файловый кэш был вызван (строка 65)
         api.cache.load_response.assert_called_once_with("test_api", {"key": "value"})
