@@ -303,9 +303,9 @@ class TestIntegrationCoverage:
 
         # Строка 120: обработка исключения в show_top_vacancies_by_salary
         json_saver.get_vacancies.side_effect = Exception("Database error")
-        # Мокаем get_positive_integer чтобы он вернул значение до вызова метода
-        with mocker.patch('src.utils.ui_helpers.get_positive_integer', return_value=5):
-            handler.show_top_vacancies_by_salary()
+        # Мокаем get_positive_integer на уровне модуля
+        mocker.patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5)
+        handler.show_top_vacancies_by_salary()
 
     def test_vacancy_search_handler_lines_102_136(self, mocker):
         """Тест для покрытия строк 102, 136 в vacancy_search_handler.py"""
@@ -319,7 +319,7 @@ class TestIntegrationCoverage:
 
         # Строка 136: период равен None
         mocker.patch.object(handler.source_selector, 'get_user_source_choice', return_value={'hh'})
-        mocker.patch('src.utils.ui_helpers.get_user_input', return_value='test query')
+        mocker.patch('src.ui_interfaces.vacancy_search_handler.get_user_input', return_value='test query')
         mocker.patch.object(handler, '_get_period_choice', return_value=None)
         handler.search_vacancies()
 
