@@ -121,13 +121,20 @@ class TestCachedAPI:
         """Тест когда кэш памяти возвращает пустой ответ, но файловый кэш содержит данные"""
         api = ConcreteCachedAPI("test_cache")
         api.connector = Mock()
+        
+        # Настраиваем файловый кэш для возврата данных
         api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
 
-        # Мокаем метод _cached_api_request для возврата пустого ответа
+        # Мокаем метод _cached_api_request для возврата пустого ответа (равного _get_empty_response)
         with patch.object(api, '_cached_api_request', return_value={"items": [], "found": 0, "pages": 0}):
             result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
 
+        # Проверяем, что вызывался load_response с правильными параметрами
+        api.cache.load_response.assert_called_once_with("test_prefix", {"param": "value"})
         assert result == {"file_cached": "data"}
+        
+        # Проверяем логирование
+        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_prefix")
 
     @patch('src.api_modules.cached_api.Path')
     @patch('src.api_modules.cached_api.FileCache')
