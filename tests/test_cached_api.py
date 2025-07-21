@@ -140,6 +140,33 @@ class TestCachedAPI:
     @patch('src.api_modules.cached_api.Path')
     @patch('src.api_modules.cached_api.FileCache')
     @patch('src.api_modules.cached_api.logger')
+    def test_file_cache_hit_lines_65_71(self, mock_logger, mock_file_cache, mock_path):
+        """Отдельный тест специально для покрытия строк 65-71: файловый кэш содержит данные"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        
+        # Настраиваем файловый кэш для возврата данных
+        test_data = {"cached_file_data": "test_value"}
+        api.cache.load_response.return_value = {"data": test_data}
+        
+        # Мокаем _cached_api_request чтобы он возвращал пустой ответ (что приведет к проверке файлового кэша)
+        api._cached_api_request = Mock(return_value={"items": [], "found": 0, "pages": 0})
+        
+        # Выполняем тест - это должно покрыть строки 65-71
+        result = api._CachedAPI__connect_to_api("test_url", {"key": "value"}, "test_api")
+        
+        # Проверяем результат
+        assert result == test_data
+        
+        # Проверяем, что файловый кэш был вызван (строка 65)
+        api.cache.load_response.assert_called_once_with("test_api", {"key": "value"})
+        
+        # Проверяем логирование (строка 67)
+        mock_logger.debug.assert_any_call("Данные получены из файлового кэша для test_api")
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_no_cache_api_success(self, mock_logger, mock_file_cache, mock_path):
         """Тест успешного API запроса без кэша"""
         api = ConcreteCachedAPI("test_cache")
