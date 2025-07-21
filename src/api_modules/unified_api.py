@@ -100,6 +100,7 @@ class UnifiedAPI:
                 if 'period' in kwargs:
                     # HH использует 'period', SuperJob использует 'published'
                     sj_kwargs['published'] = kwargs['period']
+                    sj_kwargs.pop('period', None)  # Удаляем исходный параметр
                 sj_data = self.sj_api.get_vacancies_with_deduplication(search_query, **sj_kwargs)
 
                 if sj_data:
@@ -146,6 +147,7 @@ class UnifiedAPI:
             if 'period' in kwargs:
                 # HH использует 'period', SuperJob использует 'published'
                 sj_kwargs['published'] = kwargs['period']
+                sj_kwargs.pop('period', None)  # Удаляем исходный параметр
 
             sj_data = self.sj_api.get_vacancies_with_deduplication(query, **sj_kwargs)
 
