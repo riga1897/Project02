@@ -6,7 +6,6 @@ from pathlib import Path
 from datetime import datetime
 from src.storage.json_saver import JSONSaver
 from src.vacancies.models import Vacancy
-from src.utils.salary import Salary
 
 
 class TestJSONSaver:
@@ -30,7 +29,7 @@ class TestJSONSaver:
             vacancy_id="123",
             title="Python Developer",
             url="https://example.com/job/123",
-            salary=Salary(salary_data),
+            salary=salary_data,  # Передаем словарь, а не объект Salary
             description="Test description"
         )
 
@@ -74,18 +73,14 @@ class TestJSONSaver:
 
     def test_ensure_file_exists(self, json_saver):
         """Тест создания файла если он не существует"""
-        # Файл должен быть создан в fixture
         assert Path(json_saver.filename).exists()
 
     @patch('src.storage.json_saver.logger')
     @patch('shutil.copy2')
     def test_backup_corrupted_file_success(self, mock_copy, mock_logger, json_saver):
         """Тест успешного создания резервной копии"""
-        # Создаем файл для резервного копирования
         Path(json_saver.filename).write_text("corrupted data")
-
         json_saver._backup_corrupted_file()
-
         mock_copy.assert_called_once()
         mock_logger.info.assert_called()
 
@@ -99,15 +94,12 @@ class TestJSONSaver:
     def test_backup_corrupted_file_error(self, mock_copy, mock_logger, json_saver):
         """Тест ошибки при создании резервной копии"""
         Path(json_saver.filename).write_text("corrupted data")
-
         json_saver._backup_corrupted_file()
-
         mock_logger.error.assert_called_with("Ошибка создания резервной копии: Copy error")
 
     def test_add_vacancy_single(self, json_saver, sample_vacancy):
         """Тест добавления одной вакансии"""
         messages = json_saver.add_vacancy(sample_vacancy)
-
         assert len(messages) == 1
         assert "Добавлена новая вакансия" in messages[0]
         assert sample_vacancy.vacancy_id in messages[0]
@@ -118,29 +110,21 @@ class TestJSONSaver:
             Vacancy(vacancy_id="1", title="Job 1", url="http://test1.com"),
             Vacancy(vacancy_id="2", title="Job 2", url="http://test2.com")
         ]
-
         messages = json_saver.add_vacancy(vacancies)
-
         assert len(messages) == 2
         for msg in messages:
             assert "Добавлена новая вакансия" in msg
 
     def test_add_vacancy_update_existing(self, json_saver, sample_vacancy):
         """Тест обновления существующей вакансии"""
-        # Добавляем вакансию
         json_saver.add_vacancy(sample_vacancy)
-
-        # Изменяем вакансию
         updated_vacancy = Vacancy(
             vacancy_id=sample_vacancy.vacancy_id,
             title="Updated Python Developer",
             url=sample_vacancy.url,
-            salary=sample_vacancy.salary,
             description="Updated description"
         )
-
         messages = json_saver.add_vacancy(updated_vacancy)
-
         assert len(messages) == 1
         assert "обновлена" in messages[0]
         assert "title" in messages[0]
@@ -164,26 +148,20 @@ class TestJSONSaver:
 
     def test_load_vacancies_empty_file(self, json_saver):
         """Тест загрузки из пустого файла"""
-        # Создаем пустой файл
         Path(json_saver.filename).write_text("")
-
         vacancies = json_saver.load_vacancies()
         assert vacancies == []
 
     def test_load_vacancies_file_not_found(self, json_saver):
         """Тест загрузки несуществующего файла"""
-        # Удаляем файл
         Path(json_saver.filename).unlink()
-
         vacancies = json_saver.load_vacancies()
         assert vacancies == []
 
     @patch('src.storage.json_saver.logger')
     def test_load_vacancies_invalid_json(self, mock_logger, json_saver):
         """Тест загрузки некорректного JSON"""
-        # Записываем некорректный JSON
         Path(json_saver.filename).write_text("invalid json")
-
         vacancies = json_saver.load_vacancies()
         assert vacancies == []
         mock_logger.error.assert_called()
@@ -191,9 +169,7 @@ class TestJSONSaver:
     @patch('src.storage.json_saver.logger')
     def test_load_vacancies_not_list(self, mock_logger, json_saver):
         """Тест загрузки JSON не являющегося списком"""
-        # Записываем объект вместо списка
         Path(json_saver.filename).write_text('{"key": "value"}')
-
         vacancies = json_saver.load_vacancies()
         assert vacancies == []
         mock_logger.warning.assert_called()
@@ -201,14 +177,12 @@ class TestJSONSaver:
     @patch('src.storage.json_saver.logger')
     def test_load_vacancies_invalid_item(self, mock_logger, json_saver):
         """Тест загрузки с некорректными элементами"""
-        # Записываем список с некорректными элементами
         data = [
             {"vacancy_id": "1", "title": "Valid Job", "url": "http://test.com"},
-            "invalid item",  # Некорректный элемент
+            "invalid item",
             {"vacancy_id": "2", "title": "Another Job", "url": "http://test2.com"}
         ]
         Path(json_saver.filename).write_text(json.dumps(data))
-
         vacancies = json_saver.load_vacancies()
         assert len(vacancies) == 2  # Только валидные элементы
         mock_logger.warning.assert_called()
@@ -216,10 +190,8 @@ class TestJSONSaver:
     @patch('src.storage.json_saver.logger')
     def test_load_vacancies_vacancy_creation_error(self, mock_logger, json_saver):
         """Тест ошибки создания объекта вакансии"""
-        # Записываем данные, которые не могут быть преобразованы в Vacancy
         data = [{"invalid": "data"}]
         Path(json_saver.filename).write_text(json.dumps(data))
-
         vacancies = json_saver.load_vacancies()
         # Проверяем что результат пустой или содержит только валидные вакансии
         assert len(vacancies) == 0 or all(isinstance(v, Vacancy) for v in vacancies)
@@ -243,7 +215,6 @@ class TestJSONSaver:
     def test_delete_all_vacancies_success(self, json_saver, sample_vacancy):
         """Тест успешного удаления всех вакансий"""
         json_saver.add_vacancy(sample_vacancy)
-
         result = json_saver.delete_all_vacancies()
         assert result is True
 
@@ -261,7 +232,6 @@ class TestJSONSaver:
     def test_delete_vacancy_by_id_success(self, json_saver, sample_vacancy):
         """Тест успешного удаления вакансии по ID"""
         json_saver.add_vacancy(sample_vacancy)
-
         result = json_saver.delete_vacancy_by_id(sample_vacancy.vacancy_id)
         assert result is True
 
@@ -275,14 +245,12 @@ class TestJSONSaver:
 
     def test_delete_vacancy_by_id_with_legacy_id(self, json_saver):
         """Тест удаления вакансии с legacy ID полем"""
-        # Создаем вакансию с id полем вместо vacancy_id
         vacancy_data = {
             "id": "legacy123",
             "title": "Test Job",
             "url": "http://test.com"
         }
         Path(json_saver.filename).write_text(json.dumps([vacancy_data]))
-
         result = json_saver.delete_vacancy_by_id("legacy123")
         assert result is True
 
@@ -299,7 +267,6 @@ class TestJSONSaver:
         """Тест успешного удаления вакансий по ключевому слову"""
         json_saver.add_vacancy(sample_vacancy)
         mock_filter.return_value = [sample_vacancy]
-
         count = json_saver.delete_vacancies_by_keyword("python")
         assert count == 1
 
@@ -308,7 +275,6 @@ class TestJSONSaver:
         """Тест удаления по ключевому слову без совпадений"""
         json_saver.add_vacancy(sample_vacancy)
         mock_filter.return_value = []
-
         count = json_saver.delete_vacancies_by_keyword("java")
         assert count == 0
 
@@ -351,7 +317,6 @@ class TestJSONSaver:
         class TestObject:
             def __str__(self):
                 return "test object"
-
         obj = TestObject()
         result = json_saver._ensure_json_serializable(obj)
         assert result == "test object"
@@ -391,7 +356,6 @@ class TestJSONSaver:
     def test_is_vacancy_exists_true(self, json_saver, sample_vacancy):
         """Тест проверки существования вакансии - существует"""
         json_saver.add_vacancy(sample_vacancy)
-
         result = json_saver.is_vacancy_exists(sample_vacancy)
         assert result is True
 
@@ -462,3 +426,4 @@ class TestJSONSaver:
     def test_property_filename(self, json_saver):
         """Тест свойства filename"""
         assert json_saver.filename == json_saver._filename
+`
