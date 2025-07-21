@@ -49,9 +49,11 @@ class TestSimpleCache:
         assert call_count == 1
 
     @patch('src.utils.cache.EnvLoader.get_env_var_int')
-    def test_simple_cache_ttl_expired(self, mock_get_env):
+    @patch('time.time')
+    def test_simple_cache_ttl_expired(self, mock_time, mock_get_env):
         """Тест истечения TTL кэша"""
         mock_get_env.return_value = 1  # 1 секунда TTL
+        mock_time.return_value = 0  # Начальное время
         call_count = 0
 
         @simple_cache()
@@ -60,16 +62,16 @@ class TestSimpleCache:
             call_count += 1
             return x * 2
 
-        # Первый вызов
+        # Первый вызов в момент времени 0
         result1 = test_func(5)
         assert result1 == 10
         assert call_count == 1
 
-        # Имитируем прошествие времени
-        with patch('time.time', side_effect=[0, 0, 2]):  # Время истекло
-            result2 = test_func(5)
-            assert result2 == 10
-            assert call_count == 2  # Функция вызвалась снова
+        # Имитируем прошествие времени (время истекло)
+        mock_time.return_value = 2  # Время больше TTL (1 секунда)
+        result2 = test_func(5)
+        assert result2 == 10
+        assert call_count == 2  # Функция вызвалась снова
 
     def test_simple_cache_max_size_lru(self):
         """Тест LRU очистки при достижении max_size"""
