@@ -46,7 +46,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         """
         return {'items': []}
 
-    def _validate_vacancy(self, vacancy: Dict) -> Any:
+    def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
         Валидация структуры вакансии
 
@@ -58,8 +58,8 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         """
         return (
             isinstance(vacancy, dict) and 
-            vacancy.get('name') and  # У HH это поле 'name'
-            vacancy.get('alternate_url')  # У HH это поле 'alternate_url'
+            bool(vacancy.get('name')) and  # У HH это поле 'name'
+            bool(vacancy.get('alternate_url'))  # У HH это поле 'alternate_url'
         )
 
     def __connect(self, url: str, params: Dict = {}) -> Dict:

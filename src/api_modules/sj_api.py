@@ -66,7 +66,7 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         """
         return {'objects': []}
 
-    def _validate_vacancy(self, vacancy: Dict) -> Any:
+    def _validate_vacancy(self, vacancy: Dict) -> bool:
         """
         Валидация структуры вакансии
 
@@ -78,8 +78,8 @@ class SuperJobAPI(CachedAPI, BaseJobAPI):
         """
         return (
             isinstance(vacancy, dict) and 
-            vacancy.get('profession') and  # У SJ это поле 'profession'
-            vacancy.get('link')  # У SJ это поле 'link'
+            bool(vacancy.get('profession')) and  # У SJ это поле 'profession'
+            bool(vacancy.get('link'))  # У SJ это поле 'link'
         )
 
     def __connect(self, url: str, params: Dict = None) -> Dict:

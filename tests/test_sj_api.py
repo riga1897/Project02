@@ -56,15 +56,6 @@ class TestSuperJobAPI:
             api.paginator = Mock()
             api._CachedAPI__connect_to_api = Mock(return_value={'objects': []})
             
-            # Добавляем реальную реализацию _validate_vacancy для тестов
-            def real_validate_vacancy(vacancy):
-                return (
-                    isinstance(vacancy, dict) and 
-                    vacancy.get('profession') and  
-                    vacancy.get('link')
-                )
-            api._validate_vacancy = real_validate_vacancy
-            
             return api
 
     def test_init_with_default_config(self):
