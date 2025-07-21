@@ -1,0 +1,15 @@
+FAILED tests/test_json_saver.py::TestJSONSaver::test_load_vacancies_vacancy_creation_error - AssertionError: Expected 'error' to have been called.
+FAILED tests/test_json_saver.py::TestJSONSaver::test_save_to_file_invalid_vacancy_type - TypeError: vars() argument must have __dict__ attribute
+ERROR tests/test_json_saver.py::TestJSONSaver::test_add_vacancy_single - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_add_vacancy_update_existing - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_get_vacancies - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_delete_all_vacancies_success - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_delete_vacancy_by_id_success - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_delete_vacancies_by_keyword_success - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_delete_vacancies_by_keyword_no_matches - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_save_to_file_write_error - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_is_vacancy_exists_true - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_is_vacancy_exists_false - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_is_vacancy_exists_error - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_get_file_size_exists - AttributeError: 'Salary' object has no attribute 'get'
+ERROR tests/test_json_saver.py::TestJSONSaver::test_vacancy_to_dict_with_salary - AttributeError: 'Salary' object has no attribute 'get'
