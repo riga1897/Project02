@@ -1,3 +1,4 @@
+
 import pytest
 from unittest.mock import Mock, patch, MagicMock, mock_open
 import tempfile
@@ -82,8 +83,6 @@ class TestFinalCoverage:
             # Call backup when file doesn't exist
             json_saver._backup_corrupted_file()
 
-            # Should handle gracefully
-
     def test_console_interface_lines_165_166(self):
         """Test exception in _clear_api_cache"""
         with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
@@ -104,7 +103,7 @@ class TestFinalCoverage:
             # Should handle exception gracefully
             ui._clear_api_cache()
 
-    def test_console_interface_lines_217_219(self, mocker):
+    def test_console_interface_lines_217_219(self):
         """Test empty input in _advanced_search_vacancies"""
         with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
              patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
@@ -119,10 +118,8 @@ class TestFinalCoverage:
             ui.json_saver.get_vacancies.return_value = [Mock()]
 
             # Mock empty user input
-            mocker.patch('src.utils.ui_helpers.get_user_input', return_value='')
-
-            # Should return early due to empty input
-            ui._advanced_search_vacancies()
+            with patch('src.utils.ui_helpers.get_user_input', return_value=''):
+                ui._advanced_search_vacancies()
 
     def test_console_interface_lines_236_237(self):
         """Test exception in _advanced_search_vacancies"""
@@ -141,7 +138,7 @@ class TestFinalCoverage:
             ui.json_saver.get_vacancies.side_effect = Exception("Storage error")
             ui._advanced_search_vacancies()
 
-    def test_console_interface_remaining_lines(self, mocker):
+    def test_console_interface_remaining_lines(self):
         """Test remaining console interface lines"""
         with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
              patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
@@ -156,34 +153,30 @@ class TestFinalCoverage:
             ui.source_selector = MagicMock()
             ui.vacancy_ops = MagicMock()
 
-            # Lines 236-237: exception in _advanced_search_vacancies
-            # ui.json_saver.get_vacancies.side_effect = Exception("Storage error")
-            # ui._advanced_search_vacancies()
-
             # Reset for other tests
             ui.json_saver.get_vacancies.side_effect = None
             ui.json_saver.get_vacancies.return_value = []
 
             # Lines 282, 292-293: various filter scenarios
-            mocker.patch('builtins.input', return_value='4')  # Invalid choice
-            ui._filter_saved_vacancies_by_salary()
+            with patch('builtins.input', return_value='4'):  # Invalid choice
+                ui._filter_saved_vacancies_by_salary()
 
             # Lines 316, 320, 322, 329, 339: delete scenarios
-            mocker.patch('builtins.input', return_value='4')  # Invalid choice
-            ui._delete_saved_vacancies()
+            with patch('builtins.input', return_value='4'):  # Invalid choice
+                ui._delete_saved_vacancies()
 
             # Lines 512, 567: pagination edge cases
-            mocker.patch('builtins.input', return_value='x')  # Invalid choice
-            ui._show_vacancies_for_deletion([], 'test')
+            with patch('builtins.input', return_value='x'):  # Invalid choice
+                ui._show_vacancies_for_deletion([], 'test')
 
             # Lines 584-590, 603, 607, 616-617, 621, 625: period choice edge cases
-            mocker.patch('builtins.input', side_effect=['7', '500'])  # Invalid period
-            result = ui._get_period_choice()
-            assert result == 15
+            with patch('builtins.input', side_effect=['7', '500']):  # Invalid period
+                result = ui._get_period_choice()
+                assert result == 15
 
-            mocker.patch('builtins.input', side_effect=KeyboardInterrupt())
-            result = ui._get_period_choice()
-            assert result is None
+            with patch('builtins.input', side_effect=KeyboardInterrupt()):
+                result = ui._get_period_choice()
+                assert result is None
 
     def test_vacancy_display_handler_lines_43_83_120(self):
         """Test remaining lines in vacancy_display_handler.py"""
@@ -200,7 +193,7 @@ class TestFinalCoverage:
             # Line 120: exception in search_saved_vacancies_by_keyword
             handler.search_saved_vacancies_by_keyword()
 
-    def test_vacancy_search_handler_lines_102_136(self, mocker):
+    def test_vacancy_search_handler_lines_102_136(self):
         """Test remaining lines in vacancy_search_handler.py"""
         with patch('src.ui_interfaces.vacancy_search_handler.UnifiedAPI') as mock_unified_api, \
              patch('src.ui_interfaces.vacancy_search_handler.JSONSaver') as mock_json_saver:
@@ -215,15 +208,13 @@ class TestFinalCoverage:
             mock_unified_api.get_vacancies_from_sources.side_effect = Exception("API error")
             handler.search_vacancies()
 
-    def test_user_interface_line_39(self, mocker):
+    def test_user_interface_line_39(self):
         """Test line 39 in user_interface.py"""
-        mock_ui_class = mocker.patch('src.user_interface.UserInterface')
-        mock_ui = mock_ui_class.return_value
-
-        main()
-
-        mock_ui_class.assert_called_once()
-        mock_ui.run.assert_called_once()
+        with patch('src.user_interface.UserInterface') as mock_ui_class:
+            mock_ui = mock_ui_class.return_value
+            main()
+            mock_ui_class.assert_called_once()
+            mock_ui.run.assert_called_once()
 
     def test_base_formatter_lines_145_174(self):
         """Test remaining lines in base_formatter.py"""
@@ -263,7 +254,8 @@ class TestFinalCoverage:
         except (TypeError, AttributeError):
             pass  # Expected
 
-    def test_comprehensive_edge_cases(self, mocker):
+    @patch('builtins.input', return_value='q')
+    def test_comprehensive_edge_cases(self, mock_input):
         """Additional edge cases for complete coverage"""
         # Test console interface with all possible error scenarios
         with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
@@ -282,15 +274,15 @@ class TestFinalCoverage:
 
             # Test all possible input scenarios for complete coverage
             test_inputs = [
-                ('invalid', ''),  # Invalid filter choice
-                ('0', ''),       # Cancel operations
-                ('5', ''),       # Invalid delete choice
-                ('x', ''),       # Invalid pagination choice
-                ('8', '1000'),   # Out of range period
+                'invalid',  # Invalid filter choice
+                '0',        # Cancel operations
+                '5',        # Invalid delete choice
+                'x',        # Invalid pagination choice
+                '8',        # Out of range period
             ]
 
-            for input_val, second_input in test_inputs:
-                mocker.patch('builtins.input', side_effect=[input_val, second_input, 'q'])
+            for input_val in test_inputs:
+                mock_input.return_value = input_val
 
                 # Test various methods with these inputs
                 ui.json_saver.get_vacancies.return_value = []
@@ -299,5 +291,6 @@ class TestFinalCoverage:
                 ui._show_vacancies_for_deletion([], 'test')
 
                 if input_val in ['8']:
+                    mock_input.return_value = '1000'  # Set large period value
                     result = ui._get_period_choice()
                     assert result == 15  # Default fallback
