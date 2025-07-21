@@ -687,14 +687,14 @@ def test_console_interface_edge_cases(ui_instance, mocker):
     ui_instance.json_saver.get_vacancies.return_value = []
     
     # Мокаем input для различных сценариев
-    with mocker.patch('builtins.input', side_effect=['4', '', 'q']):
-        ui_instance._filter_saved_vacancies_by_salary()
+    mocker.patch('builtins.input', side_effect=['4', '', 'q'])
+    ui_instance._filter_saved_vacancies_by_salary()
     
     # Тестируем сценарии с исключениями
     ui_instance.source_selector.get_user_source_choice.side_effect = Exception("test")
     ui_instance._clear_api_cache()
     
     # Тестируем edge cases для периода
-    with mocker.patch('builtins.input', side_effect=['7']):
-        result = ui_instance._get_period_choice()
-        assert result == 15  # default fallback
+    mocker.patch('builtins.input', side_effect=['7'])
+    result = ui_instance._get_period_choice()
+    assert result == 15  # default fallback
