@@ -36,7 +36,8 @@ class UnifiedAPI:
         seen = set()
         unique_vacancies = []
 
-        with tqdm(total=len(all_vacancies), desc="Дедупликация", unit="вакансия") as pbar:
+        print("Выполняется поиск дубликатов между платформами...")
+        with tqdm(total=len(all_vacancies), desc="Поиск дубликатов", unit="вакансия") as pbar:
             for vacancy in all_vacancies:
                 # Универсальная логика для дедупликации между источниками
                 title = vacancy.get('name', vacancy.get('profession', '')).lower().strip()
@@ -63,6 +64,10 @@ class UnifiedAPI:
                 
                 pbar.update(1)
 
+        duplicates_found = len(all_vacancies) - len(unique_vacancies)
+        if duplicates_found > 0:
+            print(f"Найдено и удалено {duplicates_found} дубликатов между платформами")
+        
         logger.info(f"Межплатформенная дедупликация: {len(all_vacancies)} -> {len(unique_vacancies)} вакансий")
         return unique_vacancies
 
@@ -144,9 +149,6 @@ class UnifiedAPI:
                 logger.error(f"Ошибка получения вакансий из SJ: {e}")
 
         # Применяем межплатформенную дедупликацию к общему списку вакансий
-        if all_vacancies:
-            print(f"Выполняется межплатформенная дедупликация {len(all_vacancies)} вакансий...")
-        
         return self._deduplicate_cross_platform(all_vacancies)
 
     def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
