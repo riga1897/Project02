@@ -98,3 +98,53 @@
 4. Добавьте ключ в `.env` файл
 
 ## Тестирование:
+### API Модули
+- test_base_api.py - Тестирует абстрактный базовый класс API
+- test_cached_api.py - Тестирует кэширующий слой для API запросов
+- test_get_api.py - Тестирует фабрику для создания API объектов
+- test_hh_api.py - Тестирует HeadHunter API клиент
+- test_sj_api.py - Тестирует SuperJob API клиент
+- test_unified_api.py - Тестирует унифицированный API интерфейс
+
+### Конфигурационные модули
+- test_api_config.py - Тестирует общую конфигурацию API
+- test_api_config.py - Тестирует общую конфигурацию API
+- test_hh_api_config.py - Тестирует конфигурацию HH.ru API
+- test_sj_api_config.py - Тестирует конфигурацию SuperJob API
+- test_ui_config.py - Тестирует конфигурацию пользовательского интерфейса
+
+### Модели данных
+- test_vacancy_models.py - Тестирует модели вакансий и зарплат
+- test_abstract.py - Тестирует абстрактные модели
+
+### Парсеры данных
+- test_hh_parser.py - Тестирует парсер данных HH.ru
+- test_sj_parser.py - Тестирует парсер данных SuperJob
+
+### Пользовательский интерфейс
+- test_console_interface.py - Тестирует консольный интерфейс пользователя
+- test_vacancy_display_handler.py - Тестирует обработчик отображения вакансий
+- test_vacancy_search_handler.py - Тестирует обработчик поиска вакансий
+- test_source_selector.py - Тестирует селектор источников данных
+
+### Хранение данных
+- test_json_saver.py - Тестирует JSON хранилище вакансий
+
+### Утилиты
+- test_base_formatter.py - Тестирует базовый форматтер данных
+- test_cache.py - Тестирует систему кэширования
+- test_env_loader.py - Тестирует загрузчик переменных окружения
+- test_file_handlers.py - Тестирует обработчики файлов
+- test_menu_manager.py - Тестирует менеджер меню
+t- est_paginator.py - Тестирует пагинатор
+- test_salary.py - Тестирует утилиты работы с зарплатами
+- test_search_utils.py - Тестирует поисковые утилиты
+- test_source_manager.py - Тестирует менеджер источников
+- test_ui_helpers.py - Тестирует вспомогательные функции UI
+- test_ui_navigation.py - Тестирует навигацию пользовательского интерфейса
+- test_vacancy_formatter.py - Тестирует форматтер вакансий
+- test_vacancy_operations.py - Тестирует операции над вакансиями
+
+### Основные модули
+- test_user_interface.py - Тестирует главный модуль пользовательского интерфейса
+
