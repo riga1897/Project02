@@ -199,3 +199,44 @@ class TestVacancyDisplayHandler:
         
         mock_logger.error.assert_called_once()
         mock_print.assert_called_once_with(f"Ошибка при поиске: {error_msg}")
+
+    @patch('src.ui_interfaces.vacancy_display_handler.logger')
+    @patch('builtins.print')
+    def test_show_all_saved_vacancies_logger_exception_coverage(self, mock_print, mock_logger, handler):
+        """Тест покрытия логирования в show_all_saved_vacancies (строка 43)"""
+        error_msg = "Database connection error"
+        handler.json_saver.get_vacancies.side_effect = Exception(error_msg)
+        
+        handler.show_all_saved_vacancies()
+        
+        # Проверяем, что ошибка была залогирована (строка 43)
+        mock_logger.error.assert_called_once_with(f"Ошибка при отображении сохраненных вакансий: {error_msg}")
+        mock_print.assert_called_once_with(f"Ошибка при загрузке вакансий: {error_msg}")
+
+    @patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5)
+    @patch('src.ui_interfaces.vacancy_display_handler.logger')
+    @patch('builtins.print')
+    def test_show_top_vacancies_by_salary_logger_exception_coverage(self, mock_print, mock_logger, mock_input, handler):
+        """Тест покрытия логирования в show_top_vacancies_by_salary (строка 83)"""
+        error_msg = "Salary processing error"
+        handler.json_saver.get_vacancies.side_effect = Exception(error_msg)
+        
+        handler.show_top_vacancies_by_salary()
+        
+        # Проверяем, что ошибка была залогирована (строка 83)
+        mock_logger.error.assert_called_once_with(f"Ошибка при получении топ сохраненных вакансий: {error_msg}")
+        mock_print.assert_called_once_with(f"Ошибка при поиске: {error_msg}")
+
+    @patch('src.utils.ui_helpers.get_user_input', return_value="python")
+    @patch('src.ui_interfaces.vacancy_display_handler.logger')
+    @patch('builtins.print')
+    def test_search_saved_vacancies_by_keyword_logger_exception_coverage(self, mock_print, mock_logger, mock_input, handler):
+        """Тест покрытия логирования в search_saved_vacancies_by_keyword (строка 120)"""
+        error_msg = "Search operation failed"
+        handler.json_saver.get_vacancies.side_effect = Exception(error_msg)
+        
+        handler.search_saved_vacancies_by_keyword()
+        
+        # Проверяем, что ошибка была залогирована (строка 120)
+        mock_logger.error.assert_called_once_with(f"Ошибка при поиске по ключевому слову: {error_msg}")
+        mock_print.assert_called_once_with(f"Ошибка при поиске: {error_msg}")
