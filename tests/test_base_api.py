@@ -68,7 +68,7 @@ class TestBaseJobAPI:
         }
 
         key = BaseJobAPI._create_dedup_key(vacancy, 'hh')
-        expected = ('python developer', 'test company', '0-0')
+        expected = ('python developer', 'test company', '')
         assert key == expected
 
     def test_create_dedup_key_hh_partial_salary(self):
@@ -123,7 +123,7 @@ class TestBaseJobAPI:
         vacancy = {}
 
         key = BaseJobAPI._create_dedup_key(vacancy, 'hh')
-        expected = ('', '', '0-0')
+        expected = ('', '', '')
         assert key == expected
 
     @patch('src.api_modules.base_api.logger')
