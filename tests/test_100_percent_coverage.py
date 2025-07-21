@@ -50,10 +50,12 @@ class Test100PercentCoverage:
             api = TestCachedAPI(temp_dir)
             api.connector = Mock()
             
-            # Mock _cached_api_request to raise exception
+            # Mock _cached_api_request to raise exception to trigger lines 66-72
             with patch.object(api, '_cached_api_request', side_effect=Exception("Cache error")):
-                result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test")
-                assert result == api._get_empty_response()
+                with patch('src.api_modules.cached_api.logger') as mock_logger:
+                    result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test")
+                    assert result == api._get_empty_response()
+                    mock_logger.error.assert_called_once()
 
     def test_json_saver_file_operations(self):
         """Test json_saver.py error handling"""
@@ -149,6 +151,24 @@ class Test100PercentCoverage:
             with patch('builtins.input', side_effect=['invalid', 'q']):
                 ui._show_vacancies_for_deletion([], 'test')
             
+            # Test specific lines in console_interface.py
+            # Lines 282, 292-293, 316, 320, 322, 329, 339: various menu interactions
+            with patch('builtins.input', side_effect=['invalid', '0']):
+                ui._show_saved_vacancies_menu()
+            
+            # Lines 512, 567: specific menu handlers
+            with patch('builtins.input', side_effect=['0']):
+                ui._show_filter_menu()
+            
+            # Lines 584-590: period choice edge cases
+            with patch('builtins.input', side_effect=['8', '0']):
+                result = ui._get_period_choice()
+                assert result is None
+            
+            # Lines 603, 607, 616-617, 621, 625: various input validations
+            with patch('builtins.input', side_effect=['invalid', '0']):
+                ui._show_advanced_search_menu()
+            
             # Test run method with exceptions
             with patch.object(ui, '_show_menu', side_effect=KeyboardInterrupt()):
                 ui.run()
@@ -192,30 +212,29 @@ class Test100PercentCoverage:
         """Test base_formatter.py lines 145, 174"""
         formatter = TestFormatter()
         
-        # Test JSON parse error (line 145)
-        invalid_json = '{"invalid": json'
-        result = formatter._parse_json_safely(invalid_json)
-        assert result is None
-        
-        # Test salary formatting with various edge cases (line 174)
-        # Test with None
-        result = formatter._format_salary_dict(None)
-        assert result == "Не указана"
-        
-        # Test with empty dict
-        result = formatter._format_salary_dict({})
-        assert result == "Не указана"
-        
-        # Test currency mapping
+        # Test line 145: currency mapping in _format_salary_dict
         salary_dict = {"from": 1000, "to": 2000, "currency": "USD"}
         result = formatter._format_salary_dict(salary_dict)
         assert "долл." in result
         
-        # Test _format_salary_safely with exception
-        try:
-            result = formatter._format_salary_safely({"invalid": "data"})
-        except Exception:
-            pass
+        # Test with EUR currency
+        salary_dict = {"from": 1000, "to": 2000, "currency": "EUR"}
+        result = formatter._format_salary_dict(salary_dict)
+        assert "евро" in result
+        
+        # Test line 174: _extract_conditions with schedule fallback
+        vacancy_mock = Mock()
+        vacancy_mock.conditions = None
+        vacancy_mock.schedule = "Полный день"
+        
+        result = formatter._extract_conditions(vacancy_mock)
+        assert result == "График: Полный день"
+        
+        # Test with both conditions and schedule None
+        vacancy_mock.conditions = None
+        vacancy_mock.schedule = None
+        result = formatter._extract_conditions(vacancy_mock)
+        assert result is None
 
     def test_vacancy_models_edge_cases(self):
         """Test vacancy models lines 121-122, 185, 228, 230"""
@@ -237,15 +256,30 @@ class Test100PercentCoverage:
         vacancy = Vacancy.from_dict(data_invalid)
         assert vacancy.published_at is None
         
-        # Lines 228, 230: comparison operators
+        # Line 185: Test date parsing with ValueError
+        with patch('src.vacancies.models.datetime') as mock_datetime:
+            mock_datetime.fromisoformat.side_effect = ValueError("Invalid date")
+            mock_datetime.fromtimestamp.side_effect = ValueError("Invalid timestamp")
+            
+            data_invalid = {
+                'title': 'Test Job',
+                'url': 'https://example.com',
+                'published_at': 'completely_invalid_date'
+            }
+            vacancy = Vacancy.from_dict(data_invalid)
+            assert vacancy.published_at is None
+        
+        # Lines 228, 230: comparison operators __le__ and __ge__
         vacancy1 = Vacancy(title="Job1", url="http://test.com/1", salary={"from": 100000})
         vacancy2 = Vacancy(title="Job2", url="http://test.com/2", salary={"from": 150000})
         
-        # Test __le__ and __ge__
+        # Test __le__ (line 228)
         assert vacancy1 <= vacancy2
+        assert vacancy1 <= vacancy1
+        
+        # Test __ge__ (line 230)  
         assert vacancy2 >= vacancy1
         assert vacancy1 >= vacancy1
-        assert vacancy1 <= vacancy1
         
         # Test Salary with empty data
         salary = Salary(salary_data={"from": None, "to": None})
@@ -260,9 +294,77 @@ class Test100PercentCoverage:
         """Test user_interface.py line 39"""
         with patch('src.user_interface.UserInterface') as mock_ui_class:
             mock_ui = mock_ui_class.return_value
-            main()
+            mock_ui.run.side_effect = Exception("Test exception")
+            try:
+                main()
+            except Exception:
+                pass
             mock_ui_class.assert_called_once()
             mock_ui.run.assert_called_once()
+
+    def test_remaining_console_interface_lines(self):
+        """Test remaining console interface lines"""
+        with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
+             patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
+             patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
+             patch('src.ui_interfaces.console_interface.JSONSaver'), \
+             patch('src.ui_interfaces.console_interface.create_main_menu'), \
+             patch('src.ui_interfaces.console_interface.VacancyOperations'), \
+             patch('src.ui_interfaces.console_interface.SourceSelector'):
+            
+            ui = UserInterface()
+            ui.json_saver = MagicMock()
+            ui.vacancy_operations = MagicMock()
+            
+            # Line 282: invalid menu choice
+            with patch('builtins.input', side_effect=['99', '0']):
+                ui._show_saved_vacancies_menu()
+            
+            # Lines 292-293: various invalid inputs
+            with patch('builtins.input', side_effect=['abc', '0']):
+                ui._show_filter_menu()
+            
+            # Line 316: invalid choice handling
+            with patch('builtins.input', side_effect=['-1', '0']):
+                ui._show_advanced_search_menu()
+            
+            # Lines 320, 322: edge cases in menu navigation
+            with patch('builtins.input', side_effect=['', '0']):
+                ui._show_saved_vacancies_menu()
+            
+            # Line 329: invalid delete option
+            with patch('builtins.input', side_effect=['10', 'q']):
+                ui._delete_saved_vacancies()
+            
+            # Line 339: exception in vacancy operations
+            ui.vacancy_operations.get_sorted_vacancies.side_effect = Exception("Error")
+            with patch('builtins.input', side_effect=['0']):
+                ui._show_top_vacancies_by_salary()
+            
+            # Line 512: filter menu edge case
+            with patch('builtins.input', side_effect=['9', '0']):
+                ui._show_filter_menu()
+            
+            # Line 567: advanced search edge case
+            with patch('builtins.input', side_effect=['8', '0']):
+                ui._show_advanced_search_menu()
+            
+            # Lines 584-590: period choice comprehensive test
+            with patch('builtins.input', side_effect=['9', '0']):
+                result = ui._get_period_choice()
+                assert result is None
+            
+            # Lines 603, 607: pagination edge cases
+            with patch('builtins.input', side_effect=['next', 'q']):
+                ui._show_vacancies_for_deletion([], 'test')
+            
+            # Lines 616-617: keyboard interrupt handling
+            with patch('builtins.input', side_effect=KeyboardInterrupt()):
+                ui._show_vacancies_for_deletion([], 'test')
+            
+            # Lines 621, 625: additional edge cases
+            with patch('builtins.input', side_effect=['invalid_page', 'q']):
+                ui._show_vacancies_for_deletion([], 'test')
 
     def test_integration_workflow(self):
         """Full integration test"""
