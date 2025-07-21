@@ -178,15 +178,20 @@ class VacancySearchHandler:
         Returns:
             dict: Словарь с информацией о дубликатах и новых вакансиях.
         """
+        from tqdm import tqdm
+        
         existing_vacancies = []
         new_vacancies = []
         total_count = len(vacancies)
 
-        for vacancy in vacancies:
-            if self.json_saver.is_vacancy_exists(vacancy):
-                existing_vacancies.append(vacancy)
-            else:
-                new_vacancies.append(vacancy)
+        print("Проверка существующих вакансий в базе данных...")
+        with tqdm(total=total_count, desc="Проверка дубликатов", unit="вакансия") as pbar:
+            for vacancy in vacancies:
+                if self.json_saver.is_vacancy_exists(vacancy):
+                    existing_vacancies.append(vacancy)
+                else:
+                    new_vacancies.append(vacancy)
+                pbar.update(1)
 
         return {
             'existing_count': len(existing_vacancies),
