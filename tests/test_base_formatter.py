@@ -47,18 +47,19 @@ class TestBaseFormatter:
         
         result = BaseFormatter._build_vacancy_lines(vacancy_mock, 1)
         
-        assert "1." in result
-        assert "ID: 123" in result
-        assert "Название: Test Job" in result
-        assert "Компания: Test Company" in result
-        assert "от 100 000 руб. в месяц" in result
-        assert "Опыт: 1-3 года" in result
-        assert "Занятость: Полная занятость" in result
-        assert "Источник: test.ru" in result
-        assert "Ссылка: https://test.ru/vacancy/123" in result
-        assert "Обязанности: Do work" in result
-        assert "Требования: Be good" in result
-        assert "Условия: Good office" in result
+        result_str = "\n".join(result)
+        assert "1." in result_str
+        assert "ID: 123" in result_str
+        assert "Название: Test Job" in result_str
+        assert "Компания: Test Company" in result_str
+        assert "от 100 000 руб. в месяц" in result_str
+        assert "Опыт: 1-3 года" in result_str
+        assert "Занятость: Полная занятость" in result_str
+        assert "Источник: test.ru" in result_str
+        assert "Ссылка: https://test.ru/vacancy/123" in result_str
+        assert "Обязанности: Do work" in result_str
+        assert "Требования: Be good" in result_str
+        assert "Условия: Good office" in result_str
     
     def test_build_vacancy_lines_without_number(self):
         """Тест формирования строк без номера"""
@@ -216,9 +217,9 @@ class TestBaseFormatter:
         requirements_line = next(line for line in result if "Требования:" in line)
         conditions_line = next(line for line in result if "Условия:" in line)
         
-        assert len(responsibilities_line) <= 165  # 150 символов + "Обязанности: " + "..."
-        assert len(requirements_line) <= 165
-        assert len(conditions_line) <= 165
+        assert len(responsibilities_line) <= 167  # 150 символов + "Обязанности: " (13 симв.) + "..." (3 симв.)
+        assert len(requirements_line) <= 166    # 150 символов + "Требования: " (12 симв.) + "..." (3 симв.)
+        assert len(conditions_line) <= 164      # 150 символов + "Условия: " (9 симв.) + "..." (3 симв.)
         assert responsibilities_line.endswith("...")
         assert requirements_line.endswith("...")
         assert conditions_line.endswith("...")
