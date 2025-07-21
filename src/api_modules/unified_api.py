@@ -148,8 +148,12 @@ class UnifiedAPI:
             except Exception as e:
                 logger.error(f"Ошибка получения вакансий из SJ: {e}")
 
-        # Применяем межплатформенную дедупликацию к общему списку вакансий
-        return self._deduplicate_cross_platform(all_vacancies)
+        # Выводим общую статистику и применяем межплатформенную дедупликацию
+        if all_vacancies:
+            print(f"\nВсего найдено {len(all_vacancies)} вакансий")
+            return self._deduplicate_cross_platform(all_vacancies)
+        else:
+            return []
 
     def get_hh_vacancies(self, query: str, **kwargs) -> List[Vacancy]:
         """Получение вакансий только с HH.ru с дедупликацией"""
