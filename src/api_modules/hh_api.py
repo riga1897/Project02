@@ -1,5 +1,5 @@
 import logging
-from typing import List, Dict, Optional
+from typing import Any, List, Dict, Optional
 
 from src.api_modules.cached_api import CachedAPI
 from src.api_modules.base_api import BaseJobAPI
@@ -46,7 +46,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
         """
         return {'items': []}
 
-    def _validate_vacancy(self, vacancy: Dict) -> bool:
+    def _validate_vacancy(self, vacancy: Dict) -> Any:
         """
         Валидация структуры вакансии
 
@@ -62,7 +62,7 @@ class HeadHunterAPI(CachedAPI, BaseJobAPI):
             vacancy.get('alternate_url')  # У HH это поле 'alternate_url'
         )
 
-    def __connect(self, url: str, params: Dict = None) -> Dict:
+    def __connect(self, url: str, params: Dict = {}) -> Dict:
         """
         Выполнение HTTP-запроса к API HeadHunter
 
