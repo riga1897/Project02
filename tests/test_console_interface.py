@@ -35,7 +35,9 @@ class TestUserInterface:
     def test_run_search_vacancies(self, mock_header, mock_print, interface):
         """Тест вызова поиска вакансий"""
         interface.search_handler.search_vacancies = Mock()
-        with patch.object(interface, '_show_menu', side_effect=['1', '0']):
+        # Создаем итератор для корректного завершения цикла
+        menu_choices = iter(['1', '0'])
+        with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
             interface.run()
         interface.search_handler.search_vacancies.assert_called_once()
 
@@ -44,7 +46,8 @@ class TestUserInterface:
     def test_run_show_saved_vacancies(self, mock_header, mock_print, interface):
         """Тест показа сохраненных вакансий"""
         interface.display_handler.show_all_saved_vacancies = Mock()
-        with patch.object(interface, '_show_menu', side_effect=['2', '0']):
+        menu_choices = iter(['2', '0'])
+        with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
             interface.run()
         interface.display_handler.show_all_saved_vacancies.assert_called_once()
 
@@ -53,7 +56,8 @@ class TestUserInterface:
     def test_run_get_top_saved_vacancies(self, mock_header, mock_print, interface):
         """Тест получения топ вакансий по зарплате"""
         interface.display_handler.show_top_vacancies_by_salary = Mock()
-        with patch.object(interface, '_show_menu', side_effect=['3', '0']):
+        menu_choices = iter(['3', '0'])
+        with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
             interface.run()
         interface.display_handler.show_top_vacancies_by_salary.assert_called_once()
 
@@ -62,7 +66,8 @@ class TestUserInterface:
     def test_run_search_saved_by_keyword(self, mock_header, mock_print, interface):
         """Тест поиска в сохраненных вакансиях по ключевому слову"""
         interface.display_handler.search_saved_vacancies_by_keyword = Mock()
-        with patch.object(interface, '_show_menu', side_effect=['4', '0']):
+        menu_choices = iter(['4', '0'])
+        with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
             interface.run()
         interface.display_handler.search_saved_vacancies_by_keyword.assert_called_once()
 
@@ -71,7 +76,8 @@ class TestUserInterface:
     def test_run_advanced_search(self, mock_header, mock_print, interface):
         """Тест расширенного поиска"""
         with patch.object(interface, '_advanced_search_vacancies') as mock_advanced:
-            with patch.object(interface, '_show_menu', side_effect=['5', '0']):
+            menu_choices = iter(['5', '0'])
+            with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
                 interface.run()
             mock_advanced.assert_called_once()
 
@@ -80,7 +86,8 @@ class TestUserInterface:
     def test_run_filter_by_salary(self, mock_header, mock_print, interface):
         """Тест фильтрации по зарплате"""
         with patch.object(interface, '_filter_saved_vacancies_by_salary') as mock_filter:
-            with patch.object(interface, '_show_menu', side_effect=['6', '0']):
+            menu_choices = iter(['6', '0'])
+            with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
                 interface.run()
             mock_filter.assert_called_once()
 
@@ -89,7 +96,8 @@ class TestUserInterface:
     def test_run_delete_vacancies(self, mock_header, mock_print, interface):
         """Тест удаления вакансий"""
         with patch.object(interface, '_delete_saved_vacancies') as mock_delete:
-            with patch.object(interface, '_show_menu', side_effect=['7', '0']):
+            menu_choices = iter(['7', '0'])
+            with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
                 interface.run()
             mock_delete.assert_called_once()
 
@@ -98,7 +106,8 @@ class TestUserInterface:
     def test_run_clear_api_cache(self, mock_header, mock_print, interface):
         """Тест очистки кэша API"""
         with patch.object(interface, '_clear_api_cache') as mock_clear:
-            with patch.object(interface, '_show_menu', side_effect=['8', '0']):
+            menu_choices = iter(['8', '0'])
+            with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
                 interface.run()
             mock_clear.assert_called_once()
 
@@ -107,7 +116,8 @@ class TestUserInterface:
     def test_run_setup_superjob_api(self, mock_header, mock_print, interface):
         """Тест настройки SuperJob API"""
         with patch.object(interface, '_setup_superjob_api') as mock_setup:
-            with patch.object(interface, '_show_menu', side_effect=['9', '0']):
+            menu_choices = iter(['9', '0'])
+            with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
                 interface.run()
             mock_setup.assert_called_once()
 
@@ -115,7 +125,8 @@ class TestUserInterface:
     @patch('src.ui_interfaces.console_interface.print_section_header')
     def test_run_invalid_choice(self, mock_header, mock_print, interface):
         """Тест неверного выбора"""
-        with patch.object(interface, '_show_menu', side_effect=['invalid', '0']):
+        menu_choices = iter(['invalid', '0'])
+        with patch.object(interface, '_show_menu', side_effect=lambda: next(menu_choices)):
             interface.run()
         mock_print.assert_any_call("Неверный выбор. Попробуйте снова.")
 
