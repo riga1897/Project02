@@ -1,0 +1,34 @@
+src/api_modules/base_api.py                       39      0   100%
+src/api_modules/cached_api.py                     80      7    91%   65-71
+src/api_modules/get_api.py                        53      0   100%
+src/api_modules/hh_api.py                         62      0   100%
+src/api_modules/sj_api.py                         78      0   100%
+src/api_modules/unified_api.py                   156      0   100%
+src/config/api_config.py                          23      0   100%
+src/config/hh_api_config.py                       20      0   100%
+src/config/sj_api_config.py                       17      0   100%
+src/config/ui_config.py                           27      0   100%
+src/storage/abstract.py                           10      0   100%
+src/storage/json_saver.py                        210      6    97%   160-161, 229-231, 299
+src/ui_interfaces/console_interface.py           443     36    92%   165-166, 217-219, 236-237, 282, 292-293, 316, 320, 322, 329, 335-339, 413-414, 433, 472, 508, 512, 567, 584-590, 603, 607, 616-617, 621, 625, 644
+src/ui_interfaces/source_selector.py              41      0   100%
+src/ui_interfaces/vacancy_display_handler.py      68      3    96%   43, 83, 120
+src/ui_interfaces/vacancy_search_handler.py      140      2    99%   102, 136
+src/user_interface.py                             15      1    93%   39
+src/utils/base_formatter.py                      102      2    98%   145, 174
+src/utils/cache.py                                73      0   100%
+src/utils/env_loader.py                           51      0   100%
+src/utils/file_handlers.py                        36      0   100%
+src/utils/menu_manager.py                         48      0   100%
+src/utils/paginator.py                            28      0   100%
+src/utils/salary.py                               82      0   100%
+src/utils/search_utils.py                         65      0   100%
+src/utils/source_manager.py                       35      0   100%
+src/utils/ui_helpers.py                          134      0   100%
+src/utils/ui_navigation.py                        99      0   100%
+src/utils/vacancy_formatter.py                   130      0   100%
+src/utils/vacancy_operations.py                  107      0   100%
+src/vacancies/abstract.py                         10      0   100%
+src/vacancies/models.py                          155      6    96%   121-122, 177, 185, 228, 230
+src/vacancies/parsers/hh_parser.py                48      0   100%
+src/vacancies/parsers/sj_parser.py                29      0   100%

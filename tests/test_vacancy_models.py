@@ -6,6 +6,42 @@ import uuid
 from src.vacancies.models import Vacancy
 from src.utils.salary import Salary
 
+def test_vacancy_lines_121_122():
+    """Тест для покрытия строк 121-122"""
+    vacancy = Vacancy(vacancy_id="123", title="Test", url="http://test.com")
+    # Проверяем что опциональные поля устанавливаются в None по умолчанию
+    assert vacancy.requirements is None
+    assert vacancy.responsibilities is None
+
+def test_vacancy_lines_177_185():
+    """Тест для покрытия строк 177, 185"""
+    # Тестируем создание из словаря с отсутствующими полями
+    data = {"vacancy_id": "123", "title": "Test", "url": "http://test.com"}
+    vacancy = Vacancy.from_dict(data)
+    
+    # Строка 177 - проверка наличия ключа 'salary'
+    assert vacancy.salary is not None  # Создается пустая зарплата
+    
+    # Строка 185 - проверка наличия ключа 'published_at'  
+    assert vacancy.published_at is None  # None когда нет данных
+
+def test_vacancy_lines_228_230():
+    """Тест для покрытия строк 228, 230"""
+    # Создаем вакансию с минимальными данными
+    data = {
+        "vacancy_id": "123",
+        "title": "Test Job", 
+        "url": "http://test.com"
+    }
+    vacancy = Vacancy.from_dict(data)
+    
+    # Тестируем to_dict для покрытия строк с проверками полей
+    result = vacancy.to_dict()
+    
+    # Строки 228, 230 - проверки наличия salary и employer
+    assert result['salary'] is not None  # Создается даже если не было
+    assert result['employer'] is None  # Был None
+
 
 class TestVacancy:
     """Тесты для модели Vacancy"""

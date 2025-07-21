@@ -438,3 +438,44 @@ class TestJSONSaver:
     def test_property_filename(self, json_saver):
         """Тест свойства filename"""
         assert json_saver.filename == json_saver._filename
+
+    def test_backup_corrupted_file_lines_160_161(self, json_saver, mocker):
+        """Тест для покрытия строк 160-161 в _backup_corrupted_file"""
+        mocker.patch('pathlib.Path.exists', return_value=False)
+        mock_logger = mocker.patch('src.storage.json_saver.logger')
+        
+        # Файл не существует - должны покрыться строки с проверкой
+        json_saver._backup_corrupted_file()
+        
+        # Проверяем что логирование не вызывалось для несуществующего файла
+        mock_logger.info.assert_not_called()
+
+    def test_save_to_file_lines_229_231(self, json_saver, sample_vacancy, mocker):
+        """Тест для покрытия строк 229-231"""
+        mock_logger = mocker.patch('src.storage.json_saver.logger')
+        
+        # Создаем мок вакансии с невалидными данными
+        invalid_vacancy = mocker.Mock()
+        invalid_vacancy.to_dict.return_value = {"invalid": "data"}  # Нет обязательных полей
+        
+        json_saver._save_to_file([invalid_vacancy])
+        
+        # Проверяем логирование ошибки валидации (строка 229)
+        mock_logger.error.assert_called()
+        # Проверяем предупреждение о пропущенных вакансиях (строка 231)  
+        mock_logger.warning.assert_called_with("Пропущено 1 невалидных вакансий")
+
+    def test_vacancy_to_dict_line_299(self):
+        """Тест для покрытия строки 299 в _vacancy_to_dict"""
+        vacancy = Vacancy(
+            vacancy_id="123",
+            title="Test Job", 
+            url="http://test.com"
+        )
+        # Принудительно устанавливаем salary в None
+        vacancy.salary = None
+        
+        result = JSONSaver._vacancy_to_dict(vacancy)
+        
+        # Проверяем что salary_dict устанавливается в None (строка 299)
+        assert result['salary'] is None

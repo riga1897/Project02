@@ -679,3 +679,22 @@ def test_methods_with_exceptions(ui_instance):
         ui_instance._show_saved_vacancies()
         ui_instance._get_top_saved_vacancies_by_salary()
         ui_instance._search_saved_vacancies_by_keyword()
+
+def test_console_interface_edge_cases(ui_instance, mocker):
+    """Тесты для покрытия оставшихся непокрытых строк"""
+    
+    # Тестируем различные сценарии для достижения 100% покрытия
+    ui_instance.json_saver.get_vacancies.return_value = []
+    
+    # Мокаем input для различных сценариев
+    mocker.patch('builtins.input', side_effect=['4', '', 'q'])
+    ui_instance._filter_saved_vacancies_by_salary()
+    
+    # Тестируем сценарии с исключениями
+    ui_instance.source_selector.get_user_source_choice.side_effect = Exception("test")
+    ui_instance._clear_api_cache()
+    
+    # Тестируем edge cases для периода
+    mocker.patch('builtins.input', side_effect=['7'])
+    result = ui_instance._get_period_choice()
+    assert result == 15  # default fallback

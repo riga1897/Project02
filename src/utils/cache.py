@@ -63,7 +63,7 @@ def simple_cache(ttl: Optional[int] = None, max_size: int = 1000) -> Callable:
             return {
                 'size': len(cache),
                 'max_size': max_size,
-                'ttl': actual_ttl if ttl else EnvLoader.get_env_var_int('CACHE_TTL', 3600)
+                'ttl': ttl if ttl is not None else EnvLoader.get_env_var_int('CACHE_TTL', 3600)
             }
 
         wrapper.clear_cache = clear_cache
