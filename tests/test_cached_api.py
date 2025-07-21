@@ -327,3 +327,18 @@ class TestCachedAPI:
 
         assert result == {"default": "params"}
         api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
+    def test_connect_method_without_params_arg(self, mock_logger, mock_file_cache, mock_path):
+        """Тест метода __connect без передачи параметра params (использование значения по умолчанию)"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.connector._APIConnector__connect.return_value = {"no_params": "test"}
+
+        # Вызываем метод без второго аргумента для тестирования значения по умолчанию
+        result = api._CachedAPI__connect("test_url")
+
+        assert result == {"no_params": "test"}
+        api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
