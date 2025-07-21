@@ -117,6 +117,21 @@ class TestCachedAPI:
     @patch('src.api_modules.cached_api.Path')
     @patch('src.api_modules.cached_api.FileCache')
     @patch('src.api_modules.cached_api.logger')
+    def test_connect_to_api_memory_cache_empty_file_cache_hit(self, mock_logger, mock_file_cache, mock_path):
+        """Тест когда кэш памяти возвращает пустой ответ, но файловый кэш содержит данные"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.cache.load_response.return_value = {"data": {"file_cached": "data"}}
+
+        # Мокаем метод _cached_api_request для возврата пустого ответа
+        with patch.object(api, '_cached_api_request', return_value={"items": [], "found": 0, "pages": 0}):
+            result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test_prefix")
+
+        assert result == {"file_cached": "data"}
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_no_cache_api_success(self, mock_logger, mock_file_cache, mock_path):
         """Тест успешного API запроса без кэша"""
         api = ConcreteCachedAPI("test_cache")
