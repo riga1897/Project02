@@ -356,3 +356,17 @@ class TestCachedAPI:
 
         assert result == {"signature": "test"}
         api.connector._APIConnector__connect.assert_called_once_with("test_url", {})
+
+    @patch('src.api_modules.cached_api.Path')
+    @patch('src.api_modules.cached_api.FileCache')
+    @patch('src.api_modules.cached_api.logger')
+    def test_connect_method_exception_handling(self, mock_logger, mock_file_cache, mock_path):
+        """Тест обработки исключения в методе __connect для 100% покрытия"""
+        api = ConcreteCachedAPI("test_cache")
+        api.connector = Mock()
+        api.connector._APIConnector__connect.side_effect = Exception("Test connection error")
+
+        result = api._CachedAPI__connect("test_url", {"param": "value"})
+
+        assert result == {}
+        mock_logger.error.assert_called_once_with("Ошибка при подключении к API: Test connection error")
