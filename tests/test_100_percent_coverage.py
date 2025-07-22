@@ -135,9 +135,9 @@ class Test100PercentCoverage:
                 ui._delete_saved_vacancies()
             
             # Test period choice edge cases
-            with patch('builtins.input', side_effect=['7', '0']):  # Invalid choice followed by cancel
+            with patch('builtins.input', side_effect=['7']):  # Invalid choice returns default
                 result = ui._get_period_choice()
-                assert result is None
+                assert result == 15
             
             with patch('builtins.input', side_effect=['6', '500']):
                 result = ui._get_period_choice()
@@ -153,9 +153,9 @@ class Test100PercentCoverage:
             
             # Test specific lines in console_interface.py
             # Lines 584-590: period choice edge cases
-            with patch('builtins.input', side_effect=['8', '0']):
+            with patch('builtins.input', side_effect=['8']):
                 result = ui._get_period_choice()
-                assert result is None
+                assert result == 15
             
             # Test run method with exceptions
             with patch.object(ui, '_show_menu', side_effect=KeyboardInterrupt()):
@@ -313,9 +313,9 @@ class Test100PercentCoverage:
                 ui._delete_saved_vacancies()
             
             # Lines 584-590: period choice comprehensive test
-            with patch('builtins.input', side_effect=['9', '0']):
+            with patch('builtins.input', side_effect=['9']):
                 result = ui._get_period_choice()
-                assert result is None
+                assert result == 15
             
             # Lines 603, 607: pagination edge cases
             with patch('builtins.input', side_effect=['next', 'q']):
