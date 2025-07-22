@@ -292,7 +292,7 @@ class Test100PercentCoverage:
             mock_ui = mock_ui_class.return_value
             main()
             mock_ui_class.assert_called_once()
-            mock_ui.run.assert_called_once()  # This covers line 39rt_called_once()  # This covers line 39
+            mock_ui.run.assert_called_once()  # This covers line 39
 
     def test_remaining_console_interface_lines(self):
         """Test remaining console interface lines"""

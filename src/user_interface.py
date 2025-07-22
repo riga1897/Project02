@@ -22,7 +22,6 @@ def main() -> None:
         level=log_level_value,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
         handlers=[
-            logging.FileHandler("user_interface.log"),
             logging.StreamHandler()
         ]
     )
