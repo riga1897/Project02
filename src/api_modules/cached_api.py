@@ -121,6 +121,10 @@ class CachedAPI(BaseJobAPI, ABC):
             data = self.connector._APIConnector__connect(url, params)
             logger.debug(f"Данные получены из API для {api_prefix}")
             
+            # Если получили None или пустые данные, возвращаем пустой ответ
+            if data is None:
+                return self._get_empty_response()
+            
             # Параллельно сохраняем в файловый кэш только валидные данные
             if data and data != self._get_empty_response():
                 # Сохраняем в файловый кэш в data/cache/

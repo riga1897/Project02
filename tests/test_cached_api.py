@@ -211,7 +211,9 @@ class TestCachedAPI:
     def test_get_cache_status_no_cache_info(self, cached_api):
         """Test cache status when cache_info method doesn't exist"""
         with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
-            # Don't add cache_info method
+            # Explicitly remove cache_info method to simulate it not existing
+            if hasattr(mock_cached_request, 'cache_info'):
+                delattr(mock_cached_request, 'cache_info')
             cached_api.cache_dir.glob.return_value = []
             
             result = cached_api.get_cache_status("test")
