@@ -64,12 +64,12 @@ class Test100PercentCoverage:
             saver = JSONSaver(str(storage_path))
             
             # Test lines 160-161: backup when file doesn't exist
-            saver.file_path = Path(temp_dir) / "nonexistent.json"
+            saver._filename = str(Path(temp_dir) / "nonexistent.json")
             saver._backup_corrupted_file()  # Should handle non-existent file
             
             # Test lines 229-231: filter error handling  
             storage_path.write_text('[{"title": "test"}]')
-            saver.file_path = storage_path
+            saver._filename = str(storage_path)
             with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
                 result = saver.delete_vacancies_by_keyword("test")
                 assert result == 0
@@ -194,7 +194,7 @@ class Test100PercentCoverage:
         # Line 136: None period in search_vacancies
         search_handler.source_selector.get_user_source_choice = Mock(return_value={'hh'})
         with patch('src.ui_interfaces.vacancy_search_handler.get_user_input', return_value='test'):
-            with patch('src.ui_interfaces.console_interface.UserInterface._get_period_choice', return_value=None):
+            with patch('builtins.input', return_value='0'):  # Mock input to return "0" (cancel)
                 search_handler.search_vacancies()
 
     def test_base_formatter_edge_cases(self):
