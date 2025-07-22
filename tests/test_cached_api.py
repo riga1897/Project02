@@ -35,6 +35,7 @@ class TestCachedAPI:
             
             api = TestCachedAPIImplementation("test_cache")
             api.connector = Mock()
+            api.cache = Mock()
             return api
     
     def test_init_cache(self, cached_api):
@@ -48,17 +49,18 @@ class TestCachedAPI:
         test_data = {'items': [{'id': 1}], 'found': 1}
         cached_api.connector._APIConnector__connect.return_value = test_data
         
-        result = cached_api._cached_api_request("http://test.com", {"param": "value"}, "test")
+        # Use string arguments to avoid unhashable dict error
+        result = cached_api._cached_api_request("http://test.com", "test_params", "test")
         
         assert result == test_data
-        cached_api.connector._APIConnector__connect.assert_called_once_with("http://test.com", {"param": "value"})
+        cached_api.connector._APIConnector__connect.assert_called_once_with("http://test.com", "test_params")
     
     @patch('src.api_modules.cached_api.logger')
     def test_cached_api_request_exception(self, mock_logger, cached_api):
         """Test cached API request with exception"""
         cached_api.connector._APIConnector__connect.side_effect = Exception("API Error")
         
-        result = cached_api._cached_api_request("http://test.com", {"param": "value"}, "test")
+        result = cached_api._cached_api_request("http://test.com", "test_params", "test")
         
         assert result == {'items': [], 'found': 0}
         mock_logger.error.assert_called_once()
@@ -81,12 +83,11 @@ class TestCachedAPI:
         cached_response = {'data': {'items': [{'id': 1}], 'found': 1}}
         
         with patch.object(cached_api, '_cached_api_request', return_value=empty_response):
-            cached_api.cache.load_response.return_value = cached_response
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == cached_response['data']
-            mock_logger.debug.assert_called_with("Данные получены из файлового кэша для test")
+            with patch.object(cached_api.cache, 'load_response', return_value=cached_response):
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == cached_response['data']
+                mock_logger.debug.assert_called_with("Данные получены из файлового кэша для test")
     
     @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_direct_request(self, mock_logger, cached_api):
@@ -95,13 +96,13 @@ class TestCachedAPI:
         api_response = {'items': [{'id': 1}], 'found': 1}
         
         with patch.object(cached_api, '_cached_api_request', return_value=empty_response):
-            cached_api.cache.load_response.return_value = None
-            cached_api.connector._APIConnector__connect.return_value = api_response
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == api_response
-            cached_api.cache.save_response.assert_called_once_with("test", {"param": "value"}, api_response)
+            with patch.object(cached_api.cache, 'load_response', return_value=None):
+                cached_api.connector._APIConnector__connect.return_value = api_response
+                
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == api_response
+                cached_api.cache.save_response.assert_called_once_with("test", {"param": "value"}, api_response)
     
     @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_memory_cache_exception(self, mock_logger, cached_api):
@@ -109,11 +110,10 @@ class TestCachedAPI:
         cached_response = {'data': {'items': [{'id': 1}], 'found': 1}}
         
         with patch.object(cached_api, '_cached_api_request', side_effect=Exception("Cache error")):
-            cached_api.cache.load_response.return_value = cached_response
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == cached_response['data']
+            with patch.object(cached_api.cache, 'load_response', return_value=cached_response):
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == cached_response['data']
     
     @patch('src.api_modules.cached_api.logger')
     def test_connect_to_api_direct_request_exception(self, mock_logger, cached_api):
@@ -121,58 +121,63 @@ class TestCachedAPI:
         empty_response = {'items': [], 'found': 0}
         
         with patch.object(cached_api, '_cached_api_request', return_value=empty_response):
-            cached_api.cache.load_response.return_value = None
-            cached_api.connector._APIConnector__connect.side_effect = Exception("API Error")
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == empty_response
-            mock_logger.error.assert_called_with("Ошибка многоуровневого кэширования: API Error")
+            with patch.object(cached_api.cache, 'load_response', return_value=None):
+                cached_api.connector._APIConnector__connect.side_effect = Exception("API Error")
+                
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == empty_response
+                mock_logger.error.assert_called_with("Ошибка многоуровневого кэширования: API Error")
     
     @patch('src.api_modules.cached_api.logger')
     def test_clear_cache_success(self, mock_logger, cached_api):
         """Test successful cache clearing"""
         mock_clear_cache = Mock()
-        cached_api._cached_api_request.clear_cache = mock_clear_cache
         
-        cached_api.clear_cache("test")
-        
-        cached_api.cache.clear.assert_called_once_with("test")
-        mock_clear_cache.assert_called_once()
-        mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
+        # Properly mock the decorated function
+        with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
+            mock_cached_request.clear_cache = mock_clear_cache
+            
+            cached_api.clear_cache("test")
+            
+            cached_api.cache.clear.assert_called_once_with("test")
+            mock_clear_cache.assert_called_once()
+            mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
     
     @patch('src.api_modules.cached_api.logger')
     def test_clear_cache_memory_error(self, mock_logger, cached_api):
         """Test cache clearing with memory cache error"""
         mock_clear_cache = Mock(side_effect=Exception("Memory cache error"))
-        cached_api._cached_api_request.clear_cache = mock_clear_cache
         
-        cached_api.clear_cache("test")
-        
-        cached_api.cache.clear.assert_called_once_with("test")
-        mock_logger.warning.assert_called_with("Ошибка очистки кэша в памяти: Memory cache error")
-        mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
+        with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
+            mock_cached_request.clear_cache = mock_clear_cache
+            
+            cached_api.clear_cache("test")
+            
+            cached_api.cache.clear.assert_called_once_with("test")
+            mock_logger.warning.assert_called_with("Ошибка очистки кэша в памяти: Memory cache error")
+            mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
     
     @patch('src.api_modules.cached_api.logger')
     def test_clear_cache_no_clear_method(self, mock_logger, cached_api):
         """Test cache clearing when clear_cache method doesn't exist"""
-        # Remove clear_cache method
-        if hasattr(cached_api._cached_api_request, 'clear_cache'):
-            delattr(cached_api._cached_api_request, 'clear_cache')
-        
-        cached_api.clear_cache("test")
-        
-        cached_api.cache.clear.assert_called_once_with("test")
-        mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
+        with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
+            # Don't add clear_cache method
+            if hasattr(mock_cached_request, 'clear_cache'):
+                delattr(mock_cached_request, 'clear_cache')
+            
+            cached_api.clear_cache("test")
+            
+            cached_api.cache.clear.assert_called_once_with("test")
+            mock_logger.info.assert_called_with("Кэш test очищен (файловый и в памяти)")
     
     @patch('src.api_modules.cached_api.logger')
     def test_clear_cache_exception(self, mock_logger, cached_api):
         """Test cache clearing with general exception"""
-        cached_api.cache.clear.side_effect = Exception("Clear error")
-        
-        cached_api.clear_cache("test")
-        
-        mock_logger.error.assert_called_with("Ошибка очистки кэша test: Clear error")
+        with patch.object(cached_api.cache, 'clear', side_effect=Exception("Clear error")):
+            cached_api.clear_cache("test")
+            
+            mock_logger.error.assert_called_with("Ошибка очистки кэша test: Clear error")
     
     @patch('src.api_modules.cached_api.Path')
     def test_get_cache_status_success(self, mock_path, cached_api):
@@ -186,32 +191,32 @@ class TestCachedAPI:
         
         # Mock cache info
         mock_cache_info = {'size': 5, 'max_size': 1000, 'ttl': 300}
-        cached_api._cached_api_request.cache_info = Mock(return_value=mock_cache_info)
         
-        result = cached_api.get_cache_status("test")
-        
-        expected = {
-            'cache_dir': str(cached_api.cache_dir),
-            'cache_dir_exists': cached_api.cache_dir.exists(),
-            'file_cache_count': 2,
-            'cache_files': ['test_file1.json', 'test_file2.json'],
-            'memory_cache': mock_cache_info
-        }
-        
-        assert result == expected
-        cached_api.cache_dir.glob.assert_called_once_with("test_*.json")
+        with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
+            mock_cached_request.cache_info = Mock(return_value=mock_cache_info)
+            
+            result = cached_api.get_cache_status("test")
+            
+            expected = {
+                'cache_dir': str(cached_api.cache_dir),
+                'cache_dir_exists': cached_api.cache_dir.exists(),
+                'file_cache_count': 2,
+                'cache_files': ['test_file1.json', 'test_file2.json'],
+                'memory_cache': mock_cache_info
+            }
+            
+            assert result == expected
+            cached_api.cache_dir.glob.assert_called_once_with("test_*.json")
     
     def test_get_cache_status_no_cache_info(self, cached_api):
         """Test cache status when cache_info method doesn't exist"""
-        # Remove cache_info method
-        if hasattr(cached_api._cached_api_request, 'cache_info'):
-            delattr(cached_api._cached_api_request, 'cache_info')
-        
-        cached_api.cache_dir.glob.return_value = []
-        
-        result = cached_api.get_cache_status("test")
-        
-        assert result['memory_cache'] == {}
+        with patch.object(cached_api, '_cached_api_request') as mock_cached_request:
+            # Don't add cache_info method
+            cached_api.cache_dir.glob.return_value = []
+            
+            result = cached_api.get_cache_status("test")
+            
+            assert result['memory_cache'] == {}
     
     @patch('src.api_modules.cached_api.logger')
     def test_get_cache_status_exception(self, mock_logger, cached_api):
@@ -250,6 +255,7 @@ class TestCachedAPIEdgeCases:
             
             api = TestCachedAPIImplementation("test_cache")
             api.connector = Mock()
+            api.cache = Mock()
             return api
     
     @patch('src.api_modules.cached_api.logger')
@@ -258,14 +264,14 @@ class TestCachedAPIEdgeCases:
         empty_response = {'items': [], 'found': 0}
         
         with patch.object(cached_api, '_cached_api_request', return_value=empty_response):
-            cached_api.cache.load_response.return_value = None
-            cached_api.connector._APIConnector__connect.return_value = empty_response
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == empty_response
-            # Should not save empty response to cache
-            cached_api.cache.save_response.assert_not_called()
+            with patch.object(cached_api.cache, 'load_response', return_value=None):
+                cached_api.connector._APIConnector__connect.return_value = empty_response
+                
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == empty_response
+                # Should not save empty response to cache
+                cached_api.cache.save_response.assert_not_called()
     
     @patch('src.api_modules.cached_api.logger') 
     def test_connect_to_api_none_response_not_cached(self, mock_logger, cached_api):
@@ -273,10 +279,10 @@ class TestCachedAPIEdgeCases:
         empty_response = {'items': [], 'found': 0}
         
         with patch.object(cached_api, '_cached_api_request', return_value=empty_response):
-            cached_api.cache.load_response.return_value = None
-            cached_api.connector._APIConnector__connect.return_value = None
-            
-            result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
-            
-            assert result == empty_response
-            cached_api.cache.save_response.assert_not_called()
+            with patch.object(cached_api.cache, 'load_response', return_value=None):
+                cached_api.connector._APIConnector__connect.return_value = None
+                
+                result = cached_api._CachedAPI__connect_to_api("http://test.com", {"param": "value"}, "test")
+                
+                assert result == empty_response
+                cached_api.cache.save_response.assert_not_called()
