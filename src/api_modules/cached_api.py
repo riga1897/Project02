@@ -136,7 +136,10 @@ class CachedAPI(BaseJobAPI, ABC):
             
             # Очищаем кэш в памяти
             if hasattr(self._cached_api_request, 'clear_cache'):
-                self._cached_api_request.clear_cache()
+                try:
+                    self._cached_api_request.clear_cache()
+                except Exception as e:
+                    logger.warning(f"Ошибка очистки кэша в памяти: {e}")
                 
             logger.info(f"Кэш {api_prefix} очищен (файловый и в памяти)")
         except Exception as e:
