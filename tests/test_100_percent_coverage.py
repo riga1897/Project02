@@ -301,8 +301,7 @@ class Test100PercentCoverage:
 
             ui = UserInterface()
             ui.json_saver = MagicMock()
-            if not hasattr(ui, 'vacancy_operations'):
-                ui.vacancy_operations = MagicMock()
+            ui.vacancy_ops = MagicMock()
             # Line 329: invalid delete option
             with patch('builtins.input', side_effect=['10', 'q']):
                 ui._delete_saved_vacancies()
