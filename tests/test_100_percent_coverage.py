@@ -280,8 +280,10 @@ class Test100PercentCoverage:
     def test_user_interface_main(self):
         """Test user_interface.py line 39 - ui.run() call"""
         with patch('src.user_interface.UserInterface') as mock_ui_class, \
-             patch('src.user_interface.EnvLoader'), \
-             patch('src.user_interface.logging'):
+             patch('src.user_interface.EnvLoader.load_env_file'), \
+             patch('src.user_interface.EnvLoader.get_env_var', return_value='INFO'), \
+             patch('src.user_interface.logging.basicConfig'), \
+             patch('builtins.print'):
             mock_ui = mock_ui_class.return_value
             main()
             mock_ui_class.assert_called_once()
