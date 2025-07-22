@@ -135,9 +135,9 @@ class Test100PercentCoverage:
                 ui._delete_saved_vacancies()
             
             # Test period choice edge cases
-            with patch('builtins.input', side_effect=['7']):
+            with patch('builtins.input', side_effect=['7', '0']):  # Invalid choice followed by cancel
                 result = ui._get_period_choice()
-                assert result == 15
+                assert result is None
             
             with patch('builtins.input', side_effect=['6', '500']):
                 result = ui._get_period_choice()
