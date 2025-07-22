@@ -55,11 +55,17 @@ class Test100PercentCoverage:
 
     def test_json_saver_file_operations(self):
         """Test json_saver.py error handling"""
-        with patch('pathlib.Path') as mock_path_class:
+        with patch('src.storage.json_saver.Path') as mock_path_class:
             mock_path = Mock()
             mock_path_class.return_value = mock_path
             mock_path.exists.return_value = False
             mock_path.parent.mkdir = Mock()
+            mock_path.touch = Mock()
+            
+            # Mock the static method used in _ensure_data_directory
+            mock_data_dir = Mock()
+            mock_data_dir.mkdir = Mock()
+            mock_path_class.side_effect = lambda x: mock_data_dir if x == "data/storage" else mock_path
 
             saver = JSONSaver("test_path")
 

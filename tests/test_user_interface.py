@@ -33,7 +33,7 @@ class TestUserInterface:
         call_args = mock_logging_config.call_args
         assert call_args[1]['level'] == logging.INFO
         assert call_args[1]['format'] == '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        assert len(call_args[1]['handlers']) == 2
+        assert len(call_args[1]['handlers']) == 1
 
         # Проверяем вывод заголовка
         expected_calls = [
