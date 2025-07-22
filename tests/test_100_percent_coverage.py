@@ -1,11 +1,6 @@
-import pytest
-from unittest.mock import Mock, patch, MagicMock, call
+from unittest.mock import Mock, patch, MagicMock
 import tempfile
-import json
-import os
 from pathlib import Path
-import time
-from io import StringIO
 from unittest.mock import mock_open
 
 from src.ui_interfaces.console_interface import UserInterface
@@ -306,8 +301,8 @@ class Test100PercentCoverage:
 
             ui = UserInterface()
             ui.json_saver = MagicMock()
-            ui.vacancy_operations = MagicMock()
-
+            if not hasattr(ui, 'vacancy_operations'):
+                ui.vacancy_operations = MagicMock()
             # Line 329: invalid delete option
             with patch('builtins.input', side_effect=['10', 'q']):
                 ui._delete_saved_vacancies()
@@ -375,4 +370,3 @@ class Test100PercentCoverage:
             formatter = TestFormatter()
             formatted = formatter.format_vacancy_info(test_vacancy)
             assert "Python Developer" in formatted
-`
