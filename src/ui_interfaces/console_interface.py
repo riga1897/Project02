@@ -410,8 +410,9 @@ class UserInterface:
                     print("Некорректный ввод. Используется 15 дней по умолчанию.")
                     return 15
             else:
-                print("Некорректный выбор. Используется 15 дней по умолчанию.")
-                return 15
+                # For invalid choices like '8', '9', etc., ask again
+                print("Некорректный выбор. Попробуйте снова.")
+                return UserInterface._get_period_choice()
 
         except KeyboardInterrupt:
             print("\nВыбор периода отменен.")
