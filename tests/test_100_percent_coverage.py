@@ -47,7 +47,7 @@ class Test100PercentCoverage:
             api.connector = Mock()
 
             # Test the actual exception handling in __connect_to_api method
-            with patch.object(api.connector, 'get', side_effect=Exception("Connection error")):
+            with patch.object(api.connector, '_APIConnector__connect', side_effect=Exception("Connection error")):
                 with patch('src.api_modules.cached_api.logger') as mock_logger:
                     result = api._CachedAPI__connect_to_api("test_url", {"param": "value"}, "test")
                     assert result == api._get_empty_response()
@@ -55,35 +55,22 @@ class Test100PercentCoverage:
 
     def test_json_saver_file_operations(self):
         """Test json_saver.py error handling"""
-        with patch('src.storage.json_saver.Path') as mock_path_class:
-            mock_path = Mock()
-            mock_path_class.return_value = mock_path
-            mock_path.exists.return_value = False
-            mock_path.parent.mkdir = Mock()
-            mock_path.touch = Mock()
-            
-            # Mock the static method used in _ensure_data_directory
-            mock_data_dir = Mock()
-            mock_data_dir.mkdir = Mock()
-            mock_path_class.side_effect = lambda x: mock_data_dir if x == "data/storage" else mock_path
+        saver = JSONSaver("test_path")
 
-            saver = JSONSaver("test_path")
+        # Test lines 160-161: backup when file doesn't exist
+        with patch('pathlib.Path.exists', return_value=False):
+            saver._backup_corrupted_file()  # Should handle non-existent file gracefully
 
-            # Test lines 160-161: backup when file doesn't exist
-            with patch.object(saver, '_filename', "nonexistent.json"):
-                saver._backup_corrupted_file()  # Should handle non-existent file
+        # Test lines 229-231: filter error handling
+        with patch.object(saver, 'load_vacancies', return_value=[Mock()]):
+            with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
+                result = saver.delete_vacancies_by_keyword("test")
+                assert result == 0
 
-            # Test lines 229-231: filter error handling
-            mock_path.exists.return_value = True
-            with patch('builtins.open', mock_open(read_data='[{"title": "test"}]')):
-                with patch('src.utils.ui_helpers.filter_vacancies_by_keyword', side_effect=Exception("Filter error")):
-                    result = saver.delete_vacancies_by_keyword("test")
-                    assert result == 0
-
-            # Test line 299: file error in delete_all_vacancies
-            with patch('builtins.open', side_effect=OSError("File error")):
-                result = saver.delete_all_vacancies()
-                assert result is False
+        # Test line 299: file error in delete_all_vacancies
+        with patch('builtins.open', side_effect=OSError("File error")):
+            result = saver.delete_all_vacancies()
+            assert result is False
 
     def test_console_interface_comprehensive(self):
         """Test console_interface.py all problematic lines"""
@@ -174,9 +161,6 @@ class Test100PercentCoverage:
         json_saver_mock = MagicMock()
         display_handler = VacancyDisplayHandler(json_saver_mock)
 
-        # Reset side effect
-        json_saver_mock.get_vacancies.side_effect = None
-
         # Line 43: empty vacancies in show_all_saved_vacancies
         json_saver_mock.get_vacancies.return_value = []
         display_handler.show_all_saved_vacancies()
@@ -200,7 +184,7 @@ class Test100PercentCoverage:
         # Line 136: None period in search_vacancies
         search_handler.source_selector.get_user_source_choice = Mock(return_value={'hh'})
         with patch('src.ui_interfaces.vacancy_search_handler.get_user_input', return_value='test'):
-            with patch('builtins.input', return_value='0'):  # Mock input to return "0" (cancel)
+            with patch('src.ui_interfaces.console_interface.UserInterface._get_period_choice', return_value=None):
                 search_handler.search_vacancies()
 
     def test_base_formatter_edge_cases(self):
@@ -284,7 +268,7 @@ class Test100PercentCoverage:
         assert result is False
 
     def test_user_interface_main(self):
-        """Test user_interface.py line 39 - ui.run() call"""
+        """Test user_interface.py line 38 - ui.run() call"""
         with patch('src.user_interface.UserInterface') as mock_ui_class, \
              patch('src.user_interface.EnvLoader.load_env_file'), \
              patch('src.user_interface.EnvLoader.get_env_var', return_value='INFO'), \
@@ -293,7 +277,7 @@ class Test100PercentCoverage:
             mock_ui = mock_ui_class.return_value
             main()
             mock_ui_class.assert_called_once()
-            mock_ui.run.assert_called_once()  # This covers line 39
+            mock_ui.run.assert_called_once()  # This covers line 38
 
     def test_remaining_console_interface_lines(self):
         """Test remaining console interface lines"""
@@ -308,24 +292,51 @@ class Test100PercentCoverage:
             ui = UserInterface()
             ui.json_saver = MagicMock()
             ui.vacancy_ops = MagicMock()
-            # Line 329: invalid delete option
-            with patch('builtins.input', side_effect=['10', 'q']):
-                ui._delete_saved_vacancies()
+            ui.source_selector = MagicMock()
 
-            # Lines 584-590: period choice comprehensive test
-            with patch('builtins.input', side_effect=['9']):
-                result = UserInterface._get_period_choice()
-                assert result == 15
+            # Lines 165-166: exception in _clear_api_cache
+            ui.source_selector.get_user_source_choice.side_effect = Exception("Source error")
+            ui._clear_api_cache()
+
+            # Reset side effects
+            ui.source_selector.get_user_source_choice.side_effect = None
+            ui.source_selector.get_user_source_choice.return_value = {'hh'}
+
+            # Lines 217-219: empty input in _advanced_search_vacancies
+            ui.json_saver.get_vacancies.return_value = [Mock()]
+            with patch('src.utils.ui_helpers.get_user_input', return_value=''):
+                ui._advanced_search_vacancies()
+
+            # Lines 236-237: exception in _advanced_search_vacancies
+            ui.json_saver.get_vacancies.side_effect = Exception("Storage error")
+            ui._advanced_search_vacancies()
+
+            # Reset side effects
+            ui.json_saver.get_vacancies.side_effect = None
+            ui.json_saver.get_vacancies.return_value = []
 
             # Lines 282, 292-293, 316, 320, 322: salary filter edge cases
             with patch('builtins.input', side_effect=['4', 'q']):  # Invalid choice 4
                 ui._filter_saved_vacancies_by_salary()
 
-            # Lines 329, 567: delete vacancies edge cases
+            # Lines 329, 567: delete vacancies edge cases  
             with patch('builtins.input', side_effect=['10', 'q']):  # Invalid choice 10
                 ui._delete_saved_vacancies()
 
-            # Lines 603, 607: pagination edge cases
+            # Lines 584-590: period choice comprehensive test
+            with patch('builtins.input', side_effect=['7']):  # Invalid choice returns default
+                result = UserInterface._get_period_choice()
+                assert result == 15
+
+            with patch('builtins.input', side_effect=['8']):
+                result = UserInterface._get_period_choice()
+                assert result == 15
+
+            with patch('builtins.input', side_effect=['9']):
+                result = UserInterface._get_period_choice()
+                assert result == 15
+
+            # Lines 603, 607, 616-617, 621, 625: pagination edge cases
             vacancy_mock = Mock()
             vacancy_mock.vacancy_id = "test"
             vacancy_mock.title = "Test"
