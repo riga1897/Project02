@@ -1,0 +1,291 @@
+platform linux -- Python 3.11.13, pytest-8.4.1, pluggy-1.6.0
+rootdir: /home/runner/workspace
+configfile: pyproject.toml
+plugins: mock-3.14.1, cov-6.2.1
+collected 806 items                                                                         
+
+tests/test_100_percent_coverage.py .F.F.F...                                          [  1%]
+tests/test_abstract.py ....                                                           [  1%]
+tests/test_api_config.py ............                                                 [  3%]
+tests/test_base_api.py ..........                                                     [  4%]
+tests/test_base_formatter.py ....................                                     [  6%]
+tests/test_base_formatter_coverage.py ..                                              [  7%]
+tests/test_base_formatter_final.py ..                                                 [  7%]
+tests/test_cache.py ..................                                                [  9%]
+tests/test_cached_api.py ....................                                         [ 12%]
+tests/test_console_interface.py ........................................ [ 16%]
+......                                                                                [ 17%]
+tests/test_console_interface_comprehensive.py ..................                      [ 19%]
+tests/test_console_interface_final.py .                                               [ 20%]
+tests/test_env_loader.py ..................                                           [ 22%]
+tests/test_file_handlers.py ...........                                               [ 23%]
+tests/test_get_api.py .........................                                       [ 26%]
+tests/test_hh_api.py ....................                                             [ 29%]
+tests/test_hh_api_config.py ..........                                                [ 30%]
+tests/test_hh_parser.py .............                                                 [ 32%]
+tests/test_json_saver.py ............................................... [ 37%]
+......                                                                                [ 38%]
+tests/test_json_saver_final.py ...                                                    [ 39%]
+tests/test_menu_manager.py .................                                          [ 41%]
+tests/test_paginator.py ...........                                                   [ 42%]
+tests/test_salary.py .....................................                            [ 47%]
+tests/test_search_utils.py ...............................                            [ 50%]
+tests/test_sj_api.py ......................                                           [ 53%]
+tests/test_sj_api_config.py ..........                                                [ 54%]
+tests/test_sj_parser.py .......                                                       [ 55%]
+tests/test_source_manager.py .....................                                    [ 58%]
+tests/test_source_selector.py ...........                                             [ 59%]
+tests/test_ui_config.py ...................                                           [ 62%]
+tests/test_ui_helpers.py ............................................... [ 67%]
+                                                                                      [ 67%]
+tests/test_ui_navigation.py .......................................                   [ 72%]
+tests/test_unified_api.py .....................................                       [ 77%]
+tests/test_user_interface.py .......                                                  [ 78%]
+tests/test_user_interface_coverage.py .                                               [ 78%]
+tests/test_user_interface_final.py ..                                                 [ 78%]
+tests/test_vacancy_display_handler.py .................                               [ 80%]
+tests/test_vacancy_display_handler_coverage.py ...                                    [ 81%]
+tests/test_vacancy_display_handler_final.py ...                                       [ 81%]
+tests/test_vacancy_formatter.py ..................................                    [ 85%]
+tests/test_vacancy_models.py ........................................... [ 91%]
+......                                                                                [ 91%]
+tests/test_vacancy_models_final.py ....                                               [ 92%]
+tests/test_vacancy_operations.py ........................                             [ 95%]
+tests/test_vacancy_search_handler.py ..................................               [ 99%]
+tests/test_vacancy_search_handler_coverage.py ..                                      [ 99%]
+tests/test_vacancy_search_handler_final.py ..                                         [100%]
+
+========================================= FAILURES ==========================================
+__________________ Test100PercentCoverage.test_json_saver_file_operations ___________________
+
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7fc63292b490>
+
+    def test_json_saver_file_operations(self):
+        """Test json_saver.py error handling"""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            storage_path = Path(temp_dir) / "test.json"
+            saver = JSONSaver(str(storage_path))
+    
+            # Test lines 160-161: backup when file doesn't exist
+>           saver.storage_path = Path(temp_dir) / "nonexistent.json"
+            ^^^^^^^^^^^^^^^^^^
+E           AttributeError: 'JSONSaver' object has no attribute 'storage_path'
+
+tests/test_100_percent_coverage.py:67: AttributeError
+__________________ Test100PercentCoverage.test_vacancy_handlers_exceptions __________________
+
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7fc632944290>
+
+    def test_vacancy_handlers_exceptions(self):
+        """Test vacancy handlers exception paths"""
+        # VacancyDisplayHandler tests
+        json_saver_mock = MagicMock()
+        display_handler = VacancyDisplayHandler(json_saver_mock)
+    
+        # Reset side effect
+        json_saver_mock.get_vacancies.side_effect = None
+    
+        # Line 43: empty vacancies in show_all_saved_vacancies
+        json_saver_mock.get_vacancies.return_value = []
+        display_handler.show_all_saved_vacancies()
+    
+        # Line 83: empty vacancies in search_saved_vacancies_by_keyword
+        with patch('src.utils.ui_helpers.get_user_input', return_value='test'):
+            display_handler.search_saved_vacancies_by_keyword()
+    
+        # Line 120: empty vacancies in show_top_vacancies_by_salary
+        with patch('src.ui_interfaces.vacancy_display_handler.get_positive_integer', return_value=5):
+            display_handler.show_top_vacancies_by_salary()
+    
+        # VacancySearchHandler tests
+        unified_api_mock = MagicMock()
+        search_handler = VacancySearchHandler(unified_api_mock, json_saver_mock)
+    
+        # Line 102: empty sources in search_vacancies
+        search_handler.source_selector.get_user_source_choice = Mock(return_value=set())
+        search_handler.search_vacancies()
+    
+        # Line 136: None period in search_vacancies
+        search_handler.source_selector.get_user_source_choice = Mock(return_value={'hh'})
+        with patch('src.ui_interfaces.vacancy_search_handler.get_user_input', return_value='test'):
+>           with patch('src.ui_interfaces.vacancy_search_handler.UserInterface._get_period_choice', return_value=None):
+
+tests/test_100_percent_coverage.py:197: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/unittest/mock.py:1430: in __enter__
+    self.target = self.getter()
+                  ^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'src.ui_interfaces.vacancy_search_handler.UserInterface'
+
+    def resolve_name(name):
+        """
+        Resolve a name to an object.
+    
+        It is expected that `name` will be a string in one of the following
+        formats, where W is shorthand for a valid Python identifier and dot stands
+        for a literal period in these pseudo-regexes:
+    
+        W(.W)*
+        W(.W)*:(W(.W)*)?
+    
+        The first form is intended for backward compatibility only. It assumes that
+        some part of the dotted name is a package, and the rest is an object
+        somewhere within that package, possibly nested inside other objects.
+        Because the place where the package stops and the object hierarchy starts
+        can't be inferred by inspection, repeated attempts to import must be done
+        with this form.
+    
+        In the second form, the caller makes the division point clear through the
+        provision of a single colon: the dotted name to the left of the colon is a
+        package to be imported, and the dotted name to the right is the object
+        hierarchy within that package. Only one import is needed in this form. If
+        it ends with the colon, then a module object is returned.
+    
+        The function will return an object (which might be a module), or raise one
+        of the following exceptions:
+    
+        ValueError - if `name` isn't in a recognised format
+        ImportError - if an import failed when it shouldn't have
+        AttributeError - if a failure occurred when traversing the object hierarchy
+                         within the imported package to get to the desired object.
+        """
+        global _NAME_PATTERN
+        if _NAME_PATTERN is None:
+            # Lazy import to speedup Python startup time
+            import re
+            dotted_words = r'(?!\d)(\w+)(\.(?!\d)(\w+))*'
+            _NAME_PATTERN = re.compile(f'^(?P<pkg>{dotted_words})'
+                                       f'(?P<cln>:(?P<obj>{dotted_words})?)?$',
+                                       re.UNICODE)
+    
+        m = _NAME_PATTERN.match(name)
+        if not m:
+            raise ValueError(f'invalid format: {name!r}')
+        gd = m.groupdict()
+        if gd.get('cln'):
+            # there is a colon - a one-step import is all that's needed
+            mod = importlib.import_module(gd['pkg'])
+            parts = gd.get('obj')
+            parts = parts.split('.') if parts else []
+        else:
+            # no colon - have to iterate to find the package boundary
+            parts = name.split('.')
+            modname = parts.pop(0)
+            # first part *must* be a module/package.
+            mod = importlib.import_module(modname)
+            while parts:
+                p = parts[0]
+                s = f'{modname}.{p}'
+                try:
+                    mod = importlib.import_module(s)
+                    parts.pop(0)
+                    modname = s
+                except ImportError:
+                    break
+        # if we reach this point, mod is the module, already imported, and
+        # parts is the list of parts in the object hierarchy to be traversed, or
+        # an empty list if just the module is wanted.
+        result = mod
+        for p in parts:
+>           result = getattr(result, p)
+                     ^^^^^^^^^^^^^^^^^^
+E           AttributeError: module 'src.ui_interfaces.vacancy_search_handler' has no attribute 'UserInterface'
+
+/nix/store/7d088dip86hlzri9sk0h78b63yfmx0a0-python3-3.11.13/lib/python3.11/pkgutil.py:715: AttributeError
+----------------------------------- Captured stdout call ------------------------------------
+
+Нет сохраненных вакансий.
+Нет сохраненных вакансий.
+Нет сохраненных вакансий.
+___________________ Test100PercentCoverage.test_vacancy_models_edge_cases ___________________
+
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7fc632945010>
+
+    def test_vacancy_models_edge_cases(self):
+        """Test vacancy models lines 121-122, 185, 228, 230"""
+        # Lines 121-122: float timestamp
+        data_float = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 1640995200.5
+        }
+        vacancy = Vacancy.from_dict(data_float)
+        assert vacancy.published_at is not None
+    
+        # Line 185: invalid date parsing
+        data_invalid = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 'invalid_date'
+        }
+        vacancy = Vacancy.from_dict(data_invalid)
+        assert vacancy.published_at is None
+    
+        # Line 185: Test exception in _parse_datetime
+        with patch('src.vacancies.models.datetime') as mock_datetime:
+            mock_datetime.fromisoformat.side_effect = ValueError("Invalid ISO date")
+            mock_datetime.fromtimestamp.side_effect = ValueError("Invalid timestamp")
+            mock_datetime.strptime.side_effect = ValueError("Invalid strptime format")
+    
+            # This should trigger the exception handling in line 185
+            result = Vacancy._parse_datetime("invalid_date_string")
+            assert result is None
+    
+        # Lines 228, 230: comparison operators __le__ and __ge__
+        # Create vacancies with different salary values to test comparisons
+        vacancy1 = Vacancy(title="Job1", url="http://test.com/1", salary={"from": 100000})
+        vacancy2 = Vacancy(title="Job2", url="http://test.com/2", salary={"from": 150000})
+    
+        # Test __le__ (line 228) - should return NotImplemented and fall back to __ge__
+        result = vacancy1.__le__(vacancy2)
+>       assert result is NotImplemented
+E       assert True is NotImplemented
+
+tests/test_100_percent_coverage.py:265: AssertionError
+====================================== tests coverage =======================================
+_____________________ coverage: platform linux, python 3.11.13-final-0 ______________________
+
+Name                                           Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------
+src/api_modules/base_api.py                       39      0   100%
+src/api_modules/cached_api.py                     73      7    90%   66-72
+src/api_modules/get_api.py                        53      0   100%
+src/api_modules/hh_api.py                         62      0   100%
+src/api_modules/sj_api.py                         78      0   100%
+src/api_modules/unified_api.py                   156      0   100%
+src/config/api_config.py                          23      0   100%
+src/config/hh_api_config.py                       20      0   100%
+src/config/sj_api_config.py                       17      0   100%
+src/config/ui_config.py                           27      0   100%
+src/storage/abstract.py                           10      0   100%
+src/storage/json_saver.py                        210      6    97%   160-161, 229-231, 299
+src/ui_interfaces/console_interface.py           443     26    94%   165-166, 217-219, 236-237, 282, 292-293, 316, 320, 322, 329, 567, 584-590, 603, 607, 616-617, 621, 625
+src/ui_interfaces/source_selector.py              41      0   100%
+src/ui_interfaces/vacancy_display_handler.py      68      3    96%   43, 83, 120
+src/ui_interfaces/vacancy_search_handler.py      144      2    99%   102, 136
+src/user_interface.py                             15      1    93%   39
+src/utils/base_formatter.py                      102      2    98%   145, 174
+src/utils/cache.py                                73      0   100%
+src/utils/env_loader.py                           51      0   100%
+src/utils/file_handlers.py                        36      0   100%
+src/utils/menu_manager.py                         48      0   100%
+src/utils/paginator.py                            28      0   100%
+src/utils/salary.py                               82      0   100%
+src/utils/search_utils.py                         65      0   100%
+src/utils/source_manager.py                       35      0   100%
+src/utils/ui_helpers.py                          134      0   100%
+src/utils/ui_navigation.py                        99      0   100%
+src/utils/vacancy_formatter.py                   130      0   100%
+src/utils/vacancy_operations.py                  107      0   100%
+src/vacancies/abstract.py                         10      0   100%
+src/vacancies/models.py                          155      3    98%   185, 228, 230
+src/vacancies/parsers/hh_parser.py                48      0   100%
+src/vacancies/parsers/sj_parser.py                29      0   100%
+----------------------------------------------------------------------------
+TOTAL                                           2711     50    98%
+================================== short test summary info ==================================
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_json_saver_file_operations - AttributeError: 'JSONSaver' object has no attribute 'storage_path'
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_vacancy_handlers_exceptions - AttributeError: module 'src.ui_interfaces.vacancy_search_handler' has no attribute 'User...
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_vacancy_models_edge_cases - assert True is NotImplemented
