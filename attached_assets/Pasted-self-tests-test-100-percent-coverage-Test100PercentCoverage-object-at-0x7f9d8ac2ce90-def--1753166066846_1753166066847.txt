@@ -1,0 +1,275 @@
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7f9d8ac2ce90>
+
+    def test_console_interface_comprehensive(self):
+        """Test console_interface.py all problematic lines"""
+        with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
+             patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
+             patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
+             patch('src.ui_interfaces.console_interface.JSONSaver'), \
+             patch('src.ui_interfaces.console_interface.create_main_menu'), \
+             patch('src.ui_interfaces.console_interface.VacancyOperations'), \
+             patch('src.ui_interfaces.console_interface.SourceSelector'):
+    
+            ui = UserInterface()
+            ui.source_selector = MagicMock()
+            ui.unified_api = MagicMock()
+            ui.json_saver = MagicMock()
+            ui.search_handler = MagicMock()
+            ui.display_handler = MagicMock()
+            ui.vacancy_operations = MagicMock()
+    
+            # Lines 165-166: exception in _clear_api_cache
+            ui.source_selector.get_user_source_choice.side_effect = Exception("Source error")
+            ui._clear_api_cache()
+    
+            # Lines 217-219: empty input in _advanced_search_vacancies
+            ui.source_selector.get_user_source_choice.side_effect = None
+            ui.json_saver.get_vacancies.return_value = [Mock()]
+            with patch('src.utils.ui_helpers.get_user_input', return_value=''):
+                ui._advanced_search_vacancies()
+    
+            # Lines 236-237: exception in _advanced_search_vacancies
+            ui.json_saver.get_vacancies.side_effect = Exception("Storage error")
+            ui._advanced_search_vacancies()
+    
+            # Reset side effects
+            ui.json_saver.get_vacancies.side_effect = None
+            ui.json_saver.get_vacancies.return_value = []
+    
+            # Test filter salary menu invalid choices
+            with patch('builtins.input', side_effect=['invalid', 'q']):
+                ui._filter_saved_vacancies_by_salary()
+    
+            with patch('builtins.input', side_effect=['4', 'q']):
+                ui._filter_saved_vacancies_by_salary()
+    
+            # Test delete vacancies invalid choices
+            with patch('builtins.input', side_effect=['invalid', 'q']):
+                ui._delete_saved_vacancies()
+    
+            with patch('builtins.input', side_effect=['4', 'q']):
+                ui._delete_saved_vacancies()
+    
+            with patch('builtins.input', side_effect=['5', 'q']):
+                ui._delete_saved_vacancies()
+    
+            # Test period choice edge cases
+            with patch('builtins.input', side_effect=['7']):
+                result = ui._get_period_choice()
+                assert result == 15
+    
+            with patch('builtins.input', side_effect=['6', '500']):
+                result = ui._get_period_choice()
+                assert result == 15
+    
+            with patch('builtins.input', side_effect=KeyboardInterrupt()):
+                result = ui._get_period_choice()
+                assert result is None
+    
+            # Test pagination invalid input
+            with patch('builtins.input', side_effect=['invalid', 'q']):
+                ui._show_vacancies_for_deletion([], 'test')
+    
+            # Test specific lines in console_interface.py
+            # Lines 282, 292-293, 316, 320, 322, 329, 339: various menu interactions
+            with patch('builtins.input', side_effect=['invalid', '0']):
+>               ui._show_saved_vacancies_menu()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AttributeError: 'UserInterface' object has no attribute '_show_saved_vacancies_menu'
+
+tests/test_100_percent_coverage.py:157: AttributeError
+----------------------------------- Captured stdout call ------------------------------------
+Ошибка при очистке кэша: Source error
+
+Расширенный поиск:
+Введите ключевые слова через запятую, пробел или используйте операторы AND/OR
+Примеры:
+  - python django postgresql (поиск по любому из слов)
+  - python, django, postgresql (поиск по любому из слов)
+  - python AND django (поиск по всем словам)
+  - python OR java (поиск по любому из слов)
+Введите поисковый запрос: Ошибка при поиске: pytest: reading from stdin while output is captured!  Consider using `-s`.
+Ошибка при поиске: Storage error
+Нет сохраненных вакансий.
+Нет сохраненных вакансий.
+Нет сохраненных вакансий для удаления.
+Нет сохраненных вакансий для удаления.
+Нет сохраненных вакансий для удаления.
+
+Выберите период публикации вакансий:
+1. 1 день
+2. 3 дня
+3. 7 дней
+4. 15 дней (по умолчанию)
+5. 30 дней
+6. Ввести свой период
+0. Отмена
+Некорректный выбор. Используется 15 дней по умолчанию.
+
+Выберите период публикации вакансий:
+1. 1 день
+2. 3 дня
+3. 7 дней
+4. 15 дней (по умолчанию)
+5. 30 дней
+6. Ввести свой период
+0. Отмена
+Некорректный период. Используется 15 дней по умолчанию.
+
+Выберите период публикации вакансий:
+1. 1 день
+2. 3 дня
+3. 7 дней
+4. 15 дней (по умолчанию)
+5. 30 дней
+6. Ввести свой период
+0. Отмена
+
+Выбор периода отменен.
+
+--- Страница 1 из 0 ---
+Вакансии 1-0 из 0 с ключевым словом 'test':
+--------------------------------------------------------------------------------
+
+============================================================
+Действия:
+a - Удалить ВСЕ вакансии с этим ключевым словом
+1-10 - Удалить конкретную вакансию по номеру на странице
+8-9, 2-5 - Удалить диапазон вакансий (например: 8-9)
+q - Назад в предыдущее меню.
+============================================================
+Неверный выбор. Попробуйте снова.
+
+--- Страница 1 из 0 ---
+Вакансии 1-0 из 0 с ключевым словом 'test':
+--------------------------------------------------------------------------------
+
+============================================================
+Действия:
+a - Удалить ВСЕ вакансии с этим ключевым словом
+1-10 - Удалить конкретную вакансию по номеру на странице
+8-9, 2-5 - Удалить диапазон вакансий (например: 8-9)
+q - Назад в предыдущее меню.
+============================================================
+Удаление отменено.
+------------------------------------- Captured log call -------------------------------------
+ERROR    src.ui_interfaces.console_interface:console_interface.py:364 Ошибка при очистке кэша: Source error
+ERROR    src.ui_interfaces.console_interface:console_interface.py:182 Ошибка при расширенном поиске: pytest: reading from stdin while output is captured!  Consider using `-s`.
+ERROR    src.ui_interfaces.console_interface:console_interface.py:182 Ошибка при расширенном поиске: Storage error
+___________________ Test100PercentCoverage.test_vacancy_models_edge_cases ___________________
+
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7f9d8ac2de50>
+
+    def test_vacancy_models_edge_cases(self):
+        """Test vacancy models lines 121-122, 185, 228, 230"""
+        # Lines 121-122: float timestamp
+        data_float = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 1640995200.5
+        }
+        vacancy = Vacancy.from_dict(data_float)
+        assert vacancy.published_at is not None
+    
+        # Line 185: invalid date parsing
+        data_invalid = {
+            'title': 'Test Job',
+            'url': 'https://example.com',
+            'published_at': 'invalid_date'
+        }
+        vacancy = Vacancy.from_dict(data_invalid)
+        assert vacancy.published_at is None
+    
+        # Line 185: Test date parsing with ValueError
+        with patch('src.vacancies.models.datetime') as mock_datetime:
+            mock_datetime.fromisoformat.side_effect = ValueError("Invalid date")
+            mock_datetime.fromtimestamp.side_effect = ValueError("Invalid timestamp")
+    
+            data_invalid = {
+                'title': 'Test Job',
+                'url': 'https://example.com',
+                'published_at': 'completely_invalid_date'
+            }
+            vacancy = Vacancy.from_dict(data_invalid)
+>           assert vacancy.published_at is None
+E           AssertionError: assert <MagicMock name='datetime.strptime()' id='140314608836368'> is None
+E            +  where <MagicMock name='datetime.strptime()' id='140314608836368'> = <src.vacancies.models.Vacancy object at 0x7f9d8a92e150>.published_at
+
+tests/test_100_percent_coverage.py:270: AssertionError
+_______________ Test100PercentCoverage.test_remaining_console_interface_lines _______________
+
+self = <tests.test_100_percent_coverage.Test100PercentCoverage object at 0x7f9d8ac2f090>
+
+    def test_remaining_console_interface_lines(self):
+        """Test remaining console interface lines"""
+        with patch('src.ui_interfaces.console_interface.HeadHunterAPI'), \
+             patch('src.ui_interfaces.console_interface.SuperJobAPI'), \
+             patch('src.ui_interfaces.console_interface.UnifiedAPI'), \
+             patch('src.ui_interfaces.console_interface.JSONSaver'), \
+             patch('src.ui_interfaces.console_interface.create_main_menu'), \
+             patch('src.ui_interfaces.console_interface.VacancyOperations'), \
+             patch('src.ui_interfaces.console_interface.SourceSelector'):
+    
+            ui = UserInterface()
+            ui.json_saver = MagicMock()
+            ui.vacancy_operations = MagicMock()
+    
+            # Line 282: invalid menu choice
+            with patch('builtins.input', side_effect=['99', '0']):
+>               ui._show_saved_vacancies_menu()
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E               AttributeError: 'UserInterface' object has no attribute '_show_saved_vacancies_menu'
+
+tests/test_100_percent_coverage.py:321: AttributeError
+===================================== warnings summary ======================================
+tests/test_100_percent_coverage.py:20
+  /home/runner/workspace/tests/test_100_percent_coverage.py:20: PytestCollectionWarning: cannot collect test class 'TestCachedAPI' because it has a __init__ constructor (from: tests/test_100_percent_coverage.py)
+    class TestCachedAPI(CachedAPI):
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+====================================== tests coverage =======================================
+_____________________ coverage: platform linux, python 3.11.13-final-0 ______________________
+
+Name                                           Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------------
+src/api_modules/base_api.py                       39      0   100%
+src/api_modules/cached_api.py                     73      7    90%   66-72
+src/api_modules/get_api.py                        53      0   100%
+src/api_modules/hh_api.py                         62      0   100%
+src/api_modules/sj_api.py                         78      0   100%
+src/api_modules/unified_api.py                   156      0   100%
+src/config/api_config.py                          23      0   100%
+src/config/hh_api_config.py                       20      0   100%
+src/config/sj_api_config.py                       17      0   100%
+src/config/ui_config.py                           27      0   100%
+src/storage/abstract.py                           10      0   100%
+src/storage/json_saver.py                        210      6    97%   160-161, 229-231, 299
+src/ui_interfaces/console_interface.py           443     28    94%   165-166, 217-219, 236-237, 282, 292-293, 316, 320, 322, 329, 339, 512, 567, 584-590, 603, 607, 616-617, 621, 625
+src/ui_interfaces/source_selector.py              41      0   100%
+src/ui_interfaces/vacancy_display_handler.py      68      3    96%   43, 83, 120
+src/ui_interfaces/vacancy_search_handler.py      144      2    99%   102, 136
+src/user_interface.py                             15      1    93%   39
+src/utils/base_formatter.py                      102      2    98%   145, 174
+src/utils/cache.py                                73      0   100%
+src/utils/env_loader.py                           51      0   100%
+src/utils/file_handlers.py                        36      0   100%
+src/utils/menu_manager.py                         48      0   100%
+src/utils/paginator.py                            28      0   100%
+src/utils/salary.py                               82      0   100%
+src/utils/search_utils.py                         65      0   100%
+src/utils/source_manager.py                       35      0   100%
+src/utils/ui_helpers.py                          134      0   100%
+src/utils/ui_navigation.py                        99      0   100%
+src/utils/vacancy_formatter.py                   130      0   100%
+src/utils/vacancy_operations.py                  107      0   100%
+src/vacancies/abstract.py                         10      0   100%
+src/vacancies/models.py                          155      3    98%   185, 228, 230
+src/vacancies/parsers/hh_parser.py                48      0   100%
+src/vacancies/parsers/sj_parser.py                29      0   100%
+----------------------------------------------------------------------------
+TOTAL                                           2711     52    98%
+================================== short test summary info ==================================
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_console_interface_comprehensive - AttributeError: 'UserInterface' object has no attribute '_show_saved_vacancies_menu'
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_vacancy_models_edge_cases - AssertionError: assert <MagicMock name='datetime.strptime()' id='140314608836368'> is None
+FAILED tests/test_100_percent_coverage.py::Test100PercentCoverage::test_remaining_console_interface_lines - AttributeError: 'UserInterface' object has no attribute '_show_saved_vacancies_menu'
+========================= 3 failed, 803 passed, 1 warning in 4.02s ==========================
