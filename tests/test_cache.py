@@ -335,3 +335,13 @@ class TestFileCache:
         cache.clear("test_source")
         
         mock_path_instance.glob.assert_called_once_with("test_source_*.json")
+
+    @patch('src.utils.cache.Path')
+    def _cached_api_request(self, mock_path):
+        """Тест кэшированного API запроса"""
+        mock_path_instance = Mock()
+        mock_path.return_value = mock_path_instance
+        mock_file1 = Mock()
+        mock_file2 = Mock()
+        mock_path_instance.glob.return_value = [mock_file1, mock_file2]
+               

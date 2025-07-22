@@ -32,7 +32,3 @@ def main() -> None:
 
     ui = UserInterface()
     ui.run()
-
-
-if __name__ == "__main__":
-    main()
