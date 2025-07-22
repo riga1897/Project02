@@ -278,12 +278,14 @@ class Test100PercentCoverage:
         assert result is False
 
     def test_user_interface_main(self):
-        """Test user_interface.py line 39"""
-        with patch('src.user_interface.UserInterface') as mock_ui_class:
+        """Test user_interface.py line 39 - ui.run() call"""
+        with patch('src.user_interface.UserInterface') as mock_ui_class, \
+             patch('src.user_interface.EnvLoader'), \
+             patch('src.user_interface.logging'):
             mock_ui = mock_ui_class.return_value
             main()
             mock_ui_class.assert_called_once()
-            mock_ui.run.assert_called_once()
+            mock_ui.run.assert_called_once()  # This covers line 39
 
     def test_remaining_console_interface_lines(self):
         """Test remaining console interface lines"""
