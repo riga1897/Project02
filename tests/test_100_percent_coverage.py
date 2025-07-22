@@ -17,7 +17,7 @@ from src.vacancies.models import Vacancy, Salary
 from src.user_interface import main
 
 
-class TestCachedAPI(CachedAPI):
+class ConcreteCachedAPI(CachedAPI):
     """Concrete implementation for testing"""
     def __init__(self, cache_dir="test_cache"):
         super().__init__(cache_dir)
@@ -47,7 +47,7 @@ class Test100PercentCoverage:
     def test_cached_api_exception_handling(self):
         """Test cached_api.py lines 66-72"""
         with tempfile.TemporaryDirectory() as temp_dir:
-            api = TestCachedAPI(temp_dir)
+            api = ConcreteCachedAPI(temp_dir)
             api.connector = Mock()
             
             # Mock _cached_api_request to raise exception to trigger lines 66-72
